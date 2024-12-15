@@ -1,0 +1,67 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  font-family: "Open Sans",sans-serif
+}
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Raleway:wght@700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  background-color: #F5F5F5;
+  color: #4F4F4F;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Raleway', sans-serif;
+}
+
+.form-container {
+  max-width: 100%;
+  width: 400px;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .form-container {
+    width: 480px;
+  }
+}
+
+@media (min-width: 768px) {
+  .form-container {
+    width: 560px;
+  }
+}
+
+.input-field {
+  @apply w-full px-4 py-[9px] border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-midnightBlue focus:border-transparent transition-all duration-200 bg-white shadow-sm;
+}
+
+.btn-primary {
+  @apply bg-blue-600 text-white py-3 px-6 rounded-md hover:bg-blue-700 transition-colors font-semibold shadow-md;
+}
+
+.btn-secondary {
+  @apply bg-gray-200 text-gray-800 py-3 px-6 rounded-md hover:bg-gray-300 transition-colors font-semibold shadow-md;
+}
+
