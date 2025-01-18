@@ -1,3 +1,4 @@
+
 import {
   pgTable,
   text,
@@ -10,6 +11,7 @@ import {
 
   date,
 } from "drizzle-orm/pg-core";
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -20,8 +22,15 @@ export const user = pgTable("user", {
   updatedAt: timestamp("updatedAt").notNull(),
   twoFactorEnabled: boolean("twoFactorEnabled"),
   country: text("country"),
-  phone: text("phone"),
+  phoneNumber: text("phoneNumber"),
+  phoneNumberVerified: boolean("phoneNumberVerified").default(false),
   dob: date("dob"),
+  role: text("role").notNull().default("user"),
+  banned: boolean("banned").default(false),
+  banReason: text("banReason"),
+  banExpires: timestamp("banExpires"),
+  
+
 });
 
 
@@ -30,7 +39,7 @@ export const agent = pgTable("agent", {
   id: uuid("id").primaryKey().defaultRandom(),
   userId: text("userId").notNull().references(() => user.id),
   socialMediaHandles: jsonb("socialMediaHandles").notNull(),
-  verificationStatus: boolean("verificationStatus").notNull(),
+  verificationStatus: boolean("verificationStatus").notNull().default(false),
   docs: jsonb("docs").notNull(),
   agencyName: text("agencyName").notNull(),
 });
@@ -71,7 +80,10 @@ export const session = pgTable("session", {
   userId: text("userId")
     .notNull()
     .references(() => user.id),
-});
+    impersonatedBy: text("impersonatedBy").references(() => user.id),
+})
+
+
 
 
 export const booking = pgTable("booking", {

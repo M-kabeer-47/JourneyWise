@@ -1,27 +1,23 @@
-import type { Metadata } from "next";
-import localFont from "next/font/local";
-import "./globals.css";
+import './globals.css'
+import { Open_Sans, Raleway } from 'next/font/google'
 
+const openSans = Open_Sans({ subsets: ['latin'] })
+const raleway = Raleway({ subsets: ['latin'], variable: '--font-raleway' })
 
+export const metadata = {
+  title: 'Premium Travel App',
+  description: 'Explore the world with ease',
+}
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: {
+  children: React.ReactNode
+}) {
   return (
     <html lang="en">
-      <head>
-      <link rel="preconnect" href="https://fonts.googleapis.com"></link>
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous"></link>
-      <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Raleway:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet" />
-
-      </head>
-      <body
-        
-      >
-        {children}
-      </body>
+      <body className={`${openSans.className} ${raleway.variable}`}>{children}</body>
     </html>
-  );
+  )
 }
+

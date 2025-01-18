@@ -1,5 +1,5 @@
 {
-  "id": "645519e3-90f9-4bcf-adb4-7506d02f298a",
+  "id": "ccc395cd-fe28-460f-b840-e03a1bf83566",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -865,6 +865,12 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "impersonatedBy": {
+          "name": "impersonatedBy",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
         }
       },
       "indexes": {},
@@ -875,6 +881,19 @@
           "tableTo": "user",
           "columnsFrom": [
             "userId"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "session_impersonatedBy_user_id_fk": {
+          "name": "session_impersonatedBy_user_id_fk",
+          "tableFrom": "session",
+          "tableTo": "user",
+          "columnsFrom": [
+            "impersonatedBy"
           ],
           "columnsTo": [
             "id"
@@ -1015,6 +1034,32 @@
         "dob": {
           "name": "dob",
           "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "role": {
+          "name": "role",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'user'"
+        },
+        "banned": {
+          "name": "banned",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "banReason": {
+          "name": "banReason",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "banExpires": {
+          "name": "banExpires",
+          "type": "timestamp",
           "primaryKey": false,
           "notNull": false
         }

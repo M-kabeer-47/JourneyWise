@@ -10,7 +10,7 @@ export async function GET(request:NextRequest){
         return NextResponse.json({ message: "Phone is required" }, { status: 400 })
     }
     // check if phone exists in the database
-    let User = await db.select().from(user).where(eq(user.phone, phone))
+    let User = await db.select().from(user).where(eq(user.phoneNumber, phone))
     if(User.length > 0){
         console.log("User", User)
         return NextResponse.json({ message: "Phone already exists" }, { status: 409 })

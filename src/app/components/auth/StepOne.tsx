@@ -1,19 +1,22 @@
 import React, { useEffect } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { stepOneSchema } from '../../utils/schema'
+import { stepOneSchema } from '../../../lib/schemas/schema'
 import { SignupData } from '@/app/(pages)/(auth)/sign-up/types'
-import Input from './ui/Input'
+import Input from '../ui/Input'
+import Spinner from '../ui/spinner'
 
 interface StepOneProps {
   onSubmit: (data: any) => void
   initialData: Partial<any>
   emailError:boolean
+  firstStepLoading:boolean
+  emailErrorMesssage:string
   setEmailError: React.Dispatch<React.SetStateAction<boolean>>
   setFormData: React.Dispatch<React.SetStateAction<Partial<SignupData>>>
 }
 
-const StepOne: React.FC<StepOneProps> = ({ onSubmit, initialData,emailError,setEmailError,setFormData }) => {
+const StepOne: React.FC<StepOneProps> = ({ onSubmit, initialData,emailError,setEmailError,firstStepLoading,emailErrorMesssage }) => {
   const { control, handleSubmit, formState: { errors },setError} = useForm({
     resolver: zodResolver(stepOneSchema),
     mode: 'onSubmit',
@@ -24,7 +27,7 @@ const StepOne: React.FC<StepOneProps> = ({ onSubmit, initialData,emailError,setE
     if(emailError){
       setError('email',{
         type:'manual',
-        message:'Email already exists'
+        message:emailErrorMesssage
       })
       setEmailError(false)
     } 
@@ -100,12 +103,11 @@ const StepOne: React.FC<StepOneProps> = ({ onSubmit, initialData,emailError,setE
       />
       <button
         type="submit"
-        onClick={()=>{
-          setFormData((prev) => ({ ...prev, step: 1 }))
-        }}
-        className="w-full bg-[#003366] text-white py-3 px-4 rounded-md hover:bg-[#002855] transition-colors text-lg font-semibold"
+        
+        disabled={firstStepLoading}
+        className={`w-full bg-[#003366] text-white py-3 px-4 rounded-md hover:bg-[#002855] transition-colors text-lg font-semibold`}
       >
-        Next
+        {firstStepLoading ? <Spinner size="small" /> : 'Next'}
       </button>
     </form>
   )

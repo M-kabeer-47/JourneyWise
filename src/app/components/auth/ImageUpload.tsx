@@ -32,7 +32,7 @@ const CloudinaryUpload: React.FC<CloudinaryUploadProps> = ({ value, onChange, er
   return (
     <div className="space-y-4">
       <div className="flex justify-center">
-        <div className="w-32 h-32 rounded-full bg-[#E6F3FF] border-4 border-[#003366] flex items-center justify-center overflow-hidden">
+        <div className="w-32 h-32 rounded-full bg-[#E6F3FF] border-[3px] border-[#003366] flex items-center justify-center overflow-hidden">
           {preview ? (
             <img src={preview} alt="Profile" className="w-full h-full object-cover" />
           ) : (
