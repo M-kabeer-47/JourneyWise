@@ -1,6 +1,6 @@
 import { NextRequest,NextResponse} from "next/server";
 import {agent} from "../../../../../auth-schema";
-import db from "@/server/db";
+import db from "@/lib/server/db";
 export async function POST(request:NextRequest){
     
     let body = await request.json()

@@ -8,14 +8,14 @@ import dynamic from 'next/dynamic';
 import { parsePhoneNumber, isValidPhoneNumber, CountryCode } from "libphonenumber-js";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import Spinner  from "@/app/components/ui/spinner";
-import { authClient } from "@/lib/auth_client";
+import Spinner  from "@/components/ui/Spinner";
+import { authClient } from "@/lib/auth/authClient";
 
 // Dynamically import client-side components
-const DatePicker = dynamic(() => import("@/app/components/auth/Date-Picker"), { ssr: false });
-const CountrySelect = dynamic(() => import("@/app/components/auth/Country-Select"), { ssr: false });
-const PhoneInput = dynamic(() => import("@/app/components/auth/PhoneInput"), { ssr: false });
-const Toast = dynamic(() => import("@/app/components/auth/Custom-Toast"), { ssr: false });
+const DatePicker = dynamic(() => import("@/components/auth/Date-Picker"), { ssr: false });
+const CountrySelect = dynamic(() => import("@/components/auth/Country-Select"), { ssr: false });
+const PhoneInput = dynamic(() => import("@/components/auth/PhoneInput"), { ssr: false });
+const Toast = dynamic(() => import("@/components/auth/Custom-Toast"), { ssr: false });
 
 const stepTwoSchema = z.object({
   dateOfBirth: z.string().nonempty("Date of birth is required"),
@@ -38,7 +38,7 @@ export default function CompleteProfile() {
   useEffect(() => {
     setIsClient(true);
     const getUserId = async () => { 
-        let session  =await  authClient.getSession();
+        let session  = await  authClient.getSession();
         if(session.data){
         
           setUserId(session.data.user.id);

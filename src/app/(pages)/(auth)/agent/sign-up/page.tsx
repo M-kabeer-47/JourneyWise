@@ -1,17 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import StepOne from "@/app/components/auth/StepOne";
-import StepTwo from "@/app/components/auth/StepTwo";
-import StepThree from "@/app/components/auth/StepThree";
-import StepFour from "@/app/components/auth/StepFour";
-import ProgressIndicator from "@/app/components/auth/Agent-Progress-Indicator";
-import Logo from "@/app/components/ui/Logo";
+import StepOne from "@/components/auth/StepOne";
+import StepTwo from "@/components/auth/StepTwo";
+import StepThree from "@/components/auth/StepThree";
+import StepFour from "@/components/auth/StepFour";
+import ProgressIndicator from "@/components/auth/Agent-Progress-Indicator";
+import Logo from "@/components/ui/Logo";
 import { SignupData } from "./types";
-import Toast from "@/app/components/auth/Custom-Toast";
+import Toast from "@/components/auth/Custom-Toast";
 import { useRouter } from "next/navigation";
 import axios from "axios";
-import { authClient } from "@/lib/auth_client";
+import { authClient } from "@/lib/auth/authClient";
 
 export default function Signup() {
   const [step, setStep] = useState(1);
@@ -35,7 +35,6 @@ export default function Signup() {
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
 
   const isValidPhoneNumber = (phone: string) => {
-    
     const phoneRegex = /^[0-9]{12}$/; 
     return phoneRegex.test(phone);
   };

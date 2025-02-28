@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
 import {user,account} from "../../../../../auth-schema";
-import db from "@/server/db";
+import db from "@/lib/server/db";
 export async function GET(request:NextRequest) {
     let searchParams = request.nextUrl.searchParams 
     let email = searchParams.get("email")

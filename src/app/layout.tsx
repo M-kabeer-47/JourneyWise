@@ -1,6 +1,8 @@
 import './globals.css'
 import { Open_Sans, Raleway } from 'next/font/google'
-
+import StoreProvider from '../providers/redux'
+import Footer from '../components/home/Footer'
+import Navbar from '../components/home/Navbar'
 const openSans = Open_Sans({ subsets: ['latin'] })
 const raleway = Raleway({ subsets: ['latin'], variable: '--font-raleway' })
 
@@ -16,7 +18,16 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={`${openSans.className} ${raleway.variable}`}>{children}</body>
+      
+      <StoreProvider>   
+      
+      <body className={`${openSans.className} ${raleway.variable}`}>
+      {/* <Navbar />   */}
+        {children}
+        {/* <Footer /> */}
+      </body>
+      </StoreProvider>  
+      
     </html>
   )
 }

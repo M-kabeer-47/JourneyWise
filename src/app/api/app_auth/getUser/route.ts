@@ -1,4 +1,4 @@
-import db from "@/server/db";
+import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
 import { user } from "../../../../../auth-schema";
 import {eq} from "drizzle-orm";

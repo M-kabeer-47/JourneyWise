@@ -1,0 +1,1 @@
+ALTER TABLE "gig" ALTER COLUMN "isAvailable" DROP DEFAULT;

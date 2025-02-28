@@ -56,6 +56,7 @@ h1, h2, h3, h4, h5, h6 {
   body {
     /* @apply bg-light-gray text-charcoal; */
   }
+  
   :root {
     --background: 0 0% 100%;
     --foreground: 240 10% 3.9%;
@@ -245,5 +246,14 @@ html {
    .custom-right {
       left: 70px;
    }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
 }
 

@@ -1,7 +1,7 @@
 import type { Config } from "tailwindcss";
 const {
   default: flattenColorPalette,
-} = require("tailwindcss/lib/util/flattenColorPalette");
+} = require("tailwindcss/lib/util/flattenColorPalette");  
 export default {
     darkMode: ["class"],
     content: [
@@ -17,10 +17,6 @@ export default {
   			foreground: 'hsl(var(--foreground))',
   			'midnight-blue': '#003366',
   			'ocean-blue': '#0077B6',
-  			accent: {
-  				DEFAULT: 'hsl(var(--accent))',
-  				foreground: 'hsl(var(--accent-foreground))'
-  			},
   			'light-gray': '#F5F5F5',
   			charcoal: '#4F4F4F',
   			card: {

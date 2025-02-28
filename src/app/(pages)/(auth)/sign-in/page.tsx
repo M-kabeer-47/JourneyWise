@@ -6,15 +6,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 import Link from "next/link";
-import { Button } from "../../../components/ui/button";
-import Spinner from "@/app/components/ui/spinner";
+import { Button } from "../../../../components/ui/button";
+import Spinner from "@/components/ui/Spinner";
 import { signInSchema } from "./schema";
-import { authClient } from "@/lib/auth_client";
-import Toast from "../../../components/auth/Custom-Toast";
+import { authClient } from "@/lib/auth/authClient";
+import Toast from "../../../../components/auth/Custom-Toast";
 import axios from "axios";
-import { signIn } from "@/lib/google";
-import Input from "@/app/components/ui/Input";
-import { APIError } from "better-auth/api";
+import { signIn } from "@/lib/auth/google";
+import Input from "@/components/ui/Input";
+
 
 export type SignInForm = z.infer<typeof signInSchema>;
 export default function SignIn() {

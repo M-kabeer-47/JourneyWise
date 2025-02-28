@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import axios from "axios";
-import StepOne from "../../../components/auth/StepOne";
-import StepTwo from "../../../components/auth/StepTwo";
-import StepThree from "../../../components/auth/StepThree";
-import ProgressIndicator from "../../../components/auth/ProgressIndicator";
-import Logo from "../../../components/ui/Logo";
+import StepOne from "../../../../components/auth/StepOne";
+import StepTwo from "../../../../components/auth/StepTwo";
+import StepThree from "../../../../components/auth/StepThree";
+import ProgressIndicator from "../../../../components/auth/ProgressIndicator";
+import Logo from "../../../../components/ui/Logo";
 import { SignupData } from "./types";
-import Toast from "../../../components/auth/Custom-Toast";
-import { authClient } from "@/lib/auth_client";
+import Toast from "../../../../components/auth/Custom-Toast";
+import { authClient } from "@/lib/auth/authClient";
 
 import { useRouter } from "next/navigation";
 
@@ -26,8 +26,11 @@ export default function Signup() {
   const [secondStepLoading, setSecondStepLoading] = useState(false);
   const nextStep = () => setStep((prev) => Math.min(prev + 1, 3));
   const prevStep = () => setStep((prev) => Math.max(prev - 1, 1));
+
+
   const router = useRouter();
 
+  
   const emailExists = async (email: string) => {
     let response = await axios
       .get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/app_auth/checkEmail`, {
@@ -177,6 +180,7 @@ export default function Signup() {
 
   const uploadToCloudinary = async (file: File): Promise<string> => {
     const formData = new FormData();
+    console.log("file",file)
     formData.append("file", file);
     formData.append(
       "upload_preset",

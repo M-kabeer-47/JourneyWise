@@ -1,6 +1,6 @@
 import { NextRequest,NextResponse } from "next/server";
 import { user } from "../../../../../auth-schema";
-import db from "@/server/db";
+import db from "@/lib/server/db";
 import { eq } from "drizzle-orm";
 export async function GET(request:NextRequest){
     let searchParams = request.nextUrl.searchParams

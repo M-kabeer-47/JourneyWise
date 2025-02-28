@@ -6,9 +6,7 @@ import {
   integer,
   timestamp,
   boolean,
-  
   jsonb,
-
   date,
 } from "drizzle-orm/pg-core";
 
@@ -64,8 +62,7 @@ export const gig = pgTable("gig", {
   requirements: jsonb("requirements"),
   tags: jsonb("tags"),
   averageRating: integer("averageRating").notNull(),
-  startDate: date("startDate").notNull(),
-	endDate: date("endDate").notNull(),
+  isAvailable: boolean("isAvailable").notNull(),
   createdAt: timestamp("createdAt").notNull(),
 });
 
@@ -234,3 +231,16 @@ export const twoFactor = pgTable("twoFactor", {
     .references(() => user.id),
 });
 
+export const trip = pgTable("trip", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: text("userId")
+    .notNull()
+    .references(() => user.id),
+  waypoints: jsonb("waypoints").notNull(),
+  estimatedBudget: integer("estimatedBudget").notNull(),
+  numPeople: integer("numPeople").notNull(),  
+  
+  currency: text("currency").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});

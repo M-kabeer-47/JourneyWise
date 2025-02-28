@@ -1,10 +1,10 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import Logo from '../../../components/ui/Logo'
-import OtpInput from '../../../components/auth/Otp-Input'
-import { authClient } from '@/lib/auth_client'
-import Toast from '@/app/components/auth/Custom-Toast'
+import Logo from '../../../../components/ui/Logo'
+import OtpInput from '../../../../components/auth/Otp-Input'
+import { authClient } from '@/lib/auth/authClient'
+import Toast from '@/components/auth/Custom-Toast'
 import { useRouter } from 'next/navigation'
 export default function OtpVerificationPage() {
   const [otp, setOtp] = useState('')
