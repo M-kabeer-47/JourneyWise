@@ -123,7 +123,8 @@ export const WaypointForm = ({
       <motion.button
         layout
         onClick={() => {
-          if(`waypoints.${ActiveIndex}.type` === "start" || `waypoints.${ActiveIndex}.type` === "end"){
+
+          if(watchedWaypoint.type === "start" || watchedWaypoint.type === "end"){
             return;
           }
           else{
@@ -146,13 +147,13 @@ export const WaypointForm = ({
             transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
           />
         )}
-        <span className="relative z-10">Attraction</span>
+        <span className="relative z-10 font-[Open Sans]">Attraction</span>
       </motion.button>
       <motion.button
         layout
         onClick={() =>
         {
-          if(`waypoints.${ActiveIndex}.type` === "start" || `waypoints.${ActiveIndex}.type` === "end"){
+          if(watchedWaypoint.type === "start" || watchedWaypoint.type === "end"){
             return;
           }
           else{

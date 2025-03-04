@@ -18,6 +18,10 @@ export default {
   			'midnight-blue': '#003366',
   			'ocean-blue': '#0077B6',
   			'light-gray': '#F5F5F5',
+			  Accent: {
+				DEFAULT: "hsl(var(--accent))",
+				foreground: "hsl(var(--accent-foreground))",
+			  },
   			charcoal: '#4F4F4F',
   			card: {
   				DEFAULT: 'hsl(var(--card))',
