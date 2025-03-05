@@ -15,9 +15,9 @@ export type BlockType = {
   listItems?: string[]
   align?: keyof typeof ALIGNMENTS
   textStyle?: {
-    bold?: boolean
-    italic?: boolean
-    underline?: boolean
+    bold: boolean
+    italic: boolean
+    underline: boolean
   }
   imageSize?: keyof typeof IMAGE_SIZES
   listStyle?: {

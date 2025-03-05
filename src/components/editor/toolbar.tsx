@@ -1,6 +1,6 @@
 "use client"
 
-import React from "react"
+import React, { useRef, useEffect } from "react"
 import { GripVertical, Trash2, ChevronLeft } from "lucide-react"
 import { useDraggable } from "@dnd-kit/core"
 import {
@@ -37,7 +37,6 @@ import { cn } from "@/utils/shadcn/utils"
 import type { BlockType } from "@/lib/types/block"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import { useEffect } from "react"
 import Input from "@/components/ui/Input"
 
 interface ToolbarProps {
@@ -211,6 +210,23 @@ export function Toolbar({
   onDelete,
   isMobile = false,
 }: ToolbarProps) {
+  // Add a ref to track current styles
+  const currentStylesRef = useRef(selectedBlock?.textStyle || {
+    bold: false,
+    italic: false,
+    underline: false,
+    align: "left"
+  });
+
+  // Update ref when selectedBlock changes
+  useEffect(() => {
+    currentStylesRef.current = selectedBlock?.textStyle || {
+      bold: false,
+      italic: false,
+      underline: false
+    };
+  }, [selectedBlock]);
+
   const handlePositionChange = (value: number) => {
     if (selectedBlock) {
       onBlockUpdate?.(selectedBlock.id, {
@@ -271,54 +287,92 @@ export function Toolbar({
   const handleAlign = (align: string) => {
     if (selectedBlock) {
       onBlockUpdate?.(selectedBlock.id, { align })
+      currentStylesRef.current.align = align;
     }
   }
 
   const handleTextStyle = (style: string) => {
-    if (selectedBlock) {
-      const currentStyle = selectedBlock.textStyle || {}
-      onBlockUpdate?.(selectedBlock.id, {
-        textStyle: {
-          ...currentStyle,
-          [style]: !currentStyle[style],
-        },
-      })
-    }
-  }
+    if (!selectedBlock) return;
+
+    // Use the ref to get current styles
+    const currentStyles = currentStylesRef.current;
+    
+    
+    // Toggle the specific style
+    const newStyles = {
+      ...currentStyles,
+      [style]: !currentStyles[style]
+    };
+    
+    // Update the ref immediately
+    currentStylesRef.current = newStyles;
+
+    // Update the block with new styles
+    onBlockUpdate?.(selectedBlock.id, {
+      textStyle: newStyles
+    });
+  };
 
   const handleEmojiSelect = (emoji: string) => {
-    if (selectedBlock && selectedBlock.content !== undefined) {
-      const selection = window.getSelection()
-      const activeElement = document.activeElement
+    if (!selectedBlock) return;
 
-      if (selection && selection.rangeCount > 0 && activeElement?.contains(selection.anchorNode)) {
-        // If we have a valid selection within the active element
-        const range = selection.getRangeAt(0)
-        const content = activeElement.textContent || ""
-        const start = range.startOffset
-        const end = range.endOffset
+    const selection = window.getSelection();
+    const activeElement = document.activeElement;
 
-        // Create new content with emoji at cursor position
-        const newContent = content.slice(0, start) + emoji + content.slice(end)
-        onBlockUpdate?.(selectedBlock.id, { content: newContent })
-
-        // Restore cursor position after emoji
-        setTimeout(() => {
-          const newRange = document.createRange()
-          const newSelection = window.getSelection()
-          if (activeElement.firstChild && newSelection) {
-            newRange.setStart(activeElement.firstChild, start + emoji.length)
-            newRange.setEnd(activeElement.firstChild, start + emoji.length)
-            newSelection.removeAllRanges()
-            newSelection.addRange(newRange)
-          }
-        }, 0)
-      } else {
-        // If no valid selection, append to end
-        onBlockUpdate?.(selectedBlock.id, { content: selectedBlock.content + emoji })
-      }
+    // Make sure we have a valid contentEditable element
+    if (!activeElement?.hasAttribute('contenteditable')) {
+      // If no contentEditable is focused, just append to content
+      onBlockUpdate?.(selectedBlock.id, { 
+        content: (selectedBlock.content || '') + emoji 
+      });
+      return;
     }
-  }
+
+    // Handle insertion with cursor position
+    if (selection && selection.rangeCount > 0) {
+      const range = selection.getRangeAt(0);
+      const content = selectedBlock.content || '';
+      
+      // Get cursor position
+      const start = range.startOffset;
+      const end = range.endOffset;
+
+      // Insert emoji at cursor position
+      const newContent = 
+        content.slice(0, start) + 
+        emoji + 
+        content.slice(end);
+
+      // Update block with new content
+      onBlockUpdate?.(selectedBlock.id, { content: newContent });
+
+      // Restore cursor position after emoji
+      setTimeout(() => {
+        const newRange = document.createRange();
+        const newSelection = window.getSelection();
+        
+        if (activeElement.firstChild && newSelection) {
+          try {
+            // Place cursor after inserted emoji
+            newRange.setStart(activeElement.firstChild, start + emoji.length);
+            newRange.setEnd(activeElement.firstChild, start + emoji.length);
+            newSelection.removeAllRanges();
+            newSelection.addRange(newRange);
+            
+            // Ensure the element maintains focus
+            activeElement.focus();
+          } catch (e) {
+            console.log('Error restoring cursor position:', e);
+          }
+        }
+      }, 0);
+    } else {
+      // If no selection, append to end
+      onBlockUpdate?.(selectedBlock.id, { 
+        content: (selectedBlock.content || '') + emoji 
+      });
+    }
+  };
 
   const renderBlockEditor = () => {
     if (!selectedBlock) return null
@@ -333,7 +387,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.textStyle?.bold && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.bold && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("bold")}
             >
@@ -344,7 +398,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.textStyle?.italic && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.italic && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("italic")}
             >
@@ -355,7 +409,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.textStyle?.underline && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.underline && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("underline")}
             >
@@ -374,7 +428,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.align === "left" && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.align === "left" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("left")}
             >
@@ -385,7 +439,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.align === "center" && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.align === "center" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("center")}
             >
@@ -396,7 +450,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                selectedBlock.align === "right" && "bg-light-gray text-ocean-blue",
+                currentStylesRef.current.align === "right" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("right")}
             >
@@ -485,7 +539,7 @@ export function Toolbar({
                 <h3 className="font-medium text-charcoal text-center">Settings</h3>
               </div>  
             </div>
-            
+
             
             {/* Image upload */}
             <div className="mb-6">
@@ -544,7 +598,7 @@ export function Toolbar({
                   onClick={() => onBlockUpdate?.(selectedBlock.id, { align: "left" })}
                 >
                   <AlignLeft className="h-4 w-4 mr-2" />
-                  Left
+                  
                 </Button>
                 <Button
                   variant="outline"
@@ -556,7 +610,7 @@ export function Toolbar({
                   onClick={() => onBlockUpdate?.(selectedBlock.id, { align: "center" })}
                 >
                   <AlignCenter className="h-4 w-4 mr-2" />
-                  Center
+                  
                 </Button>
                 <Button
                   variant="outline"
@@ -568,7 +622,7 @@ export function Toolbar({
                   onClick={() => onBlockUpdate?.(selectedBlock.id, { align: "right" })}
                 >
                   <AlignRight className="h-4 w-4 mr-2" />
-                  Right
+                  
                 </Button>
               </div>
             </div>

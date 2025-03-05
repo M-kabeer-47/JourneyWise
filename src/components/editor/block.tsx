@@ -34,7 +34,7 @@ export function Block({
   images = [],
   listItems = [],
   align = "left",
-  textStyle = {},
+  textStyle ={},
   imageSize = "medium",
   listStyle = { type: "bulleted", icon: "disc" },
   margin,
@@ -45,8 +45,8 @@ export function Block({
   isSelected,
 }: BlockProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  const [isEditing, setIsEditing] = useState(false)
-  const [showMobileMenu, setShowMobileMenu] = useState(false) // Added mobile menu state
+  
+  
   const contentRef = useRef<HTMLElement>(null)
   const [isTouching, setIsTouching] = useState(false)
 
@@ -78,10 +78,10 @@ export function Block({
   }
 
   useEffect(() => {
-    if (contentRef.current && !isEditing) {
+    if (contentRef.current) {
       contentRef.current.textContent = content
     }
-  }, [content, isEditing])
+  }, [content ])
 
   useEffect(() => {
     const handleTouchStart = () => setIsTouching(true)
@@ -118,24 +118,24 @@ export function Block({
     const styles: Record<string, string> = {
       textAlign: align || "left",
     }
-    if (textStyle?.bold) styles.fontWeight = "bold"
-    if (textStyle?.italic) styles.fontStyle = "italic"
-    if (textStyle?.underline) styles.textDecoration = "underline"
+    textStyle.bold ? (styles.fontWeight = "bold") : (styles.fontWeight = "normal")
+    textStyle.italic ? (styles.fontStyle = "italic") : (styles.fontStyle = "normal")
+    textStyle.underline ? (styles.textDecoration = "underline") : (styles.textDecoration = "none")
     return styles
   }
 
   const getImageSizeClass = () => {
     switch (imageSize) {
       case "small":
-        return "max-w-md mx-auto"
+        return "max-w-md"
       case "medium":
-        return "max-w-2xl mx-auto"
+        return "max-w-2xl"
       case "large":
-        return "max-w-4xl mx-auto"
+        return "max-w-4xl"
       case "full":
-        return "w-full -mx-4 md:-mx-8 rounded-[0px]"
+        return "w-full"
       default:
-        return "max-w-2xl mx-auto"
+        return "max-w-2xl"
     }
   }
 
@@ -154,8 +154,41 @@ export function Block({
   }
 
   const handleClick = (e: React.MouseEvent) => {
-    
-    // Don't do anything on click - icons will be visible through CSS
+    // Immediately select the block and pass current styles
+    onSelect({
+      id,
+      type,
+      content,
+      level,
+      url,
+      alt,
+      images,
+      listItems,
+      align,
+      textStyle: textStyle || { bold: false, italic: false, underline: false },
+      imageSize,
+      listStyle,
+      margin,
+    });
+  }
+
+  const handleFocus = (e: React.FocusEvent) => {
+    // Also handle focus events to ensure selection state is updated
+    onSelect({
+      id,
+      type,
+      content,
+      level,
+      url,
+      alt,
+      images,
+      listItems,
+      align,
+      textStyle: textStyle || { bold: false, italic: false, underline: false },
+      imageSize,
+      listStyle,
+      margin,
+    });
   }
 
   const handleOpenToolbar = (e: React.MouseEvent) => {
@@ -200,58 +233,78 @@ export function Block({
   }
 
   const renderContent = () => {
-    const commonInputStyles = cn(
-      "outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
-      "text-charcoal min-h-[1em]",
-      "empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400",
-      "hover:bg-light-gray/20 focus:bg-light-gray/20 transition-colors",
-      "cursor-text",
-    )
+    const handleContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      onUpdate(id, { content: e.target.value });
+    };
 
     switch (type) {
       case "heading": {
-        const Tag = `h${level}` as keyof JSX.IntrinsicElements
         return (
-          <Tag
-            ref={contentRef as any}
+          <input
+            type="text"
+            value={content || ''}
+            onChange={handleContentChange}
+            onClick={handleClick}
+            onFocus={handleFocus}
+            
+            placeholder="Type heading..."
             className={cn(
-              commonInputStyles,
+              "w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
+              "text-charcoal min-h-[1em]",
               level === 1 && "text-4xl font-bold mb-6",
               level === 2 && "text-3xl font-semibold mb-4",
               level === 3 && "text-2xl font-medium mb-3",
+              textStyle?.bold && "font-bold",
+              textStyle?.italic && "italic",
+              textStyle?.underline && "underline",
+              align === "center" && "text-center",
+              align === "right" && "text-right",
+              align === "left" && "text-left",
             )}
-            contentEditable
-            data-placeholder="Type heading..."
-            suppressContentEditableWarning
-            style={getTextStyles()}
           />
-        )
+        );
       }
 
       case "paragraph":
         return (
-          <p
-            ref={contentRef as any}
-            className={cn(commonInputStyles, "mb-4 leading-relaxed")}
-            contentEditable
-            data-placeholder="Type paragraph..."
-            suppressContentEditableWarning
-            style={getTextStyles()}
+          <textarea
+            value={content || ''}
+            onChange={handleContentChange}
+            onClick={handleClick}
+            onFocus={handleFocus}
+            placeholder="Type paragraph..."
+            rows={3}
+            className={cn(
+              "w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
+              "text-charcoal min-h-[1em] resize-none",
+              "mb-4 leading-relaxed",
+              textStyle?.bold && "font-bold",
+              textStyle?.italic && "italic",
+              textStyle?.underline && "underline",
+              align === "center" && "text-center",
+              align === "right" && "text-right",
+              align === "left" && "text-left",
+            )}
           />
-        )
+        );
 
       case "image":
         return (
-          <div className="mb-6" onClick={handleClick}>
+          <div className={cn(
+            "mb-6",
+            imageSize === "full" && "mx-[-1rem] w-[calc(100%+2rem)]" // Negative margin to break out of container
+          )} onClick={handleClick}>
             {url ? (
               <div className={cn(
                 getImageSizeClass(),
                 align === "left" && "mr-auto ml-0",
                 align === "center" && "mx-auto",
                 align === "right" && "ml-auto mr-0",
+                imageSize === "full" && "mx-0 w-full" // Override alignment for full width
               )}>
                 <div className={cn(
                   "border border-light-gray/30 rounded-lg overflow-hidden",
+                  imageSize === "full" && "rounded-none", // Remove border radius for full width
                   isSelected && "ring-2 ring-ocean-blue"
                 )}>
                   <Image
@@ -274,7 +327,7 @@ export function Block({
               </div>
             ) : (
               <div className={cn(
-                "flex flex-col items-center justify-center border-2 border-ocean-blue p-8 text-center rounded-lg",
+                "flex flex-col items-center justify-center border border-light-gray/30 p-8 text-center rounded-lg",
                 getImageSizeClass(),
                 align === "left" && "mr-auto ml-0",
                 align === "center" && "mx-auto",
@@ -282,7 +335,7 @@ export function Block({
                 imageSize === "small" && "h-48",
                 imageSize === "medium" && "h-64",
                 imageSize === "large" && "h-80",
-                imageSize === "full" && "h-96 aspect-[21/9]",
+                imageSize === "full" && "h-96 w-full rounded-none",
                 isSelected && "ring-2 ring-ocean-blue"
               )}>
                 <div className="flex flex-col items-center justify-center">
@@ -454,7 +507,7 @@ export function Block({
       )}
     >
       {/* Block Controls - Show only on hover/focus */}
-      <div className="absolute md:-left-12 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ">
+      <div className="absolute md:-left-[30px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ">
         <Button
           variant="ghost"
           size="icon"
@@ -489,7 +542,7 @@ export function Block({
       {/* Content Area */}
       <div
         className={cn(
-          "py-2 px-4 rounded-lg transition-colors",
+          "py-2 rounded-lg transition-colors",
           "cursor-default",
           "hover:bg-light-gray/20",
           "focus-within:bg-light-gray/20",
@@ -502,38 +555,43 @@ export function Block({
   )
 }
 
-function ListItem({
-  item,
-  index,
-  onUpdate,
-  onDelete,
-  
-  isDash,
-  align,
-  textStyle,
-  isSelected,
-  listStyle,
-  isNumbered,
-}: {
+interface ListItemProps {
   item: string
   index: number
   onUpdate: (index: number, value: string) => void
   onDelete: (index: number) => void
-  
   isDash?: boolean
   align?: string
   textStyle?: { bold?: boolean; italic?: boolean; underline?: boolean }
   isSelected?: boolean
   listStyle?: { type: "numbered" | "bulleted"; icon?: "disc" | "circle" | "square" | "dash" }
   isNumbered?: boolean
-}) {
+}
+
+function ListItem({
+  item,
+  index,
+  onUpdate,
+  onDelete,
+  isDash,
+  align,
+  textStyle,
+  isSelected,
+  listStyle,
+  isNumbered,
+}: ListItemProps) {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onUpdate(index, e.target.value);
+  };
+
   const getTextStyles = () => {
     const styles: Record<string, string> = {
       textAlign: align || "left",
     }
-    if (textStyle?.bold) styles.fontWeight = "bold"
-    if (textStyle?.italic) styles.fontStyle = "italic"
-    if (textStyle?.underline) styles.textDecoration = "underline"
+
+    textStyle?.bold ? (styles.fontWeight = "bold") : (styles.fontWeight = "normal")
+    textStyle?.italic ? (styles.fontStyle = "italic") : (styles.fontStyle = "normal")
+    textStyle?.underline ? (styles.textDecoration = "underline") : (styles.textDecoration = "none")
     return styles
   }
 
@@ -576,38 +634,30 @@ function ListItem({
   return (
     <li className={cn("flex items-center gap-2 group relative -mt-1", isSelected && "bg-light-gray/50")}>
       {renderBullet()}
-      <div
+      <input
+        type="text"
+        value={item}
+        onChange={handleChange}
+        placeholder="List item..."
         className={cn(
-          "flex-1 outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2 py-1 text-charcoal min-h-[1em]",
-          "empty:before:content-[attr(data-placeholder)] empty:before:text-gray-400",
-          "hover:bg-light-gray/50 focus:bg-light-gray/50 transition-colors",
-          isSelected && "bg-light-gray/50",
+          "flex-1 outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2 py-1",
+          "text-charcoal min-h-[1em]",
+          isSelected && "bg-light-gray/50"
         )}
-        contentEditable
-        data-placeholder="List item..."
-        suppressContentEditableWarning
-        
-        
-        onClick={(e) => e.stopPropagation()}
         style={getTextStyles()}
-      >
-        {item}
-      </div>
+      />
       <Button
         variant="ghost"
         size="icon"
         className={cn(
-          "h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity",
-          "text-charcoal hover:text-red-500 hover:bg-red-50",
+          "h-8 w-8 opacity-0 group-hover:opacity-100",
+          "text-charcoal hover:text-red-500 hover:bg-red-50"
         )}
-        onClick={(e) => {
-          e.stopPropagation()
-          onDelete(index)
-        }}
+        onClick={() => onDelete(index)}
       >
         <X className="h-4 w-4" />
       </Button>
     </li>
-  )
+  );
 }
 
