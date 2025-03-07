@@ -13,14 +13,15 @@ import { Check, CircleDot, Dot, Minus } from "lucide-react"
 import { useSensors, useSensor, PointerSensor, KeyboardSensor } from "@dnd-kit/core"
 import { sortableKeyboardCoordinates } from "@dnd-kit/sortable"
 import { isMobile } from "@/utils/blog/utils"
-
+import AutoResizeTextarea from "../ui/AutoResizeTextArea"
 import { ImageIcon } from "lucide-react"
+import { set } from "zod"
 interface BlockProps extends BlockType {
   onDelete: (id: string) => void
   onUpdate: (id: string, updates: Partial<BlockType>) => void
   onSelect: (block: BlockType) => void
   isSelected: boolean
-  margin?: { top?: number; bottom?: number }
+  setCurrentListItemIndex: (index: number) => void
   position?: { top?: number; bottom?: number }
 }
 
@@ -34,10 +35,11 @@ export function Block({
   images = [],
   listItems = [],
   align = "left",
-  textStyle ={},
+  textStyle,
   imageSize = "medium",
   listStyle = { type: "bulleted", icon: "disc" },
-  margin,
+  
+  setCurrentListItemIndex,
   position,
   onDelete,
   onUpdate,
@@ -45,8 +47,7 @@ export function Block({
   isSelected,
 }: BlockProps) {
   const [currentSlide, setCurrentSlide] = useState(0)
-  
-  
+
   const contentRef = useRef<HTMLElement>(null)
   const [isTouching, setIsTouching] = useState(false)
 
@@ -139,19 +140,6 @@ export function Block({
     }
   }
 
-  const getListStyleType = () => {
-    if (listStyle.type === "numbered") return "decimal"
-    switch (listStyle.icon) {
-      case "circle":
-        return "circle"
-      case "square":
-        return "square"
-      case "dash":
-        return "none"
-      default:
-        return "disc"
-    }
-  }
 
   const handleClick = (e: React.MouseEvent) => {
     // Immediately select the block and pass current styles
@@ -168,7 +156,7 @@ export function Block({
       textStyle: textStyle || { bold: false, italic: false, underline: false },
       imageSize,
       listStyle,
-      margin,
+      
     });
   }
 
@@ -187,12 +175,13 @@ export function Block({
       textStyle: textStyle || { bold: false, italic: false, underline: false },
       imageSize,
       listStyle,
-      margin,
+      
+      
     });
   }
-
-  const handleOpenToolbar = (e: React.MouseEvent) => {
-    e.stopPropagation()
+  const handleListItemClick = (index: number) => {
+    setCurrentListItemIndex(index);
+    // Call onSelect with the specified list item index
     onSelect({
       id,
       type,
@@ -203,13 +192,15 @@ export function Block({
       images,
       listItems,
       align,
-      textStyle,
+      textStyle: textStyle || { bold: false, italic: false, underline: false },
       imageSize,
       listStyle,
-      margin,
-    })
-  }
+      
+    });
+  };
 
+
+ 
   
 
   
@@ -244,14 +235,14 @@ export function Block({
             type="text"
             value={content || ''}
             onChange={handleContentChange}
-            onClick={handleClick}
+            // onClick={handleClick}
             onFocus={handleFocus}
             
             placeholder="Type heading..."
             className={cn(
               "w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
-              "text-charcoal min-h-[1em]",
-              level === 1 && "text-4xl font-bold mb-6",
+              "text-charcoal h-[1.5em] overflow-visible",
+              level === 1 && "text-4xl  mb-4",
               level === 2 && "text-3xl font-semibold mb-4",
               level === 3 && "text-2xl font-medium mb-3",
               textStyle?.bold && "font-bold",
@@ -267,25 +258,14 @@ export function Block({
 
       case "paragraph":
         return (
-          <textarea
-            value={content || ''}
-            onChange={handleContentChange}
-            onClick={handleClick}
-            onFocus={handleFocus}
-            placeholder="Type paragraph..."
-            rows={3}
-            className={cn(
-              "w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
-              "text-charcoal min-h-[1em] resize-none",
-              "mb-4 leading-relaxed",
-              textStyle?.bold && "font-bold",
-              textStyle?.italic && "italic",
-              textStyle?.underline && "underline",
-              align === "center" && "text-center",
-              align === "right" && "text-right",
-              align === "left" && "text-left",
-            )}
-          />
+          <AutoResizeTextarea
+          value={content}
+          onChange={handleContentChange}
+          onFocus={handleFocus}
+          placeholder="Type paragraph..."
+          className="w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-1 text-charcoal pl-[5px]" 
+          minHeight="1.5em"
+        />
         );
 
       case "image":
@@ -366,7 +346,7 @@ export function Block({
                     index={index}
                     onUpdate={handleListItemUpdate}
                     onDelete={handleListItemDelete}
-                    
+                    onClick={handleListItemClick}
                     align={align}
                     textStyle={textStyle}
                     isSelected={isSelected}
@@ -392,7 +372,7 @@ export function Block({
                     index={index}
                     onUpdate={handleListItemUpdate}
                     onDelete={handleListItemDelete}
-                    
+                    onClick={handleListItemClick}
                     isDash={listStyle?.icon === "dash"}
                     align={align}
                     textStyle={textStyle}
@@ -507,7 +487,7 @@ export function Block({
       )}
     >
       {/* Block Controls - Show only on hover/focus */}
-      <div className="absolute md:-left-[30px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ">
+      <div className="absolute md:-left-[30px] left-[-25px] top-1/2 -translate-y-1/2 flex flex-col items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity ">
         <Button
           variant="ghost"
           size="icon"
@@ -518,14 +498,7 @@ export function Block({
         >
           <GripVertical className="h-4 w-4 text-ocean-blue" />
         </Button>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-8 w-8 hover:bg-light-gray transition-colors"
-          onClick={handleOpenToolbar}
-        >
-          <Settings2 className="h-4 w-4 text-ocean-blue" />
-        </Button>
+        
         <Button
           variant="ghost"
           size="icon"
@@ -544,8 +517,8 @@ export function Block({
         className={cn(
           "py-2 rounded-lg transition-colors",
           "cursor-default",
-          "hover:bg-light-gray/20",
-          "focus-within:bg-light-gray/20",
+          "min-h-fit max-w-full",
+          "focus-within:bg-light-gray/20 bg-white",
         )}
         onClick={handleClick}
       >
@@ -564,8 +537,9 @@ interface ListItemProps {
   align?: string
   textStyle?: { bold?: boolean; italic?: boolean; underline?: boolean }
   isSelected?: boolean
-  listStyle?: { type: "numbered" | "bulleted"; icon?: "disc" | "circle" | "square" | "dash" }
+  listStyle?: { type: "numbered" | "bulleted"; icon?: "disc" | "circle" | "none" | "dash" | "tick" }
   isNumbered?: boolean
+  onClick?: (index: number) => void
 }
 
 function ListItem({
@@ -579,6 +553,7 @@ function ListItem({
   isSelected,
   listStyle,
   isNumbered,
+  onClick,
 }: ListItemProps) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onUpdate(index, e.target.value);
@@ -609,18 +584,24 @@ function ListItem({
     }
 
     switch (listStyle?.icon) {
-      case "square":
-        return (
-          <span className="absolute -left-5 text-ocean-blue">
-            <Check className="h-4 w-4" />
-          </span>
-        )
+     
       case "circle":
         return (
           <span className="absolute -left-5 text-ocean-blue">
             <CircleDot className="h-4 w-4" />
           </span>
         )
+
+      case "none":
+        return null
+
+      case "tick":
+        return (
+          <span className="absolute -left-5 text-ocean-blue">
+            <Check className="h-4 w-4" />
+          </span>
+        )
+
       case "disc":
       default:
         return (
@@ -638,6 +619,7 @@ function ListItem({
         type="text"
         value={item}
         onChange={handleChange}
+        onClick={()=>onClick(index)}
         placeholder="List item..."
         className={cn(
           "flex-1 outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2 py-1",

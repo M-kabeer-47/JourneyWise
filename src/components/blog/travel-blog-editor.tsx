@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 
 
 import type { BlockType } from "@/lib/types/block"
+import { arrayMove } from "@dnd-kit/sortable"
 
 // Dynamically import DnD components with ssr: false
 const DndComponents = dynamic(
@@ -31,7 +32,7 @@ export default function TravelBlogEditor() {
   // Check if we're on mobile
   useEffect(() => {
     const checkMobile = () => {
-      setIsMobile(window.innerWidth < 500)
+      setIsMobile(window.innerWidth < 768)
     }
     
     checkMobile()
@@ -74,7 +75,7 @@ export default function TravelBlogEditor() {
       id: nanoid(),
       type,
       textStyle: {
-        bold: false,
+        bold: type === 'heading' ? true : false,
         italic: false,
         underline: false,
       },
@@ -84,8 +85,17 @@ export default function TravelBlogEditor() {
     setBlocks((prev) => [...prev, newBlock])
   }, [])
 
-  const handleUpdateBlock = useCallback((id: string, updates: Partial<BlockType>) => {
+  function handleUpdateBlock(id: string, updates: Partial<BlockType>) {
     
+    if (selectedBlock?.id === id) {
+      setSelectedBlock((prev) => {
+        if (prev) {
+          return { ...prev, ...updates }
+        }
+        return prev
+      });
+    }
+   
     
     setBlocks((prev) =>
       prev.map((block) => {
@@ -108,7 +118,9 @@ export default function TravelBlogEditor() {
         return block
       })
     )
-  }, [])
+  }
+  
+  
 
   const handleDeleteBlock = useCallback((id: string) => {
     setBlocks((prev) => prev.filter((block) => block.id !== id))
@@ -117,6 +129,7 @@ export default function TravelBlogEditor() {
     }
   }, [selectedBlock])
 
+  
   const toggleMobileToolbar = useCallback(() => {
     setIsToolbarExpanded((prev) => !prev)
   }, [])

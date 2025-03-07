@@ -9,6 +9,7 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
+import { useState } from "react"
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
 import { Laptop, Smartphone, Save, Type, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -56,6 +57,8 @@ export default function DndComponents({
   isMobile,
   toggleMobileToolbar,
 }: DndComponentsProps) {
+
+    const [currentListItemIndex, setCurrentListItemIndex] = useState<number>(0);   
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -76,9 +79,9 @@ export default function DndComponents({
       onDragCancel={handleDragCancel}
     >
       <header className="sticky top-0 z-50 w-full border-b border-light-gray bg-white">
-        <div className="container flex h-16 items-center justify-between">
+        <div className=" flex h-16 items-center justify-between px-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-xl font-semibold text-midnight-blue">Travel Blog Editor</h1>
+            <h1 className="text-2xl font-bold text-midnight-blue font-[raleway]">JourneyWise</h1>
           </div>
           <div className="flex items-center gap-2">
             <div className="flex items-center border border-light-gray rounded-md p-1">
@@ -105,7 +108,10 @@ export default function DndComponents({
                 <Smartphone className="h-4 w-4" />
               </Button>
             </div>
-            <Button variant="default" size="sm" className="bg-ocean-blue hover:bg-midnight-blue">
+            <Button variant="default" size="sm" className="bg-ocean-blue hover:bg-midnight-blue" onClick={() => {
+              console.log("Save clicked")
+              console.log("blocks", blocks)
+            }}>
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
@@ -113,7 +119,7 @@ export default function DndComponents({
         </div>
       </header>
 
-      <main className="pl-[50px] pr-[50px] py-8 relative ">
+      <main className={`${!isToolbarExpanded && !isMobile ? "pr-[50px] pl-[50px]": "pl-[20px]"} py-8 relative`}>
         <div className="flex">
           <div className={cn(
             "flex-1",
@@ -128,18 +134,24 @@ export default function DndComponents({
               >
                 <div className="p-4">
                   <DroppableContainer id="blocks">
-                    <SortableContext items={blocks.map((block) => block.id)} strategy={verticalListSortingStrategy}>
+                    <SortableContext 
+                      items={blocks.filter(block => block && block.id).map((block) => block.id)} 
+                      strategy={verticalListSortingStrategy}
+                    >
                       <div className="space-y-1">
-                        {blocks.map((block) => (
-                          <Block
-                            key={block.id}
-                            {...block}
-                            onDelete={handleDeleteBlock}
-                            onUpdate={handleUpdateBlock}
-                            onSelect={setSelectedBlock}
-                            isSelected={selectedBlock?.id === block.id}
-                          />
-                        ))}
+                        {blocks.map((block) => 
+                          block && block.id ? (
+                            <Block
+                              key={block.id}
+                              {...block}
+                              setCurrentListItemIndex={setCurrentListItemIndex}
+                              onDelete={handleDeleteBlock}
+                              onUpdate={handleUpdateBlock}
+                              onSelect={setSelectedBlock}
+                              isSelected={selectedBlock?.id === block.id}
+                            />
+                          ) : null
+                        )}
 
                         {blocks.length === 0 && (
                           <div className="h-[calc(100vh-16rem)] flex flex-col items-center justify-center text-center p-4">
@@ -173,6 +185,7 @@ export default function DndComponents({
           )}
 
           <Toolbar
+            currentListItemIndex={currentListItemIndex}
             isExpanded={isToolbarExpanded}
             onToggle={() => setIsToolbarExpanded(!isToolbarExpanded)}
             selectedBlock={selectedBlock}
@@ -194,4 +207,4 @@ export default function DndComponents({
       </main>
     </DndContext>
   )
-} 
+}

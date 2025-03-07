@@ -24,11 +24,15 @@ export type BlockType = {
     type: keyof typeof LIST_TYPES
     icon?: keyof typeof LIST_ICONS
   }
-  margin?: {
-    top: number
-    bottom: number
+ 
+  
+  position?: {
+    top?: number
+    bottom?: number
   }
+  listItemIndex?: number
 }
+
 
 export type DragData = {
   type: string

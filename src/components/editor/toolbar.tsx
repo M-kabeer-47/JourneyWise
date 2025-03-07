@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useRef, useEffect } from "react"
+import React, {  useEffect ,useState} from "react"
 import { GripVertical, Trash2, ChevronLeft } from "lucide-react"
 import { useDraggable } from "@dnd-kit/core"
 import {
@@ -37,7 +37,7 @@ import { cn } from "@/utils/shadcn/utils"
 import type { BlockType } from "@/lib/types/block"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import Input from "@/components/ui/Input"
+
 
 interface ToolbarProps {
   isExpanded: boolean
@@ -48,49 +48,66 @@ interface ToolbarProps {
   onAddBlock?: (type: string, data?: Record<string, any>) => void
   onDelete?: (id: string) => void
   isMobile?: boolean
+  currentListItemIndex: number
 }
 
 const PositionSlider = ({ handlePositionChange, initialValue = 0 }: { 
   handlePositionChange: (value: number) => void,
   initialValue?: number 
-}) => (
-  <div className="border-t border-light-gray mt-4 pt-4">
-    <h4 className="text-sm font-medium text-charcoal mb-2">Block Spacing</h4>
-    <div className="px-2">
-      <div className="flex items-center gap-3">
-        <span className="text-xs text-charcoal whitespace-nowrap">Bottom</span>
-        <div className="relative flex-1">
-          <input
-            type="range"
-            min="-5"
-            max="5"
-            step="1"
-            value={initialValue}
-            onChange={(e) => handlePositionChange(Number.parseInt(e.target.value))}
-            className="w-full h-2 bg-light-gray rounded-lg appearance-none cursor-pointer accent-ocean-blue"
-            style={{
-              // Custom styling for the slider
-              accentColor: 'var(--ocean-blue, #0077cc)',
-              background: 'linear-gradient(to right, #e2e8f0, #e2e8f0)',
-              height: '6px',
-            }}
-          />
-          <div className="absolute w-full flex justify-between text-xs text-charcoal/50 px-1 mt-1">
-            <span>-5</span>
-            <span>0</span>
-            <span>5</span>
+}) => {
+  // Add local state to track slider value during interaction
+  const [sliderValue, setSliderValue] = useState(initialValue);
+  
+  // Update local state when initialValue changes (from parent)
+  useEffect(() => {
+    setSliderValue(initialValue);
+  }, [initialValue]);
+  
+  // Handler for slider change
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = Number.parseInt(e.target.value);
+    setSliderValue(newValue);
+    handlePositionChange(newValue);
+  };
+  
+  return (
+    <div className="border-t border-light-gray mt-4 pt-4">
+      <h4 className="text-sm font-medium text-charcoal mb-2">Block Spacing</h4>
+      <div className="px-2">
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-charcoal whitespace-nowrap">Bottom</span>
+          <div className="relative flex-1">
+            <input
+              type="range"
+              min="-5"
+              max="5"
+              step="1"
+              value={sliderValue}
+              onChange={handleChange}
+              className="w-full h-2 bg-light-gray rounded-lg appearance-none cursor-pointer accent-ocean-blue"
+              style={{
+                accentColor: 'var(--ocean-blue, #0077cc)',
+                background: 'linear-gradient(to right, #e2e8f0, #e2e8f0)',
+                height: '6px',
+              }}
+            />
+            <div className="absolute w-full flex justify-between text-xs text-charcoal/50 px-1 mt-1">
+              <span>-5</span>
+              <span>0</span>
+              <span>5</span>
+            </div>
           </div>
+          <span className="text-xs text-charcoal whitespace-nowrap">Top</span>
         </div>
-        <span className="text-xs text-charcoal whitespace-nowrap">Top</span>
-      </div>
-      <div className="text-center mt-4">
-        <span className="inline-block px-3 py-1 bg-ocean-blue/10 text-ocean-blue text-xs rounded-full">
-          {initialValue > 0 ? `Top: ${initialValue}` : initialValue < 0 ? `Bottom: ${Math.abs(initialValue)}` : "No spacing"}
-        </span>
+        <div className="text-center mt-4">
+          <span className="inline-block px-3 py-1 bg-ocean-blue/10 text-ocean-blue text-xs rounded-full">
+            {sliderValue > 0 ? `Top: ${sliderValue}` : sliderValue < 0 ? `Bottom: ${Math.abs(sliderValue)}` : "No spacing"}
+          </span>
+        </div>
       </div>
     </div>
-  </div>
-)
+  );
+};
 
 function DraggableItem({
   type,
@@ -207,25 +224,14 @@ export function Toolbar({
   onBlockUpdate,
   onClearSelection,
   onAddBlock,
-  onDelete,
+  
   isMobile = false,
+  currentListItemIndex
 }: ToolbarProps) {
   // Add a ref to track current styles
-  const currentStylesRef = useRef(selectedBlock?.textStyle || {
-    bold: false,
-    italic: false,
-    underline: false,
-    align: "left"
-  });
+  
 
-  // Update ref when selectedBlock changes
-  useEffect(() => {
-    currentStylesRef.current = selectedBlock?.textStyle || {
-      bold: false,
-      italic: false,
-      underline: false
-    };
-  }, [selectedBlock]);
+
 
   const handlePositionChange = (value: number) => {
     if (selectedBlock) {
@@ -287,7 +293,7 @@ export function Toolbar({
   const handleAlign = (align: string) => {
     if (selectedBlock) {
       onBlockUpdate?.(selectedBlock.id, { align })
-      currentStylesRef.current.align = align;
+      selectedBlock.align = align
     }
   }
 
@@ -295,7 +301,7 @@ export function Toolbar({
     if (!selectedBlock) return;
 
     // Use the ref to get current styles
-    const currentStyles = currentStylesRef.current;
+    const currentStyles = selectedBlock.textStyle || {}
     
     
     // Toggle the specific style
@@ -305,7 +311,7 @@ export function Toolbar({
     };
     
     // Update the ref immediately
-    currentStylesRef.current = newStyles;
+    
 
     // Update the block with new styles
     onBlockUpdate?.(selectedBlock.id, {
@@ -315,63 +321,26 @@ export function Toolbar({
 
   const handleEmojiSelect = (emoji: string) => {
     if (!selectedBlock) return;
+    else if(selectedBlock.type === "list" && selectedBlock.listItems) {
 
-    const selection = window.getSelection();
-    const activeElement = document.activeElement;
-
-    // Make sure we have a valid contentEditable element
-    if (!activeElement?.hasAttribute('contenteditable')) {
-      // If no contentEditable is focused, just append to content
-      onBlockUpdate?.(selectedBlock.id, { 
-        content: (selectedBlock.content || '') + emoji 
-      });
-      return;
-    }
-
-    // Handle insertion with cursor position
-    if (selection && selection.rangeCount > 0) {
-      const range = selection.getRangeAt(0);
-      const content = selectedBlock.content || '';
-      
-      // Get cursor position
-      const start = range.startOffset;
-      const end = range.endOffset;
-
-      // Insert emoji at cursor position
-      const newContent = 
-        content.slice(0, start) + 
-        emoji + 
-        content.slice(end);
-
-      // Update block with new content
-      onBlockUpdate?.(selectedBlock.id, { content: newContent });
-
-      // Restore cursor position after emoji
-      setTimeout(() => {
-        const newRange = document.createRange();
-        const newSelection = window.getSelection();
         
-        if (activeElement.firstChild && newSelection) {
-          try {
-            // Place cursor after inserted emoji
-            newRange.setStart(activeElement.firstChild, start + emoji.length);
-            newRange.setEnd(activeElement.firstChild, start + emoji.length);
-            newSelection.removeAllRanges();
-            newSelection.addRange(newRange);
-            
-            // Ensure the element maintains focus
-            activeElement.focus();
-          } catch (e) {
-            console.log('Error restoring cursor position:', e);
-          }
-        }
-      }, 0);
-    } else {
-      // If no selection, append to end
-      onBlockUpdate?.(selectedBlock.id, { 
-        content: (selectedBlock.content || '') + emoji 
-      });
+        const content = selectedBlock.listItems[currentListItemIndex] || "";
+        const newContent = `${content}${emoji}`;
+        onBlockUpdate?.(selectedBlock.id, {
+          listItems: selectedBlock.listItems.map((item, index) => index === currentListItemIndex ? newContent : item),   
+        });
+        
+      
+
+
     }
+    
+    const content = selectedBlock.content || "";
+    const newContent = `${content}${emoji}`;
+    
+    onBlockUpdate?.(selectedBlock.id, {
+      content: newContent,
+    });
   };
 
   const renderBlockEditor = () => {
@@ -387,7 +356,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.bold && "bg-light-gray text-ocean-blue",
+                selectedBlock.textStyle?.bold && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("bold")}
             >
@@ -398,7 +367,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.italic && "bg-light-gray text-ocean-blue",
+                selectedBlock.textStyle?.italic && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("italic")}
             >
@@ -409,16 +378,14 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.underline && "bg-light-gray text-ocean-blue",
+                selectedBlock.textStyle?.underline && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleTextStyle("underline")}
             >
               <Underline className="h-4 w-4" />
             </Button>
-            {/*<Button variant="ghost" size="sm" className="flex-1 text-charcoal hover:text-ocean-blue">
-              <Link className="h-4 w-4" />
-            </Button>*/}
-          </div>
+         
+                      </div>
         </div>
         <div className="border-t border-light-gray mt-4 pt-4">
           <h4 className="text-sm font-medium text-charcoal mb-2">Alignment</h4>
@@ -428,7 +395,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.align === "left" && "bg-light-gray text-ocean-blue",
+                selectedBlock?.align === "left" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("left")}
             >
@@ -439,7 +406,7 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.align === "center" && "bg-light-gray text-ocean-blue",
+                selectedBlock?.align === "center" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("center")}
             >
@@ -450,15 +417,16 @@ export function Toolbar({
               size="sm"
               className={cn(
                 "flex-1 text-charcoal hover:text-ocean-blue",
-                currentStylesRef.current.align === "right" && "bg-light-gray text-ocean-blue",
+                selectedBlock?.align === "right" && "bg-light-gray text-ocean-blue",
               )}
               onClick={() => handleAlign("right")}
             >
               <AlignRight className="h-4 w-4" />
             </Button>
+           
           </div>
         </div>
-        {(selectedBlock.type === "heading" || selectedBlock.type === "paragraph") && (
+        {(selectedBlock.type === "heading" || selectedBlock.type === "paragraph" || selectedBlock.type === "list") && (
           <div className="border-t border-light-gray mt-4 pt-4">
             <h4 className="text-sm font-medium text-charcoal mb-2">Emoji</h4>
             <div className="px-2">
@@ -717,12 +685,12 @@ export function Toolbar({
               <div className="mt-4">
                 <h4 className="text-sm font-medium text-charcoal mb-2">Bullet Style</h4>
                 <RadioGroup
-                  value={selectedBlock.listStyle?.icon || "disc"}
+                  value={selectedBlock.listStyle?.icon}
                   onValueChange={(value) =>
                     onBlockUpdate?.(selectedBlock.id, {
                       listStyle: {
                         ...selectedBlock.listStyle,
-                        icon: value as "disc" | "circle" | "square" | "dash",
+                        icon: value as "disc" | "circle" | "square" | "dash" | "none",
                       },
                     })
                   }
@@ -738,20 +706,11 @@ export function Toolbar({
                       <span>Disc</span>
                     </Label>
                   </div>
+                
                   <div>
-                    <RadioGroupItem value="circle" id="circle" className="peer sr-only" />
+                    <RadioGroupItem value="tick" id="tick" className="peer sr-only " />
                     <Label
-                      htmlFor="circle"
-                      className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-[10px] hover:bg-light-gray/80 hover:text-accent-foreground peer-data-[state=checked]:border-ocean-blue [&:has([data-state=checked])]:border-ocean-blue [&:has([data-state=checked])]:bg-ocean-blue/5 cursor-pointer  "
-                    >
-                      <CircleDot className="h-4 w-4 text-ocean-blue" />
-                      <span>Circle</span>
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem value="square" id="square" className="peer sr-only " />
-                    <Label
-                      htmlFor="square"
+                      htmlFor="tick"
                       className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-[10px] hover:bg-light-gray/80 hover:text-accent-foreground peer-data-[state=checked]:border-ocean-blue [&:has([data-state=checked])]:border-ocean-blue [&:has([data-state=checked])]:bg-ocean-blue/5 cursor-pointer  "
                     >
                       <Check className="h-4 w-4 text-ocean-blue" />
@@ -766,6 +725,16 @@ export function Toolbar({
                     >
                       <Minus className="h-4 w-4 text-ocean-blue" />
                       <span>Dash</span>
+                    </Label>
+                  </div>
+                  <div>
+                    <RadioGroupItem value="none" id="none" className="peer sr-only" />
+                    <Label
+                      htmlFor="none"
+                      className="flex items-center justify-center gap-2 rounded-md border-2 border-muted bg-popover p-[10px] hover:bg-light-gray/80 hover:text-accent-foreground peer-data-[state=checked]:border-ocean-blue [&:has([data-state=checked])]:border-ocean-blue [&:has([data-state=checked])]:bg-ocean-blue/5 cursor-pointer  "
+                    >
+                   
+                      <span>None</span>
                     </Label>
                   </div>
                 </RadioGroup>
