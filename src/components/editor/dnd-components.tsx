@@ -9,16 +9,16 @@ import {
   useSensor,
   useSensors,
 } from "@dnd-kit/core"
-import { useState } from "react"
+
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
-import { Laptop, Smartphone, Save, Type, Settings } from "lucide-react"
+import { Save, Type, Settings } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Block } from "@/components/editor/block"
 import { Toolbar } from "@/components/editor/toolbar"
 import { DroppableContainer } from "@/components/editor/droppable-container"
-
 import { cn } from "@/utils/shadcn/utils"
 import type { BlockType } from "@/lib/types/block"
+import SaveBlog  from "@/utils/functions/SaveBlog"
 
 interface DndComponentsProps {
   blocks: BlockType[]
@@ -37,6 +37,13 @@ interface DndComponentsProps {
   setIsToolbarExpanded: (expanded: boolean) => void
   isMobile: boolean
   toggleMobileToolbar: () => void
+  currentBlockIndex: number | null
+  setCurrentBlockIndex: (index: number | null) => void
+  blocksRef: React.RefObject<HTMLTextAreaElement[]>
+  currentListItemIndex: number | null
+  setCurrentListItemIndex: (index: number)=>void
+  listItemsRef: React.RefObject<Map<string, HTMLTextAreaElement>>
+  
 }
 
 export default function DndComponents({
@@ -46,7 +53,8 @@ export default function DndComponents({
   handleDragEnd,
   handleDragCancel,
   viewMode,
-  setViewMode,
+  currentBlockIndex,
+  setCurrentBlockIndex,
   selectedBlock,
   setSelectedBlock,
   handleUpdateBlock,
@@ -56,13 +64,22 @@ export default function DndComponents({
   setIsToolbarExpanded,
   isMobile,
   toggleMobileToolbar,
+  blocksRef,
+  currentListItemIndex,
+  setCurrentListItemIndex,
+  listItemsRef,
 }: DndComponentsProps) {
 
-    const [currentListItemIndex, setCurrentListItemIndex] = useState<number>(0);   
+    
+
+
   const sensors = useSensors(
     useSensor(PointerSensor, {
+      // Better configuration for both mouse and touch
       activationConstraint: {
-        distance: 8,
+        distance: isMobile ? 2 : 5,  // Shorter distance on mobile
+        delay: isMobile ? 100 : 0,   // Small delay on mobile to distinguish tap from drag
+        tolerance: isMobile ? 5 : 0, // Some tolerance on mobile
       },
     }),
     useSensor(KeyboardSensor, {
@@ -84,34 +101,8 @@ export default function DndComponents({
             <h1 className="text-2xl font-bold text-midnight-blue font-[raleway]">JourneyWise</h1>
           </div>
           <div className="flex items-center gap-2">
-            <div className="flex items-center border border-light-gray rounded-md p-1">
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "h-8 w-8",
-                  viewMode === "desktop" && "bg-light-gray text-ocean-blue"
-                )}
-                onClick={() => setViewMode("desktop")}
-              >
-                <Laptop className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                className={cn(
-                  "h-8 w-8",
-                  viewMode === "mobile" && "bg-light-gray text-ocean-blue"
-                )}
-                onClick={() => setViewMode("mobile")}
-              >
-                <Smartphone className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button variant="default" size="sm" className="bg-ocean-blue hover:bg-midnight-blue" onClick={() => {
-              console.log("Save clicked")
-              console.log("blocks", blocks)
-            }}>
+         
+            <Button variant="default" size="sm" className="bg-ocean-blue hover:bg-midnight-blue" onClick={() => SaveBlog(blocks)}>
               <Save className="h-4 w-4 mr-2" />
               Save
             </Button>
@@ -119,7 +110,13 @@ export default function DndComponents({
         </div>
       </header>
 
-      <main className={`${!isToolbarExpanded && !isMobile ? "pr-[50px] pl-[50px]": "pl-[20px]"} py-8 relative`}>
+      <main className={cn(
+  `${!isToolbarExpanded && !isMobile ? "pr-[50px] pl-[50px]": "pl-[20px]"} py-8 relative`,
+  // Add padding at the bottom when toolbar is expanded on mobile
+  isMobile && isToolbarExpanded && "pb-[40vh]",
+  // Make the main content area scrollable
+  "overflow-y-auto h-[calc(100vh-4rem)]"
+)}>
         <div className="flex">
           <div className={cn(
             "flex-1",
@@ -128,7 +125,7 @@ export default function DndComponents({
             <div className="ml-0">
               <div
                 className={cn(  
-                  "border border-light-gray rounded-lg bg-white shadow-sm transition-all",
+                  "border border-light-gray rounded-lg bg-white shadow-sm transition-all pb-[100px]",
                   viewMode === "mobile" ? "max-w-[375px] mx-auto" : "w-full max-w-[calc(100%-2rem)]"
                 )}
               >
@@ -139,12 +136,22 @@ export default function DndComponents({
                       strategy={verticalListSortingStrategy}
                     >
                       <div className="space-y-1">
-                        {blocks.map((block) => 
+                        {blocks.map((block,index) => 
                           block && block.id ? (
                             <Block
+                              
                               key={block.id}
                               {...block}
+                              currentBlockIndex={currentBlockIndex}
+
+                              index={index}
+                              id={block.id}
+                              blocksRef={blocksRef}
+                              currentListItemIndex={currentListItemIndex}
+                              listItemsRef={listItemsRef}
+                              setCurrentBlockIndex={setCurrentBlockIndex}
                               setCurrentListItemIndex={setCurrentListItemIndex}
+                              onToggle={() => setIsToolbarExpanded(!isToolbarExpanded)}
                               onDelete={handleDeleteBlock}
                               onUpdate={handleUpdateBlock}
                               onSelect={setSelectedBlock}
@@ -186,6 +193,9 @@ export default function DndComponents({
 
           <Toolbar
             currentListItemIndex={currentListItemIndex}
+            currentBlockIndex={currentBlockIndex ?? 0}
+            blockRefs={blocksRef}
+            listItemsRef={listItemsRef}
             isExpanded={isToolbarExpanded}
             onToggle={() => setIsToolbarExpanded(!isToolbarExpanded)}
             selectedBlock={selectedBlock}

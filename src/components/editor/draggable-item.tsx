@@ -13,9 +13,14 @@ interface DraggableItemProps {
 }
 
 export const DraggableItem = ({ type, icon, label, data }: DraggableItemProps) => {
+  // Important: Use 'new-' prefix to identify items from toolbar
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useDraggable({
-    id: `${type}-${label}`,
-    data: { type, isTemplate: true, ...data },
+    id: `new-${type}-${label.replace(/\s+/g, '-').toLowerCase()}`,
+    data: { 
+      type, 
+      isTemplate: true, 
+      ...data 
+    },
   })
 
   const style = transform

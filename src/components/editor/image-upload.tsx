@@ -22,6 +22,7 @@ export function ImageUpload({
   disablePreviewUpload = false 
 }: ImageUploadProps) {
   const [preview, setPreview] = useState(currentUrl)
+  
   const [isDragging, setIsDragging] = useState(false)
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,6 +107,7 @@ export function ImageUpload({
           </div>
           <p className="text-xs text-charcoal/70 mt-1">SVG, PNG, JPG or GIF</p>
           <Input
+            label=""
             type="file"
             className="hidden"
             accept="image/*"
