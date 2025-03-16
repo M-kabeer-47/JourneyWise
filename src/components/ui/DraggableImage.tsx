@@ -1,110 +1,131 @@
-import { useState,useRef,useEffect } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-
+import { BlockType } from "@/lib/types/block";
 const DraggableImage = ({ 
-    height,
-    src, 
-    alt, 
-    className, 
-    containerHeight = '300px' 
-  }: {
-    src: string;  
-    alt?: string;
-    className?: string;
-    containerHeight?: string;
-    width: number,
-    height: number
-  }) => {
-    // Store the object's position as percentages (initially centered)
-    const [objectPosition, setObjectPosition] = useState({ x: 50, y: 50 });
-    // Use state only for cursor updates
-    const [isDragging, setIsDragging] = useState(false);
-    const containerRef = useRef(null);
-    // Use a ref for the dragging flag to avoid re-renders on every mouse move
-    const dragging = useRef(false);
-    // For throttling updates
-    const animationFrame = useRef(null);
-  
-    const handleMouseDown = (e: React.MouseEvent) => {
-      e.preventDefault(); // Prevent text selection during drag
-      dragging.current = true;
-      setIsDragging(true);
-    };
-  
-    const handleMouseMove = (e:React.MouseEvent) => {
-      if (!dragging.current || !containerRef.current) return;
-      if (animationFrame.current) return;
-  
-      animationFrame.current = requestAnimationFrame(() => {
-        const rect = containerRef.current.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        // Constrain the values between 0 and 100
-        const posX = Math.min(100, Math.max(0, (x / rect.width) * 100));
-        const posY = Math.min(100, Math.max(0, (y / rect.height) * 100));
-        setObjectPosition({ x: posX, y: posY });
-        animationFrame.current = null;
-      });
-    };
-  
-    const handleMouseUp = () => {
-      dragging.current = false;
-      setIsDragging(false);
+  height,
+  src, 
+  alt, 
+  className, 
+  containerHeight = '230px',
+  width,
+  onUpdate,
+  blockId
+}: {
+  src: string;  
+  alt?: string;
+  className?: string;
+  containerHeight?: string;
+  width: number;
+  height: number;
+  onUpdate: (id: string, updates: Partial<BlockType>) => void;
+  blockId: string;
+}) => {
+  // Initial focus centered
+  const [objectPosition, setObjectPosition] = useState({ x: 50, y: 50 });
+  const [isDragging, setIsDragging] = useState(false);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const dragging = useRef(false);
+  const animationFrame = useRef<number | null>(null);
+  // Store initial mouse and image positions
+  const dragStart = useRef({ mouseX: 0, mouseY: 0, objectX: 50, objectY: 50 });
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.preventDefault();
+    dragging.current = true;
+    setIsDragging(true);
+    if (!containerRef.current) return;
+    const rect = containerRef.current.getBoundingClientRect();
+    // Calculate mouse position in percentage relative to the container
+    const mouseX = ((e.clientX - rect.left) / rect.width) * 100;
+    const mouseY = ((e.clientY - rect.top) / rect.height) * 100;
+    // Save the initial positions to preserve offset during drag
+    dragStart.current = { mouseX, mouseY, objectX: objectPosition.x, objectY: objectPosition.y };
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (!dragging.current || !containerRef.current) return;
+    if (animationFrame.current) return;
+
+    animationFrame.current = requestAnimationFrame(() => {
+      const rect = containerRef.current!.getBoundingClientRect();
+      // Get current mouse position as percentage
+      const currentMouseX = ((e.clientX - rect.left) / rect.width) * 100;
+      const currentMouseY = ((e.clientY - rect.top) / rect.height) * 100;
+      // Calculate how far the mouse has moved from the initial position
+      const deltaX = currentMouseX - dragStart.current.mouseX;
+      const deltaY = currentMouseY - dragStart.current.mouseY;
+      // Compute the new object position:
+      // - Horizontal: direct addition
+      // - Vertical: inverted (drag up moves the focal point down)
+      const newX = Math.min(100, Math.max(0, dragStart.current.objectX + deltaX));
+      const newY = Math.min(100, Math.max(0, dragStart.current.objectY - deltaY));
+      setObjectPosition({ x: newX, y: newY });
+      console.log("newX",newX+"newY",newY)
+      console.log("blockId",blockId)
+      onUpdate(blockId, { imageObjectPosition: { x: newX, y: newY } });
+      animationFrame.current = null;
+    });
+  };
+
+  const handleMouseUp = () => {
+    dragging.current = false;
+    setIsDragging(false);
+    if (animationFrame.current) {
+      cancelAnimationFrame(animationFrame.current);
+      animationFrame.current = null;
+    }
+  };
+
+  useEffect(() => {
+    // Attach events to document so dragging is captured even when cursor is outside container
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
       if (animationFrame.current) {
         cancelAnimationFrame(animationFrame.current);
-        animationFrame.current = null;
       }
     };
-  
-    useEffect(() => {
-      // Attach event listeners to the document so drag events are captured even outside the container
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-  
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-        if (animationFrame.current) {
-          cancelAnimationFrame(animationFrame.current);
-        }
-      };
-    }, []);
-  
-    // Calculate proper height
-    const imageHeight = containerHeight === 'auto' ? 'auto' : containerHeight;
-  
-    return (
-      <div
-        ref={containerRef}
-        className={`relative overflow-hidden ${className}`}
-        onMouseDown={handleMouseDown}
+  }, []);
+
+  const imageHeight = containerHeight === 'auto' ? 'auto' : containerHeight;
+
+  return (
+    <div
+      ref={containerRef}
+      className={`relative overflow-hidden ${className}`}
+      onMouseDown={handleMouseDown}
+      style={{ 
+        cursor: isDragging ? 'grabbing' : 'grab',
+        height: imageHeight,
+        position: 'relative'
+      }}
+    >
+      <Image
+        src={src}
+        alt={alt || ''}
+        width={width}
+        height={height}
+        
+        className="object-cover"
         style={{ 
-          cursor: isDragging ? 'grabbing' : 'grab',
-          height: imageHeight,
-          position: 'relative'
+          objectPosition: `${objectPosition.x}% ${objectPosition.y}%`,
+          width: '100%',
+          height: '100%',
+          
+          position: 'absolute'
         }}
-      >
-        <Image
-          src={src}
-          alt={alt || ''}
-          width={1200}
-          height={height}
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-          className="object-cover"
-          style={{ 
-            objectPosition: `${objectPosition.x}% ${objectPosition.y}%`,
-            width: height === 300 ? '100%' : 'auto',
-            height: height === 300 ? '100%' : 'auto',
-            position: 'absolute'
-          }}
-          draggable={false}
-        />
-        {isDragging && (
-          <div className="absolute inset-0 bg-white/5 pointer-events-none z-10">
-            {/* Visual cue for dragging */}
-          </div>
-        )}
-      </div>
-    );
-  };
-  export default DraggableImage;
+        draggable={false}
+      />
+      {isDragging && (
+        <div className="absolute inset-0 bg-white/5 pointer-events-none z-10">
+          {/* Visual cue for dragging */}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default DraggableImage;

@@ -75,6 +75,7 @@ export function Block({
       duration: 150,
       easing: "cubic-bezier(0.25, 1, 0.5, 1)",
     },
+    
   });
 
   const style = {
@@ -299,12 +300,14 @@ export function Block({
                 >
                   {imageSize === "full" ? (
                     <DraggableImage
+                    blockId={id}
                     width={0}
-                    height={300}
-                    containerHeight={"300px"}
+                    height={220}
+                    containerHeight={"220px"}
                     src={url}
                     alt={alt || ""}
                     className="w-full object-cover h-60"
+                    onUpdate={onUpdate}
       />
                   ) : (
                     <img src={url} alt={
@@ -463,9 +466,9 @@ export function Block({
             "cursor-grab hover:bg-light-gray transition-colors",
             isDragging && "cursor-grabbing",
           )}
-          onClick={onToggle}
           {...attributes}
-          {...listeners}
+                {...listeners}
+
         >
           <GripVertical className="h-4 w-4 text-ocean-blue" />
         </Button>
@@ -484,6 +487,7 @@ export function Block({
 
       {/* Actual block content */}
       <div onClick={handleClick} 
+                
       style={getPositionStyles()} 
       >
         {renderContent()}

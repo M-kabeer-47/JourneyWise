@@ -47,6 +47,7 @@
       left: "mr-auto ml-0",
       center: "mx-auto",
       right: "ml-auto mr-0"
-    }
+    },
+    
   };
 export default blogClasses;

@@ -8,6 +8,7 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
+  TouchSensor,
 } from "@dnd-kit/core"
 
 import { SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable"
@@ -19,6 +20,7 @@ import { DroppableContainer } from "@/components/editor/droppable-container"
 import { cn } from "@/utils/shadcn/utils"
 import type { BlockType } from "@/lib/types/block"
 import SaveBlog  from "@/utils/functions/SaveBlog"
+import { useEffect } from "react"
 
 interface DndComponentsProps {
   blocks: BlockType[]
@@ -70,16 +72,18 @@ export default function DndComponents({
   listItemsRef,
 }: DndComponentsProps) {
 
-    
+  
+  useEffect(() => {
 
+  }, [])
 
   const sensors = useSensors(
-    useSensor(PointerSensor, {
+    useSensor(isMobile ? TouchSensor : PointerSensor, {
       // Better configuration for both mouse and touch
       activationConstraint: {
-        distance: isMobile ? 2 : 5,  // Shorter distance on mobile
-        delay: isMobile ? 100 : 0,   // Small delay on mobile to distinguish tap from drag
-        tolerance: isMobile ? 5 : 0, // Some tolerance on mobile
+        distance: isMobile ? 5 : 5,  // Shorter distance on mobile
+        delay: isMobile ? 0 : 0,   // Small delay on mobile to distinguish tap from drag
+        tolerance: isMobile ? 0 : 0, // Some tolerance on mobile
       },
     }),
     useSensor(KeyboardSensor, {
@@ -94,6 +98,7 @@ export default function DndComponents({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
+      
     >
       <header className="sticky top-0 z-50 w-full border-b border-light-gray bg-white">
         <div className=" flex h-16 items-center justify-between px-4">

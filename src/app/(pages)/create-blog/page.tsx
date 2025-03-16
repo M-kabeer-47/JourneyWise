@@ -55,8 +55,9 @@ export default function TravelBlogEditor() {
     setActiveId(event.active.id)
   }, [])
 
-  const handleAddBlock = useCallback((type: string, data?: Record<string, any>) => {
+  const handleAddBlock = useCallback((type: BlockType["type"], data?: Record<string, any>) => {
     let id = nanoid()
+    console.log("Updates", data)
     const newBlock: BlockType = {
       id,
       type,

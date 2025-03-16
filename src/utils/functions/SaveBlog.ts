@@ -5,7 +5,7 @@ export default function SaveBlog(blocks: BlockType[]): string {
     let htmlOutput = '';
     const blogHTML = blocks.map(block => {
       let blockHTML = '';
-      
+      console.log("Block Image Size: ",block.imageSize)
       switch (block.type) {
         case 'heading': {
           const headingLevel = block.level || 1;
@@ -52,7 +52,7 @@ export default function SaveBlog(blocks: BlockType[]): string {
           if (block.url) {
             // Add image with rounded overflow wrapper
             blockHTML += `<div className="rounded-md overflow-hidden${block.imageSize === 'full' ? ' rounded-none' : ''}">`;
-            blockHTML += `<img src="${block.url}" alt="${block.alt || ''}" className="w-full object-cover" />`;
+            blockHTML += `<img src="${block.url}" alt="${block.alt || ''}" className="${block.imageSize === "full" ? `h-[220px] w-full object-cover object-[${block.imageObjectPosition?.x}%_${block.imageObjectPosition?.y}%]` : ""}" />`;
             blockHTML += `</div>`;
             
             // Add caption if exists

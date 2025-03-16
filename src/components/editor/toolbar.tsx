@@ -133,6 +133,7 @@ const mobileQuickTools = [
     key: "image",
     icon: <ImageIcon className="h-4 w-4" />,
     type: "image",
+  
   },
   {
     key: "list-bulleted",

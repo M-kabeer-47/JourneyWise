@@ -1,4 +1,3 @@
-import type { BLOCK_TYPES, LIST_TYPES, LIST_ICONS, IMAGE_SIZES, ALIGNMENTS } from "@/lib/constants"
 
 
 export type ListItemType = {
@@ -12,7 +11,7 @@ export type ListItemType = {
 }
 export type BlockType = {
   id: string
-  type: keyof typeof BLOCK_TYPES
+  type: "heading" | "paragraph" | "image" | "list"
   content?: string
   level?: 1 | 2 | 3
   url?: string
@@ -29,10 +28,10 @@ export type BlockType = {
     italic: boolean
     underline: boolean
   }
-  imageSize?: keyof typeof IMAGE_SIZES
+  imageSize?: "small" | "medium" | "large" | "full"
   listStyle?: { type: "numbered" | "bulleted"; icon?: "disc" | "circle" | "none" | "dash" | "tick" };
  
-  
+  imageObjectPosition?: { x?: number; y?: number }
   position?: {
     top?: number
     bottom?: number
