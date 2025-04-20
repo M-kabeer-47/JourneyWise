@@ -67,10 +67,7 @@ export default {
   				'Open Sans',
   				'sans-serif'
   			],
-  			railway: [
-  				'var(--font-railway)',
-  				'sans-serif'
-  			]
+  			
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

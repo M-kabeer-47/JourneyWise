@@ -1,149 +1,193 @@
-import React, { useRef, useEffect, Ref } from 'react';
-import { text } from 'stream/consumers';
+import React, {
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+  CSSProperties,
+  FormEvent,
+  ClipboardEvent,
+  FocusEvent,
+  KeyboardEvent,
+  MutableRefObject,
+} from "react";
 
-interface AutoResizeTextareaProps {
+export interface AutoResizeEditableProps {
   value?: string;
-  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onListChange?: (value: string) => void;
+  onChange?: (content: string) => void;
+  onListChange?: (content: string) => void;
   placeholder?: string;
   className?: string;
   minHeight?: string;
-  onFocus?: (e: React.FocusEvent<HTMLTextAreaElement>) => void;
-  type?: string;
-  textStyles?: React.CSSProperties;
+  onFocus?: () => void;
+  type?: "text" | "list";
+  textStyles?: CSSProperties;
   index?: number;
-  blocksRef?: Ref<HTMLTextAreaElement[]>;
+  blocksRef?: MutableRefObject<HTMLDivElement[]>; // Provided from a higher component
   id?: string;
   listItemIndex?: number;
-  listItemsRef?: Ref<Map<string, HTMLTextAreaElement>>;
+  listItemsRef?: MutableRefObject<Map<string, HTMLDivElement>>; // Provided from a higher component
   currentBlockIndex?: number;
-
-  
+  setCurrentBlockType: (type: "text" | "list") => void;
 }
 
-const AutoResizeTextarea: React.FC<AutoResizeTextareaProps> = ({
-  type,
-  value = '',
-  onChange,
-  placeholder = 'Type here...',
-  className = '',
-  blocksRef,
-  index,
-  onFocus,
-  onListChange,
-  textStyles,
-  id,
-  listItemIndex,
-  listItemsRef,
-
-  currentBlockIndex,
-}) => {
-  
-  
-// Adjust height whenever value changes from outside
-useEffect(() => {
-  adjustHeight();
-}, [value]);
-useEffect(() => {
-  console.log("currentBlockIndex", currentBlockIndex)
+export interface AutoResizeEditableRef {
+  applyStyle: (style: "bold" | "italic" | "underline") => void;
 }
-,[currentBlockIndex])
 
-// Initial adjustment
-useEffect(() => {
-  adjustHeight();
-}, []);
+const AutoResizeEditable = forwardRef<
+  AutoResizeEditableRef,
+  AutoResizeEditableProps
+>(
+  (
+    {
+      value = "",
+      onChange,
+      onListChange,
+      placeholder = "Type here...",
+      className = "",
+      minHeight,
+      onFocus,
+      type = "text",
+      textStyles,
+      index,
+      blocksRef,
+      id,
+      listItemIndex,
+      listItemsRef,
+      currentBlockIndex,
+      setCurrentBlockType,
+    },
+    ref
+  ) => {
+    // Get the correct element from refs
+    const getEditorElement = (): HTMLDivElement | null => {
+      if (type === "text") {
+        return blocksRef && index !== undefined
+          ? blocksRef.current[index] || null
+          : null;
+      } else if (type === "list") {
+        return listItemsRef && id && listItemIndex !== undefined
+          ? listItemsRef.current.get(`${id}-${listItemIndex}`) || null
+          : null;
+      }
+      return null;
+    };
 
-// Also adjust on window resize for responsive layouts
-useEffect(() => {
-  window.addEventListener('resize', adjustHeight);
-  return () => window.removeEventListener('resize', adjustHeight);
-}, []);
+    // Set initial content on mount
+    useEffect(() => {
+      const editorEl = getEditorElement();
+      if (editorEl && value) {
+        editorEl.innerHTML = value;
+      }
+    }, []);
 
+    // Adjust height based on content
+    const adjustHeight = () => {
+      const editorEl = getEditorElement();
+      if (!editorEl) return;
+      editorEl.style.height = "auto";
+      const contentHeight = editorEl.scrollHeight;
+      const minSize = minHeight ? parseInt(minHeight) : 24;
+      editorEl.style.height = Math.max(minSize, contentHeight) + "px";
+    };
 
-// Update AutoResizeTextarea.tsx - add this effect to focus the textarea
-useEffect(() => {
-  // Focus the textarea when it becomes the current block
-  if (currentBlockIndex === index && blocksRef && 'current' in blocksRef) {
-    const textarea = blocksRef.current[index];
-    if (textarea) {
-      textarea.focus();
-    }
-  }
-}, [currentBlockIndex, index]);
-  // Improved height adjustment function
-  const adjustHeight = () => {
-    let textarea = null;
-    if (blocksRef && 'current' in blocksRef && index !== undefined) {
-      textarea = blocksRef.current[index];
-    } else if (listItemsRef && 'current' in listItemsRef && listItemIndex !== undefined) {
-      textarea = listItemsRef.current.get(`${id}-${listItemIndex}`);
-    }
-    
-    
+    useEffect(() => {
+      adjustHeight();
+    }, []);
 
-    if (!textarea) return;
-    
-    // Reset to minimal height first
-    textarea.style.height = '0px';
-    
-    // Get the actual content height
-    const contentHeight = textarea.scrollHeight;
-    
-    // Set minimum size based on type
-    const minSize = type === "list" ? '24px' : '24px';
-    
-    // Apply the larger of content height or min size
-    textarea.style.height = Math.max(parseInt(minSize), contentHeight) + 'px';
-  };
+    useEffect(() => {
+      window.addEventListener("resize", adjustHeight);
+      return () => window.removeEventListener("resize", adjustHeight);
+    }, []);
 
-  // Handle content changes
-  const handleChangeInternal = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (onChange) {
-      onChange(e);
-    }
-    else if(onListChange) {
-      onListChange(e.target.value);
-    }
-    
-    // Adjust height immediately after content changes
-    requestAnimationFrame(adjustHeight);
-  };
+    // Auto-focus current block
+    useEffect(() => {
+      if (currentBlockIndex === index && blocksRef?.current) {
+        const editorEl = blocksRef.current[index];
+        if (editorEl) {
+          editorEl.focus();
+        }
+      }
+    }, [currentBlockIndex, index, blocksRef]);
 
-  
+    // Update content & notify parent
+    const updateContent = () => {
+      const editorEl = getEditorElement();
+      if (!editorEl) return;
+      const updatedContent = editorEl.innerHTML;
+      if (type === "list") {
+        onListChange?.(updatedContent);
+      } else {
+        onChange?.(updatedContent);
+      }
+    };
 
-  return (
-    <textarea
-    ref={(el) => {
+    // Handle text input
+    const handleInput = (e: FormEvent<HTMLDivElement>) => {
+      updateContent();
+      adjustHeight();
+    };
 
-      // For regular blocks
-      if (blocksRef && index !== undefined && el) {
+    // **Prevent <div> insertion & enforce <br> for new lines**
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.execCommand("insertLineBreak"); // Inserts <br> instead of <div>
+      }
+    };
+
+    // **Handle pasting - Convert new lines to <br>**
+    const handlePaste = (e: ClipboardEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const editorEl = getEditorElement();
+      if (!editorEl) return;
+
+      const pastedText = e.clipboardData.getData("text/plain");
+      const formattedText = pastedText.replace(/\n/g, "<br>"); // Replace new lines with <br>
+      document.execCommand("insertHTML", false, formattedText);
+
+      updateContent();
+      adjustHeight();
+    };
+
+    // Set element ref
+    const setEditorRef = (el: HTMLDivElement | null) => {
+      if (!el) return;
+      if (type === "text" && blocksRef && index !== undefined) {
         blocksRef.current[index] = el;
+      } else if (type === "list" && listItemsRef && id && listItemIndex !== undefined) {
+        listItemsRef.current.set(`${id}-${listItemIndex}`, el);
       }
-      
-      // For list items - use composite key pattern: "blockId-listItemIndex"
-      if (listItemsRef && id && listItemIndex !== undefined && el) {
-        const key = `${id}-${listItemIndex}`;
+    };
 
-        listItemsRef.current.set(key, el);
-      }
-    }}
-      value={value}
-      onChange={handleChangeInternal}
-      onFocus={onFocus}
-      placeholder={placeholder}
-      style={{
-        resize: 'none',
-        overflow: 'hidden',
-        boxSizing: 'border-box',
-        padding: '4px',
-        lineHeight: '1.5',
-        ...textStyles
-      }}
-      className={className}
-      
-    />
-  );
-};
+    return (
+      <div
+        ref={setEditorRef}
+        contentEditable
+        suppressContentEditableWarning
+        onInput={handleInput}
+        onPaste={handlePaste}
+        onKeyDown={handleKeyDown}
+        onFocus={() => {
+          setCurrentBlockType(type);
+          onFocus?.();
+        }}
+        onClick={() => {
+          setCurrentBlockType(type);
+          onFocus?.();
+        }}
+        className={className}
+        style={{
+          resize: "none",
+          overflow: "hidden",
+          boxSizing: "border-box",
+          padding: "4px",
+          lineHeight: "1.5",
+          ...textStyles,
+        }}
+        data-placeholder={index === 0 ? "Enter your title" : placeholder}
+      />
+    );
+  }
+);
 
-export default AutoResizeTextarea;  
+export default AutoResizeEditable;

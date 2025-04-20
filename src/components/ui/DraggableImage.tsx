@@ -100,7 +100,8 @@ const DraggableImage = ({
       style={{ 
         cursor: isDragging ? 'grabbing' : 'grab',
         height: imageHeight,
-        position: 'relative'
+        
+        
       }}
     >
       <Image

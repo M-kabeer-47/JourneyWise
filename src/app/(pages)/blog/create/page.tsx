@@ -7,6 +7,7 @@ import dynamic from 'next/dynamic'
 
 
 import type { BlockType } from "@/lib/types/block"
+import { toast, Toast } from "@/components/ui/Toast"
 
 
 // Dynamically import DnD components with ssr: false
@@ -17,16 +18,18 @@ const DndComponents = dynamic(
 
 export default function TravelBlogEditor() {
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop")
-  const [blocks, setBlocks] = useState<BlockType[]>([])
+  const [blocks, setBlocks] = useState<BlockType[]>([
+    {id: nanoid(), type: "heading",level: 1,  textStyle: {bold: true, italic: false, underline: false}, margin: {top: 0, bottom: 0}},
+  ])
   const [activeId, setActiveId] = useState<string | null>(null)
   const [isToolbarExpanded, setIsToolbarExpanded] = useState(true)
   const [selectedBlock, setSelectedBlock] = useState<BlockType | undefined>()
   const [isMobile, setIsMobile] = useState(false)
   const [isClient, setIsClient] = useState(false)
-  const [currentBlockIndex, setCurrentBlockIndex] = useState<number | null>(null)
-  const blocksRef = useRef<HTMLTextAreaElement[]>([])
+  const [currentBlockIndex, setCurrentBlockIndex] = useState<number | null>(0)
+  const blocksRef = useRef<HTMLDivElement[]>([])
   const [currentListItemIndex, setCurrentListItemIndex] = useState<number>(0);   
-      const listItemsRef = useRef<Map<string, HTMLTextAreaElement>>(new Map());
+  const listItemsRef = useRef<Map<string, HTMLDivElement>>(new Map());
   
   // Check if we're on the client
   useEffect(() => {
@@ -56,43 +59,46 @@ export default function TravelBlogEditor() {
   }, [])
 
   const handleAddBlock = useCallback((type: BlockType["type"], data?: Record<string, any>) => {
-    let id = nanoid()
-    console.log("Updates", data)
+    let id = nanoid();
+  
     const newBlock: BlockType = {
       id,
       type,
       textStyle: {
-        bold: type === 'heading' ? true : false,
+        bold: type === "heading" ? true : false,
         italic: false,
         underline: false,
       },
+      margin: {
+        top: 0,
+        bottom: 0,
+      },
+      formattedSpans: [],
       ...data,
-    }
-    setSelectedBlock(newBlock)
-    setBlocks((prev) => [...prev, newBlock])
+    };
+  
+    setSelectedBlock(newBlock);
+    setBlocks((prev) => [...prev, newBlock]);
+  
     setTimeout(() => {
-    if(type==="list"){
-      let textarea = listItemsRef.current.get(`${id}-${currentListItemIndex}`)
-      if(textarea){
-        textarea.focus()
+      if (type === "list") {
+        let textarea = listItemsRef.current.get(`${id}-${currentListItemIndex}`);
+        if (textarea) {
+          textarea.focus();
+          textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+      } else {
+        if (type !== "image") {
+          let textarea = blocksRef.current[blocksRef.current.length - 1];
+          if (textarea) {
+            textarea.focus();
+            textarea.scrollIntoView({ behavior: "smooth", block: "center" });
+          }
+        }
       }
-    }
-    else{
-      if(type!="image"){
-        let textarea=blocksRef.current[blocksRef.current.length-1]
-      if(textarea){
-      console.log("textarea",textarea)
-      textarea.focus()
-    }
-      }
- 
-    }
-    
-    }
-    ,50)
-    
-
-  }, [])
+    }, 50);
+  }, []);
+  
 
   const handleDragEnd = useCallback((event: any) => {
     const { active, over } = event;
@@ -164,10 +170,22 @@ export default function TravelBlogEditor() {
   
 
   function handleUpdateBlock(id: string, updates: Partial<BlockType>) {
-    
+   
     if (selectedBlock?.id === id) {
       setSelectedBlock((prev) => {
         if (prev) {
+          if (updates.margin) {
+            const updatedMargin = {
+              ...prev.margin || { top: 0, bottom: 0 },
+              ...updates.margin
+            };
+            
+            return { 
+              ...prev, 
+              ...updates,
+              margin: updatedMargin // Make sure margin is properly merged
+            };
+          }
           if (updates.listItems) {
             
             return { ...prev, listItems: updates.listItems, ...updates };
@@ -205,9 +223,15 @@ export default function TravelBlogEditor() {
   
   
 
-  const handleDeleteBlock = useCallback((id: string) => {
-    setBlocks((prev) => prev.filter((block) => block.id !== id))
-    if (selectedBlock?.id === id) {
+  const handleDeleteBlock = useCallback((id: string,index: number) => {
+    
+    if(index === 0){
+      toast.error("Cannot delete the title")
+      return;
+    }
+    setBlocks((prev) => prev.filter((block) => block.id !== id ))
+
+    if (selectedBlock?.id === id ) {
       setSelectedBlock(undefined)
     }
   }, [selectedBlock])
@@ -235,7 +259,6 @@ export default function TravelBlogEditor() {
   return (
     <div className="min-h-screen bg-white">
       <DndComponents
-
         blocksRef={blocksRef}
         currentBlockIndex={currentBlockIndex}
         listItemsRef={listItemsRef}
@@ -259,6 +282,7 @@ export default function TravelBlogEditor() {
         isMobile={isMobile}
         toggleMobileToolbar={toggleMobileToolbar}
       />
+      <Toast />
     </div>
   )
 }

@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import db  from "@/lib/server/db"
 import { gig } from "@/../auth-schema"
 export async function POST(req: Request) {
@@ -43,3 +43,4 @@ export async function POST(req: Request) {
     }
 
 }
+

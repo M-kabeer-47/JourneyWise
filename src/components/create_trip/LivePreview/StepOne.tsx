@@ -38,7 +38,7 @@ export default function StepOne({
     <>
       <div className="space-y-6 md:space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <motion.h1 variants={itemVariants} className="text-2xl md:text-3xl font-bold text-midnight-blue">
+          <motion.h1 variants={itemVariants} className="text-2xl md:text-4xl font-[800] text-midnight-blue">
             {title || "Experience Title"}
           </motion.h1>
           <motion.div

@@ -19,12 +19,12 @@ import { useEffect } from "react";
 
 
 interface BlockProps extends BlockType {
-  onDelete: (id: string) => void;
+  onDelete: (id: string, index: number) => void;
   onUpdate: (id: string, updates: Partial<BlockType>) => void;
   onSelect: (block: BlockType) => void;
   isSelected: boolean;
   setCurrentListItemIndex: (index: number) => void;
-  position?: { top?: number; bottom?: number };
+  setCurrentBlockType: (type: string) => void;
   ref?: React.RefObject<HTMLDivElement | HTMLTextAreaElement>;
   index?: number;
   setCurrentBlockIndex: (index: number | null) => void;
@@ -33,6 +33,7 @@ interface BlockProps extends BlockType {
   currentListItemIndex?: number;
   onToggle?: ()=>void;
   currentBlockIndex?: number | null;
+  
   
 }
 
@@ -50,7 +51,7 @@ export function Block({
   imageSize = "medium",
   listStyle = { type: "bulleted", icon: "disc" },
   setCurrentListItemIndex,
-  position,
+  margin = { top: 0, bottom: 0 },
   onDelete,
   onUpdate,
   onSelect,
@@ -62,7 +63,9 @@ export function Block({
   listItemsRef,
   currentListItemIndex,
   onToggle,
+  
   currentBlockIndex,
+  setCurrentBlockType,
   
 }: BlockProps) {
   
@@ -104,7 +107,17 @@ export function Block({
           align: "left",
         },
       ],
+
     });
+    
+    
+    setTimeout(() => {
+      let textarea = listItemsRef?.current.get(`${id}-${listItems.length}`)
+      if(textarea){
+        textarea.focus()
+      }
+    }, 50)
+
   };
 
   const handleListItemUpdate = (index: number, value: string) => {
@@ -128,9 +141,10 @@ export function Block({
       textAlign: align || "left",
     };
     if (textStyle) {
-      styles.fontWeight = textStyle.bold ? "bold" : "normal";
+      styles.fontWeight = textStyle.bold ? "800" : "normal";
       styles.fontStyle = textStyle.italic ? "italic" : "normal";
       styles.textDecoration = textStyle.underline ? "underline" : "none";
+      
     }
     return styles;
   };
@@ -142,7 +156,21 @@ export function Block({
       case "medium":
         return "max-w-2xl";
       case "large":
-        return "max-w-4xl";
+        return "max-w-3xl";
+      case "full":
+        return "w-full";
+      default:
+        return "max-w-2xl";
+    }
+  };
+  const getImageBlockSizeClass = () => {
+    switch (imageSize) {
+      case "small":
+        return "max-w-md h-[330px]";
+      case "medium":
+        return "max-w-2xl h-[430px]";
+      case "large":
+        return "max-w-3xl h-[530px]";
       case "full":
         return "w-full";
       default:
@@ -151,6 +179,7 @@ export function Block({
   };
 
   const handleClick = (e: React.MouseEvent) => {
+    console.log("Content: "+content)
     setCurrentBlockIndex(index ?? null);
     onSelect({
       id,
@@ -170,8 +199,8 @@ export function Block({
     
   };
 
-  const handleFocus = (e: React.FocusEvent) => {
-    
+  const handleFocus = () => {
+    console.log("index: "+index)
     setCurrentBlockIndex(index ?? null);
     onSelect({
       id,
@@ -210,21 +239,23 @@ export function Block({
 
   const getPositionStyles = () => {
     const styles: React.CSSProperties = {};
-    if (position?.top || position?.bottom) {
-      styles.position = "relative";
-      if (position?.top) {
-        styles.top = `${position.top}px`;
+    if (margin?.top || margin?.bottom) {
+      
+      if (margin?.top) {
+        styles.marginTop = `${margin.top}px`;
       }
-      if (position?.bottom) {
-        styles.top = `-${position.bottom}px`;
+      if (margin?.bottom) {
+        styles.marginBottom = `${margin.bottom}px`;
       }
     }
     return styles;
   };
 
   const renderContent = () => {
-    const handleContentChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onUpdate(id, { content: e.target.value });
+    const handleContentChange = (content: string) => {
+      
+      console.log("content: "+content)
+      onUpdate(id, { content });
     };
 
     switch (type) {
@@ -243,13 +274,13 @@ export function Block({
             onFocus={handleFocus}
             placeholder="Type heading..."
             textStyles={getTextStyles()}
+            setCurrentBlockType={setCurrentBlockType}
             className={cn(
               "w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2",
-              "text-charcoal overflow-visible",
-              level === 1 && "text-3xl md:text-4xl",
-              level === 2 && "text-2xl md:text-3xl font-semibold ",
-              level === 3 && "text-xl md:text-2xl font-medium ",
-              
+              "text-black overflow-visible ",
+              level === 1 && "text-3xl md:text-5xl font-bold font-raleway",
+              level === 2 && "text-2xl md:text-4xl font-semibold font-raleway",  
+              level === 3 && "text-xl md:text-3xl font-medium font-raleway",
               align === "center" && "text-center",
               align === "right" && "text-right",
               align === "left" && "text-left"
@@ -267,16 +298,18 @@ export function Block({
             onChange={handleContentChange}
             onFocus={handleFocus}
             placeholder="Type paragraph..."
-            className="w-full outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-1 text-charcoal pl-[5px]"
+            className="w-full outline-none  focus:ring-2 focus:ring-ocean-blue/20 rounded px-1 text-charcoal pl-[5px]"
             minHeight="1.5em"
             textStyles={getTextStyles()}
+            setCurrentBlockType={setCurrentBlockType}
+            
           />
         );
       case "image":
         return (
           <div
             className={cn(
-              "mb-6",
+              "h-auto mb-[30px] mt-[30px]",
               imageSize === "full" && "mx-[-1rem] w-[calc(100%+2rem)]"
             )}
             onClick={handleClick}
@@ -285,10 +318,12 @@ export function Block({
               <div
                 className={cn(
                   getImageSizeClass(),
+                  
                   align === "left" && "mr-auto ml-0",
                   align === "center" && "mx-auto",
                   align === "right" && "ml-auto mr-0",
                   imageSize === "full" && "mx-0 w-full",
+                  
                   
                 )}
               >
@@ -325,13 +360,11 @@ export function Block({
               <div
                 className={cn(
                   "flex flex-col items-center justify-center border border-light-gray/30 p-8 text-center rounded-lg",
-                  getImageSizeClass(),
+                  getImageBlockSizeClass(),
                   align === "left" && "mr-auto ml-0",
                   align === "center" && "mx-auto",
                   align === "right" && "ml-auto mr-0",
-                  imageSize === "small" && "h-48",
-                  imageSize === "medium" && "h-64",
-                  imageSize === "large" && "h-80",
+                  
                   imageSize === "full" && "w-full h-60 rounded-none",
                   "border-[2px] border-charcoal/50",
                   isSelected && "ring-2 ring-ocean-blue border-[0px]"
@@ -349,11 +382,11 @@ export function Block({
         );
       case "list":
         return (
-          <div className="-mt-2 group" onClick={handleClick}>
+          <div className="group " onClick={handleClick}>
             {listStyle?.type === "numbered" ? (
               <ol
                 className={cn(
-                  "space-y-1 list-decimal",
+                  "space-y-1 list-decimal ",
                   align === "center" && "text-center",
                   align === "right" && "text-right"
                 )}
@@ -375,6 +408,7 @@ export function Block({
                     isNumbered
                     listItemsRef={listItemsRef}
                     currentListItemIndex={currentListItemIndex}
+                    setCurrentBlockType={setCurrentBlockType}
                   />
                 ))}
               </ol>
@@ -396,7 +430,7 @@ export function Block({
                     onUpdate={handleListItemUpdate}
                     onDelete={handleListItemDelete}
                     onFocus={handleListItemFocus}
-                    isDash={listStyle?.icon === "dash"}
+                    
                     align={item.align}
                     textStyle={item}
                     isSelected={isSelected}
@@ -404,6 +438,7 @@ export function Block({
                     id={id}
                     listItemsRef={listItemsRef}
                     currentListItemIndex={currentListItemIndex}
+                    setCurrentBlockType={setCurrentBlockType}
 
                   />
                 ))}
@@ -417,8 +452,9 @@ export function Block({
                 handleListItemAdd();
               }}
               className={cn(
-                "text-ocean-blue  hover:text-ocean-blue/80 hover:bg-light-gray/50",
-                "ml-6 mt-2 transition-colors opacity-0 group-hover:opacity-100"
+                "text-ocean-blue hover:text-ocean-blue/80 hover:bg-light-gray/50 transition-colors duration-300 ease-in-out",
+"ml-2 mt-1 hidden group-hover:flex transition-all duration-300 ease-in-out"
+
               )}
             >
               {/* show on hover */}
@@ -454,7 +490,7 @@ export function Block({
       
       {/* Block Controls - Move to left side, show on hover */}
       <div className={cn(
-        "absolute -left-10 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2",
+        "absolute -left-8 top-1/2 -translate-y-1/2 flex flex-col items-center gap-2",
         "opacity-0 group-hover:opacity-100 transition-opacity",
         "z-20",
       )}>
@@ -479,14 +515,14 @@ export function Block({
             "h-8 w-8",
             "text-red-500 hover:bg-red-50",
           )}
-          onClick={() => onDelete(id)}
+          onClick={() => onDelete(id, index ?? -1)}
         >
           <Trash2 className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Actual block content */}
-      <div onClick={handleClick} 
+      <div onClick={handleClick}
                 
       style={getPositionStyles()} 
       >
@@ -502,7 +538,7 @@ interface ListItemProps {
   index: number;
   onUpdate: (index: number, value: string) => void;
   onDelete: (index: number) => void;
-  isDash?: boolean;
+  
   align?: string;
   textStyle?: ListItemType;
   isSelected?: boolean;
@@ -512,6 +548,7 @@ interface ListItemProps {
   addItem?: () => void;
   currentListItemIndex?: number;
   listItemsRef?: React.MutableRefObject<Map<string, HTMLElement>>;
+  setCurrentBlockType?: (type: "list" | "text") => void;
 }
 
 function ListItem({
@@ -519,14 +556,15 @@ function ListItem({
   index,
   onUpdate,
   onDelete,
-  isDash,
+  
   isSelected,
   listStyle,
   isNumbered,
   onFocus,
   id,
-  currentListItemIndex,
-  listItemsRef
+  listItemsRef,
+  setCurrentBlockType,
+  
 
   
 }: ListItemProps) {
@@ -546,50 +584,46 @@ function ListItem({
   const renderBullet = () => {
     if (isNumbered) {
       return (
-        <span className="text-ocean-blue font-medium min-w-[24px] text-right">
+        <span className="text-charcoal font-medium min-w-[24px] text-right">
           {index + 1}.
         </span>
       );
     }
 
-    if (isDash) {
-      return (
-        <span className="text-ocean-blue min-w-[16px]">
-          <Minus className="h-4 w-4" />
-        </span>
-      );
-    }
 
     switch (listStyle?.icon) {
-      case "circle":
-        return (
-          <span className="text-ocean-blue min-w-[16px]">
-            <CircleDot className="h-4 w-4" />
-          </span>
-        );
+      
       case "none":
         return null;
+      case "dash":
+        return (
+          <span className="text-charcoal min-w-[16px]">
+            <Minus className="h-4 w-4" />
+          </span>
+        );  
+      
       case "tick":
         return (
-          <span className="text-ocean-blue min-w-[16px]">
-            <Check className="h-4 w-4" />
+          <span className="text-charcoal min-w-[16px]">
+            <Check className="h-4 w-4"/>
           </span>
         );
       case "disc":
-      default:
         return (
-          <span className="text-ocean-blue min-w-[16px]">
-            <Dot className="h-5 w-5" />
+          <span className="text-charcoal min-w-[16px]">
+            <Dot className="h-5 w-5 " />
           </span>
         );
+      
     }
   };
 
   return (
     <li
       className={cn(
-        "flex items-center gap-2 group relative w-full",
+      "flex items-center gap-2 group relative w-full left-[-20px] m-0 text-charcoal pl-4",
         isSelected && "bg-light-gray/50",
+        
         
       )}
     
@@ -599,7 +633,7 @@ function ListItem({
       <div className="flex w-full ">
         <div
           
-          className="w-full relative left-[-10px]"
+          className={`w-full relative left-[-5px] 1 ${isNumbered ? "top-[1px]" : ""}`}
         >
           <AutoResizeTextarea            
             type="list"
@@ -613,6 +647,7 @@ function ListItem({
                 onFocus(index)  
               }
             }}
+            setCurrentBlockType={setCurrentBlockType}
             className={cn(
               "outline-none focus:ring-2 focus:ring-ocean-blue/20 rounded px-2 py-1",
               "text-charcoal min-h-[1em] w-full relative top-[2px]",

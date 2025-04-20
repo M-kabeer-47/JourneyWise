@@ -1,4 +1,3 @@
-
 import {
   pgTable,
   text,
@@ -244,3 +243,16 @@ export const trip = pgTable("trip", {
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
+export const blog = pgTable("blog", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  title: jsonb("title").notNull(),
+  content: text("content").notNull(),
+  
+  blocks: jsonb("blocks").notNull(),
+  authorId: text("authorId")
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp("createdAt").notNull(),
+  updatedAt: timestamp("updatedAt").notNull(),
+});
+

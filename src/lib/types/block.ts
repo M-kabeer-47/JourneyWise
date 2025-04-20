@@ -32,16 +32,20 @@ export type BlockType = {
   listStyle?: { type: "numbered" | "bulleted"; icon?: "disc" | "circle" | "none" | "dash" | "tick" };
  
   imageObjectPosition?: { x?: number; y?: number }
-  position?: {
+  margin?: {
     top?: number
     bottom?: number
   }
-  listItemIndex?: number
-}
-
-
-export type DragData = {
-  type: string
-  isTemplate?: boolean
+  listItemIndex?: number,
+  formattedSpans?: Array<{
+    start: number
+    end: number
+    textStyle: {
+      bold: boolean
+      italic: boolean
+      underline: boolean  
+    }
+    
+  }>
 }
 

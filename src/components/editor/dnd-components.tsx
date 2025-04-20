@@ -3,7 +3,8 @@
 import {
   DndContext,
   DragOverlay,
-  closestCenter,
+  
+  closestCorners,
   KeyboardSensor,
   PointerSensor,
   useSensor,
@@ -20,7 +21,10 @@ import { DroppableContainer } from "@/components/editor/droppable-container"
 import { cn } from "@/utils/shadcn/utils"
 import type { BlockType } from "@/lib/types/block"
 import SaveBlog  from "@/utils/functions/SaveBlog"
-import { useEffect } from "react"
+
+import axios from "axios"
+import toast from "react-hot-toast"
+import { useState } from "react"
 
 interface DndComponentsProps {
   blocks: BlockType[]
@@ -41,7 +45,7 @@ interface DndComponentsProps {
   toggleMobileToolbar: () => void
   currentBlockIndex: number | null
   setCurrentBlockIndex: (index: number | null) => void
-  blocksRef: React.RefObject<HTMLTextAreaElement[]>
+  blocksRef: React.RefObject<HTMLDivElement[]>
   currentListItemIndex: number | null
   setCurrentListItemIndex: (index: number)=>void
   listItemsRef: React.RefObject<Map<string, HTMLTextAreaElement>>
@@ -72,10 +76,8 @@ export default function DndComponents({
   listItemsRef,
 }: DndComponentsProps) {
 
-  
-  useEffect(() => {
-
-  }, [])
+  const [isSaving, setSaving] = useState(false)
+  const [currentBlockType, setCurrentBlockType] = useState("text")
 
   const sensors = useSensors(
     useSensor(isMobile ? TouchSensor : PointerSensor, {
@@ -90,11 +92,25 @@ export default function DndComponents({
       coordinateGetter: sortableKeyboardCoordinates,
     }),
   )
+  const handleSaveBlog = async () => {
+    setSaving(true)
+    let {content,title} = await SaveBlog(blocks)
+    console.log("Content: ", JSON.stringify(content))
+    await axios.post("/api/blog", { content, blocks,title }).then((res) => {
+      toast.success("Blog Saved Successfully")
+      setSaving(false)
+    })
+    .catch((err) => {
+      toast.error("Error Saving Blog, Please try again")
+    })
+  }
+  
+  
 
   return (
     <DndContext
       sensors={sensors}
-      collisionDetection={closestCenter}
+      collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       onDragCancel={handleDragCancel}
@@ -107,9 +123,9 @@ export default function DndComponents({
           </div>
           <div className="flex items-center gap-2">
          
-            <Button variant="default" size="sm" className="bg-ocean-blue hover:bg-midnight-blue" onClick={() => SaveBlog(blocks)}>
+            <Button variant="default" size="sm" className={`bg-ocean-blue hover:bg-midnight-blue ${isSaving ? "opacity-50 cursor-not-allowed" : ""}`} onClick={handleSaveBlog} disabled={isSaving}>
               <Save className="h-4 w-4 mr-2" />
-              Save
+              {isSaving ? "Saving..." : "Save"}
             </Button>
           </div>
         </div>
@@ -118,11 +134,11 @@ export default function DndComponents({
       <main className={cn(
   `${!isToolbarExpanded && !isMobile ? "pr-[50px] pl-[50px]": "pl-[20px]"} py-8 relative`,
   // Add padding at the bottom when toolbar is expanded on mobile
-  isMobile && isToolbarExpanded && "pb-[40vh]",
+  isMobile && isToolbarExpanded && "pb-[30vh]",
   // Make the main content area scrollable
   "overflow-y-auto h-[calc(100vh-4rem)]"
 )}>
-        <div className="flex">
+        <div className="flex ">
           <div className={cn(
             "flex-1",
             isToolbarExpanded && !isMobile && "mr-[400px]"
@@ -131,16 +147,22 @@ export default function DndComponents({
               <div
                 className={cn(  
                   "border border-light-gray rounded-lg bg-white shadow-sm transition-all pb-[100px]",
-                  viewMode === "mobile" ? "max-w-[375px] mx-auto" : "w-full max-w-[calc(100%-2rem)]"
+                  viewMode === "mobile" ? "max-w-[375px] mx-auto " : "w-full max-w-[calc(100%-2rem)]",
+                  `${isMobile ? "min-h-[75vh]" : "min-h-[80vh]"}`
                 )}
               >
-                <div className="p-4">
-                  <DroppableContainer id="blocks">
+                <div className="p-4 h-full w-full ">
+                  <DroppableContainer id="blocks" className="h-full w-full">
                     <SortableContext 
                       items={blocks.filter(block => block && block.id).map((block) => block.id)} 
                       strategy={verticalListSortingStrategy}
+                      
+                      
                     >
-                      <div className="space-y-1">
+                       <div className={cn(
+            "space-y-1",
+            blocks.length === 0 && "h-full"
+          )}>
                         {blocks.map((block,index) => 
                           block && block.id ? (
                             <Block
@@ -161,6 +183,8 @@ export default function DndComponents({
                               onUpdate={handleUpdateBlock}
                               onSelect={setSelectedBlock}
                               isSelected={selectedBlock?.id === block.id}
+                              isMobile={isMobile}
+                              setCurrentBlockType={setCurrentBlockType}
                             />
                           ) : null
                         )}
@@ -199,7 +223,7 @@ export default function DndComponents({
           <Toolbar
             currentListItemIndex={currentListItemIndex}
             currentBlockIndex={currentBlockIndex ?? 0}
-            blockRefs={blocksRef}
+            blocksRef={blocksRef}
             listItemsRef={listItemsRef}
             isExpanded={isToolbarExpanded}
             onToggle={() => setIsToolbarExpanded(!isToolbarExpanded)}
@@ -209,6 +233,8 @@ export default function DndComponents({
             onAddBlock={handleAddBlock}
             onDelete={handleDeleteBlock}
             isMobile={isMobile}
+            currentBlockType={currentBlockType}
+            
           />
         </div>
 

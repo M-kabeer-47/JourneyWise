@@ -39,7 +39,7 @@ import type { BlockType } from "@/lib/types/block"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { DraggableItem } from "./draggable-item"
-import { current } from "@reduxjs/toolkit"
+
 
 
 interface ToolbarProps {
@@ -55,10 +55,13 @@ interface ToolbarProps {
   currentBlockIndex: number
   blockRefs: React.MutableRefObject<HTMLTextAreaElement[]>
   listItemsRef: React.MutableRefObject<Map<string, HTMLTextAreaElement>>
+  currentBlockType: string,
+  blocksRef: React.MutableRefObject<HTMLDivElement[]>
+
 }
 
-const PositionSlider = ({ handlePositionChange, initialValue = 0 }: { 
-  handlePositionChange: (value: number) => void,
+const PositionSlider = ({ handleBlockSpacing, initialValue = 0 }: { 
+  handleBlockSpacing: (value: number) => void,
   initialValue?: number 
 }) => {
   // Add local state to track slider value during interaction
@@ -73,7 +76,7 @@ const PositionSlider = ({ handlePositionChange, initialValue = 0 }: {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = Number.parseInt(e.target.value);
     setSliderValue(newValue);
-    handlePositionChange(newValue);
+    handleBlockSpacing(newValue);
   };
   
   return (
@@ -85,9 +88,9 @@ const PositionSlider = ({ handlePositionChange, initialValue = 0 }: {
           <div className="relative flex-1">
             <input
               type="range"
-              min="-5"
-              max="5"
-              step="1"
+              min="-20"
+              max="20"
+              step="0.5"
               value={sliderValue}
               onChange={handleChange}
               className="w-full h-2 bg-light-gray rounded-lg appearance-none cursor-pointer accent-ocean-blue"
@@ -117,32 +120,7 @@ const PositionSlider = ({ handlePositionChange, initialValue = 0 }: {
 
 
 // Define the most important tools for mobile quick access
-const mobileQuickTools = [
-  {
-    key: "heading-1",
-    icon: <Heading1 className="h-4 w-4" />,
-    type: "heading",
-    data: { level: 1 },
-  },
-  {
-    key: "paragraph",
-    icon: <Text className="h-4 w-4" />,
-    type: "paragraph",
-  },
-  {
-    key: "image",
-    icon: <ImageIcon className="h-4 w-4" />,
-    type: "image",
-  
-  },
-  {
-    key: "list-bulleted",
-    icon: <List className="h-4 w-4" />,
-    type: "list",
-    data: { listStyle: { type: "bulleted" } },
-  },
-  
-];
+
 
 // Custom styled input component
 const StyledInput = ({ 
@@ -193,36 +171,13 @@ export function Toolbar({
 currentBlockIndex,
   isMobile = false,
   currentListItemIndex,
-  blockRefs,
+  
   listItemsRef,
+  currentBlockType,
+  blocksRef,
+  
 }: ToolbarProps) {
   // Add a ref to track current styles
-  
-
-
-
-  const handlePositionChange = (value: number) => {
-    if (selectedBlock) {
-      onBlockUpdate?.(selectedBlock.id, {
-        position: {
-          top: value > 0 ? value * 8 : 0, // Positive value moves down
-          bottom: value < 0 ? Math.abs(value) * 8 : 0, // Negative value moves up
-        },
-      })
-    }
-  }
-  
-  // Calculate initial position value for the slider
-  const getInitialPositionValue = () => {
-    if (!selectedBlock) return 0
-    
-    const position = selectedBlock.position || {};
-    const { top = 0, bottom = 0 } = position;
-    
-    if (top > 0) return Math.round(top / 8); // Convert back from pixels
-    if (bottom > 0) return -Math.round(bottom / 8);
-    return 0;
-  }
 
   const tools = [
     {
@@ -248,17 +203,91 @@ currentBlockIndex,
     },
     { type: "paragraph", icon: <Text className="h-4 w-4" />, label: "Paragraph", key: "paragraph" },
     { type: "image", icon: <ImageIcon className="h-4 w-4" />, label: "Image", key: "image" },
-    { type: "list", icon: <List className="h-4 w-4" />, label: "List", key: "list", data: { align: "", listItems: [{
+    { type: "list", icon: <List className="h-4 w-4" />, label: "List", key: "list", data: { align: "",listStyle: {
+      type: "bulleted",
+      icon: "disc",
+    }, 
+    listItems: [{
       content: "",
       textStyle: {
         bold: false,
         italic: false,
         underline: false,
       },
+      
       align: "left",
-    }] } },
+
+    }] } },  ]
+
+
+    const mobileQuickTools = [
+      {
+        key: "heading-1",
+        icon: <Heading1 className="h-4 w-4" />,
+        type: "heading",
+        data: { level: 1 },
+      },
+      {
+        key: "paragraph",
+        icon: <Text className="h-4 w-4" />,
+        type: "paragraph",
+      },
+      {
+        key: "image",
+        icon: <ImageIcon className="h-4 w-4" />,
+        type: "image",
+      
+      },
+      {
+        key: "list-bulleted",
+        icon: <List className="h-4 w-4" />,
+        type: "list",
+        data:   { align: "", listStyle: {
+          type: "bulleted",
+          icon: "disc",
+        }, 
+        listItems: [{
+          content: "",
+          textStyle: {
+            bold: false,
+            italic: false,
+            underline: false,
+          },
+          
+          align: "left",
     
-  ]
+        }]},
+      },
+      
+    ];
+
+
+
+
+  const handleBlockSpacing = (value: number) => {
+    console.log("Values:" +value)
+    if (selectedBlock) {
+      onBlockUpdate?.(selectedBlock.id, {
+        margin: {
+          top: value > 0 ? value * 8 : 0, // Positive value moves down
+          bottom: value < 0 ? Math.abs(value) * 8 : 0, // Negative value moves up
+        },
+      })
+    }
+  }
+  
+  // Calculate initial position value for the slider
+  const getInitialPositionValue = () => {
+    if (!selectedBlock) return 0
+
+    const margin = selectedBlock.margin || {};
+    const { top = 0, bottom = 0 } = margin;
+    
+    if (top > 0) return Math.round(top / 8); // Convert back from pixels
+    if (bottom > 0) return -Math.round(bottom / 8);
+    return 0;
+  }
+
 
   const handleAlign = (align: "left" | "right" | "center") => {
    if(selectedBlock?.type === "list" && selectedBlock.listItems) {
@@ -281,112 +310,249 @@ currentBlockIndex,
       if (!currentListItem) return;
       else {
         const currentStyles = currentListItem.textStyle
-        console.log("Current styles of the list item with index: "+currentListItemIndex+" are: "+JSON.stringify(currentStyles))
+       
         const newStyles = {
           ...currentStyles,
           [style as keyof ListItemType["textStyle"]]: !currentStyles[style]
         };
-        console.log("New styles of the list item with index: "+currentListItemIndex+" are: "+JSON.stringify(newStyles))
+        
         onBlockUpdate?.(selectedBlock.id, {
           listItems: selectedBlock.listItems.map((item, index) => index === currentListItemIndex ? { ...item, textStyle: newStyles } : item),
         });
       }
     }
   }
-  const handleTextStyle = (style: string) => {
-    if (!selectedBlock) return;
-    else if(selectedBlock.type === "list" && selectedBlock.listItems) {
-      handleListItemStyle(style)
-      return;
-    }
-   
-     // 
-      
-
-    
-    const currentStyles: ListItemType["textStyle"] = selectedBlock.textStyle || {
-      bold: false,
-      italic: false,
-      underline: false}
-    
-    
-    
-    // Toggle the specific style
-    const newStyles:ListItemType["textStyle"] = {
-      ...currentStyles,
-      [style as keyof ListItemType["textStyle"]]: !currentStyles[style as keyof ListItemType["textStyle"]]
+  const getEditorElement = (): HTMLDivElement | null => {
+      if (currentBlockType === 'text') {
+        console.log("BlocksRef:" +blocksRef)
+        return (blocksRef && currentBlockIndex !== undefined) ? blocksRef.current[currentBlockIndex] || null : null;
+      } else if (currentBlockType === 'list') {
+        return (listItemsRef && selectedBlock?.id && currentListItemIndex !== undefined)
+          ? listItemsRef.current.get(`${selectedBlock.id}-${currentListItemIndex}`) || null
+          : null;
+      }
+      return null;
     };
-    
-    // Update the ref immediately
-    
+// Applies an inline style (bold, italic, underline) to the currently selected text
+const applyStyle = (style: 'bold' | 'italic' | 'underline') => {
+  const editorEl = getEditorElement();
+  if (!editorEl) return;
 
-    // Update the block with new styles
-    onBlockUpdate?.(selectedBlock.id, {
-      textStyle: newStyles
-    });
-  };
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+  const range = selection.getRangeAt(0);
+  if (range.collapsed) return; // No text selected
 
+  // Ensure the selection is within our editor
+  if (!editorEl.contains(range.commonAncestorContainer)) return;
 
-  const handleEmojiSelect = (emoji: string) => {
-    if (!selectedBlock) return;
+  // Determine the target element from the selection (for toggling off)
+  let target: HTMLElement | null = null;
+  if (range.commonAncestorContainer.nodeType === Node.TEXT_NODE) {
+    target = range.commonAncestorContainer.parentElement;
+  } else if (range.commonAncestorContainer.nodeType === Node.ELEMENT_NODE) {
+    target = range.commonAncestorContainer as HTMLElement;
+  }
+
+  // Check if the target is a span with the desired style (to toggle off)
+  let isToggled = false;
+  if (target && target.tagName === 'SPAN') {
+    if (style === 'bold' && target.style.fontWeight === 'bold') {
+      isToggled = true;
+    } else if (style === 'italic' && target.style.fontStyle === 'italic') {
+      isToggled = true;
+    } else if (style === 'underline' && target.style.textDecoration === 'underline') {
+      isToggled = true;
+    }
+  }
+
+  if (isToggled && target) {
+  // Store the current selection position for restoring later
+  const selectionStart = range.startOffset;
+  const selectionEnd = range.endOffset;
+  const selectionStartContainer = range.startContainer;
+  const selectionEndContainer = range.endContainer;
   
-    // For list items
-    if (selectedBlock.type === "list" && selectedBlock.listItems) {
-      const key = `${selectedBlock.id}-${currentListItemIndex}`;
-      console.log("Key inside function: "+key)
-      const listItemTextarea = listItemsRef.current.get(key);
+  // Remove the style from the span
+  if (style === 'bold') {
+    target.style.removeProperty('font-weight');
+  } else if (style === 'italic') {
+    target.style.removeProperty('font-style');
+  } else if (style === 'underline') {
+    target.style.removeProperty('text-decoration');
+  }
+  
+  // If no inline styles remain, unwrap the span
+  if (!target.getAttribute('style') || target.getAttribute('style') === '') {
+    const parentNode = target.parentNode;
+    if (parentNode) {
+      const fragment = document.createDocumentFragment();
+      while (target.firstChild) {
+        fragment.appendChild(target.firstChild);
+      }
+      parentNode.replaceChild(fragment, target);
       
-      if (listItemTextarea) {
-        // Use cursor position logic
-        const start = listItemTextarea.selectionStart;
-        const end = listItemTextarea.selectionEnd;
-        const text = listItemTextarea.value; 
-        console.log("Text: " + text)
-        
-        const newContent = `${text.substring(0, start)}${emoji}${text.substring(end)}`;
-        
-        
-        
-        // Position cursor after emoji
-        setTimeout(() => {
-          if (listItemTextarea) {
-            const newPosition = start + emoji.length;
-            listItemTextarea.selectionStart = newPosition;
-            listItemTextarea.selectionEnd = newPosition;
-            listItemTextarea.focus();
-          }
-        }, 100);
-        onBlockUpdate?.(selectedBlock.id, {
-          listItems: selectedBlock.listItems.map((item, index) => 
-            index === currentListItemIndex ? { ...item, content: newContent } : item
-          )
-        });
-        
-        return;
+      // Try to normalize the DOM to clean up any empty text nodes
+      if (parentNode.normalize) {
+        parentNode.normalize();
       }
     }
+  }
+  
+  // Attempt to restore the selection position
+  try {
+    selection.removeAllRanges();
+    const newRange = document.createRange();
     
-    // Regular block logic (unchanged)
-    const textarea = blockRefs.current[currentBlockIndex];
-    
-    if (!textarea) return;
-    
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const newContent = `${text.substring(0, start)}${emoji}${text.substring(end)}`;
-    
-    setTimeout(() => {
-      let newIndex = start + emoji.length;
-      textarea.selectionStart = newIndex;
-      textarea.selectionEnd = newIndex;
-      textarea.focus();
-    }, 100);
-    
+    // Try to position at the same containers and offsets
+    // This works for simple cases where the DOM structure isn't dramatically changed
+    newRange.setStart(selectionStartContainer, selectionStart);
+    newRange.setEnd(selectionEndContainer, selectionEnd);
+    selection.addRange(newRange);
+  } catch (e) {
+    // Fallback: if we can't restore the exact position, set cursor at end of editor content
+    console.log("Could not restore exact selection position after style removal");
+    const newRange = document.createRange();
+    newRange.selectNodeContents(editorEl);
+    newRange.collapse(false);
+    selection.addRange(newRange);
+  }
+  
+  // Save updated content
+  if (currentBlockType === "list") {
     onBlockUpdate?.(selectedBlock.id, {
-      content: newContent,
+      listItems: selectedBlock.listItems.map((item, idx) =>
+        idx === currentListItemIndex ? { ...item, content: editorEl.innerHTML } : item
+      ),
     });
-  };
+  } else {
+    onBlockUpdate?.(selectedBlock.id, { content: editorEl.innerHTML });
+  }
+  return;
+}
+
+  // Apply the style by wrapping the selected text in a span
+  const span = document.createElement('span');
+  if (style === 'bold') {
+    span.style.fontWeight = 'bold';
+  } else if (style === 'italic') {
+    span.style.fontStyle = 'italic';
+  } else if (style === 'underline') {
+    span.style.textDecoration = 'underline';
+  }
+
+  // Wrap the selected content
+  span.appendChild(range.extractContents());
+  range.insertNode(span);
+
+  // Position the caret and ensure new text doesn't inherit styling
+  selection.removeAllRanges();
+  const newRange = document.createRange();
+
+  // Create a break element to prevent style inheritance
+  const breakElement = document.createElement('span');
+  breakElement.className = 'styling-breakpoint';
+  breakElement.innerHTML = '\u200B'; // Zero-width space
+
+  // Insert the break element after our styled span using the PARENT of the span
+  // This fixes the "Failed to execute 'insertBefore'" error
+  const spanParent = span.parentNode;
+  if (spanParent) {
+    if (span.nextSibling) {
+      spanParent.insertBefore(breakElement, span.nextSibling);
+    } else {
+      spanParent.appendChild(breakElement);
+    }
+    
+    // Set caret after the break element
+    newRange.setStartAfter(breakElement);
+    newRange.collapse(true);
+    selection.addRange(newRange);
+  }
+
+  // Save updated content
+  if (currentBlockType === "list") {
+    onBlockUpdate?.(selectedBlock.id, {
+      listItems: selectedBlock.listItems.map((item, idx) =>
+        idx === currentListItemIndex ? { ...item, content: editorEl.innerHTML } : item
+      ),
+    });
+  } else {
+    onBlockUpdate?.(selectedBlock.id, { content: editorEl.innerHTML });
+  }
+};
+
+
+
+
+// Inserts an emoji at the current caret position in the editor and then saves the content.
+const handleEmojiSelect = (emoji: string) => {
+  if (!selectedBlock) return;
+  
+  // For list items:
+  if (selectedBlock.type === "list" && selectedBlock.listItems) {
+    const key = `${selectedBlock.id}-${currentListItemIndex}`;
+    const listItemEditable = listItemsRef.current.get(key);
+    if (listItemEditable) {
+      const selection = window.getSelection();
+      if (!selection || selection.rangeCount === 0) return;
+      const range = selection.getRangeAt(0);
+      // If the selection is not inside the current list item, place caret at the end.
+      if (!listItemEditable.contains(range.commonAncestorContainer)) {
+        range.selectNodeContents(listItemEditable);
+        range.collapse(false);
+      }
+      // Delete any selected content and insert the emoji.
+      range.deleteContents();
+      const emojiNode = document.createTextNode(emoji);
+      range.insertNode(emojiNode);
+
+      // Move the caret after the inserted emoji.
+      const newRange = document.createRange();
+      newRange.setStartAfter(emojiNode);
+      newRange.collapse(true);
+      selection.removeAllRanges();
+      selection.addRange(newRange);
+
+      // Save the updated list item content (including emoji)
+      onBlockUpdate?.(selectedBlock.id, {
+        listItems: selectedBlock.listItems.map((item, index) =>
+          index === currentListItemIndex
+            ? { ...item, content: listItemEditable.innerHTML }
+            : item
+        )
+      });
+    }
+    return;
+  }
+  
+  // Regular block logic:
+  const editorEl = blocksRef.current[currentBlockIndex];
+  if (!editorEl) return;
+  
+  const selection = window.getSelection();
+  if (!selection || selection.rangeCount === 0) return;
+  const range = selection.getRangeAt(0);
+  // If the selection is not within the current editor, set the caret at the end.
+  if (!editorEl.contains(range.commonAncestorContainer)) {
+    range.selectNodeContents(editorEl);
+    range.collapse(false);
+  }
+  range.deleteContents();
+  const emojiNode = document.createTextNode(emoji);
+  range.insertNode(emojiNode);
+
+  // Move the caret after the inserted emoji.
+  const newRange = document.createRange();
+  newRange.setStartAfter(emojiNode);
+  newRange.collapse(true);
+  selection.removeAllRanges();
+  selection.addRange(newRange);
+
+  // Save the updated content (including the inserted emoji)
+  onBlockUpdate?.(selectedBlock.id, { content: editorEl.innerHTML });
+};
+
 
 
   const renderBlockEditor = () => {
@@ -394,6 +560,7 @@ currentBlockIndex,
 
     const commonFormatting = (
       <>
+  {currentBlockIndex !== 0 && (
         <div className="border-t border-light-gray mt-4 pt-4">
           <h4 className="text-sm font-medium text-charcoal mb-2">Text Formatting</h4>
           <div className="flex gap-1">
@@ -404,7 +571,7 @@ currentBlockIndex,
                 "flex-1 text-charcoal hover:text-ocean-blue",
                 (selectedBlock.textStyle?.bold || (selectedBlock.listItems && selectedBlock.listItems[currentListItemIndex]?.textStyle?.bold)) && "bg-light-gray text-ocean-blue",
               )}
-              onClick={() => handleTextStyle("bold")}
+              onClick={() => applyStyle("bold")}
             >
               <Bold className="h-4 w-4" />
             </Button>
@@ -415,7 +582,7 @@ currentBlockIndex,
                 "flex-1 text-charcoal hover:text-ocean-blue",
                 (selectedBlock.textStyle?.italic || selectedBlock.listItems && selectedBlock.listItems[currentListItemIndex]?.textStyle?.italic) && "bg-light-gray text-ocean-blue",
               )}
-              onClick={() => handleTextStyle("italic")}
+              onClick={() => applyStyle("italic")}
             >
               <Italic className="h-4 w-4" />
             </Button>
@@ -426,13 +593,15 @@ currentBlockIndex,
                 "flex-1 text-charcoal hover:text-ocean-blue",
                 (selectedBlock.textStyle?.underline || (selectedBlock.listItems && selectedBlock.listItems[currentListItemIndex]?.textStyle?.underline)) && "bg-light-gray text-ocean-blue",
               )}
-              onClick={() => handleTextStyle("underline")}
+              onClick={() => applyStyle("underline")}
             >
               <Underline className="h-4 w-4" />
             </Button>
          
                       </div>
         </div>
+        )}
+        
         {
 
 selectedBlock.type !== "list" && (
@@ -477,7 +646,7 @@ selectedBlock.type !== "list" && (
           </div>
         </div>
 )}
-        {(selectedBlock.type === "heading" || selectedBlock.type === "paragraph" || selectedBlock.type === "list") && (
+        {((selectedBlock.type === "heading" || selectedBlock.type === "paragraph" || selectedBlock.type === "list") && !isMobile) && (
           <div className="border-t border-light-gray mt-4 pt-4">
             <h4 className="text-sm font-medium text-charcoal mb-2">Emoji</h4>
             <div className="px-2">
@@ -509,7 +678,7 @@ selectedBlock.type !== "list" && (
             </div>
             {commonFormatting}
             <PositionSlider 
-              handlePositionChange={handlePositionChange}
+              handleBlockSpacing={handleBlockSpacing}
               initialValue={getInitialPositionValue()}
             />
           </div>
@@ -532,7 +701,7 @@ selectedBlock.type !== "list" && (
             </div>
             {commonFormatting}
             <PositionSlider 
-              handlePositionChange={handlePositionChange}
+              handleBlockSpacing={handleBlockSpacing}
               initialValue={getInitialPositionValue()}
             />
           </div>
@@ -688,7 +857,7 @@ selectedBlock.type !== "list" && (
             
             {/* Position slider */}
             <PositionSlider
-              handlePositionChange={handlePositionChange}
+              handleBlockSpacing={handleBlockSpacing}
               initialValue={getInitialPositionValue()}
             />
           </div>
@@ -761,7 +930,7 @@ selectedBlock.type !== "list" && (
                     onBlockUpdate?.(selectedBlock.id, {
                       listStyle: {
                         ...selectedBlock.listStyle,
-                        icon: value as "disc" | "circle" | "square" | "dash" | "none",
+                        icon: value as "disc" | "circle" | "dash" | "none" | "tick",
                       },
                     })
                   }
@@ -813,7 +982,7 @@ selectedBlock.type !== "list" && (
             )}
             {commonFormatting}
               <PositionSlider 
-              handlePositionChange={handlePositionChange}
+              handleBlockSpacing={handleBlockSpacing}
               initialValue={getInitialPositionValue()}
             />
           </div>
@@ -838,8 +1007,8 @@ selectedBlock.type !== "list" && (
         "transition-all duration-300 bg-white border-light-gray z-40",
         isMobile 
           ? cn(
-              "fixed bottom-0 left-0 right-0 border-t",
-              isExpanded ? "h-[40vh]" : "h-12"
+              "fixed bottom-0 left-0 right-0 border-t ",
+              isExpanded ? "h-[30vh]" : "h-12"
             )
           : cn(
               "fixed right-0 top-16 h-[calc(100vh-4rem)] border-l",
@@ -864,7 +1033,7 @@ selectedBlock.type !== "list" && (
       )}
       
       {isMobile && isExpanded && (
-        <div className="flex items-center justify-between p-2 border-b border-light-gray">
+        <div className="flex items-center justify-between p-2 border-b border-light-gray ">
           <div className="w-8"></div>
           <h3 className="font-medium text-charcoal">
             {selectedBlock ? "Block Settings" : "Add Blocks"}
@@ -906,8 +1075,8 @@ selectedBlock.type !== "list" && (
       )}
 
       {(isExpanded || selectedBlock) && (
-        <ScrollArea className={cn("h-full", isMobile && "pt-[0px]")}>
-          <div className="">
+        <ScrollArea className={cn("h-full ", isMobile && "pt-[0px]")}>
+          <div className="pt-[20px]">
             {!selectedBlock ? (
               <div className="space-y-4">
                 <div className={cn("flex items-center justify-between px-2", isMobile && "hidden")}>

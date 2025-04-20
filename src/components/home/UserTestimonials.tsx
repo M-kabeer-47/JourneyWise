@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from 'react'
 import Image from 'next/image'
 import { Star } from 'lucide-react'
 import { cn } from "@/lib/auth/utils"
+import {useRouter} from 'next/navigation'
 
 const testimonials = [
   { id: 1, name: 'David Bowes', image: '/user1.jpg', rating: 5, quote: 'TravelEase made planning my dream vacation a breeze!' },
@@ -94,10 +95,12 @@ const InfiniteMovingCards = ({
 };
 
 export default function UserTestimonials() {
+  const router = useRouter()
   return (
     <section className="py-16 bg-white mb-[100px]">
       <div className="mx-auto px-4">
         <h2 className="text-3xl font-bold mb-8 text-center">What Our Users Say</h2>
+        
         <InfiniteMovingCards items={testimonials} speed="normal" pauseOnHover={true} />
       </div>
     </section>

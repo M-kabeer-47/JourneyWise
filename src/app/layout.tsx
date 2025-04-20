@@ -1,32 +1,43 @@
+"use client"
 import './globals.css'
 import { Open_Sans, Raleway } from 'next/font/google'
 import StoreProvider from '../providers/redux'
 import Footer from '../components/home/Footer'
 import Navbar from '../components/home/Navbar'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 const openSans = Open_Sans({ subsets: ['latin'] })
 const raleway = Raleway({ subsets: ['latin'], variable: '--font-raleway' })
 
-export const metadata = {
-  title: 'Premium Travel App',
-  description: 'Explore the world with ease',
-}
-
+// export const metadata = {
+//   title: 'Premium Travel App',
+//   description: 'Explore the world with ease',
+// }
+const queryClient = new QueryClient()
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  
   return (
     <html lang="en">
+        <QueryClientProvider client={queryClient} >
+        
+      <StoreProvider>
       
-      <StoreProvider>   
+        
       
       <body className={`${openSans.className} ${raleway.variable}`}>
-      {/* <Navbar />   */}
+      <ReactQueryDevtools initialIsOpen={false} />   
+      <Navbar />  
         {children}
-        {/* <Footer /> */}
+        <Footer />
       </body>
+      
       </StoreProvider>  
+      </QueryClientProvider>
+      
       
     </html>
   )
