@@ -14,6 +14,7 @@ import type { Waypoint } from "@/lib/types/waypoint"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
 import { cn } from "@/utils/shadcn/utils"
+import ImageModal from "../ui/ImageModal"
 interface WaypointTimelineProps {
   waypoints: Waypoint[]
   activeIndex: number
@@ -450,26 +451,11 @@ export const WaypointTimeline = (props: WaypointTimelineProps) => {
 
       {/* Shared Image Modal */}
       {isImageModalOpen && selectedWaypoint && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center w-full z-50">
-          <div className="relative rounded-[0px] h-[40] min-[700px]:h-[70%] px-[2%]">
-            <div className="flex justify-end">
-              <button
-                onClick={() => setIsImageModalOpen(false)}
-                className="absolute top-[-30px] text-white"
-              >
-                <X className="w-6 h-6" />
-              </button>
-            </div>
-            <img
-              src={selectedWaypoint.imageUrl || "/placeholder.svg"}
-              alt={selectedWaypoint.name}
-              className="w-full h-full object-contain"
-            />
-            <p className="mt-2 text-sm text-gray-200">
-              
-            </p>
-          </div>
-        </div>
+       <ImageModal
+        isOpen={isImageModalOpen}
+        imageUrl={selectedWaypoint.imageUrl || ""}       
+         onClose={() => setIsImageModalOpen(false)}
+        />
       )}
     </>
   )

@@ -20,10 +20,6 @@
     const handleFocus = (fieldName: string) => setFocusedField(fieldName)
     const handleBlur = () => setFocusedField(null)
 
-    useEffect(()=>{
-    console.log("Submit",submit)
-    console.log("Requirements",formData.requirements)
-    },[submit])
 
     const addTier = () => {
       if (formData.tiers.length < 3) {
@@ -68,6 +64,16 @@
       handleInputChange("requirements", newRequirements)
     }
 
+
+
+
+    
+    useEffect(()=>{
+    console.log("Submit",submit)
+    console.log("Requirements",formData.requirements)
+    },[submit])
+
+    
     useEffect(() => {
       const fetchCurrencies = async () => {
         try {

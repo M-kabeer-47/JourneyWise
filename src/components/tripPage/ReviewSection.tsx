@@ -1,3 +1,4 @@
+"use client"
 import React, { useState } from 'react';
 import { Star, MessageCircle, User } from 'lucide-react';
 import { cn } from '@/utils/shadcn/utils';

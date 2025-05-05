@@ -58,6 +58,6 @@ export const stepFourSchema = z.object({
 })
 
 
-export const formSchema = stepOneSchema.merge(stepTwoSchema).merge(stepThreeSchema).merge(stepFourSchema)
+export const formSchema = stepOneSchema.merge(stepTwoSchema).merge(stepThreeSchema).merge(stepFourSchema).merge(z.object({"averageRating": z.number().optional(), "totalReviews": z.number().optional(), "id": z.string().optional()}))
 
 export type ExperienceData = z.infer<typeof formSchema>

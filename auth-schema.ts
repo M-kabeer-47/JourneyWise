@@ -1,3 +1,4 @@
+
 import {
   pgTable,
   text,
@@ -7,6 +8,7 @@ import {
   boolean,
   jsonb,
   date,
+  doublePrecision,
 } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -60,7 +62,7 @@ export const gig = pgTable("gig", {
   category: jsonb("category").notNull(),
   requirements: jsonb("requirements"),
   tags: jsonb("tags"),
-  averageRating: integer("averageRating").notNull(),
+  averageRating: doublePrecision("averageRating").notNull(),
   isAvailable: boolean("isAvailable").notNull(),
   createdAt: timestamp("createdAt").notNull(),
 });
@@ -134,7 +136,7 @@ export const review = pgTable("review", {
 		.notNull()
 		.references(() => user.id),
 	comment: text("comment").notNull(),
-	rating: integer("rating").notNull(),
+	rating: doublePrecision("rating").notNull(),
 	createdAt: timestamp("createdAt").notNull(),
 });
 

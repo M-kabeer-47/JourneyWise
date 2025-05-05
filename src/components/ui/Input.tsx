@@ -1,44 +1,22 @@
-import React, { useState } from 'react'
-import { FiEye, FiEyeOff } from 'react-icons/fi'
+import * as React from "react"
 
-interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string
-  error?: string
-}
+import { cn } from "@/utils/shadcn/utils"
 
-const Input: React.FC<InputProps> = ({ label, error, ...props }) => {
-  const [showPassword, setShowPassword] = useState(false)
-
-  const togglePasswordVisibility = () => {
-    setShowPassword(!showPassword)
-  }
-
-  return (
-    <div className="mb-6 w-full">
-      <label className="block text-gray-700 text-sm font-semibold mb-2" htmlFor={props.id || props.name}>
-        {label}
-      </label>
-      <div className="relative">
-        <input
-          className={`input-field ${error ? 'border-red-500' : 'border-gray-300'}`}
-          {...props}
-          type={props.type === 'password' && showPassword ? 'text' : props.type}
-        />
-        {props.type === 'password' && (
-          <button
-            type="button"
-            tabIndex={-1}
-            onClick={togglePasswordVisibility}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-          >
-            {showPassword ? <FiEyeOff className="text-gray-500" /> : <FiEye className="text-gray-500" />}
-          </button>
+const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
+  ({ className, type, ...props }, ref) => {
+    return (
+      <input
+        type={type}
+        className={cn(
+          "flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-base shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 md:text-sm",
+          className
         )}
-      </div>
-      {error && <p className="mt-1 text-red-500 text-xs italic">{error}</p>}
-    </div>
-  )
-}
+        ref={ref}
+        {...props}
+      />
+    )
+  }
+)
+Input.displayName = "Input"
 
-export default Input
-
+export { Input }

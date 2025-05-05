@@ -263,3 +263,27 @@ div[contenteditable][data-placeholder]:empty:before {
   color: #aaa;
 }
 
+/* Add this to your global CSS or as a styled component */
+.grid-skeleton-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .grid-skeleton-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1280px) {
+  .grid-skeleton-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (min-width: 1536px) {
+  .grid-skeleton-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}

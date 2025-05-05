@@ -85,6 +85,13 @@
       "when": 1742986107332,
       "tag": "0011_safe_ultron",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1745753015478,
+      "tag": "0012_chubby_romulus",
+      "breakpoints": true
     }
   ]
 }

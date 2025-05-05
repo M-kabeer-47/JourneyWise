@@ -4,7 +4,7 @@ const client = createAuthClient()
 export const signIn = async () => {
     const data = await client.signIn.social({
         provider: "google",
-        callbackURL: "http://localhost:3000/dashboard"
+        callbackURL: "http://localhost:3000/"
         
     })  
 }

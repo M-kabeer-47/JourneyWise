@@ -3,11 +3,10 @@ import axios from "axios";
 import { auth } from "@/lib/auth/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import "dotenv/config";
 export default async function Dashboard() {
   console.log("BACKEND: "+process.env.NEXT_PUBLIC_BACKEND_URL);
   const session = await auth.api.getSession({ headers: await headers() });
-
+  console.log("User: "+ session && JSON.stringify(session.user));
   if (!session) {
     redirect("/sign-in"); // This stops further execution
   }

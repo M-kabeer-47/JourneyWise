@@ -74,7 +74,7 @@ export default function HeroSection() {
           Discover unique experiences, plan your journey, and create unforgettable memories.
         </motion.p>
         <motion.div
-          className="relative max-w-md mx-auto mb-8"
+          className="relative max-w-lg mx-auto mb-8 "
         >
           <input
             type="text"
@@ -107,4 +107,3 @@ export default function HeroSection() {
     </motion.section>
   )
 }
-

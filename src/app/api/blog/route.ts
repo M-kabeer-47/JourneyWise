@@ -11,7 +11,6 @@ export async function POST(request: NextRequest){
             title: title,
             content: content,
             blocks: blocks,
-            skeleton: skeleton,
             authorId:  "4Tlkb3LOqayKnRDTGayGXHWC6qsePSW7",
             createdAt: new Date(),
             updatedAt: new Date() 

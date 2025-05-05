@@ -12,7 +12,7 @@ import { Waypoint } from "@/lib/types/waypoint"
 import PremiumTimeline from "@/components/my-trips/PremiumTimeline"
 import WaypointCard from "@/components/my-trips/TripCard"
 import TripOverview from "@/components/my-trips/TripDetails"
-import ImageModal from "@/components/my-trips/ImageModal"
+import ImageModal from "@/components/ui/ImageModal"
 import axios from "axios"
 import { useQuery } from "@tanstack/react-query"
 
@@ -25,6 +25,11 @@ interface trip {
   currency: string
   createdAt: string
 }
+
+
+let startLocation;
+let endLocation;
+
 
 export default function TripDetail() {
   const params = useParams()
@@ -68,24 +73,19 @@ export default function TripDetail() {
     }
   }
   , [isError])
-  // Handle scrolling and active waypoint tracking
- // Handle scrolling and active waypoint tracking
+  
 useEffect(() => {
   if (!contentRef.current) return;
   
   const handleScroll = () => {
-    // Get all visible waypoint elements
-    const waypointElements = waypointRefs.current.filter(Boolean);
-    const contentElement = contentRef.current;
-    if (!contentElement) return;
-    
-    // Calculate scroll progress for progress bar
-    const scrollable = contentElement.scrollHeight - contentElement.clientHeight;
-    const scrolled = contentElement.scrollTop;
+    // Use window scroll instead of contentElement scroll
+    const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = window.scrollY || document.documentElement.scrollTop;
     const progress = Math.min(scrolled / scrollable, 1);
     setScrollProgress(progress);
     
     // Find which waypoint is most visible in the viewport
+    const waypointElements = waypointRefs.current.filter(Boolean);
     let foundVisible = false;
     
     for (let i = 0; i < waypointElements.length; i++) {
@@ -93,10 +93,9 @@ useEffect(() => {
       if (!waypoint) continue;
       
       const rect = waypoint.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
       
       // Consider a waypoint visible if it's in the top portion of the screen
-      if (rect.top >= 0 && rect.top <= windowHeight/2) {
+      if (rect.top >= 0 && rect.top <= window.innerHeight/2) {
         if (activeWaypointIndex !== i) {
           setActiveWaypointIndex(i);
         }
@@ -112,10 +111,9 @@ useEffect(() => {
         if (!waypoint) continue;
         
         const rect = waypoint.getBoundingClientRect();
-        const windowHeight = window.innerHeight;
         
         // Check if waypoint is in the visible area
-        if (rect.top <= windowHeight && rect.bottom >= 0) {
+        if (rect.top <= window.innerHeight && rect.bottom >= 0) {
           if (activeWaypointIndex !== i) {
             setActiveWaypointIndex(i);
           }
@@ -125,68 +123,17 @@ useEffect(() => {
     }
   };
   
-  const contentElement = contentRef.current;
-  contentElement.addEventListener('scroll', handleScroll);
+  // Update the event listener to use window instead of contentElement
+  window.addEventListener('scroll', handleScroll);
   
   return () => {
-    contentElement.removeEventListener('scroll', handleScroll);
+    window.removeEventListener('scroll', handleScroll);
   };
 }, [activeWaypointIndex]);
   
-  // Simple function to highlight and scroll to timeline waypoint
-  const highlightTimelineWaypoint = (index: number) => {
-    if (!timelineRef.current) return;
-    
-    // Find the waypoint element in the timeline
-    const timelineWaypointElements = timelineRef.current.querySelectorAll('.relative');
-    
-    if (index >= 0 && index < timelineWaypointElements.length) {
-      const waypointElement = timelineWaypointElements[index] as HTMLElement;
-      
-      if (waypointElement) {
-        // Get the timeline container's dimensions
-        const timeline = timelineRef.current;
-        const timelineHeight = timeline.clientHeight;
-        
-        // Calculate position to center the waypoint in the timeline view
-        const waypointPosition = waypointElement.offsetTop;
-        const scrollTarget = waypointPosition - (timelineHeight / 2) + 50;
-        
-        // Scroll the timeline
-        timeline.scrollTo({
-          top: Math.max(0, scrollTarget),
-          behavior: 'smooth'
-        });
-      }
-    }
-  };
+  
 
 
-  useEffect(() => {
-    // Update timeline position when activeWaypointIndex changes
-    if (activeWaypointIndex === undefined || !timelineRef.current) return;
-    
-    // Find waypoint elements by their structure in PremiumTimeline
-    const timeline = timelineRef.current;
-    const waypointElements = timeline.querySelectorAll('.relative');
-    
-    if (!waypointElements[activeWaypointIndex]) return;
-    
-    const timelineHeight = timeline.clientHeight;
-    const waypointElement = waypointElements[activeWaypointIndex] as HTMLElement;
-    const waypointTop = waypointElement.offsetTop;
-    
-    // Center the waypoint in the timeline
-    const scrollPosition = waypointTop - (timelineHeight / 2) + 30;
-    
-    // Use requestAnimationFrame for smoother scrolling
-    requestAnimationFrame(() => {
-      timeline.scrollTo({
-        top: Math.max(0, scrollPosition),
-        behavior: 'smooth'
-      });
-    });
-  }, [activeWaypointIndex]);
   
   // Add a new useEffect to handle timeline scrolling when activeWaypointIndex changes
   useEffect(() => {
@@ -195,25 +142,26 @@ useEffect(() => {
   }, [activeWaypointIndex]);
 
   // Modify scrollTimelineToWaypoint to better find elements in the timeline
+  
   const scrollTimelineToWaypoint = (index: number) => {
     if (!timelineRef.current || !fetchedData.trip) return;
+      
     
-    // Using setTimeout to ensure the DOM is updated
     setTimeout(() => {
       const timeline = timelineRef.current;
       if (!timeline) return;
-      
-      // Find waypoint elements by their structure in PremiumTimeline
-      const waypointElements = timeline.querySelectorAll('.relative');
-      
+        
+      // Find waypoint elements by the new specific class
+      const waypointElements = timeline.querySelectorAll('.waypoint-container');
+        
       if (waypointElements[index]) {
         const timelineHeight = timeline.clientHeight;
         const waypointElement = waypointElements[index] as HTMLElement;
         const waypointTop = waypointElement.offsetTop;
-        
+          
         // Center the waypoint in the timeline
         const scrollPosition = waypointTop - (timelineHeight / 2) + 40; // Adjusted for better centering
-        
+          
         // Smooth scroll to the waypoint
         timeline.scrollTo({
           top: Math.max(0, scrollPosition),
@@ -222,11 +170,10 @@ useEffect(() => {
       }
     }, 10); // Small delay to ensure DOM updates
   };
-
   // Scroll to waypoint when clicked in timeline
   const scrollToWaypoint = (index: number) => {
     const waypointElement = waypointRefs.current[index];
-    if (!waypointElement || !contentRef.current) return;
+    if (!waypointElement) return;
     
     // Set active waypoint index first
     setActiveWaypointIndex(index);
@@ -234,8 +181,8 @@ useEffect(() => {
     // Simple fixed offset calculation - use a consistent value
     const offset = 150; // Fixed offset for better positioning
     
-    // Scroll the main content area to the selected waypoint
-    contentRef.current.scrollTo({
+    // Scroll the window to the selected waypoint
+    window.scrollTo({
       top: waypointElement.offsetTop - offset,
       behavior: 'smooth'
     });
@@ -253,16 +200,18 @@ useEffect(() => {
     );
   }
 
- let startLocation;
- let endLocation;
+ 
   if (fetchedData.trip) {
      startLocation = fetchedData.trip.waypoints.find(w => w.type === "start")?.name || "Start";
    endLocation = fetchedData.trip.waypoints.find(w => w.type === "end")?.name || "End";  
   }
+  else{
+    return; 
+  }
   
 
   return (
-    <div className="h-screen flex flex-col bg-light-gray font-sans mb-[100px] relative top-[60px]">
+    <div className="h-auto flex flex-col bg-light-gray font-sans mb-[100px] relative top-[60px]">
       {/* Header */}
       <header className="sticky top-0 z-30 bg-white border-b border-gray-200 shadow-sm mb-[10px]">
         <div className="container mx-auto px-4 py-4 flex items-center">
@@ -335,9 +284,9 @@ useEffect(() => {
       </header>
       
       {/* Main content area */}
-      <div className="flex-1 flex flex-col md:flex-row overflow-hidden">
-        {/* Timeline sidebar - pass the timelineRef to the component */}
-        <div className="md:w-80 lg:w-96 bg-white overflow-hidden border-r border-gray-200 shadow-sm hidden md:block">
+      <div className="flex-1 flex flex-col md:flex-row">
+        {/* Timeline sidebar - fixed position instead of scrollable */}
+        <div className="md:w-80 lg:w-96 bg-white border-r border-gray-200 shadow-sm hidden md:block md:sticky md:top-0 md:h-screen">
           <PremiumTimeline 
             waypoints={fetchedData.trip.waypoints}
             activeWaypointIndex={activeWaypointIndex}
@@ -348,13 +297,14 @@ useEffect(() => {
             budget={fetchedData.trip.estimatedBudget}
             currency={fetchedData.trip.currency}
             timelineRef={timelineRef}
+            scrollProgress={scrollProgress}
           />
         </div>
         
-        {/* Main content */}
+        {/* Main content - will use the main page scrollbar */}
         <div 
           ref={contentRef}
-          className="flex-1 overflow-y-auto  px-4 pb-8 md:pb-[150px] md:px-8 lg:px-12"
+          className="flex-1 px-4 pb-8 md:pb-[150px] md:px-8 lg:px-12"
         >
           {/* fetchedData.trip overview */}
           <TripOverview 
@@ -391,11 +341,11 @@ useEffect(() => {
       </div>
       
       {/* Image modal */}
-      <ImageModal 
+      <ImageModal
         isOpen={isImageModalOpen}
         onClose={() => setIsImageModalOpen(false)}
-        waypoint={fetchedData.trip.waypoints[activeWaypointIndex] || null}
-      />
+        imageUrl={fetchedData.trip.waypoints[activeWaypointIndex].imageUrl || ""}
+        />
       
       <Toast />
     </div>

@@ -12,8 +12,8 @@ const ImageModal = ({ isOpen, onClose, imageUrl, alt = "Image" }: ImageModalProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center w-full z-50 top-[-60px]">
-          <div className="relative rounded-[0px] h-[40] min-[700px]:h-[70%] px-[2%]">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center w-full z-50 top-[50px]">
+          <div className="relative rounded-[0px] h-[70] min-[700px]:h-[70%] px-[2%]">
             <div className="flex justify-end">
               <button
                 onClick={() => onClose()}

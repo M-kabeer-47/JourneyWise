@@ -57,7 +57,7 @@ export default function Home() {
     mode: "onSubmit"
   })
 
-  const { fields: waypoints, update: updateWaypoint, remove: removeWaypoint, insert: insertWaypoint } = useFieldArray({
+  const { fields: waypoints,  remove: removeWaypoint, insert: insertWaypoint } = useFieldArray({
     name: "waypoints",
     control,
   })

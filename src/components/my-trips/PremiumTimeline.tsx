@@ -14,6 +14,8 @@ interface PremiumTimelineProps {
   budget?: number;
   currency?: string;
   timelineRef?: React.RefObject<HTMLDivElement>;
+  scrollProgress?: number;
+  
 }
 
 // Add a simple solution to prevent auto-scrolling when a waypoint is clicked
@@ -22,47 +24,32 @@ export default function PremiumTimeline({
   waypoints,
   activeWaypointIndex,
   onWaypointClick,
+  scrollProgress,
+  
   timelineRef: externalTimelineRef
 }: PremiumTimelineProps) {
   
   const [progressBarTop, setProgressBarTop] = useState(0);
   const [progressBarHeight, setProgressBarHeight] = useState(0);
   const [isUserScrolling, setIsUserScrolling] = useState(false);
-  
+  const [hoveredWaypointIndex, setHoveredWaypointIndex] = useState<number | null>(null);
+  const [clickedWaypointIndex, setClickedWaypointIndex] = useState<number | undefined>(undefined);
   const internalTimelineRef = useRef<HTMLDivElement>(null);
   // Use the externally provided ref or fall back to internal one
   const timelineRef = externalTimelineRef || internalTimelineRef;
   const waypointRefs = useRef<(HTMLDivElement | null)[]>([]);
   
   
-  const handleWaypointClick = (index: number) => {
-    // Set a flag to prevent auto-scrolling in the timeline
-    setIsUserScrolling(true);
-    
-    // Call the original click handler
-    onWaypointClick(index);
-    
-    // Reset the flag after a short delay to allow for normal behavior afterward
-    setTimeout(() => {
-      setIsUserScrolling(false);
-    }, 1000);
-  };
+  // Find line ~41 and replace the handleWaypointClick function
+// Find line ~41 and replace the handleWaypointClick function
+const handleWaypointClick = (index: number) => {
+  setClickedWaypointIndex(index);  
+  onWaypointClick(index);
+  
+};
   
   // Original coloring
-  const getWaypointColor = (type: string) => {
-    switch (type) {
-      case "start":
-        return "bg-ocean-blue";
-      case "attraction":
-        return "bg-ocean-blue/90";
-      case "stop":
-        return "bg-ocean-blue/80";
-      case "end":
-        return "bg-midnight-blue";
-      default:
-        return "bg-ocean-blue";
-    }
-  };
+ 
 
   const getWaypointIcon = (type: string) => {
     const iconProps = { className: "w-4 h-4 text-white" };
@@ -101,64 +88,46 @@ export default function PremiumTimeline({
     waypointRefs.current = waypointRefs.current.slice(0, waypoints.length);
   }, [waypoints.length]);
   
-  // Simplify the progress bar logic
-  useEffect(() => {
-    // Simple function to update the progress bar based on active waypoint
-    const updateProgressBar = () => {
-      if (!timelineRef.current || waypointRefs.current.length === 0) return;
-      
-      // Get all waypoint elements
-      const allWaypoints = waypointRefs.current.filter(Boolean);
-      
-      if (allWaypoints.length < 2) return;
-      
-      // Get the first waypoint position
-      const firstWaypoint = allWaypoints[0];
-      if (!firstWaypoint) return;
+  
+
+  
+useEffect(() => {
+  const updateProgressBar = () => {
+    if (!timelineRef.current || waypointRefs.current.length < 2) return;
+    
+    const allWaypoints = waypointRefs.current.filter(Boolean);
+    if (allWaypoints.length < 2) return;
+    
+    const firstWaypoint = allWaypoints[0];
+    const activeWaypoint = allWaypoints[activeWaypointIndex];
+    
+    if (firstWaypoint && activeWaypoint) {
       const firstTop = firstWaypoint.offsetTop + 16;
-      
-      // For the height, we use the active waypoint position
-      const activeWaypoint = allWaypoints[activeWaypointIndex];
-      if (!activeWaypoint) return;
       const activeTop = activeWaypoint.offsetTop + 16;
       
-      // Set the position and height directly
       setProgressBarTop(firstTop);
       setProgressBarHeight(activeWaypointIndex === 0 ? 0 : activeTop - firstTop);
-      
-      // Only auto-scroll when not clicking waypoints
-      if (!isUserScrolling && activeWaypoint) {
-        const timeline = timelineRef.current;
-        const timelineHeight = timeline.clientHeight;
-        
-        // Center the waypoint in the timeline view
-        const scrollPosition = activeWaypoint.offsetTop - (timelineHeight / 2) + 40;
-        
-        // Smooth scroll to the position
-        timeline.scrollTo({
-          top: Math.max(0, scrollPosition),
-          behavior: 'smooth'
-        });
-      }
-    };
-    
-    // Wait for a frame to ensure DOM is ready
-    requestAnimationFrame(updateProgressBar);
-    
-    // Clean up
-    window.addEventListener('resize', updateProgressBar);
-    return () => window.removeEventListener('resize', updateProgressBar);
-  }, [activeWaypointIndex, isUserScrolling]);
+    }
+  };
+
+  // Defer measurement until after DOM updates
+  const timer = setTimeout(updateProgressBar, 50);
+  window.addEventListener("resize", updateProgressBar);
+  return () => {
+    clearTimeout(timer);
+    window.removeEventListener("resize", updateProgressBar);
+  };
+}, [activeWaypointIndex]);
 
   // Dynamically control spacing between waypoints
   const baseSpacing = 8; // default spacing in rem
   const dynamicSpacing = Math.max(2, baseSpacing - 0.8 * (waypoints.length - 1));
 
   return (
-    <div ref={timelineRef} className="h-full flex flex-col bg-white p-6 overflow-y-auto overflow-x-hidden custom-scrollbar">
+    <div ref={timelineRef} className="h-full flex flex-col bg-white p-6 overflow-y-auto overflow-x-hidden custom-scrollbar pb-[170px]">
       {/* Header */}
-      <div className="mb-6 pb-4 border-b border-gray-100">
-        <h2 className="text-xl font-bold text-midnight-blue">Journey Timeline</h2>
+      <div className="mb-6 pb-4 border-b border-gray-100 ">
+        <h2 className="text-xl font-bold text-midnight-blue ">Journey Timeline</h2>
         <p className="text-sm text-gray-500 mt-1">Track your adventure</p>
       </div>
 
@@ -177,7 +146,10 @@ export default function PremiumTimeline({
         />
 
         {waypoints.map((waypoint, index) => {
-          const isActive = index === activeWaypointIndex;
+          
+          const isActiveByScroll = index === activeWaypointIndex;
+          const isActiveByClick = clickedWaypointIndex !== undefined && index === clickedWaypointIndex;
+          const isActiveByHover = index === hoveredWaypointIndex;
           const isPassed = index < activeWaypointIndex;
 
           return (
@@ -185,16 +157,17 @@ export default function PremiumTimeline({
               key={waypoint.id}
               ref={el => waypointRefs.current[index] = el}
               style={{ marginBottom: `${index === waypoints.length - 1 ? 0 : dynamicSpacing}rem` }}
-              className="relative"
+              className="relative "
+              
             >
               {/* Icon wrapper - using ref-based approach instead of class selector */}
               <div
                 className={`
                   absolute -left-[38px] w-8 h-8 rounded-full
                   flex items-center justify-center z-10
-                  ${getWaypointColor(waypoint.type)}
-                  ${isActive ? "shadow-md" : "shadow-sm hover:shadow"}
-                  transition-shadow duration-300
+                  ${(isActiveByClick || isActiveByHover) ? "shadow-md" : "shadow-sm hover:shadow"}
+                  ${isActiveByClick ? "bg-midnight-blue" : "bg-ocean-blue"}
+                  transition-all duration-300
                 `}
                 style={{ top: 0 }}
               >
@@ -205,11 +178,13 @@ export default function PremiumTimeline({
               {/* Improved Waypoint Button - FIXED POSITIONING */}
               <motion.button
                 onClick={() => handleWaypointClick(index)}
+                onHoverStart={() => setHoveredWaypointIndex(index)}
+                onHoverEnd={() => setHoveredWaypointIndex(null)}
                 className={`
                   ml-10 px-4 py-3 rounded-lg w-full text-left
                   transition-all duration-300 
                   relative left-[-30px]
-                  ${isActive 
+                  ${isActiveByClick || isActiveByHover
                     ? "bg-light-gray/60 shadow-sm" 
                     : isPassed
                       ? "bg-white hover:bg-light-gray/20"
@@ -225,7 +200,7 @@ export default function PremiumTimeline({
                   <div className="flex-1">
                     <h3 className={`
                       text-base font-semibold mb-1
-                      ${isActive ? "text-midnight-blue" : "text-gray-700"}
+                      ${isActiveByClick ? "text-midnight-blue" : "text-gray-700"}
                     `}>
                       {waypoint.name}
                     </h3>
@@ -243,7 +218,7 @@ export default function PremiumTimeline({
                     )}
                   </div>
                   
-                  {isActive && (
+                  {(isActiveByClick || isActiveByHover) && (
                     <ArrowRight className="w-4 h-4 text-ocean-blue" />
                   )}
                 </div>

@@ -39,20 +39,7 @@ import {
       }
     };
   
-    const getWaypointColor = (type: string) => {
-      switch (type) {
-        case "start":
-          return "bg-ocean-blue";
-        case "attraction":
-          return "bg-ocean-blue/90";
-        case "stop":
-          return "bg-ocean-blue/80";
-        case "end":
-          return "bg-midnight-blue";
-        default:
-          return "bg-ocean-blue";
-      }
-    };
+    
   
     const getWaypointLabel = (type: string) => {
       switch (type) {
