@@ -26,8 +26,9 @@ import {
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/utils/shadcn/utils";
-import TierSelectionCard from "./TierSelectionCard";
+import {TierSelectionCard} from "./TierSelectionCard";
 import { toast } from "@/components/ui/Toast";
+import {CustomTierSection} from "./TierSelectionCard";
 
 const formSchema = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),
@@ -39,13 +40,15 @@ const formSchema = z.object({
   tier: z.string({
     required_error: "Please select a package tier",
   }),
+  customMembers: z.string().optional(),
+  customNotes: z.string().optional(),
   notes: z.string().optional(),
   promoCode: z.string().optional(),
 });
 
 export default function BookingForm({
   tripData,
-  onFormChange,
+  
   onTierSelect,
   onDateUpdate,
   selectedTier,
@@ -55,6 +58,8 @@ export default function BookingForm({
   const [endDate, setEndDate] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPromoField, setShowPromoField] = useState(false);
+  const [isCustomTierSelected, setIsCustomTierSelected] = useState(false);
+  const [customMembers, setCustomMembers] = useState(1);
 
   // Initialize the form without dependency on selectedTier
   const {
@@ -110,12 +115,40 @@ export default function BookingForm({
 
   const handleTierSelect = (tierName) => {
     setValue("tier", tierName);
-
+    
+    // If a regular tier is selected, uncheck custom tier
+    if (tierName !== "custom" && isCustomTierSelected) {
+      setIsCustomTierSelected(false);
+    }
+  
     // Notify parent component
     if (onTierSelect) {
       onTierSelect(tierName);
     }
   };
+
+  const handleCustomMemberChange = (newCount) => {
+    setCustomMembers(newCount);
+  };
+
+  useEffect(() => {
+    if (isCustomTierSelected) {
+      setValue("tier", "custom");
+      onTierSelect && onTierSelect("custom");
+    } else {
+      // If custom tier is unchecked, select the first tier or currently selected tier
+      if (selectedTier && selectedTier !== "custom") {
+        setValue("tier", selectedTier);
+        onTierSelect && onTierSelect(selectedTier);
+      } else if (tripData?.experience?.tier?.tierInfo?.length) {
+        const defaultTier = tripData.experience.tier.tierInfo[0].name;
+        setValue("tier", defaultTier);
+        onTierSelect && onTierSelect(defaultTier);
+      }
+    }
+  }, [isCustomTierSelected, setValue, onTierSelect, selectedTier, tripData]);
+
+  
 
   const onSubmit = async (data) => {
     setIsSubmitting(true);
@@ -124,27 +157,49 @@ export default function BookingForm({
       // Simulate API call
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Get the selected tier data
-      const selectedTierData = tripData.experience.tier.tierInfo.find(
-        (tier) => tier.name === data.tier
-      );
+      // Create booking object based on standard or custom tier
+      let booking;
 
-      // Create full booking object
-      const booking = {
-        ...data,
-        tripId: tripData.experience.id,
-        endDate: endDate,
-        tripName: tripData.experience.title,
-        tripPrice: selectedTierData.price,
-        people: selectedTierData.members,
-        currency: tripData.experience.tier.currency,
-        agent: tripData.agent.name,
-      };
+      if (data.tier === "custom") {
+        booking = {
+          ...data,
+          tripId: tripData.experience.id,
+          endDate: endDate,
+          tripName: tripData.experience.title,
+          people: parseInt(data.customMembers || "2"),
+          isCustomRequest: true,
+          requiresAgentConfirmation: true,
+          currency: tripData.experience.tier.currency,
+          agent: tripData.agent.name,
+        };
 
-      console.log("Booking submitted:", booking);
-      toast.success(
-        "Booking submitted successfully! Redirecting to payment..."
-      );
+        console.log("Custom booking submitted:", booking);
+        toast.success(
+          "Your custom request has been submitted. The agent will review and confirm shortly."
+        );
+      } else {
+        // Get the selected tier data
+        const selectedTierData = tripData.experience.tier.tierInfo.find(
+          (tier) => tier.name === data.tier
+        );
+
+        // Create full booking object
+        booking = {
+          ...data,
+          tripId: tripData.experience.id,
+          endDate: endDate,
+          tripName: tripData.experience.title,
+          tripPrice: selectedTierData.price,
+          people: selectedTierData.members,
+          currency: tripData.experience.tier.currency,
+          agent: tripData.agent.name,
+        };
+
+        console.log("Booking submitted:", booking);
+        toast.success(
+          "Booking submitted successfully! Redirecting to payment..."
+        );
+      }
     } catch (error) {
       toast.error("Something went wrong. Please try again.");
       console.error("Booking error:", error);
@@ -173,8 +228,8 @@ export default function BookingForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
       <motion.div initial="hidden" animate="visible" variants={sectionVariants}>
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-full bg-ocean-blue flex items-center justify-center text-white">
-            <User size={16} />
+          <div className="w-8 h-8 rounded-full bg-ocean-blue/20 flex items-center justify-center text-white">
+            <User size={16} className="text-midnight-blue" />
           </div>
           <h2 className="text-2xl font-bold text-midnight-blue">
             Your Details
@@ -259,8 +314,8 @@ export default function BookingForm({
         className="pt-6 border-t border-gray-100"
       >
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-full bg-ocean-blue flex items-center justify-center text-white">
-            <Badge size={16} />
+          <div className="w-8 h-8 rounded-full bg-ocean-blue/20 flex items-center justify-center text-white">
+            <Badge size={16} className="text-midnight-blue" />
           </div>
           <h2 className="text-2xl font-bold text-midnight-blue">
             Experience Package
@@ -283,44 +338,15 @@ export default function BookingForm({
           <p className="mt-1 text-sm text-red-600">{errors.tier.message}</p>
         )}
 
-        {!showPromoField && (
-          <div className="mt-4">
-            <button
-              type="button"
-              className="text-ocean-blue hover:underline text-sm flex items-center"
-              onClick={() => setShowPromoField(true)}
-            >
-              <Gift size={14} className="mr-1" />
-              Do you have a promo code?
-            </button>
-          </div>
-        )}
+        
 
-        {showPromoField && (
-          <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: "auto" }}
-            exit={{ opacity: 0, height: 0 }}
-            className="mt-4"
-          >
-            <Label
-              htmlFor="promoCode"
-              className="text-sm font-medium text-gray-700"
-            >
-              Promo Code
-            </Label>
-            <div className="mt-1 relative">
-              <Gift className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              <Input
-                id="promoCode"
-                {...register("promoCode")}
-                className="pl-10 w-full h-10 rounded-lg border-gray-200 text-charcoal text-sm
-                         transition-all duration-200 outline-none focus:outline-none focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                placeholder="Enter promo code"
-              />
-            </div>
-          </motion.div>
-        )}
+        {/* Custom Tier Option */}
+        <CustomTierSection 
+          isCustomTierSelected={isCustomTierSelected}
+          setIsCustomTierSelected={setIsCustomTierSelected}
+          register={register}
+          errors={errors}
+        />
       </motion.div>
 
       <motion.div
@@ -330,8 +356,8 @@ export default function BookingForm({
         className="pt-6 border-t border-gray-100"
       >
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-full bg-ocean-blue flex items-center justify-center text-white">
-            <Calendar size={16} />
+          <div className="w-8 h-8 rounded-full bg-ocean-blue/20 flex items-center justify-center text-white">
+            <Calendar size={16} className="text-midnight-blue"/>
           </div>
           <h2 className="text-2xl font-bold text-midnight-blue">Trip Dates</h2>
         </div>
@@ -350,7 +376,7 @@ export default function BookingForm({
                     "transition-all duration-200 outline-none focus:outline-none hover:border-ocean-blue focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
                   )}
                 >
-                  <Calendar className="mr-2 h-4 w-4 text-ocean-blue" />
+                  <Calendar className="mr-2 h-4 w-4 text-midnight-blue" />
                   {selectedDate
                     ? format(selectedDate, "PPP")
                     : "Select trip start date"}
@@ -426,8 +452,8 @@ export default function BookingForm({
         className="pt-6 border-t border-gray-100"
       >
         <div className="flex items-center gap-2 mb-6">
-          <div className="w-8 h-8 rounded-full bg-ocean-blue flex items-center justify-center text-white">
-            <MessageSquare size={16} />
+          <div className="w-8 h-8 rounded-full bg-ocean-blue/20 flex items-center justify-center text-white">
+            <MessageSquare size={16} className="text-midnight-blue" />
           </div>
           <h2 className="text-2xl font-bold text-midnight-blue">
             Additional Information

@@ -233,7 +233,7 @@ export default function Navbar() {
               (
                 <Link href="/profile">
                   <div className="flex items-center group cursor-pointer">
-                    <div className={`w-8 h-8 rounded-full overflow-hidden ${!isScrolled && pathName === "/" ? 'text-white border border-white': 'text-ocean-blue bg-white border-2 border-ocean-blue/30'} font-[700] flex items-center justify-center  shadow-sm transition-all duration-300`}>
+                    <div className={`w-8 h-8 rounded-full overflow-hidden ${!isScrolled && pathName === "/" ? 'text-white border border-white': 'text-ocean-blue bg-white'} font-[700] border-2 border-white flex items-center justify-center  shadow-sm transition-all duration-300`}>
                       {!user.image ? (
                         <img 
                           src={"https://res.cloudinary.com/e-commerce-muhammad-kabeer/image/upload/v1734257952/profile.jpg"} 

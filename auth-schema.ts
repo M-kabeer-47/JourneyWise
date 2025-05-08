@@ -85,24 +85,26 @@ export const session = pgTable("session", {
 
 
 export const booking = pgTable("booking", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	agentId: uuid("agentId")
-		.notNull()
-		.references(() => agent.id),
-	customerId: text("customerId")
-		.notNull()
-		.references(() => user.id),
-	gigId: uuid("gigId")
-		.notNull()
-		.references(() => gig.id),
-	bookingDate: date("bookingDate").notNull(),
-	totalPrice: jsonb("totalPrice").notNull(),
-	status: text({"enum": ["pending", "confirmed", "cancelled","completed"]}).notNull(),
-	startDate: date("startDate").notNull(),
-	endDate: date("endDate").notNull(),
-	noOfPeople: integer("noOfPeople").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  agentId: uuid("agentId")
+    .notNull()
+    .references(() => agent.id),
+  customerId: text("customerId")
+    .notNull()
+    .references(() => user.id),
+  gigId: uuid("gigId")
+    .notNull()
+    .references(() => gig.id),
+  bookingDate: date("bookingDate").notNull(),
+  price: jsonb("price").notNull(), // { userPrice, agentPrice }
+  status: text({"enum": ["pending", "approved", "confirmed", "cancelled","completed"]}).notNull(),
+  startDate: date("startDate").notNull(),
+  endDate: date("endDate").notNull(),
+  noOfPeople: integer("noOfPeople").notNull(),
   duration: integer("duration").notNull(),
-	paymentId: uuid("paymentId").references(() => payment.id)
+  paymentId: uuid("paymentId").references(() => payment.id), // Nullable by default
+  isCustomRequest: boolean("isCustomRequest").default(false),
+  notes: text("notes"),
 });
 
 

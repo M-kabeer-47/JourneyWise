@@ -81,7 +81,7 @@ export default function TravelDestinations() {
             setCurrentIndex(index)
           }
         },
-        { threshold: 0.5 }
+        { threshold: 0.1 }
       )
 
       if (ref.current) { //@ts-ignore

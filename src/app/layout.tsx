@@ -30,9 +30,9 @@ export default function RootLayout({
       
       <body className={`${openSans.className} ${raleway.variable}`}>
       <ReactQueryDevtools initialIsOpen={false} />   
-      <Navbar />  
+      
         {children}
-        <Footer />
+        
       </body>
       
       </StoreProvider>  
