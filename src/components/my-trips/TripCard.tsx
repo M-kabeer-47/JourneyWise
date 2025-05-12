@@ -8,7 +8,7 @@ import {
     Globe
   } from "lucide-react";
   import { motion } from "framer-motion";
-  import { Waypoint } from "@/lib/types/waypoint";
+  import { Waypoint } from "@/lib/types/Waypoint";
   
   interface WaypointCardProps {
     waypoint: Waypoint;

@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ExperienceCard from './ExperienceCard';
 import ExperienceCardSkeleton from '@/components/skeletons/ExperienceCardSkeleton';
-import { Experience  } from '@/lib/types/experience';
+import { Experience  } from '@/lib/types/Experience';
 import { Button } from '@/components/ui/button';
 
 interface ExperienceData {

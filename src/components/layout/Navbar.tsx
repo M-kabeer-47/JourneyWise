@@ -139,7 +139,7 @@ export default function Navbar() {
                       onMouseLeave={() => setIsBlogDropdownOpen(false)}
                     >
                       <button
-                        className="text-white hover:text-accent transition-colors duration-300 flex items-center"
+                        className="text-white  transition-colors duration-300 flex items-center"
                       >
                         {link.name}
                         <ChevronDown size={16} className="ml-1" />
@@ -170,7 +170,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       href={link.href}
-                      className="text-white hover:text-accent transition-colors duration-300"
+                      className="text-white  transition-colors duration-300"
                     >
                       {link.name}
                     </Link>
@@ -183,14 +183,14 @@ export default function Navbar() {
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 onClick={() => setIsSearchOpen(!isSearchOpen)}
-                className="text-white hover:text-accent transition-colors p-2"
+                className="text-white  transition-colors p-2"
               >
                 <Search size={20} />
               </motion.button>
 
               <motion.button
                 whileTap={{ scale: 0.9 }}
-                className="text-white hover:text-accent transition-colors p-2"
+                className="text-white  transition-colors p-2"
               >
                 <Bell size={20} />
               </motion.button>
@@ -198,10 +198,10 @@ export default function Navbar() {
               <Link href="/messages">
                 <motion.button
                   whileTap={{ scale: 0.9 }}
-                  className="text-white hover:text-accent transition-colors relative p-2"
+                  className="text-white  transition-colors relative p-2"
                 >
                   <Mail size={20} />
-                  <span className="absolute top-0 right-0 bg-accent text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
+                  <span className="absolute top-0 right-0 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                     3
                   </span>
                 </motion.button>
@@ -308,7 +308,7 @@ export default function Navbar() {
                   <div className="p-4 space-y-4">
                     <div className="flex justify-between items-center mb-6">
                       <h2 className="text-xl font-bold text-white">Menu</h2>
-                      <button onClick={() => setIsMenuOpen(false)} className="text-white hover:text-accent p-2">
+                      <button onClick={() => setIsMenuOpen(false)} className="text-white  p-2">
                         <X size={24} />
                       </button>
                     </div>
@@ -318,7 +318,7 @@ export default function Navbar() {
                           <>
                             <button
                               onClick={() => setIsMobileBlogDropdownOpen(!isMobileBlogDropdownOpen)}
-                              className="w-full text-left text-white hover:text-accent transition-colors duration-300 flex items-center justify-between p-2"
+                              className="w-full text-left text-white  transition-colors duration-300 flex items-center justify-between p-2"
                             >
                               <span className="flex items-center">
                                 {link.icon}
@@ -339,7 +339,7 @@ export default function Navbar() {
                                     <Link
                                       key={item.name}
                                       href={item.href}
-                                      className="block text-white hover:text-accent transition-colors duration-300 flex items-center p-2"
+                                      className="block text-white  transition-colors duration-300 flex items-center p-2"
                                       onClick={() => setIsMenuOpen(false)}
                                     >
                                       {item.icon}
@@ -353,7 +353,7 @@ export default function Navbar() {
                         ) : (
                           <Link
                             href={link.href}
-                            className="block text-white hover:text-accent transition-colors duration-300 flex items-center space-x-2 p-2"
+                            className="block text-white  transition-colors duration-300 flex items-center space-x-2 p-2"
                             onClick={() => setIsMenuOpen(false)}
                           >
                             {link.icon}
@@ -364,7 +364,7 @@ export default function Navbar() {
                     ))}
                     <div className="pt-4 border-t border-gray-700">
                       <Link href="/signup">
-                        <button className="w-full text-left text-white hover:text-accent transition-colors duration-300 py-2 px-2">
+                        <button className="w-full text-left text-white  transition-colors duration-300 py-2 px-2">
                           Sign Up
                         </button>
                       </Link>

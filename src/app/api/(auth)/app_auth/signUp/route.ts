@@ -1,6 +1,6 @@
-import {user} from '../../../../../auth-schema';
+import {user} from '../../../../../../auth-schema';
 import { NextRequest, NextResponse } from "next/server";
-import db from "../../../../lib/server/db"
+import db from "../../../../../lib/server/db"
 import { eq } from 'drizzle-orm';
 import { log } from 'console';
 export async function POST(req:NextRequest,res:NextResponse) {

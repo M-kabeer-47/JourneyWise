@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
-import { BlockType } from "@/lib/types/block";
+import { BlockType } from "@/lib/types/Block";
 const DraggableImage = ({ 
   height,
   src, 

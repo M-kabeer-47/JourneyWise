@@ -98,7 +98,7 @@ export default function TripPlanningTools() {
                 </ul>
                 <motion.button
                   whileTap={{ scale: 0.98 }}
-                  className="w-full bg-ocean-blue text-white py-3 rounded-[25px] shadow-sm hover:bg-accent transition-all duration-300 ease-in-out text-lg font-semibold"
+                  className="w-full bg-gradient-to-r from-midnight-blue to-ocean-blue text-white py-3 rounded-[25px] shadow-sm hover:bg-accent transition-all duration-300 ease-in-out text-lg font-semibold"
                 >
                   {tool.buttonText}
                 </motion.button>

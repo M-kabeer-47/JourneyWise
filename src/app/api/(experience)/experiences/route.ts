@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/server/db";
-import { agent, gig, user } from "@/../auth-schema";
+import { agent, experience, user } from "@/../auth-schema";
 import { eq, sql } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     // Build query
     let results = await db
       .select({
-        experience: gig,
+        experience: experience,
         agent: {
           agentId: agent.id,
         },
@@ -22,9 +22,9 @@ export async function GET(request: NextRequest) {
           avatar: user.image,
         }
       })
-      .from(gig)
-      .innerJoin(agent, eq(agent.id, gig.agentId))
-      .innerJoin(user, eq(user.id, agent.userId)).limit(limit).offset(offset)
+      .from(experience)
+      .innerJoin(agent, eq(agent.id, experience.agentID))
+      .innerJoin(user, eq(user.id, agent.userID)).limit(limit).offset(offset)
 
       
 
@@ -33,12 +33,12 @@ export async function GET(request: NextRequest) {
 
     // Format results
     const experiences = results.map(({ experience, user: userData, agent: agentData }) => ({
-      experience:experience,
+      experience: experience,
       agent: { ...userData, ...agentData }
     }));
 
     // Get total count for pagination
-    const countResult = await db.select({ count: sql`count(*)` }).from(gig);
+    const countResult = await db.select({ count: sql`count(*)` }).from(experience);
     const total = Number(countResult[0].count);
 
     return NextResponse.json({ 

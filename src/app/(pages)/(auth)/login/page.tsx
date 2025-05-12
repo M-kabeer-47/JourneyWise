@@ -97,10 +97,10 @@ export default function SignIn() {
   };
 
   return (
-    <div className="max-w-[70%] mx-auto py-4">
+    <div className="overflow-hidden flex justify-center">
 
     
-    <div className="h-screen flex flex-col md:flex-row">
+    <div className="h-screen flex flex-col md:flex-row w-[100%] rounded-xl shadow-2xl ">
 
       {/* Left side - Hero Image Section */}
       <div className="hidden md:flex md:w-1/2 relative bg-midnight-blue">
@@ -113,7 +113,7 @@ export default function SignIn() {
             className="opacity-70"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-br from-midnight-blue/80 via-ocean-blue/50 to-midnight-blue/70"></div>
+          <div className="absolute inset-0 bg-gradient-to-br  from-ocean-blue/10 to-ocean-blue/30"></div>
         </div>
 
         <div className="relative z-10 flex flex-col justify-center items-center w-full p-12 text-white">
@@ -129,9 +129,9 @@ export default function SignIn() {
               around the world.
             </p>
             <div className="flex -space-x-2 justify-center mt-8">
-              <div className="w-10 h-10 rounded-full bg-[#f3d19e] border-2 border-white"></div>
-              <div className="w-10 h-10 rounded-full bg-[#94c4a1] border-2 border-white"></div>
-              <div className="w-10 h-10 rounded-full bg-[#e38b75] border-2 border-white"></div>
+              <div className="w-10 h-10 rounded-full bg-ocean-blue border-2 border-white"></div>
+              <div className="w-10 h-10 rounded-full bg-accent border-2 border-white"></div>
+              <div className="w-10 h-10 rounded-full bg-midnight-blue border-2 border-white"></div>
             </div>
             <p className="text-sm text-white/70">
               Join thousands of travelers on their adventures
@@ -231,7 +231,7 @@ export default function SignIn() {
             {/* Sign In Button */}
             <Button
               type="submit"
-              className="w-full h-11 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white rounded-lg shadow-md hover:shadow-xl hover:scale-[1.01] hover:from-ocean-blue hover:to-midnight-blue transition-all duration-300"
+              className="w-full h-11 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white rounded-lg shadow-md hover:shadow-xl  transition-all duration-300"
               disabled={isLoading}
             >
               {isLoading ? <Spinner size="small" /> : "Sign in"}

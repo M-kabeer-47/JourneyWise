@@ -1,7 +1,7 @@
 "use client"
 
 import React, {  useEffect ,useState} from "react"
-import { ListItemType } from "@/lib/types/block"
+import { ListItemType } from "@/lib/types/Block"
 
 import {
   ChevronRight,
@@ -35,7 +35,7 @@ import ImageSizeOption from "../ui/ImageSizeOption"
 import { ImageUpload } from "@/components/editor/image-upload"
 import { EmojiPicker } from "@/components/editor/emoji-picker"
 import { cn } from "@/utils/shadcn/utils"
-import type { BlockType } from "@/lib/types/block"
+import type { BlockType } from "@/lib/types/Block"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
 import { DraggableItem } from "./draggable-item"

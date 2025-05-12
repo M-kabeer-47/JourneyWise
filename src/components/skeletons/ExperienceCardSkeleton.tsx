@@ -3,7 +3,7 @@ import { motion } from 'framer-motion';
 
 export default function ExperienceCardSkeleton() {
   return (
-    <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg bg-gray-200">
+    <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg bg-gray-200 animate-pulse">
       {/* Shimmer effect overlay */}
       <div className="absolute inset-0 w-full h-full">
         <div className="animate-pulse w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200" />

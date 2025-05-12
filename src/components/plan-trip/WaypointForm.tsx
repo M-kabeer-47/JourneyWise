@@ -479,7 +479,7 @@ export const WaypointForm = ({
         </div>
       </div>
 
-      <form onSubmit={handleSubmit(onFinish,inValid)}>
+      <form onSubmit={handleSubmit(onFinish)}>
         {FormContent}
       </form>
     </div>

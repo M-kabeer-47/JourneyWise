@@ -42,7 +42,7 @@ export default function OtpVerificationPage() {
           setShowToast(true)
           setTimeout(() => {
             setShowToast(false)
-            router.push("/dashboard")
+            router.push("/")
           }
             ,3000 
             )

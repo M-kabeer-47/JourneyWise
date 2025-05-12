@@ -2,8 +2,6 @@
 import './globals.css'
 import { Open_Sans, Raleway } from 'next/font/google'
 import StoreProvider from '../providers/redux'
-import Footer from '../components/layout/Footer'
-import Navbar from '../components/layout/Navbar'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
 const openSans = Open_Sans({ subsets: ['latin'] })
@@ -35,10 +33,10 @@ export default function RootLayout({
         
       </body>
       
-      </StoreProvider>  
+      </StoreProvider>
       </QueryClientProvider>
       
-      
+
     </html>
   )
 }

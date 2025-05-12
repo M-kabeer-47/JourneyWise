@@ -16,7 +16,7 @@ import {
   formSchema,
 } from "@/lib/schemas/experience"
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary"
-import { Toast, toast } from "@/components/ui/Toast"
+import { toast } from "@/components/ui/Toast"
 import axios from "axios"
 import Overlay from "@/components/ui/Overlay"
 
@@ -298,7 +298,7 @@ export default function CreateExperience() {
           </div>
         </div>
       </div>
-      <Toast />
+      
       <Overlay isVisible={isOverlayVisible} />
     </div>
   )

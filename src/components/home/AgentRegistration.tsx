@@ -64,8 +64,8 @@ export default function AgentRegistration() {
                 </div>
               </motion.div>
               <motion.button
-                className="bg-ocean-blue text-white py-3 px-6 sm:px-8 rounded-full font-semibold text-base sm:text-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex items-center justify-center w-full lg:w-auto hover:bg-accent"
-                whileHover={{ scale: 1.05 }}
+                className="bg-gradient-to-r from-midnight-blue to-ocean-blue text-white py-3 px-6 sm:px-8 rounded-full font-semibold text-base sm:text-lg shadow-md hover:shadow-lg transition-all duration-300 ease-in-out flex items-center justify-center w-full lg:w-auto hover:bg-accent"
+                
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}

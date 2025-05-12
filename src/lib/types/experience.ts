@@ -4,16 +4,31 @@ export interface Experience {
   description: string;
   gigImage: string;
   averageRating: number;
+  duration: number;
   tags?: string[];
   agent: {
     name: string;
     avatar: string;
   }
-  tier?: {
-    tierInfo?: {
-      price?: number;
-      members?: number;
-      description?: string;
+  tier: {
+    currency: string;
+    tierInfo: {
+      name: string;
+      price: number;
+      members: number;
+      description: string;
     }[];
   };
 }
+
+export interface ExperienceResponse {
+  experience : Experience;
+  agent: {
+    agentID: any;
+    name: string;
+    avatar: string;
+    agentId: string;
+    userId: string;
+  }
+}
+   

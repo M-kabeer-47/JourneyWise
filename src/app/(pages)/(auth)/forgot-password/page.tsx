@@ -6,7 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import Link from 'next/link'
 import Logo from '@/components/ui/Logo'
-import Input from '@/components/ui/Input'
+import FormInput from '@/components/ui/FormInput'
 import Toast from '@/components/auth/Custom-Toast'
 import Spinner from '@/components/ui/Spinner'
 import { authClient } from '@/lib/auth/authClient'
@@ -108,10 +108,10 @@ const forgotPasswordSchema = z.object({
                 control={control}
                 defaultValue=""
                 render={({ field }) => (
-                  <Input
+                  <FormInput
                     label="Email address"
                     type="email"
-                    autoComplete="email"
+                    placeholder="Email Address"
                     
                     {...field}
                     error={errors.email?.message}
@@ -122,7 +122,7 @@ const forgotPasswordSchema = z.object({
               <div>
                 <button
                   type="submit"
-                  className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#003366] hover:bg-[#002855] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0077B6] transition-colors"
+                  className={`w-[100%] bg-gradient-to-r from-midnight-blue to-ocean-blue text-white py-2 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 font-medium ${isLoading ? "opacity-50 cursor-not-allowed" : " "}`}
                   disabled={isLoading}
                 >
                   {isLoading ? <Spinner size="small" /> : 'Send reset link'}

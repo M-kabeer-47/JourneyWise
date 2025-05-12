@@ -1,4 +1,4 @@
-import type { BlockType } from "@/lib/types/block"
+import type { BlockType } from "@/lib/types/Block"
 import BlogClasses from "@/lib/types/BlogClassess"
 
 import { uploadToCloudinary } from "./uploadToCloudinary"

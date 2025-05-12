@@ -6,7 +6,7 @@ import dynamic from 'next/dynamic'
 
 
 
-import type { BlockType } from "@/lib/types/block"
+import type { BlockType } from "@/lib/types/Block"
 import { toast, Toast } from "@/components/ui/Toast"
 
 

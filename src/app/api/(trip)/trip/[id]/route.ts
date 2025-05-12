@@ -27,7 +27,7 @@ export async function GET(request:NextRequest,{params}:{params:{id:string}}){
         name: user.name,
         avatar: user.image,
       }
-    }).from(trip).where(eq(trip.id, id)).innerJoin(user, eq(user.id, trip.userId))
+    }).from(trip).where(eq(trip.id, id)).innerJoin(user, eq(user.id, trip.userID))
     
     console.log("Query result:", data);
     

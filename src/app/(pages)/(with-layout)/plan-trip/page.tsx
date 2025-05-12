@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline"
 import { WaypointForm } from "@/components/plan-trip/WaypointForm"
 import { GuideModal } from "@/components/plan-trip/guide-modal/GuideModal"
-import { Toast, toast } from "@/components/ui/Toast"
+import {  toast } from "@/components/ui/Toast"
 import { useFieldArray, useForm } from "react-hook-form"
 import { tripData, tripSchema } from "@/lib/schemas/trip"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -288,7 +288,6 @@ export default function Home() {
             </div>
           )}
         </div>
-        <Toast />
         <ConfirmationModal
           data={watchWaypoints}
           isOpen={isConfirmationModalOpen}

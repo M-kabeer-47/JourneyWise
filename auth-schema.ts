@@ -1,4 +1,3 @@
-
 import {
   pgTable,
   text,
@@ -28,27 +27,24 @@ export const user = pgTable("user", {
   banned: boolean("banned").default(false),
   banReason: text("banReason"),
   banExpires: timestamp("banExpires"),
-  
-
 });
-
-
 
 export const agent = pgTable("agent", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: text("userId").notNull().references(() => user.id),
+  userID: text("userID")
+    .notNull()
+    .references(() => user.id),
   socialMediaHandles: jsonb("socialMediaHandles").notNull(),
   verificationStatus: boolean("verificationStatus").notNull().default(false),
   docs: jsonb("docs").notNull(),
   agencyName: text("agencyName").notNull(),
 });
 
-
-export const gig = pgTable("gig", {
+export const experience = pgTable("experience", {
   id: uuid("id").primaryKey().defaultRandom(),
-  gigImage: text("gigImage").notNull(),
+  experienceImage: text("experienceImage").notNull(),
   tier: jsonb("tier").notNull(),
-  gigImages: jsonb("gigImages").notNull(),
+  experienceImages: jsonb("experienceImages").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
   location: jsonb("location").notNull(),
@@ -56,7 +52,7 @@ export const gig = pgTable("gig", {
   includedServices: jsonb("includedServices").notNull(),
   excludedServices: jsonb("excludedServices").notNull(),
   itineraryDetails: jsonb("itineraryDetails").notNull(),
-  agentId: uuid("agentId")
+  agentID: uuid("agentID")
     .notNull()
     .references(() => agent.id),
   category: jsonb("category").notNull(),
@@ -78,125 +74,102 @@ export const session = pgTable("session", {
   userId: text("userId")
     .notNull()
     .references(() => user.id),
-    impersonatedBy: text("impersonatedBy").references(() => user.id),
-})
-
-
-
+  impersonatedBy: text("impersonatedBy").references(() => user.id),
+});
 
 export const booking = pgTable("booking", {
   id: uuid("id").primaryKey().defaultRandom(),
-  agentId: uuid("agentId")
+  agentID: uuid("agentID")
     .notNull()
     .references(() => agent.id),
-  customerId: text("customerId")
+  customerID: text("customerID")
     .notNull()
     .references(() => user.id),
-  gigId: uuid("gigId")
+
+  customerName: text("customerName").notNull(),
+  customerEmail: text("customerEmail").notNull(),
+  customerPhone: text("customerPhone").notNull(),
+
+  experienceID: uuid("experienceID")
     .notNull()
-    .references(() => gig.id),
+    .references(() => experience.id),
   bookingDate: date("bookingDate").notNull(),
-  price: jsonb("price").notNull(), // { userPrice, agentPrice }
-  status: text({"enum": ["pending", "approved", "confirmed", "cancelled","completed"]}).notNull(),
+  status: text({
+    enum: ["pending", "approved", "confirmed", "cancelled", "completed"],
+  }).notNull(),
   startDate: date("startDate").notNull(),
   endDate: date("endDate").notNull(),
-  noOfPeople: integer("noOfPeople").notNull(),
-  duration: integer("duration").notNull(),
-  paymentId: uuid("paymentId").references(() => payment.id), // Nullable by default
+  tier: jsonb("tier").notNull(),
+  paymentID: uuid("paymentID").references(() => payment.id),
   isCustomRequest: boolean("isCustomRequest").default(false),
   notes: text("notes"),
 });
 
 
-/*
-## FAQs
-
-- faq_id
-- gig_id **(FK)**
-- question
-- answer
-*/
 
 export const faq = pgTable("faq", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	gigId: uuid("gigId")
-		.notNull()
-		.references(() => gig.id),
-	question: text("question").notNull(),
-	answer: text("answer").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  experienceID: uuid("experienceID")
+    .notNull()
+    .references(() => experience.id),
+  question: text("question").notNull(),
+  answer: text("answer").notNull(),
 });
 
-
-
-
 export const review = pgTable("review", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	gigId: uuid("gigId")
-		.notNull()
-		.references(() => gig.id),
-	userId: text("userId")
-		.notNull()
-		.references(() => user.id),
-	comment: text("comment").notNull(),
-	rating: doublePrecision("rating").notNull(),
-	createdAt: timestamp("createdAt").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  experienceID: uuid("experienceID")
+    .notNull()
+    .references(() => experience.id),
+  userID: text("userID")
+    .notNull()
+    .references(() => user.id),
+  comment: text("comment").notNull(),
+  rating: doublePrecision("rating").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
 });
 
 export const payment = pgTable("payment", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	transactionDateTime: timestamp("transactionDateTime").notNull(),
-	status: text({"enum": ["pending", "confirmed", "cancelled","refunded"]}).notNull(),
-	paymentType: text("paymentType").notNull(),
-	amount: integer("amount").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  transactionDateTime: timestamp("transactionDateTime").notNull(),
+  status: text({
+    enum: ["pending", "confirmed", "cancelled", "refunded"],
+  }).notNull(),
+  paymentType: text("paymentType").notNull(),
+  amount: integer("amount").notNull(),
 });
-
-
-
 
 export const messages = pgTable("messages", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	senderId: text("senderId")
-		.notNull()
-		.references(() => user.id),
-	recipientId: text("recipientId")
-		.notNull()
-		.references(() => user.id),
-	createdAt: timestamp("createdAt").notNull(),
-	status: text({"enum": ["sent", "delivered","seen","deleted"]}).notNull(),
-	message: text("message").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  senderID: text("senderID")
+    .notNull()
+    .references(() => user.id),
+  recipientID: text("recipientID")
+    .notNull()
+    .references(() => user.id),
+  createdAt: timestamp("createdAt").notNull(),
+  status: text({ enum: ["sent", "delivered", "seen", "deleted"] }).notNull(),
+  message: text("message").notNull(),
 });
-
-
-
 
 export const notifications = pgTable("notifications", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	userId: text("userId")
-		.notNull()
-		.references(() => user.id),
-	message: text("message").notNull(),
-	type: text({"enum": ["booking", "message","reminder","alert"]}).notNull(),
-	isRead: boolean("isRead").notNull(),
-	createdAt: timestamp("createdAt").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  userID: text("userID")
+    .notNull()
+    .references(() => user.id),
+  message: text("message").notNull(),
+  type: text({ enum: ["booking", "message", "reminder", "alert"] }).notNull(),
+  isRead: boolean("isRead").notNull(),
+  createdAt: timestamp("createdAt").notNull(),
 });
-
-
-
 
 export const searchHistory = pgTable("searchHistory", {
-	id: uuid("id").primaryKey().defaultRandom(),
-	userId: text("userId").notNull().references(() => user.id),
-	searchQuery: text("searchQuery").notNull(),
+  id: uuid("id").primaryKey().defaultRandom(),
+  userID: text("userID")
+    .notNull()
+    .references(() => user.id),
+  searchQuery: text("searchQuery").notNull(),
 });
-
-
-
-
-
-
-
-
-
 
 export const account = pgTable("account", {
   id: text("id").primaryKey(),
@@ -236,13 +209,13 @@ export const twoFactor = pgTable("twoFactor", {
 
 export const trip = pgTable("trip", {
   id: uuid("id").primaryKey().defaultRandom(),
-  userId: text("userId")
+  userID: text("userID")
     .notNull()
     .references(() => user.id),
   waypoints: jsonb("waypoints").notNull(),
   estimatedBudget: integer("estimatedBudget").notNull(),
-  numPeople: integer("numPeople").notNull(),  
-  
+  numPeople: integer("numPeople").notNull(),
+
   currency: text("currency").notNull(),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
@@ -251,12 +224,11 @@ export const blog = pgTable("blog", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: jsonb("title").notNull(),
   content: text("content").notNull(),
-  
+
   blocks: jsonb("blocks").notNull(),
-  authorId: text("authorId")
+  authorID: text("authorID")
     .notNull()
     .references(() => user.id),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
-

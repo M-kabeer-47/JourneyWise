@@ -62,7 +62,7 @@ export default function HeroSection() {
         <motion.h1
           className="text-5xl md:text-7xl font-bold mb-6"
         >
-          Explore the World <span className="text-ocean-blue"
+          Explore the World <span className="text-ocean-blue font-extrabold"
          style={{
           textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
         }}>
@@ -79,9 +79,9 @@ export default function HeroSection() {
           <input
             type="text"
             placeholder="Where do you want to go?"
-            className="w-full px-6 py-4 rounded-full text-charcoal focus:outline-none focus:ring-2 focus:ring-ocean-blue shadow-md"
+            className="w-full px-6 py-4 rounded-full  text-charcoal focus:outline-none focus:ring-2 focus:ring-ocean-blue shadow-md"
           />
-          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-ocean-blue text-white p-3 rounded-full  transition-colors duration-300">
+          <button className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-ocean-blue text-white p-3 rounded-full   transition-colors duration-300">
             <Search size={24} />
           </button>
         </motion.div>
@@ -89,14 +89,14 @@ export default function HeroSection() {
           className="flex justify-center space-x-6"
         >
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            
             whileTap={{ scale: 0.95 }}
-            className="bg-ocean-blue text-white max-[380px]:px-4 px-8 py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
+            className="bg-gradient-to-r from-midnight-blue to-ocean-blue text-white max-[380px]:px-4 px-8 py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
           >
-            Explore Gigs
+            Explore Experiences
           </motion.button>
           <motion.button
-            whileHover={{ scale: 1.05 }}
+            
             whileTap={{ scale: 0.95 }}
             className="bg-white text-ocean-blue max-[380px]:px-4 px-8 py-3 rounded-full shadow-md hover:shadow-lg transition-all duration-300 ease-in-out"
           >

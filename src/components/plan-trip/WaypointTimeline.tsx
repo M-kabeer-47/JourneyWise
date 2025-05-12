@@ -10,7 +10,7 @@ import {
   ChevronUp,
   X,
 } from "lucide-react"
-import type { Waypoint } from "@/lib/types/waypoint"
+import type { Waypoint } from "@/lib/types/Waypoint"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
 import { cn } from "@/utils/shadcn/utils"

@@ -6,7 +6,7 @@ import { Share2, ArrowLeft, User } from "lucide-react"
 import Spinner from "@/components/ui/Spinner"
 import { Toast, toast } from "@/components/ui/Toast"
 import Link from "next/link"
-import { Waypoint } from "@/lib/types/waypoint"
+import { Waypoint } from "@/lib/types/Waypoint"
 
 // Import the components we created
 import PremiumTimeline from "@/components/my-trips/PremiumTimeline"

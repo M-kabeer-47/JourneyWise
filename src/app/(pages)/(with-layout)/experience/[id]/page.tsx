@@ -113,7 +113,7 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
                 <div className="lg:col-span-8 space-y-6">
                   {/* Main Image */}
                   <MainImage
-                    src={experienceData.experience.gigImage}
+                    src={experienceData.experience.experienceImage}
                     alt={experienceData.experience.title}
                     className="h-[250px] sm:h-[450px] mt-6 rounded-xl overflow-hidden"
                   />
@@ -146,7 +146,7 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
                       Trip Highlights
                     </h3>
                     <ImagesCarousel
-                      images={experienceData.experience.gigImages}
+                      images={experienceData.experience.experienceImages}
                     />
                   </div>
 

@@ -19,7 +19,7 @@ import { Block } from "@/components/editor/block"
 import { Toolbar } from "@/components/editor/toolbar"
 import { DroppableContainer } from "@/components/editor/droppable-container"
 import { cn } from "@/utils/shadcn/utils"
-import type { BlockType } from "@/lib/types/block"
+import type { BlockType } from "@/lib/types/Block"
 import SaveBlog  from "@/utils/functions/SaveBlog"
 
 import axios from "axios"

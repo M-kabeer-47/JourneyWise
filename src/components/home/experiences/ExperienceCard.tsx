@@ -2,7 +2,7 @@
 import React from 'react';
 import { Star } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { Experience } from '@/lib/types/experience';
+import { Experience } from '@/lib/types/Experience';
 import Link from 'next/link';
 
 
@@ -19,7 +19,7 @@ export default function ExperienceCard({ experience, agent }: { experience: Expe
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
-            src={experience.gigImage}
+            src={experience.experienceImage}
             alt={experience.title}
             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           />

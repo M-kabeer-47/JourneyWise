@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { MapPin, Navigation, Hotel, Compass, ArrowRight } from "lucide-react";
-import { Waypoint } from "@/lib/types/waypoint";
+import { Waypoint } from "@/lib/types/Waypoint";
 
 // Update the interface to accept a ref
 interface PremiumTimelineProps {
