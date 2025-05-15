@@ -6,7 +6,7 @@ import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { GripVertical, X, Plus, ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { cn } from "@/utils/shadcn/utils";
+import { cn } from "@/lib/utils";
 import type { BlockType } from "@/lib/types/Block";
 
 import { Check, CircleDot, Dot, Minus } from "lucide-react";

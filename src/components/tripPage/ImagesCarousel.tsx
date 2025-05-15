@@ -1,7 +1,7 @@
 "use client"
 import { useState,useEffect } from 'react';
 import { Image as ImageIcon } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils'
+import { cn } from '@/lib/utils'
 import { motion } from "framer-motion";
 
 import {

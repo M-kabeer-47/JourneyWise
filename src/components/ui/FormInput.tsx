@@ -5,7 +5,7 @@ import {
   Eye, EyeOff, AlertCircle,
   Link
 } from "lucide-react";
-import { cn } from "@/utils/shadcn/utils";
+import { cn } from "@/lib/utils";
 
 type InputProps = {
   id?: string;

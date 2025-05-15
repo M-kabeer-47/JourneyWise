@@ -6,7 +6,7 @@ import { Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import Input from "@/components/ui/Input"
 import Image from "next/image"
-import { cn } from "@/utils/shadcn/utils"
+import { cn } from "@/lib/utils"
 
 interface ImageUploadProps {
   onUpload: (url: string) => void

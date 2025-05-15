@@ -4,7 +4,7 @@ import 'react-phone-input-2/lib/style.css'
 import { Phone, AlertCircle } from 'lucide-react';
 
 import { Label } from '@/components/ui/label';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 
 interface PhoneInputProps {
   value: string

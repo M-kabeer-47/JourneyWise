@@ -1,1 +1,0 @@
-ALTER TABLE "trip" DROP COLUMN IF EXISTS "estimatedDuration";

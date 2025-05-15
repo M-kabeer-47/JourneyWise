@@ -1,6 +1,6 @@
 import React from 'react';
 import { PhoneCall, MessageCircle, Calendar } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
 interface BookingCTAProps {

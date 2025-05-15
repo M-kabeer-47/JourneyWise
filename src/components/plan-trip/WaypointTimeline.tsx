@@ -13,7 +13,7 @@ import {
 import type { Waypoint } from "@/lib/types/Waypoint"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
-import { cn } from "@/utils/shadcn/utils"
+import { cn } from "@/lib/utils"
 import ImageModal from "../ui/ImageModal"
 interface WaypointTimelineProps {
   waypoints: Waypoint[]

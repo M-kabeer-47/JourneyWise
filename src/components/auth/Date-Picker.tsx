@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Calendar as CalendarIcon, AlertCircle, ChevronDown } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface DatePickerProps {

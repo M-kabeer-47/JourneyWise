@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { cn } from '@/utils/shadcn/utils'
+import { cn } from '@/lib/utils'
 
 interface EnhancedDescriptionCardProps {
   title: string;

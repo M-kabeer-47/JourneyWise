@@ -1,1 +1,0 @@
-ALTER TABLE "user" RENAME COLUMN "phone" TO "phoneNumber";

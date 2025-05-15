@@ -9,7 +9,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { cn } from "@/utils/shadcn/utils";
+import { cn } from "@/lib/utils";
 import { tripData } from "@/lib/schemas/trip";
 interface ConfirmationModalProps {
   data: tripData["waypoints"],

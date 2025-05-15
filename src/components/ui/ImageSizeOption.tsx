@@ -1,6 +1,6 @@
 import { RadioGroupItem } from "@/components/ui/radio-group"
 import { Label } from "@/components/ui/label"
-import {cn} from "@/utils/shadcn/utils"
+import {cn} from "@/lib/utils"
 export default function ImageSizeOption({
     value,
     label,

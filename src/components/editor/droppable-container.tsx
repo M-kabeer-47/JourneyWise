@@ -2,7 +2,7 @@
 
 import type React from "react"
 import { useDroppable } from "@dnd-kit/core"
-import { cn } from "@/utils/shadcn/utils"
+import { cn } from "@/lib/utils"
 
 interface DroppableContainerProps {
   id: string

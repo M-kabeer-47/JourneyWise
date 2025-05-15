@@ -1,6 +1,6 @@
 import React from 'react';
 import { Clock, MapPin, Calendar } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils'
+import { cn } from '@/lib/utils'
 
 export interface Activity {
   id: string;

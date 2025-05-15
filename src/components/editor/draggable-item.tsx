@@ -3,7 +3,7 @@
 import type React from "react"
 import { useDraggable } from "@dnd-kit/core"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/utils/shadcn/utils"
+import { cn } from "@/lib/utils"
 
 interface DraggableItemProps {
   type: string

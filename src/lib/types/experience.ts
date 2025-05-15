@@ -1,34 +1,37 @@
+export interface agent {
+  id: string;
+  name: string;
+  avatar: string;
+  agentID: string;
+  userID: string;
+}
+export interface tierInfo {
+  name: string;
+  price: number;
+  members: number;
+  description: string;
+}
+
 export interface Experience {
+  agent: { avatar: string | undefined; name: string; } | undefined;
   id: string;
   title: string;
   description: string;
-  gigImage: string;
+  experienceImage: string;
   averageRating: number;
+  isAvailable: boolean;
   duration: number;
   tags?: string[];
-  agent: {
-    name: string;
-    avatar: string;
-  }
-  tier: {
-    currency: string;
-    tierInfo: {
-      name: string;
-      price: number;
-      members: number;
-      description: string;
-    }[];
+  location: {
+    city: string;
+    country: string;
+    code: string;
   };
+  
+  tier: tierInfo[];
 }
 
 export interface ExperienceResponse {
-  experience : Experience;
-  agent: {
-    agentID: any;
-    name: string;
-    avatar: string;
-    agentId: string;
-    userId: string;
-  }
+  experience: Experience;
+  agent: agent
 }
-   

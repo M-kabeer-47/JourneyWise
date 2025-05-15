@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { MapPin, Clock } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 
 interface EnhancedLocationInfoProps {
   city: string;

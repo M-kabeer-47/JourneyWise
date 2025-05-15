@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from "react";
 import { User } from "lucide-react";
-import { cn } from "@/utils/shadcn/utils";
+import { cn } from "@/lib/utils";
 
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { motion, AnimatePresence } from "framer-motion";

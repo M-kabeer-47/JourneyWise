@@ -1,6 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { X, Star, ImagePlus } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 import Spinner from '../ui/Spinner';
 
 interface ReviewModalProps {

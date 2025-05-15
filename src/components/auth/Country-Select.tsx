@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Check, ChevronDown, Globe, AlertCircle } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 
 interface CountrySelectProps {
   value: string;

@@ -1,6 +1,6 @@
 {
-  "id": "add85eb6-3c44-4544-bc9d-f5678b8324ac",
-  "prevId": "ccc395cd-fe28-460f-b840-e03a1bf83566",
+  "id": "a964a128-8e5b-4cb6-a8ad-d0a976cb60a1",
+  "prevId": "ecb1681c-c46f-467c-bc2e-91d49d771c31",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -120,8 +120,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "userId": {
-          "name": "userId",
+        "userID": {
+          "name": "userID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -136,7 +136,8 @@
           "name": "verificationStatus",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": false
         },
         "docs": {
           "name": "docs",
@@ -153,12 +154,82 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "agent_userId_user_id_fk": {
-          "name": "agent_userId_user_id_fk",
+        "agent_userID_user_id_fk": {
+          "name": "agent_userID_user_id_fk",
           "tableFrom": "agent",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "userID"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.blog": {
+      "name": "blog",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "title": {
+          "name": "title",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "blocks": {
+          "name": "blocks",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "authorID": {
+          "name": "authorID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "blog_authorID_user_id_fk": {
+          "name": "blog_authorID_user_id_fk",
+          "tableFrom": "blog",
+          "tableTo": "user",
+          "columnsFrom": [
+            "authorID"
           ],
           "columnsTo": [
             "id"
@@ -184,20 +255,38 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "agentId": {
-          "name": "agentId",
+        "agentID": {
+          "name": "agentID",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "customerId": {
-          "name": "customerId",
+        "customerID": {
+          "name": "customerID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "gigId": {
-          "name": "gigId",
+        "customerName": {
+          "name": "customerName",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customerEmail": {
+          "name": "customerEmail",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "customerPhone": {
+          "name": "customerPhone",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "experienceID": {
+          "name": "experienceID",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -205,12 +294,6 @@
         "bookingDate": {
           "name": "bookingDate",
           "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "totalPrice": {
-          "name": "totalPrice",
-          "type": "jsonb",
           "primaryKey": false,
           "notNull": true
         },
@@ -232,33 +315,40 @@
           "primaryKey": false,
           "notNull": true
         },
-        "noOfPeople": {
-          "name": "noOfPeople",
-          "type": "integer",
+        "tier": {
+          "name": "tier",
+          "type": "jsonb",
           "primaryKey": false,
           "notNull": true
         },
-        "duration": {
-          "name": "duration",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "paymentId": {
-          "name": "paymentId",
+        "paymentID": {
+          "name": "paymentID",
           "type": "uuid",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "isCustomRequest": {
+          "name": "isCustomRequest",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "notes": {
+          "name": "notes",
+          "type": "text",
           "primaryKey": false,
           "notNull": false
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "booking_agentId_agent_id_fk": {
-          "name": "booking_agentId_agent_id_fk",
+        "booking_agentID_agent_id_fk": {
+          "name": "booking_agentID_agent_id_fk",
           "tableFrom": "booking",
           "tableTo": "agent",
           "columnsFrom": [
-            "agentId"
+            "agentID"
           ],
           "columnsTo": [
             "id"
@@ -266,12 +356,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "booking_customerId_user_id_fk": {
-          "name": "booking_customerId_user_id_fk",
+        "booking_customerID_user_id_fk": {
+          "name": "booking_customerID_user_id_fk",
           "tableFrom": "booking",
           "tableTo": "user",
           "columnsFrom": [
-            "customerId"
+            "customerID"
           ],
           "columnsTo": [
             "id"
@@ -279,12 +369,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "booking_gigId_gig_id_fk": {
-          "name": "booking_gigId_gig_id_fk",
+        "booking_experienceID_experience_id_fk": {
+          "name": "booking_experienceID_experience_id_fk",
           "tableFrom": "booking",
-          "tableTo": "gig",
+          "tableTo": "experience",
           "columnsFrom": [
-            "gigId"
+            "experienceID"
           ],
           "columnsTo": [
             "id"
@@ -292,12 +382,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "booking_paymentId_payment_id_fk": {
-          "name": "booking_paymentId_payment_id_fk",
+        "booking_paymentID_payment_id_fk": {
+          "name": "booking_paymentID_payment_id_fk",
           "tableFrom": "booking",
           "tableTo": "payment",
           "columnsFrom": [
-            "paymentId"
+            "paymentID"
           ],
           "columnsTo": [
             "id"
@@ -312,8 +402,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.faq": {
-      "name": "faq",
+    "public.experience": {
+      "name": "experience",
       "schema": "",
       "columns": {
         "id": {
@@ -323,60 +413,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "gigId": {
-          "name": "gigId",
-          "type": "uuid",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "question": {
-          "name": "question",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "answer": {
-          "name": "answer",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "faq_gigId_gig_id_fk": {
-          "name": "faq_gigId_gig_id_fk",
-          "tableFrom": "faq",
-          "tableTo": "gig",
-          "columnsFrom": [
-            "gigId"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
-    "public.gig": {
-      "name": "gig",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "uuid",
-          "primaryKey": true,
-          "notNull": true,
-          "default": "gen_random_uuid()"
-        },
-        "gigImage": {
-          "name": "gigImage",
+        "experienceImage": {
+          "name": "experienceImage",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -387,8 +425,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "gigImages": {
-          "name": "gigImages",
+        "experienceImages": {
+          "name": "experienceImages",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
@@ -435,8 +473,8 @@
           "primaryKey": false,
           "notNull": true
         },
-        "agentId": {
-          "name": "agentId",
+        "agentID": {
+          "name": "agentID",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
@@ -461,19 +499,13 @@
         },
         "averageRating": {
           "name": "averageRating",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
-        "startDate": {
-          "name": "startDate",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "endDate": {
-          "name": "endDate",
-          "type": "date",
+        "isAvailable": {
+          "name": "isAvailable",
+          "type": "boolean",
           "primaryKey": false,
           "notNull": true
         },
@@ -486,12 +518,64 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "gig_agentId_agent_id_fk": {
-          "name": "gig_agentId_agent_id_fk",
-          "tableFrom": "gig",
+        "experience_agentID_agent_id_fk": {
+          "name": "experience_agentID_agent_id_fk",
+          "tableFrom": "experience",
           "tableTo": "agent",
           "columnsFrom": [
-            "agentId"
+            "agentID"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.faq": {
+      "name": "faq",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "experienceID": {
+          "name": "experienceID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "question": {
+          "name": "question",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "answer": {
+          "name": "answer",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "faq_experienceID_experience_id_fk": {
+          "name": "faq_experienceID_experience_id_fk",
+          "tableFrom": "faq",
+          "tableTo": "experience",
+          "columnsFrom": [
+            "experienceID"
           ],
           "columnsTo": [
             "id"
@@ -517,14 +601,14 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "senderId": {
-          "name": "senderId",
+        "senderID": {
+          "name": "senderID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
         },
-        "recipientId": {
-          "name": "recipientId",
+        "recipientID": {
+          "name": "recipientID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -550,12 +634,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "messages_senderId_user_id_fk": {
-          "name": "messages_senderId_user_id_fk",
+        "messages_senderID_user_id_fk": {
+          "name": "messages_senderID_user_id_fk",
           "tableFrom": "messages",
           "tableTo": "user",
           "columnsFrom": [
-            "senderId"
+            "senderID"
           ],
           "columnsTo": [
             "id"
@@ -563,12 +647,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "messages_recipientId_user_id_fk": {
-          "name": "messages_recipientId_user_id_fk",
+        "messages_recipientID_user_id_fk": {
+          "name": "messages_recipientID_user_id_fk",
           "tableFrom": "messages",
           "tableTo": "user",
           "columnsFrom": [
-            "recipientId"
+            "recipientID"
           ],
           "columnsTo": [
             "id"
@@ -594,8 +678,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "userId": {
-          "name": "userId",
+        "userID": {
+          "name": "userID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -627,12 +711,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "notifications_userId_user_id_fk": {
-          "name": "notifications_userId_user_id_fk",
+        "notifications_userID_user_id_fk": {
+          "name": "notifications_userID_user_id_fk",
           "tableFrom": "notifications",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "userID"
           ],
           "columnsTo": [
             "id"
@@ -702,14 +786,14 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "gigId": {
-          "name": "gigId",
+        "experienceID": {
+          "name": "experienceID",
           "type": "uuid",
           "primaryKey": false,
           "notNull": true
         },
-        "userId": {
-          "name": "userId",
+        "userID": {
+          "name": "userID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -722,7 +806,7 @@
         },
         "rating": {
           "name": "rating",
-          "type": "integer",
+          "type": "double precision",
           "primaryKey": false,
           "notNull": true
         },
@@ -735,12 +819,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "review_gigId_gig_id_fk": {
-          "name": "review_gigId_gig_id_fk",
+        "review_experienceID_experience_id_fk": {
+          "name": "review_experienceID_experience_id_fk",
           "tableFrom": "review",
-          "tableTo": "gig",
+          "tableTo": "experience",
           "columnsFrom": [
-            "gigId"
+            "experienceID"
           ],
           "columnsTo": [
             "id"
@@ -748,12 +832,12 @@
           "onDelete": "no action",
           "onUpdate": "no action"
         },
-        "review_userId_user_id_fk": {
-          "name": "review_userId_user_id_fk",
+        "review_userID_user_id_fk": {
+          "name": "review_userID_user_id_fk",
           "tableFrom": "review",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "userID"
           ],
           "columnsTo": [
             "id"
@@ -779,8 +863,8 @@
           "notNull": true,
           "default": "gen_random_uuid()"
         },
-        "userId": {
-          "name": "userId",
+        "userID": {
+          "name": "userID",
           "type": "text",
           "primaryKey": false,
           "notNull": true
@@ -794,12 +878,12 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "searchHistory_userId_user_id_fk": {
-          "name": "searchHistory_userId_user_id_fk",
+        "searchHistory_userID_user_id_fk": {
+          "name": "searchHistory_userID_user_id_fk",
           "tableFrom": "searchHistory",
           "tableTo": "user",
           "columnsFrom": [
-            "userId"
+            "userID"
           ],
           "columnsTo": [
             "id"
@@ -916,6 +1000,82 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
+    "public.trip": {
+      "name": "trip",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userID": {
+          "name": "userID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "waypoints": {
+          "name": "waypoints",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estimatedBudget": {
+          "name": "estimatedBudget",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "numPeople": {
+          "name": "numPeople",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "trip_userID_user_id_fk": {
+          "name": "trip_userID_user_id_fk",
+          "tableFrom": "trip",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userID"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
     "public.twoFactor": {
       "name": "twoFactor",
       "schema": "",
@@ -1025,8 +1185,8 @@
           "primaryKey": false,
           "notNull": false
         },
-        "phone": {
-          "name": "phone",
+        "phoneNumber": {
+          "name": "phoneNumber",
           "type": "text",
           "primaryKey": false,
           "notNull": false
@@ -1035,7 +1195,8 @@
           "name": "phoneNumberVerified",
           "type": "boolean",
           "primaryKey": false,
-          "notNull": false
+          "notNull": false,
+          "default": false
         },
         "dob": {
           "name": "dob",

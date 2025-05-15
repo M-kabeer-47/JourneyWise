@@ -23,7 +23,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Label } from "@/components/ui/label";
-import { cn } from "@/utils/shadcn/utils";
+import { cn } from "@/lib/utils";
 import { TierSelectionCard } from "./TierSelectionCard";
 import { toast, Toast } from "@/components/ui/Toast";
 import { CustomTierSection } from "./TierSelectionCard";

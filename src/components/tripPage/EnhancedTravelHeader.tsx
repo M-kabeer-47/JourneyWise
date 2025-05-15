@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { CheckCircle2, Ban, User, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
-import { cn } from '@/utils/shadcn/utils'
+import { cn } from '@/lib/utils'
 
 interface EnhancedTravelHeaderProps {
   title: string;

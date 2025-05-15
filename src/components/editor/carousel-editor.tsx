@@ -3,7 +3,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 import { GripVertical, Plus, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ImageUpload } from "@/components/editor/image-upload"
-import { cn } from "@/utils/shadcn/utils"
+import { cn } from "@/lib/utils"
 
 interface CarouselEditorProps {
   images: Array<{ id: string; url: string; alt?: string }>

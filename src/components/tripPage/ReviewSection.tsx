@@ -1,7 +1,7 @@
 "use client"
 import React, { useState } from 'react';
 import { Star, MessageCircle, User } from 'lucide-react';
-import { cn } from '@/utils/shadcn/utils';
+import { cn } from '@/lib/utils';
 import ReviewModal from './ReviewModal';
 import ImageModal from '../ui/ImageModal';
 
