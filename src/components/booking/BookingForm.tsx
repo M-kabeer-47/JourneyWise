@@ -286,7 +286,7 @@ export default function BookingForm({ tripData }: BookingFormProps) {
             <TierSelectionCard
               key={index}
               tier={tier}
-              currency={tripData.experience.tier.currency}
+              currency={tripData.experience.currency}
               isSelected={selectedTierIndex === index}
               onSelect={() => handleTierSelect(index)}
             />

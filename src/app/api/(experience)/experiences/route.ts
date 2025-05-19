@@ -18,10 +18,10 @@ export async function GET(request: NextRequest) {
     
     // Filtering parameters
     const isAvailable = searchParams.get("isAvailable");
-    const minPrice = searchParams.get("minPrice");
-    const maxPrice = searchParams.get("maxPrice");
-    const minDuration = searchParams.get("minDuration");
-    const maxDuration = searchParams.get("maxDuration");
+    const minPrice = parseFloat(searchParams.get("minPrice")|| "1")
+    const maxPrice = parseFloat(searchParams.get("maxPrice")|| "1")
+    const minDuration = parseFloat(searchParams.get("minDuration")|| "1")
+    const maxDuration = parseFloat(searchParams.get("maxDuration")|| "1")
     const tags = searchParams.get("tags"); // Comma-separated list of tags
     
     // Search parameter

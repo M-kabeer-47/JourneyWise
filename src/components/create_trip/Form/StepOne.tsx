@@ -332,7 +332,7 @@ export default function FormStep1({ formData, handleInputChange, errors, onSubmi
                            flex items-center gap-1.5
                            ${
                              formData.tags.includes(tag)
-                               ? "bg-midnight-blue text-white"
+                               ? "bg-ocean-blue text-white"
                                : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
                            }`}
                 whileHover={{ scale: 1.02 }}
