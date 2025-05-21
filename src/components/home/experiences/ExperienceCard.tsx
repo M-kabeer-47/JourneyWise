@@ -1,22 +1,17 @@
 "use client";
-import React from 'react';
-import { Star } from 'lucide-react';
-import { motion } from 'framer-motion';
-import { Experience } from '@/lib/types/Experience';
-import Link from 'next/link';
+import React from "react";
+import { Star } from "lucide-react";
+import { motion } from "framer-motion";
+import { Experience } from "@/lib/types/experiences/Experience";
+import Link from "next/link";
 
-interface ExperienceCardProps {
+export default function ExperienceCard({
+  experience,
+}: {
   experience: Experience;
-  agent?: {
-    avatar: string | undefined; 
-    name: string
-  };
-}
-
-export default function ExperienceCard({ experience, agent }: ExperienceCardProps) {
+}) {
   // Use the agent from experience if not provided separately
-  const displayAgent = agent || experience.agent;
-  
+
   return (
     <motion.div
       transition={{ duration: 0.2 }}
@@ -36,16 +31,22 @@ export default function ExperienceCard({ experience, agent }: ExperienceCardProp
 
         {/* Enhanced Availability Badge */}
         <div className="absolute top-4 left-4 z-10">
-          <div className={`flex items-center px-3 py-1.5 rounded-full backdrop-blur-sm ${
-            experience.isAvailable
-              ? 'bg-green-500/20 text-green-50 border border-green-300/30'
-              : 'bg-red-500/20 text-red-50 border border-red-300/30'
-          }`}>
-            <span className={`h-2 w-2 rounded-full mr-2 ${
-              experience.isAvailable ? 'bg-green-400 animate-pulse' : 'bg-red-400'
-            }`}></span>
+          <div
+            className={`flex items-center px-3 py-1.5 rounded-full backdrop-blur-sm ${
+              experience.isAvailable
+                ? "bg-green-500/20 text-green-50 border border-green-300/30"
+                : "bg-red-500/20 text-red-50 border border-red-300/30"
+            }`}
+          >
+            <span
+              className={`h-2 w-2 rounded-full mr-2 ${
+                experience.isAvailable
+                  ? "bg-green-400 animate-pulse"
+                  : "bg-red-400"
+              }`}
+            ></span>
             <span className="text-xs font-medium">
-              {experience.isAvailable ? 'Available' : 'Unavailable'}
+              {experience.isAvailable ? "Available" : "Unavailable"}
             </span>
           </div>
         </div>
@@ -59,17 +60,30 @@ export default function ExperienceCard({ experience, agent }: ExperienceCardProp
             </h3>
             <div className="text-right shrink-0">
               <div className="text-xs text-white/90">Starting at</div>
-              <div className="text-2xl font-bold">${experience.tier?.tierInfo?.[0]?.price}</div>
+              <div className="text-2xl font-bold">
+                ${experience.tier.tierInfo[0].price}
+              </div>
             </div>
           </div>
 
           {/* Duration */}
           <div className="flex items-center mb-3">
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-white/70 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-4 w-4 text-white/70 mr-1"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
             </svg>
             <span className="text-xs text-white/90 drop-shadow-sm">
-              {experience.duration} {experience.duration === 1 ? 'day' : 'days'}
+              {experience.duration} {experience.duration === 1 ? "day" : "days"}
             </span>
           </div>
 
@@ -91,14 +105,24 @@ export default function ExperienceCard({ experience, agent }: ExperienceCardProp
           <div className="flex items-center justify-between pt-3 border-t border-white/30">
             <div className="flex items-center space-x-2">
               <img
-                src={displayAgent.avatar}
-                alt={displayAgent.name}
+                src={
+                  (experience.agent && experience.agent.avatar) ||
+                  "/default-avatar.png"
+                }
+                alt={
+                  (experience.agent && experience.agent.name) || "Agent Avatar"
+                }
                 className="w-8 h-8 rounded-full border-2 border-white/70"
               />
               <div>
-                <p className="text-sm font-medium text-white drop-shadow-sm">{displayAgent.name}</p>
+                <p className="text-sm font-medium text-white drop-shadow-sm">
+                  {experience.agent && experience.agent.name}
+                </p>
                 <div className="flex items-center">
-                  <Star className="w-3.5 h-3.5 text-yellow-400" fill="currentColor" />
+                  <Star
+                    className="w-3.5 h-3.5 text-yellow-400"
+                    fill="currentColor"
+                  />
                   <span className="ml-1 text-xs text-white/90 drop-shadow-sm">
                     {experience.averageRating}
                   </span>

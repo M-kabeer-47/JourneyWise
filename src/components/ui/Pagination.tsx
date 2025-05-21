@@ -81,9 +81,9 @@ const Pagination = ({ currentPage, totalPages, onPageChange, className = '' }: P
             <button
               key={page}
               onClick={() => onPageChange(page as number)}
-              className={`flex items-center justify-center h-9 w-9 rounded-md text-sm font-medium transition-colors ${
+              className={`flex items-center justify-center h-9 w-9 rounded-[50%]  text-sm font-medium transition-colors ${
                 currentPage === page
-                  ? 'bg-ocean-blue text-white' 
+                  ? ' bg-midnight-blue text-white' 
                   : 'text-gray-700 hover:bg-gray-100'
               }`}
               aria-label={`Page ${page}`}

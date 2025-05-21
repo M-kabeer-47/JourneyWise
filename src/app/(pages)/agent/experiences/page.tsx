@@ -9,7 +9,7 @@ import Pagination from '@/components/ui/Pagination';
 import SearchBar from '@/components/ui/SearchBar';
 import SortBy from '@/components/ui/SortBy';
 import ExperienceGrid from '@/components/experiences/ExperienceGrid';
-import { Experience } from '@/lib/types/Experience';
+import { Experience } from '@/lib/types/experiences/Experience';
 import { generateMockExperiences } from '@/utils/mockDataGenerators';
 
 export default function AgentExperiences() {

@@ -1,33 +1,26 @@
-'use client'
+"use client";
 
-
-import GigCarousel from './experiences/ExperienceCarousel'
-import { useQuery } from '@tanstack/react-query'
-
-import axios from 'axios'
-
+import useFetchExperiences from "@/lib/hooks/useFetchExperiences";
+import GigCarousel from "./experiences/ExperienceCarousel";
 
 export default function FeaturedGigs() {
-    const {data,isFetching,isLoading} = useQuery({
-      queryKey: ['home'],
-      queryFn: async () => {
-        const res = await axios.get('/api/experiences?limit=6&offset=0')
-        if (res.status !== 200) {
-          alert('Network response was not ok')
-        }
-        return res.data
-      },
-      refetchOnWindowFocus: false,
-    })
-    if(isLoading || isFetching){
-      return (
-        <GigCarousel title="Recommended Experiences" experiences={[]} isLoading={isFetching}/>
-      )
-    }
-    return <GigCarousel title="Recommended Experiences" experiences={data.experiences} isLoading={isLoading} />
-    
+  const { experiences, isLoading, isFetching } = useFetchExperiences({});
 
+  if (isLoading || isFetching) {
+    return (
+      <GigCarousel
+        title="Recommended Experiences"
+        experiences={[]}
+        isLoading={isFetching}
+      />
+    );
+  }
+
+  return (
+    <GigCarousel
+      title="Featured Experiences"
+      experiences={experiences}
+      isLoading={isLoading}
+    />
+  );
 }
-
-  
-

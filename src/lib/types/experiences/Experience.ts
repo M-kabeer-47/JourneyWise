@@ -13,7 +13,7 @@ export interface tierInfo {
 }
 
 export interface Experience {
-  agent: { avatar: string | undefined; name: string; } | undefined;
+
   id: string;
   title: string;
   description: string;
@@ -28,7 +28,16 @@ export interface Experience {
     code: string;
   };
   
-  tier: tierInfo[];
+  tier: {
+    currency: string;
+    tierInfo: tierInfo[];
+  };
+  agent?:{
+    id: string;
+    name: string;
+    avatar: string;
+  }
+
 }
 
 export interface ExperienceResponse {

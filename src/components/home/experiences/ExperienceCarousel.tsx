@@ -5,20 +5,13 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ExperienceCard from './ExperienceCard';
 import ExperienceCardSkeleton from '@/components/skeletons/ExperienceCardSkeleton';
-import { Experience  } from '@/lib/types/Experience';
+import { Experience  } from '@/lib/types/experiences/Experience';
 import { Button } from '@/components/ui/button';
 
-interface ExperienceData {
-  experience: Experience;
-  agent: {
-    avatar: string | undefined;
-    name: string;
-  };
-}
 
 interface ExperienceCarouselProps {
   title: string;
-  experiences?: ExperienceData[];  
+  experiences?: Experience[];  
   sectionRef?: React.RefObject<HTMLElement>;
   isLoading?: boolean;
 }
@@ -146,7 +139,7 @@ export default function ExperienceCarousel({
               >
                 {experiences.length > 0 ? experiences.map((experience, index) => (
                   <motion.div
-                    key={experience.experience.id || `experience-${index}`}
+                    key={experience.id || `experience-${index}`}
                     className="flex-shrink-0 flex-grow-0 px-4"
                     style={{ width: `${100 / cardsPerView}%` }}
                     initial={{ opacity: 0, y: 50 }}
@@ -156,7 +149,7 @@ export default function ExperienceCarousel({
                     whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
                     <div className="h-full transform transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
-                      <ExperienceCard experience={experience.experience} agent={experience.agent} />
+                      <ExperienceCard experience={experience}/>
                     </div>
                   </motion.div>
                 )) : (

@@ -1,7 +1,7 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Experience } from '@/lib/types/Experience';
+import { Experience } from '@/lib/types/experiences/Experience';
 import ExperienceCard from '@/components/home/experiences/ExperienceCard';
 import ExperienceSkeleton from '@/components/skeletons/ExperienceCardSkeleton'; // Assuming this exists
 
