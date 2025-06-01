@@ -1,10 +1,3 @@
-
-
-
-
-
-
-
 "use client";
 import React, { useState } from "react";
 import { usePathname } from "next/navigation";
@@ -31,7 +24,7 @@ const AgentSidebar = () => {
   const mainLinks = [
     {
       label: "Dashboard",
-      href: "/agent",
+      href: "/agent/dashboard",
       icon: (
         <LayoutDashboard
           className={`w-5 h-5 ${
@@ -168,17 +161,14 @@ const AgentSidebar = () => {
       ),
     },
   ];
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   return (
     <Sidebar open={open} setOpen={setOpen}>
       <SidebarBody className="bg-midnight-blue dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800">
         {/* Logo section */}
         <div className="flex items-center mb-8 py-4 o">
           <img src="/white_logo2.png" alt="Logo" className="h-[40px]" />
-          {open && (
-          <Logo className="text-white text-xl" />
-          )
-          }
+          {open && <Logo className="text-white text-xl" />}
         </div>
 
         {/* Main navigation */}

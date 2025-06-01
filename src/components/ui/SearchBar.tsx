@@ -16,7 +16,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   className = "",
 }) => {
   return (
-    <div className="md:col-span-5 relative flex items-center">
+    <div className="relative flex items-center w-full">
       <input
         type="search"
         placeholder="Search experiences..."

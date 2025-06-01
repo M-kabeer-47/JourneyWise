@@ -11,7 +11,6 @@ import Pagination from '@/components/ui/Pagination';
 import SearchBar from '@/components/ui/SearchBar';
 import SortBy from '@/components/ui/SortBy';
 import ExperienceGrid from '@/components/experiences/ExperienceGrid';
-import { Experience } from '@/lib/types/Experience';
 import useFetchExperiences from "@/hooks/useFetchExperiences";
 
 export default function AgentExperiences() {
