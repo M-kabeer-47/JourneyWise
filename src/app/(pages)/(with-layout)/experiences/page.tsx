@@ -3,20 +3,21 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin, Search, ArrowRight } from "lucide-react";
+import { MapPin, Search, ArrowRight, X, SlidersHorizontal } from "lucide-react";
 
 // Custom Components
 import { LocationSelector } from "@/components/experiences/LocationSelector";
 import ExperienceFilters from "@/components/experiences/ExperienceFilters";
 
 // App Components
-import ExperienceCard from "@/components/home/experiences/ExperienceCard";
+import ExperienceCard from "@/components/experiences/ExperienceCard";
 import ExperienceSkeleton from "@/components/skeletons/ExperienceCardSkeleton";
 import Pagination from "@/components/ui/Pagination";
 import SortBy from "@/components/ui/SortBy";
-import useFetchExperiences from "@/lib/hooks/useFetchExperiences";
-import { Filters } from "@/lib/types/experiences/Filters";
-import { Experience } from "@/lib/types/experiences/Experience";
+import useFetchExperiences from "@/hooks/useFetchExperiences";
+import { Filters } from "@/lib/types/Experience";
+import { Experience } from "@/lib/types/Experience";
+import SearchBar from "@/components/ui/SearchBar";
 // Data
 
 const popularLocations = [
@@ -65,8 +66,7 @@ const tagOptions = [
 const sortOptions = [
   { value: "createdAt", label: "Date Added" },
   { value: "averageRating", label: "Rating" },
-  { value: "minPrice", label: "Price: Low to High" },
-  { value: "maxPrice", label: "Price: High to Low" },
+  { value: "minPrice", label: "Price" },
   { value: "duration", label: "Duration" },
 ];
 
@@ -75,25 +75,26 @@ export default function ExperiencesPage() {
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
 
-
-
-  const [currentPage, setCurrentPage] = useState<number>(parseInt(current.get('page') || "1"))
+  const [currentPage, setCurrentPage] = useState<number>(
+    parseInt(current.get("page") || "1")
+  );
   const [searchValue, setSearchValue] = useState("");
   const [sortBy, setSortBy] = useState("createdAt");
   const [sortOrder, setSortOrder] = useState("desc");
   const [filters, setFilters] = useState<Filters>({
-    isAvailable: true,
-    minPrice: 1,
-    maxPrice: 10000,
-    minDuration: 1,
-    maxDuration: 30,
-    tags: [],
-    locations: [],
+    isAvailable: current.get("isAvailable") === "true" || true,
+    minPrice: parseFloat(current.get("minPrice") || "1"),
+    maxPrice: parseFloat(current.get("maxPrice") || "100000"),
+    minDuration: parseInt(current.get("minDuration") || "1"),
+    maxDuration: parseInt(current.get("maxDuration") || "30"),
+    tags: current.get("tags")
+      ? current.get("tags")!.split(",").filter(Boolean)
+      : [],
+    locations: current.get("locations")
+      ? current.get("locations")!.split(",").filter(Boolean)
+      : [],
   });
-  
-  
-
-  // Filter form state
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { experiences, isLoading, isFetching, totalPages, totalExperiences } =
     useFetchExperiences();
@@ -101,6 +102,7 @@ export default function ExperiencesPage() {
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
+  const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
   const handleLocationChange = useCallback(
     (selectedLocations: string[]) => {
@@ -108,7 +110,6 @@ export default function ExperiencesPage() {
         ...prev,
         locations: selectedLocations,
       }));
-
       updateQueryParams({
         locations:
           selectedLocations.length > 0 ? selectedLocations.join(",") : null,
@@ -171,36 +172,9 @@ export default function ExperiencesPage() {
 
   const handlePageChange = useCallback((page: number) => {
     updateQueryParams({ page: page.toString() });
-    setCurrentPage(page)
+    setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, []);
-
-  const clearTag = useCallback(
-    (tag: string) => {
-      const newTags = filters.tags.filter((t) => t !== tag);
-      setFilters((prev) => ({
-        ...prev,
-        tags: newTags,
-      }));
-
-      updateQueryParams({
-        tags: newTags.length > 0 ? newTags.join(",") : null,
-      });
-    },
-    [filters.tags]
-  );
-
-  // const clearLocation = useCallback((location: string) => {
-  //   const newLocations = filters.locations.filter(l => l !== location);
-  //   setFilters(prev => ({
-  //     ...prev,
-  //     locations: newLocations
-  //   }));
-
-  //   updateQueryParams({
-  //     locations: newLocations.length > 0 ? newLocations.join(',') : null
-  //   });
-  // }, [filters.locations]);
 
   const clearAllFilters = useCallback(() => {
     const defaultFilters = {
@@ -217,7 +191,7 @@ export default function ExperiencesPage() {
     setSearchValue("");
 
     // Clear URL parameters except for page, limit, sort
-    
+
     console.log("Current: " + current);
     current.set("page", "1");
     current.set("limit", "10");
@@ -230,8 +204,6 @@ export default function ExperiencesPage() {
   // Update query parameters helper
 
   function updateQueryParams(params: Record<string, string | null>) {
-    const current = new URLSearchParams(searchParams);
-
     // Update or add new parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value === "" || value === null || value === undefined) {
@@ -240,7 +212,6 @@ export default function ExperiencesPage() {
         current.set(key, value);
       }
     });
-
     // Build the new URL
     const search = current.toString();
     const query = search ? `?${search}` : "";
@@ -249,7 +220,6 @@ export default function ExperiencesPage() {
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      let current = new URLSearchParams(searchParams);
       current.set("search", searchValue);
       const currentQuery = current.toString();
       const query = currentQuery ? `?${currentQuery}` : "";
@@ -258,76 +228,6 @@ export default function ExperiencesPage() {
 
     return () => clearTimeout(timer);
   }, [searchValue]);
-
-  useEffect(() => {
-    alert("Total Pages: " + totalPages);
-  }, [totalPages]);
-
-  // Calculate total pages
-
-  // Show active filters
-  const renderActiveFilters = () => {
-    const hasActiveFilters =
-      filters.isAvailable ||
-      filters.minPrice > 1 ||
-      filters.maxPrice < 10000 ||
-      filters.minDuration > 1 ||
-      filters.maxDuration < 30 ||
-      filters.tags.length > 0;
-    // filters.locations.length > 0;
-
-    if (!hasActiveFilters) return null;
-
-    return (
-      <div className="flex flex-wrap gap-2 items-center pt-3 mt-2 border-t border-gray-100">
-        {filters.tags.map((tag) => (
-          <div
-            key={tag}
-            className="flex items-center bg-midnight-blue/10 text-midnight-blue rounded-full py-1 pl-3 pr-1.5 text-xs font-medium"
-          >
-            <span>{tag}</span>
-            <button
-              onClick={() => clearTag(tag)}
-              className="ml-1 p-0.5 rounded-full hover:bg-midnight-blue/20"
-              type="button"
-            >
-              <span>×</span>
-            </button>
-          </div>
-        ))}
-
-        {/* {filters.locations.map(location => (
-          <div 
-            key={location} 
-            className="flex items-center bg-midnight-blue/10 text-midnight-blue rounded-full py-1 pl-3 pr-1.5 text-xs font-medium"
-          >
-            <span>{location}</span>
-            <button 
-              onClick={() => clearLocation(location)}
-              className="ml-1 p-0.5 rounded-full hover:bg-midnight-blue/20"
-              type="button"
-            >
-              <span>×</span>
-            </button>
-          </div>
-        ))} */}
-
-        {(filters.isAvailable ||
-          filters.minPrice > 1 ||
-          filters.maxPrice < 10000 ||
-          filters.minDuration > 1 ||
-          filters.maxDuration < 30) && (
-          <button
-            onClick={clearAllFilters}
-            className="text-xs text-midnight-blue font-medium hover:underline"
-            type="button"
-          >
-            Clear all filters
-          </button>
-        )}
-      </div>
-    );
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
@@ -338,7 +238,7 @@ export default function ExperiencesPage() {
         </div>
 
         <div className="px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24">
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto text-center relative top-[40px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-raleway font-bold mb-4">
               Discover Amazing Experiences
             </h1>
@@ -357,17 +257,10 @@ export default function ExperiencesPage() {
           <div className="p-5 border-b border-gray-100 w-full">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 w-full">
               {/* Simple, minimal search bar */}
-              <div className="md:col-span-5 relative flex items-center">
-                <input
-                  type="search"
-                  placeholder="Search experiences..."
-                  value={searchValue}
-                  onChange={(e) => handleSearch(e.target.value)}
-                  // onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-                  className="block w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:border-ocean-blue"
-                />
-                <Search className="absolute right-2 top-3 h-6 w-6 text-gray-400 " />
-              </div>
+              <SearchBar
+                searchTerm={searchValue}
+                setSearchTerm={handleSearch}
+              />
 
               {/* Full-width location selector */}
               <div className="md:col-span-4">
@@ -393,29 +286,145 @@ export default function ExperiencesPage() {
                 </div>
               </div>
             </div>
-
-            {/* Active filters */}
-            {renderActiveFilters()}
           </div>
+
+          {/* Active Filters Tags */}
+          {(filters.tags.length > 0 || filters.locations.length > 0) && (
+            <div className="px-5 py-3 border-b border-gray-100">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-sm text-midnight-blue font-medium">
+                  Active filters:
+                </span>
+
+                {/* Location tags */}
+                {filters.locations.map((location) => (
+                  <div
+                    key={location}
+                    className="inline-flex items-center gap-1 bg-ocean-blue/20 text-green-800 text-xs px-3 py-1 rounded-full"
+                  >
+                    <MapPin size={12} className="text-midnight-blue" />
+                    <span>
+                      {popularLocations.find((loc) => loc.code === location)
+                        ?.name || location}
+                    </span>
+                    <button
+                      onClick={() => {
+                        const newLocations = filters.locations.filter(
+                          (loc) => loc !== location
+                        );
+                        handleLocationChange(newLocations);
+                      }}
+                      className="ml-1 rounded-full p-0.5 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Category/Tag tags */}
+                {filters.tags.map((tag) => (
+                  <div
+                    key={tag}
+                    className="inline-flex items-center gap-1 bg-purple-100 text-purple-800 text-xs px-3 py-1 rounded-full"
+                  >
+                    <span>{tag}</span>
+                    <button
+                      onClick={() => {
+                        const newTags = filters.tags.filter((t) => t !== tag);
+                        setFilters((prev) => ({ ...prev, tags: newTags }));
+                        updateQueryParams({
+                          tags: newTags.length > 0 ? newTags.join(",") : null,
+                        });
+                      }}
+                      className="ml-1 hover:bg-purple-200 rounded-full p-0.5 transition-colors"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+
+                {/* Clear all filters button */}
+                <button
+                  onClick={clearAllFilters}
+                  className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
+                >
+                  <span>Clear all</span>
+                  <X size={12} />
+                </button>
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="flex flex-col md:flex-row gap-6">
-          {/* Filters Sidebar - Now using the new ExperienceFilters component */}
-          <div className="md:w-72 flex-shrink-0">
-            <ExperienceFilters
-              initialValues={{
-                isAvailable: filters.isAvailable,
-                minPrice: filters.minPrice,
-                maxPrice: filters.maxPrice,
-                minDuration: filters.minDuration,
-                maxDuration: filters.maxDuration,
-                tags: filters.tags,
-              }}
-              tagOptions={tagOptions}
-              onApplyFilters={handleApplyFilters}
-              onClearFilters={clearAllFilters}
-            />
+        {/* Toggle button for filters - only visible on mobile */}
+        <button
+          onClick={toggleSidebar}
+          className="md:hidden fixed left-0 top-1/2 -translate-y-1/2 bg-midnight-blue text-white p-3 rounded-r-lg shadow-lg z-30 flex items-center gap-2"
+        >
+          {sidebarOpen ? (
+            <>
+              <X size={16} />
+              <span className="text-sm">Close</span>
+            </>
+          ) : (
+            <>
+              <SlidersHorizontal size={16} />
+              <span className="text-sm">Filters</span>
+            </>
+          )}
+        </button>
+
+        <div className="relative flex gap-6">
+          {/* Filters Sidebar with collapsible behavior */}
+          <div
+            className={`
+              md:w-72 flex-shrink-0 
+              fixed md:static left-0 top-0 h-full md:h-auto z-20 
+              transform transition-transform duration-300 ease-in-out
+              ${
+                sidebarOpen
+                  ? "translate-x-0"
+                  : "-translate-x-full md:translate-x-0"
+              }
+              bg-white md:bg-transparent
+              border-r border-gray-200 md:border-0
+            `}
+          >
+            <div className="p-4 md:p-0 h-full overflow-y-auto overflow-x-hidden">
+              {/* Mobile close button - inside the sidebar */}
+              <div className="flex justify-between items-center mb-4 md:hidden">
+                <h2 className="text-lg font-bold">Filters</h2>
+                <button onClick={toggleSidebar} className="p-1">
+                  <X size={20} />
+                </button>
+              </div>
+
+              <ExperienceFilters
+                initialValues={{
+                  isAvailable: filters.isAvailable,
+                  minPrice: filters.minPrice,
+                  maxPrice: filters.maxPrice,
+                  minDuration: filters.minDuration,
+                  maxDuration: filters.maxDuration,
+                  tags: filters.tags,
+                }}
+                tagOptions={tagOptions}
+                onApplyFilters={(newFilters) => {
+                  handleApplyFilters(newFilters);
+                  if (window.innerWidth < 768) setSidebarOpen(false);
+                }}
+                onClearFilters={clearAllFilters}
+              />
+            </div>
           </div>
+
+          {/* Overlay to close sidebar on mobile */}
+          {sidebarOpen && (
+            <div
+              className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
+              onClick={toggleSidebar}
+            ></div>
+          )}
 
           {/* Main Content Area */}
           <div className="flex-1">
@@ -441,8 +450,8 @@ export default function ExperiencesPage() {
             </div>
 
             {/* Results Grid */}
-            {isLoading ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {isLoading || isFetching ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {Array(6)
                   .fill(0)
                   .map((_, i) => (
@@ -472,7 +481,7 @@ export default function ExperiencesPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
               >
                 {experiences.map((experience: Experience) => (
                   <motion.div

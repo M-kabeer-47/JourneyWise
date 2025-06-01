@@ -5,7 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import ExperienceCard from './ExperienceCard';
 import ExperienceCardSkeleton from '@/components/skeletons/ExperienceCardSkeleton';
-import { Experience  } from '@/lib/types/experiences/Experience';
+import { Experience  } from '@/lib/types/Experience';
 import { Button } from '@/components/ui/button';
 
 
@@ -33,8 +33,8 @@ export default function ExperienceCarousel({
 
   const updateCardsPerView = () => {
     const width = window.innerWidth;
-    if (width >= 1536) setCardsPerView(4); // 2xl
-    else if (width >= 1280) setCardsPerView(3); // xl
+    if (width >= 1536) setCardsPerView(5); // 2xl
+    else if (width >= 1280) setCardsPerView(4); // xl
     else if (width >= 768) setCardsPerView(2); // md
     else setCardsPerView(1); // mobile
   };
@@ -92,7 +92,7 @@ export default function ExperienceCarousel({
       ref={sectionRef || null}
       className="py-20 bg-gradient-to-b from-midnight-blue/5 to-ocean-blue/5 relative overflow-hidden"
     >
-      <div className="container mx-auto px-4 md:px-8">
+      <div className="px-4 md:px-12">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -115,7 +115,7 @@ export default function ExperienceCarousel({
           )}
         </motion.div>
 
-        <div className="relative max-w-[1400px] mx-auto" ref={containerRef}>
+        <div className="relative w-full" ref={containerRef}>
           <div className="overflow-hidden px-2">
             {isLoading ? (
               // Skeleton loading state - simple fixed number based on screen size
@@ -148,7 +148,7 @@ export default function ExperienceCarousel({
                     viewport={{ once: true }}
                     whileHover={{ y: -5, transition: { duration: 0.2 } }}
                   >
-                    <div className="h-full transform transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
+                    <div className="h-full  transform transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
                       <ExperienceCard experience={experience}/>
                     </div>
                   </motion.div>

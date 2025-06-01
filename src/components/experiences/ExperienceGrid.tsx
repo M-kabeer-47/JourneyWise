@@ -1,8 +1,8 @@
 "use client";
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Experience } from '@/lib/types/experiences/Experience';
-import ExperienceCard from '@/components/home/experiences/ExperienceCard';
+import { Experience } from '@/lib/types/Experience';
+import ExperienceCard from '@/components/experiences/ExperienceCard';
 import ExperienceSkeleton from '@/components/skeletons/ExperienceCardSkeleton'; // Assuming this exists
 
 interface ExperienceGridProps {
@@ -39,8 +39,8 @@ const ExperienceGrid: React.FC<ExperienceGridProps> = ({
   // If loading, show skeletons
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {Array(9).fill(0).map((_, i) => (
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        {Array(8).fill(0).map((_, i) => (
           <ExperienceSkeleton key={i} />
         ))}
       </div>
@@ -84,7 +84,7 @@ const ExperienceGrid: React.FC<ExperienceGridProps> = ({
       variants={containerVariants}
       initial="hidden"
       animate="visible"
-      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
     >
       {experiences.map(experience => (
         <motion.div 

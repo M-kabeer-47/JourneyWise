@@ -1,9 +1,8 @@
 "use client";
-import React from "react";
+
 import { Star } from "lucide-react";
 import { motion } from "framer-motion";
-import { Experience } from "@/lib/types/experiences/Experience";
-import Link from "next/link";
+import { Experience } from "../../../../src/lib/data/index.ts";
 
 export default function ExperienceCard({
   experience,
@@ -17,7 +16,7 @@ export default function ExperienceCard({
       transition={{ duration: 0.2 }}
       className="relative w-full h-[400px] group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
     >
-      <Link href={`/experience/${experience.id}`} className="block h-full">
+      <a href={`/experience/${experience.id}`} className="block h-full">
         {/* Background Image */}
         <div className="absolute inset-0">
           <img
@@ -61,7 +60,7 @@ export default function ExperienceCard({
             <div className="text-right shrink-0">
               <div className="text-xs text-white/90">Starting at</div>
               <div className="text-2xl font-bold">
-                ${experience.tier.tierInfo[0].price}
+                ${experience.tier?.tierInfo?.[0]?.price ?? 'N/A'}
               </div>
             </div>
           </div>
@@ -138,7 +137,7 @@ export default function ExperienceCard({
             </motion.button>
           </div>
         </div>
-      </Link>
+      </a>
     </motion.div>
   );
 }

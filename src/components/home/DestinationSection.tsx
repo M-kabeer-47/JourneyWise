@@ -4,7 +4,7 @@ import { useState, useEffect, useRef, createRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { MapPin, Utensils, Calendar, ChevronDown } from 'lucide-react'
-import { useAppDispatch } from '@/lib/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 import { toggleNavbar } from '@/lib/redux/slices/navbar'
 const destinations = [
   {

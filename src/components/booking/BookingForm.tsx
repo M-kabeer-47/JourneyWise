@@ -27,7 +27,7 @@ import { cn } from "@/lib/utils";
 import { TierSelectionCard } from "./TierSelectionCard";
 import { toast, Toast } from "@/components/ui/Toast";
 import { CustomTierSection } from "./TierSelectionCard";
-import { ExperienceResponse } from "@/lib/types/experiences/Experience";
+import { ExperienceResponse } from "@/lib/types/Experience";
 import Spinner from "../ui/Spinner";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import axios from "axios";

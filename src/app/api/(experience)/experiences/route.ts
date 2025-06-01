@@ -44,7 +44,7 @@ export async function GET(request: NextRequest) {
       // Handle price range filter using the tierInfo array in tier
       if (minPrice !== null) {
         // Assume the lowest tier price is at index 0
-        conditions.push(sql`${experience.maxPrice} >= ${parseFloat(minPrice)}`);
+        conditions.push(sql`${experience.minPrice} >= ${parseFloat(minPrice)}`);
       }
       if (maxPrice !== null) {
         // Assume the highest tier price is at the last index

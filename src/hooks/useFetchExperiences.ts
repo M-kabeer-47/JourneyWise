@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Experience } from "@/lib/types/experiences/Experience";
+import { Experience } from "@/lib/types/Experience";
 import { useSearchParams } from "next/navigation";
 
 

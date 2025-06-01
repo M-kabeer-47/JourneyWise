@@ -1,6 +1,6 @@
 "use client";
-import React from 'react';
-import { Search, X } from 'lucide-react';
+import React from "react";
+import { Search, X } from "lucide-react";
 
 interface SearchBarProps {
   searchTerm: string;
@@ -9,32 +9,22 @@ interface SearchBarProps {
   className?: string;
 }
 
-const SearchBar: React.FC<SearchBarProps> = ({ 
-  searchTerm, 
-  setSearchTerm, 
+const SearchBar: React.FC<SearchBarProps> = ({
+  searchTerm,
+  setSearchTerm,
   placeholder = "Search...",
-  className = ""
+  className = "",
 }) => {
   return (
-    <div className={`relative flex-1 ${className}`}>
-      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-        <Search className="h-5 w-5 text-gray-400" />
-      </div>
+    <div className="md:col-span-5 relative flex items-center">
       <input
         type="search"
-        placeholder={placeholder}
+        placeholder="Search experiences..."
         value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
-        className="block w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-ocean-blue focus:border-transparent text-gray-900"
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="block w-full px-4 py-2 bg-gray-50 border border-gray-200 rounded-lg text-gray-700 focus:outline-none focus:border-ocean-blue"
       />
-      {searchTerm && (
-        <button
-          onClick={() => setSearchTerm('')}
-          className="absolute inset-y-0 right-0 pr-3 flex items-center"
-        >
-          <X className="h-5 w-5 text-gray-400 hover:text-gray-600" />
-        </button>
-      )}
+      <Search className="absolute right-2  h-6 w-6 text-gray-400 " />
     </div>
   );
 };

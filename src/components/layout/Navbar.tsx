@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { motion, AnimatePresence, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Search, Bell, Menu, X, UserPlus, Mail, Home, MapPin, Book, ChevronDown, Edit } from 'lucide-react';
-import { useAppSelector } from '@/lib/hooks/redux';
+import { useAppSelector } from '@/hooks/redux';
 import { usePathname } from 'next/navigation';
 import fetchUserFromClient from '@/hooks/fetchUserFromClient';
 

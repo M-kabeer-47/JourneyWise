@@ -13,7 +13,6 @@ export interface tierInfo {
 }
 
 export interface Experience {
-
   id: string;
   title: string;
   description: string;
@@ -25,22 +24,44 @@ export interface Experience {
   location: {
     city: string;
     country: string;
-    code: string;
+    code?: string;
   };
-  
+  category: string;
+  minPrice: string;
+  maxPrice: string;
+
   tier: {
     currency: string;
     tierInfo: tierInfo[];
   };
-  agent?:{
+  agent?: {
     id: string;
     name: string;
     avatar: string;
-  }
-
+  };
 }
 
 export interface ExperienceResponse {
   experience: Experience;
-  agent: agent
+  agent: agent;
+}
+
+export type Filters = {
+  isAvailable: boolean;
+  minPrice: number;
+  maxPrice: number;
+  minDuration: number;
+  maxDuration: number;
+  tags: string[];
+  locations: string[];
+};
+
+export interface Review {
+  id: string;
+  experienceTitle: string;
+  userName: string;
+  userImage: string;
+  comment: string;
+  rating: number;
+  createdAt: string;
 }

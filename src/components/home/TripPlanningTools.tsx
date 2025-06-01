@@ -4,7 +4,7 @@ import { motion } from 'framer-motion'
 import { CalendarDays, Compass, BookOpen } from 'lucide-react'
 import { toggleNavbar } from '@/lib/redux/slices/navbar'
 import { useEffect,useRef } from 'react'
-import { useAppDispatch } from '@/lib/hooks/redux'
+import { useAppDispatch } from '@/hooks/redux'
 const tools = [
   { 
     id: 1, 
@@ -62,7 +62,7 @@ export default function TripPlanningTools() {
   return (
     <motion.section 
     ref={sectionRef}
-      className="py-32 bg-gray-50 relative top-[140px] "
+      className="py-32 bg-gray-50 relative top-[140px]"
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
@@ -76,7 +76,7 @@ export default function TripPlanningTools() {
           {tools.map((tool) => (
             <div
               key={tool.id}
-              className="bg-white rounded-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-ocean-blue border-opacity-20 min-h-[480px] flex flex-col"
+              className="bg-white rounded-lg overflow-hidden transition-all duration-300 ease-in-out hover:shadow-lg border-2 border-ocean-blue border-opacity-20 min-h-[400px] xl:min-h-[600px] flex flex-col"
             >
               <div className="p-8 flex flex-col h-full">
                 <div className="flex items-center mb-6">
