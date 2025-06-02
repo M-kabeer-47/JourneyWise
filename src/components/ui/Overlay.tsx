@@ -10,7 +10,7 @@ const Overlay: React.FC<OverlayProps> = ({ isVisible }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
-      <Spinner size="large" />
+      <Spinner size="small" />
     </div>
   )
 }

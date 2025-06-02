@@ -1,5 +1,5 @@
   import { useState, useEffect } from "react"
-  import { motion } from "framer-motion"
+
   import { Plus, Minus, HelpCircle, Trash2 } from "lucide-react"
   import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
   import axios from "axios"

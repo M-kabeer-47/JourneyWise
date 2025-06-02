@@ -13,73 +13,24 @@ import ImagesCarousel from "@/components/tripPage/ImagesCarousel";
 import axios from "axios";
 import ReviewSection from "@/components/tripPage/ReviewSection";
 import ExperiencePageSkeleton from "@/components/skeletons/ExperiencePageSkeleton";
-
+import { reviews } from "@/lib/data/dashboardMockData";
 const TripPage = async ({ params }: { params: { id: string } }) => {
   let { id } = await params;
   let isLoading = true;
 
   const fetchTrip = async () => {
     try {
-      let response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/experience/${id}`);
+      let response = await axios.get(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/experience/${id}`
+      );
       isLoading = false;
       return response.data;
     } catch (error) {
-      
-
       return null;
     }
   };
 
-  
-
-  const reviewsData = [
-    {
-      id: "rev1",
-      user: {
-        name: "Sarah Johnson",
-        avatar:
-          "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3",
-      },
-      rating: 5.0,
-      content:
-        "This was absolutely the highlight of our trip to Japan! Our guide was incredibly knowledgeable about Kyoto's history and culture. The tea ceremony was so authentic and the accommodation was beautiful. Highly recommend this experience!",
-    },
-    {
-      id: "rev2",
-      user: {
-        name: "Michael Chen",
-        avatar:
-          "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1887&auto=format&fit=crop&ixlib=rb-4.0.3",
-      },
-      rating: 4.5,
-      content:
-        "The cultural immersion was fantastic and we learned so much about Japanese traditions. Beautiful temples and excellent organization. The only small issue was that one day felt a bit rushed, but overall an amazing experience.",
-    },
-    {
-      id: "rev3",
-      user: {
-        name: "Emma Rodriguez",
-        avatar:
-          "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1770&auto=format&fit=crop&ixlib=rb-4.0.3",
-      },
-      rating: 5.0,
-      content:
-        "The bamboo forest walk was magical, especially early in the morning before the crowds arrived. Our guide arranged everything perfectly and handled all the logistics so we could just enjoy the experience.",
-    },
-    {
-      id: "rev4",
-      user: {
-        name: "David Thompson",
-      },
-      rating: 4.0,
-      content:
-        "Great cultural experience with knowledgeable guides. The food was amazing and accommodations were comfortable. Would have liked a bit more free time to explore on our own, but otherwise very satisfied with this cultural journey.",
-    },
-  ];
-
-
   const experienceData = await fetchTrip();
-  
 
   return (
     <>
@@ -217,8 +168,8 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
               <div className="mt-10 pt-6 border-t border-gray-100 mb-[100px]">
                 <ReviewSection
                   rating={experienceData.experience.averageRating}
-                  totalReviews={reviewsData.length}
-                  reviews={reviewsData}
+                  totalReviews={reviews.length}
+                  reviews={reviews}
                 />
               </div>
 

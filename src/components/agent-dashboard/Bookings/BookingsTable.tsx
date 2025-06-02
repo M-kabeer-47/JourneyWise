@@ -273,10 +273,10 @@ const BookingsTable: React.FC<BookingsTableProps> = ({
                   } whitespace-nowrap`}
                 >
                   <span
-                    className={`flex justify-center items-center  rounded-[12px] text-xs font-medium w-24 ${getStatusClass(
+                    className={`flex justify-center items-center font-semibold  rounded-[12px] text-[14px]  w-24 ${getStatusClass(
                       booking.status
                     )}
-                    ${isFullPage ? "sm:px-14 sm:py-3 px-10 py-2" : "sm:px-12 sm:py-2 px-8 py-1.5"}
+                    ${isFullPage ? "sm:px-14 sm:py-2.5 px-10 py-2" : "sm:px-14 sm:py-2 px-8 py-1.5"}
                     `}
                   >
                     {booking.status.charAt(0).toUpperCase() +

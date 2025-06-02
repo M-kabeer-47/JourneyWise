@@ -1,43 +1,25 @@
-"use client"
-import './globals.css'
-import { Open_Sans, Raleway } from 'next/font/google'
-import StoreProvider from '../providers/redux'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import {ReactQueryDevtools} from '@tanstack/react-query-devtools'
-const openSans = Open_Sans({ subsets: ['latin'] })
-const raleway = Raleway({ subsets: ['latin'], variable: '--font-raleway' })
+import "./globals.css";
+import { Open_Sans, Raleway } from "next/font/google";
+import Providers from "../providers/Providers";
 
-// export const metadata = {
-//   title: 'Premium Travel App',
-//   description: 'Explore the world with ease',
-// }
-const queryClient = new QueryClient()
+const openSans = Open_Sans({ subsets: ["latin"] });
+const raleway = Raleway({ subsets: ["latin"], variable: "--font-raleway" });
+
+export const metadata = {
+  title: "Premium Travel App",
+  description: "Explore the world with ease",
+};
+
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
-  
   return (
     <html lang="en">
-        <QueryClientProvider client={queryClient} >
-        
-      <StoreProvider>
-      
-        
-      
       <body className={`${openSans.className} ${raleway.variable}`}>
-      <ReactQueryDevtools initialIsOpen={false} />   
-      
-        {children}
-        
+        <Providers>{children}</Providers>
       </body>
-      
-      </StoreProvider>
-      </QueryClientProvider>
-      
-
     </html>
-  )
+  );
 }
-

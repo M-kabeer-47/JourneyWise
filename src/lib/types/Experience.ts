@@ -27,8 +27,8 @@ export interface Experience {
     code?: string;
   };
   category: string;
-  minPrice: string;
-  maxPrice: string;
+  minPrice: number;
+  maxPrice: number;
 
   tier: {
     currency: string;
@@ -62,6 +62,8 @@ export interface Review {
   userName: string;
   userImage: string;
   comment: string;
+  images?: string[];
   rating: number;
   createdAt: string;
+  experienceId: string;
 }

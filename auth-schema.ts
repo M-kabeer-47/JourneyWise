@@ -105,10 +105,7 @@ export const booking = pgTable("booking", {
   paymentID: uuid("paymentID").references(() => payment.id),
   isCustomRequest: boolean("isCustomRequest").default(false),
   notes: text("notes"),
-
 });
-
-
 
 export const faq = pgTable("faq", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -128,6 +125,7 @@ export const review = pgTable("review", {
     .notNull()
     .references(() => user.id),
   comment: text("comment").notNull(),
+  images: jsonb("images"),
   rating: doublePrecision("rating").notNull(),
   createdAt: timestamp("createdAt").notNull(),
 });

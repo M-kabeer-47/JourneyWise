@@ -1,6 +1,13 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
-import { CircleCheck, Upload, Check, HelpCircle } from "lucide-react";
+import {
+  CircleCheck,
+  Upload,
+  Check,
+  HelpCircle,
+  X,
+  ImageIcon,
+} from "lucide-react";
 import {
   TooltipProvider,
   Tooltip,
@@ -16,7 +23,6 @@ interface FormStep1Props {
   formData: ExperienceData;
   handleInputChange: (field: keyof ExperienceData, value: any) => void;
   errors: Partial<ExperienceData>;
-  onSubmit: (data: Partial<ExperienceData>) => void;
   initialData: Partial<ExperienceData>;
 }
 
@@ -61,13 +67,14 @@ export default function FormStep1({
   formData,
   handleInputChange,
   errors,
-  onSubmit,
   initialData,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [countries, setCountries] = useState<Country[]>([]);
   const [citiesData, setCitiesData] = useState<CityData>({});
-  const { watch } = useForm({ defaultValues: initialData });
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFocus = (fieldName: string) => setFocusedField(fieldName);
   const handleBlur = () => setFocusedField(null);
@@ -78,6 +85,75 @@ export default function FormStep1({
       : [...formData.tags, tag];
     handleInputChange("tags", updatedTags);
   };
+
+  // Handle file selection (both click and drop)
+  const handleFileSelect = (file: File) => {
+    if (file && file.type.startsWith("image/")) {
+      handleInputChange("experienceImage", file); // Changed from gigImage
+
+      // Create preview URL
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  // Handle drag and drop events
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+  };
+
+  const handleDrop = (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    const imageFile = files.find((file) => file.type.startsWith("image/"));
+
+    if (imageFile) {
+      handleFileSelect(imageFile);
+    }
+  };
+
+  // Handle file input change
+  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handleFileSelect(file);
+    }
+  };
+
+  // Remove image
+  const handleRemoveImage = () => {
+    handleInputChange("experienceImage", ""); // Changed from gigImage
+    setImagePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
+  // Set initial preview if formData has an image
+  useEffect(() => {
+    if (formData.experienceImage) {
+      // Changed from gigImage
+      if (typeof formData.experienceImage === "string") {
+        setImagePreview(formData.experienceImage);
+      } else if ((formData.experienceImage as any) instanceof File) {
+        const previewUrl = URL.createObjectURL(formData.experienceImage);
+        setImagePreview(previewUrl);
+
+        // Cleanup function
+        return () => URL.revokeObjectURL(previewUrl);
+      }
+    } else {
+      setImagePreview(null);
+    }
+  }, [formData.experienceImage]); // Changed from gigImage
 
   useEffect(() => {
     const fetchCountries = async () => {
@@ -112,18 +188,6 @@ export default function FormStep1({
   const cities = formData.countryCode
     ? citiesData[formData.countryCode] || []
     : [];
-
-  // Watch all form fields
-  useEffect(() => {
-    const subscription = watch((formValues) => {
-      const validationResult = stepOneSchema.safeParse(formValues);
-      if (validationResult.success) {
-        onSubmit(formValues as Partial<ExperienceData>);
-      }
-    });
-
-    return () => subscription.unsubscribe?.();
-  }, [watch, onSubmit]);
 
   return (
     <div className="space-y-8">
@@ -207,38 +271,96 @@ export default function FormStep1({
           </div>
         </div>
 
-        {/* Gig Image Upload */}
+        {/* Enhanced Experience Image Upload with Drag & Drop */}
         <div className="space-y-2">
           <label className="block text-base font-medium text-midnight-blue">
-            Gig Image
+            Experience Image
           </label>
-          <div className="border-2 border-dashed border-gray-200 rounded-lg p-4 text-center">
+
+          {/* Upload Area */}
+          <div
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            className={`relative border-2 border-dashed rounded-lg transition-all duration-200 ${
+              isDragOver
+                ? "border-ocean-blue bg-ocean-blue/5"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+          >
             <input
+              ref={fileInputRef}
               type="file"
               accept="image/*"
-              // Change the image upload handler to:
-              onChange={async (e) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  handleInputChange("gigImage", file);
-                  console.log("file", file);
-                }
-              }}
+              onChange={handleFileInputChange}
               className="hidden"
-              id="gigImageUpload"
+              id="experienceImageUpload" // Changed from gigImageUpload
             />
-            <label
-              htmlFor="gigImageUpload"
-              className="inline-flex items-center gap-2 px-4 h-10 rounded-lg border-2 border-ocean-blue
-                         text-ocean-blue text-sm font-medium transition-all duration-200
-                         hover:bg-ocean-blue hover:text-white cursor-pointer"
-            >
-              <Upload className="w-4 h-4" />
-              Upload Image
-            </label>
+
+            {imagePreview ? (
+              // Image Preview
+              <div className="relative group">
+                <img
+                  src={imagePreview}
+                  alt="Experience preview"
+                  className="w-full h-48 object-cover rounded-lg"
+                />
+                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                  <div className="flex gap-2">
+                    <label
+                      htmlFor="experienceImageUpload" // Changed from gigImageUpload
+                      className="px-3 py-2 bg-white text-midnight-blue rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
+                    >
+                      Change
+                    </label>
+                    <button
+                      type="button"
+                      onClick={handleRemoveImage}
+                      className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              // Upload Area
+              <label
+                htmlFor="experienceImageUpload" // Changed from gigImageUpload
+                className="block p-8 text-center cursor-pointer"
+              >
+                <div className="flex flex-col items-center">
+                  <div
+                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
+                      isDragOver
+                        ? "bg-ocean-blue text-white"
+                        : "bg-gray-100 text-gray-400"
+                    }`}
+                  >
+                    <ImageIcon className="w-8 h-8" />
+                  </div>
+                  <div className="text-lg font-medium text-midnight-blue mb-2">
+                    {isDragOver ? "Drop image here" : "Upload Experience Image"}
+                  </div>
+                  <div className="text-sm text-gray-500 mb-4">
+                    Drag and drop an image or click to browse
+                  </div>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg text-sm font-medium hover:bg-ocean-blue/90 transition-colors">
+                    <Upload className="w-4 h-4" />
+                    Choose File
+                  </div>
+                  <div className="text-xs text-gray-400 mt-2">
+                    Supports: JPG, PNG, WebP (Max 10MB)
+                  </div>
+                </div>
+              </label>
+            )}
           </div>
-          {errors.gigImage && (
-            <p className="text-red-500 text-sm mt-1">{errors.gigImage}</p>
+
+          {errors.experienceImage && ( // Changed from gigImage
+            <p className="text-red-500 text-sm mt-1">
+              {errors.experienceImage}
+            </p>
           )}
         </div>
 
