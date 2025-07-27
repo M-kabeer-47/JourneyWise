@@ -5,7 +5,7 @@ export interface agent {
   agentID: string;
   userID: string;
 }
-export interface tierInfo {
+export interface tier {
   name: string;
   price: number;
   members: number;
@@ -30,9 +30,9 @@ export interface Experience {
   minPrice: number;
   maxPrice: number;
 
-  tier: {
+  tiers: {
     currency: string;
-    tierInfo: tierInfo[];
+    tiers: tier[];
   };
   agent?: {
     id: string;

@@ -95,6 +95,7 @@ export default function ExperiencesPage() {
       : [],
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isDefaultFilters, setIsDefaultFilters] = useState(true);
 
   const { experiences, isLoading, isFetching, totalPages, totalExperiences } =
     useFetchExperiences();
@@ -178,7 +179,7 @@ export default function ExperiencesPage() {
 
   const clearAllFilters = useCallback(() => {
     const defaultFilters = {
-      isAvailable: false,
+      isAvailable: true,
       minPrice: 1,
       maxPrice: 10000,
       minDuration: 1,
@@ -192,12 +193,9 @@ export default function ExperiencesPage() {
 
     // Clear URL parameters except for page, limit, sort
 
-    console.log("Current: " + current);
-    current.set("page", "1");
-    current.set("limit", "10");
-
-    const search = current.toString();
-    const query = search ? `?${search}` : "";
+    // Remove all search params
+    Array.from(current.keys()).forEach((key) => current.delete(key));
+    let query = current.toString();
     router.push(`/experiences${query}`);
   }, [router]);
 

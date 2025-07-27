@@ -78,7 +78,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
         <div className="flex items-center gap-2 truncate">
           <Globe size={18} className="text-ocean-blue flex-shrink-0" />
           <span className="truncate">
-            {selectedLocations.length > 0 
+            {selectedLocations && selectedLocations.length > 0 
               ? `${selectedLocations.length} location${selectedLocations.length > 1 ? 's' : ''}` 
               : 'All Locations'}
           </span>

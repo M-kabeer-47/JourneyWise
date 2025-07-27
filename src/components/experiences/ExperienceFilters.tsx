@@ -277,7 +277,7 @@ export default function ExperienceFilters({
                   type="button"
                   onClick={() => handleTagToggle(tag)}
                   className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    filters.tags.includes(tag)
+                    filters.tags && filters.tags.includes(tag)
                       ? 'bg-midnight-blue text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                   }`}

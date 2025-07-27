@@ -174,7 +174,7 @@ export async function GET(request: NextRequest) {
         duration: experience.duration,
         isAvailable: experience.isAvailable,
         experienceImage: experience.experienceImage, // Adjust if needed
-        tier: experience.tier,
+        tiers: experience.tiers,
         tags: experience.tags,
         averageRating: experience.averageRating || 0,
         agent: {

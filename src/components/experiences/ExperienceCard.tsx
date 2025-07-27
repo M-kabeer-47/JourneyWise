@@ -83,7 +83,7 @@ function ExperienceContent({
         <div className="text-right shrink-0">
           <div className="text-xs text-white/90">Starting at</div>
           <div className="text-2xl font-bold">
-            ${experience?.tier?.tierInfo[0].price}
+            ${experience?.tiers?.tiers[0].price}
           </div>
         </div>
       </div>

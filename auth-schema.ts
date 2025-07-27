@@ -43,7 +43,7 @@ export const agent = pgTable("agent", {
 export const experience = pgTable("experience", {
   id: uuid("id").primaryKey().defaultRandom(),
   experienceImage: text("experienceImage").notNull(),
-  tier: jsonb("tier").notNull(),
+  tiers: jsonb("tiers").notNull(),
   minPrice: integer("minPrice").default(0),
   maxPrice: integer("maxPrice").default(0),
   experienceImages: jsonb("experienceImages").notNull(),

@@ -129,7 +129,7 @@ export default function Navbar() {
               JourneyWise
             </Link>
 
-            <div className="hidden xl:flex space-x-6 absolute left-1/2 transform -translate-x-1/2">
+            <div className="hidden xl:flex space-x-10 absolute left-1/2 transform -translate-x-1/2">
               {navLinks.map((link) => (
                 <div key={link.name} className="relative">
                   {link.dropdown ? (
