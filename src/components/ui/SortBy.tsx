@@ -72,8 +72,8 @@ export default function SortBy({
       <AnimatePresence>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 0 }}
+            animate={{ opacity: 1, y: 8 }}
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.15 }}
             className="absolute z-50 mt-1 left-0 right-0 bg-white rounded-lg shadow-lg border border-gray-200 py-1"

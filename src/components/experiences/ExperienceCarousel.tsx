@@ -33,7 +33,7 @@ export default function ExperienceCarousel({
 
   const updateCardsPerView = () => {
     const width = window.innerWidth;
-    if (width >= 1536) setCardsPerView(5); // 2xl
+    if (width >= 1736) setCardsPerView(5); // 2xl
     else if (width >= 1280) setCardsPerView(4); // xl
     else if (width >= 768) setCardsPerView(2); // md
     else setCardsPerView(1); // mobile

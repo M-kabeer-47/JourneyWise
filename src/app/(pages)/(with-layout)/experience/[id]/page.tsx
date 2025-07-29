@@ -144,8 +144,8 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
                     {/* Pricing Tiers */}
                     <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                       <PricingTier
-                        currency={experienceData.experience.tier.currency}
-                        tiers={experienceData.experience.tier.tierInfo}
+                        currency={experienceData.experience.tiers.currency}
+                        tiers={experienceData.experience.tiers.tiers}
                       />
 
                       {/* Booking CTA - Desktop */}

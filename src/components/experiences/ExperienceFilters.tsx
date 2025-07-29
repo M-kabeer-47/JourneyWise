@@ -129,7 +129,7 @@ export default function ExperienceFilters({
   
   return (
     <ThemeProvider theme={theme}>
-      <div className="bg-white rounded-xl shadow-md p-5 sticky top-24">
+      <div className="bg-white rounded-xl shadow-md p-5 sticky">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-gray-900">Filters</h2>
           <button 

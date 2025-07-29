@@ -98,11 +98,7 @@ export default function StepFour({ itemVariants,activeTierIndex, setActiveTierIn
                       </div>
 
                       {/* Action Buttons */}
-                      <div className="space-y-3 pt-4">
-                        <button className="w-full py-3 bg-midnight-blue text-white rounded-lg font-medium hover:bg-midnight-blue/90 transition-colors duration-200">
-                          Request to book
-                        </button>
-                      </div>
+                      
                     </div>
                   </motion.div>
                 </AnimatePresence>
@@ -111,7 +107,7 @@ export default function StepFour({ itemVariants,activeTierIndex, setActiveTierIn
               {/* Requirements Section */}
               <motion.div variants={itemVariants} className="mt-6 md:mt-8 space-y-4">
                 <h3 className="text-xl font-semibold text-midnight-blue">Requirements</h3>
-                <div className="grid gap-4">
+                <div className="grid gap-2">
                   {requirements.length > 0 && requirements[0] !== "" ? (
                     requirements.map(
                       (req: string, index: number) =>

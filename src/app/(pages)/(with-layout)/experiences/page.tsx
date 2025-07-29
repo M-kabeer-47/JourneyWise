@@ -202,6 +202,7 @@ export default function ExperiencesPage() {
   // Update query parameters helper
 
   function updateQueryParams(params: Record<string, string | null>) {
+    
     // Update or add new parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value === "" || value === null || value === undefined) {
@@ -255,10 +256,12 @@ export default function ExperiencesPage() {
           <div className="p-5 border-b border-gray-100 w-full">
             <div className="grid grid-cols-1 md:grid-cols-12 gap-4 w-full">
               {/* Simple, minimal search bar */}
-              <SearchBar
-                searchTerm={searchValue}
-                setSearchTerm={handleSearch}
-              />
+              <div className="md:col-span-5">
+                <SearchBar
+                  searchTerm={searchValue}
+                  setSearchTerm={handleSearch}
+                />
+              </div>
 
               {/* Full-width location selector */}
               <div className="md:col-span-4">
@@ -372,7 +375,7 @@ export default function ExperiencesPage() {
           )}
         </button>
 
-        <div className="relative flex gap-6">
+        <div className="relative flex gap-6 ">
           {/* Filters Sidebar with collapsible behavior */}
           <div
             className={`
@@ -479,7 +482,7 @@ export default function ExperiencesPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3  gap-6"
               >
                 {experiences.map((experience: Experience) => (
                   <motion.div

@@ -16,8 +16,8 @@ import {
 } from "@/components/ui/tooltip";
 import axios from "axios";
 import type { ExperienceData } from "@/lib/schemas/experience";
-import { useForm } from "react-hook-form";
 import { stepOneSchema } from "@/lib/schemas/experience";
+import countries from "@/lib/data/countries";
 
 interface FormStep1Props {
   formData: ExperienceData;
@@ -70,7 +70,7 @@ export default function FormStep1({
   initialData,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const [countries, setCountries] = useState<Country[]>([]);
+  
   const [citiesData, setCitiesData] = useState<CityData>({});
   const [isDragOver, setIsDragOver] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -155,26 +155,7 @@ export default function FormStep1({
     }
   }, [formData.experienceImage]); // Changed from gigImage
 
-  useEffect(() => {
-    const fetchCountries = async () => {
-      try {
-        const response = await axios.get("https://restcountries.com/v3.1/all");
-        const countryData = response.data.map((c: any) => ({
-          name: c.name.common,
-          cca2: c.cca2,
-        }));
-        setCountries(
-          countryData.sort((a: Country, b: Country) =>
-            a.name.localeCompare(b.name)
-          )
-        );
-      } catch (error) {
-        console.error("Error fetching countries:", error);
-      }
-    };
-
-    fetchCountries();
-  }, []);
+  
 
   // Load cities data
   useEffect(() => {

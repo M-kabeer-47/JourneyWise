@@ -157,7 +157,7 @@ export default function StepOne({
         </motion.div>
 
         <motion.div variants={itemVariants}>
-          <h3 className="text-lg font-semibold text-midnight-blue mb-2">
+          <h3 className="text-base font-semibold text-midnight-blue mb-2">
             Description
           </h3>
           <p className="text-base text-charcoal leading-relaxed">

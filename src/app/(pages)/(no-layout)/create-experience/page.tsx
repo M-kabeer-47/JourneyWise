@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import LivePreview from "@/components/create_trip/LivePreview/LivePreview";
-import FormStep1 from "@/components/create_trip/Form/StepOne";
-import FormStep2 from "@/components/create_trip/Form/StepTwo";
-import FormStep3 from "@/components/create_trip/Form/StepThree";
-import FormStep4 from "@/components/create_trip/Form/StepFour";
+import LivePreview from "@/components/create_experience/LivePreview/LivePreview";
+import FormStep1 from "@/components/create_experience/Form/StepOne";
+import FormStep2 from "@/components/create_experience/Form/StepTwo";
+import FormStep3 from "@/components/create_experience/Form/StepThree";
+import FormStep4 from "@/components/create_experience/Form/StepFour";
 import {
   stepOneSchema,
   stepTwoSchema,
@@ -19,7 +19,7 @@ import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import { toast } from "@/components/ui/Toast";
 import axios from "axios";
 
-import { Loader, Loader2 } from "lucide-react";
+import {  Loader2 } from "lucide-react";
 
 export default function CreateExperience() {
   const [currentStep, setCurrentStep] = useState(1);
@@ -189,7 +189,7 @@ export default function CreateExperience() {
           experienceImage: uploadedGigImage,
           experienceImages: uploadedImages,
           agentID: "4d19d13d-4c4b-4462-98a1-ab88c19aeb32",
-          tier: { ...formData.tiers, currency: formData.currency },
+          tiers: { tiers: [...formData.tiers], currency: formData.currency },
           location: {
             country: formData.country,
             city: formData.city,

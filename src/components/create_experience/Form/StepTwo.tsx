@@ -106,7 +106,7 @@ export default function FormStep2({ formData, handleInputChange, errors,clickedN
 
               <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-charcoal mb-1">Destination Name</label>
+                  <label className="block text-sm font-medium text-charcoal mb-2">Destination Name</label>
                   <input
                     type="text"
                     value={destination.name}
