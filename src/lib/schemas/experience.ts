@@ -70,7 +70,7 @@ export const stepTwoSchema = z.object({
 
 export const stepThreeSchema = z.object({
   experienceImages: z
-    .array(z.union([z.string(), z.instanceof(File)]))
+    .array(z.instanceof(File))
     .min(5, "At least 5 images are required"),
   includedServices: z
     .array(z.string().min(1, "service is required"))

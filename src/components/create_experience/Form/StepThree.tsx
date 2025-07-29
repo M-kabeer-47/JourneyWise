@@ -132,8 +132,7 @@ export default function FormStep3({
     const newImages = formData.experienceImages.filter((_, i) => i !== index);
     handleInputChange("experienceImages", newImages);
 
-  // Adjust startIndex if necessary
-  
+    // Adjust startIndex if necessary
   };
 
   const addService = useCallback(
@@ -328,7 +327,11 @@ export default function FormStep3({
           )}
           {errors.experienceImages && (
             <p className="text-red-500 text-sm mt-1">
-              {errors.experienceImages}
+              {typeof errors.experienceImages === "string"
+                ? errors.experienceImages
+                : Array.isArray(errors.experienceImages)
+                ? errors.experienceImages.join(", ")
+                : String(errors.experienceImages)}
             </p>
           )}
         </div>
@@ -346,7 +349,11 @@ export default function FormStep3({
           onFocus={handleFocus}
           onBlur={handleBlur}
           type="included"
-          error={errors.includedServices}
+          error={
+            Array.isArray(errors.includedServices)
+              ? errors.includedServices.join(", ")
+              : errors.includedServices
+          }
         />
 
         <ServiceSection
@@ -357,11 +364,15 @@ export default function FormStep3({
           onUpdateService={(index, value) =>
             updateService("excluded", index, value)
           }
-          focusedField={focusedField}
+          error={
+            Array.isArray(errors.excludedServices)
+              ? errors.excludedServices.join(", ")
+              : errors.excludedServices
+          }
           onFocus={handleFocus}
           onBlur={handleBlur}
           type="excluded"
-          error={errors.excludedServices}
+          focusedField={focusedField}
         />
       </div>
     </div>
