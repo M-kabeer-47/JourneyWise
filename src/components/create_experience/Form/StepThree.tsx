@@ -56,13 +56,13 @@ function useImageUrls(experienceImages: (string | File)[]) {
     setImageUrls(newUrls);
 
     // Cleanup function
-    return () => {
-      newFileUrls.forEach((url) => {
-        if (url.startsWith("blob:")) {
-          URL.revokeObjectURL(url);
-        }
-      });
-    };
+    // return () => {
+    //   newFileUrls.forEach((url) => {
+    //     if (url.startsWith("blob:")) {
+    //       URL.revokeObjectURL(url);
+    //     }
+    //   });
+    // };
   }, [experienceImages]);
 
   // Cleanup on unmount
