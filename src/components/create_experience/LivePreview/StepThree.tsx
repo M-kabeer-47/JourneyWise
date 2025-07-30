@@ -249,8 +249,7 @@ export default function StepThree({
                 {includedServices.filter(Boolean).map((service, index) => (
                   <motion.li
                     key={`included-${index}-${service}`}
-                    initial={{ opacity: 0, x: -20 }} // Reduce x value
-                    animate={{ opacity: 1, x: 0 }}
+                    
                     transition={{ delay: index * 0.05, duration: 0.3 }} // Shorter delay and duration
                     className="flex items-center text-white overflow-hidden" // Add overflow-hidden
                   >
@@ -281,8 +280,7 @@ export default function StepThree({
                 {excludedServices.filter(Boolean).map((service, index) => (
                   <motion.li
                     key={`excluded-${index}-${service}`}
-                    initial={{ opacity: 0, x: -20 }} // Reduce x value
-                    animate={{ opacity: 1, x: 0 }}
+                    
                     transition={{ delay: index * 0.05, duration: 0.3 }} // Shorter delay and duration
                     className="flex items-center text-midnight-blue overflow-hidden" // Add overflow-hidden
                   >

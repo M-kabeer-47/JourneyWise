@@ -86,10 +86,26 @@ export default function FormStep3({
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [visibleImages, setVisibleImages] = useState(5);
+  const [dragOver, setDragOver] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
 
   // Use the custom hook
   const imageUrls = useImageUrls(formData.experienceImages);
+
+  // Calculate total slots (images + empty slots when under limit)
+  const totalSlots =
+    formData.experienceImages.length +
+    (formData.experienceImages.length < 20 ? 1 : 0);
+
+  // Calculate maximum start index
+  const maxStartIndex = Math.max(0, totalSlots - visibleImages);
+
+  // Auto-adjust startIndex when it becomes invalid
+  useEffect(() => {
+    if (startIndex > maxStartIndex) {
+      setStartIndex(maxStartIndex);
+    }
+  }, [startIndex, maxStartIndex]);
 
   const addImages = useCallback(
     (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,12 +113,68 @@ export default function FormStep3({
       if (files) {
         const newImages = [...formData.experienceImages, ...Array.from(files)];
         handleInputChange("experienceImages", newImages);
+
+        // Auto-slide to show newly added images
+        const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
+        const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
+        if (newImages.length >= visibleImages) {
+          setStartIndex(newMaxStartIndex);
+        }
       }
-      // Reset the input
       e.target.value = "";
     },
-    [formData.experienceImages, handleInputChange]
+    [formData.experienceImages, handleInputChange, visibleImages]
   );
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const newImages = [...formData.experienceImages, ...Array.from(files)];
+      handleInputChange("experienceImages", newImages);
+
+      // Auto-slide to show newly added images
+      const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
+      const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
+      if (newImages.length >= visibleImages) {
+        setStartIndex(newMaxStartIndex);
+      }
+    }
+  };
+
+  // Fixed removeImage function
+  const removeImage = (index: number) => {
+    const newImages = formData.experienceImages.filter((_, i) => i !== index);
+    handleInputChange("experienceImages", newImages);
+
+    // Calculate new constraints
+    const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
+    const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
+
+    // Adjust startIndex to keep it within valid bounds
+    if (startIndex > newMaxStartIndex) {
+      setStartIndex(newMaxStartIndex);
+    }
+  };
+
+  // Fixed slide functions - move exactly one position
+  const slideLeft = useCallback(() => {
+    setStartIndex((prev) => Math.max(0, prev - 1));
+  }, []);
+
+  const slideRight = useCallback(() => {
+    setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
+  }, [maxStartIndex]);
+
+  // Apply transform based on startIndex
+  useEffect(() => {
+    if (sliderRef.current) {
+      sliderRef.current.style.transform = `translateX(-${
+        startIndex * (100 / visibleImages)
+      }%)`;
+    }
+  }, [startIndex, visibleImages]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -127,13 +199,6 @@ export default function FormStep3({
     []
   );
   const handleBlur = useCallback(() => setFocusedField(null), []);
-
-  const removeImage = (index: number) => {
-    const newImages = formData.experienceImages.filter((_, i) => i !== index);
-    handleInputChange("experienceImages", newImages);
-
-    // Adjust startIndex if necessary
-  };
 
   const addService = useCallback(
     (type: "included" | "excluded") => {
@@ -170,26 +235,6 @@ export default function FormStep3({
     },
     [formData, handleInputChange]
   );
-
-  const slideLeft = useCallback(() => {
-    if (startIndex > 0) {
-      setStartIndex(startIndex - 1);
-    }
-  }, [startIndex]);
-
-  const slideRight = useCallback(() => {
-    if (startIndex < formData.experienceImages.length - visibleImages) {
-      setStartIndex(startIndex + 1);
-    }
-  }, [startIndex, formData.experienceImages.length, visibleImages]);
-
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.style.transform = `translateX(-${
-        startIndex * (100 / visibleImages)
-      }%)`;
-    }
-  }, [startIndex, visibleImages]);
 
   return (
     <div className="space-y-8">
@@ -229,18 +274,17 @@ export default function FormStep3({
             </TooltipProvider>
           </div>
 
-          {/* Image Gallery */}
+          {/* Fixed Image Gallery */}
           <div className="relative overflow-hidden">
             <div
               ref={sliderRef}
               className="flex transition-transform duration-300 ease-in-out"
               style={{
-                width: `${
-                  Math.max(formData.experienceImages.length, visibleImages) *
-                  (100 / visibleImages)
-                }%`,
+                // Total width based on actual slots needed
+                width: `${totalSlots * (100 / visibleImages)}%`,
               }}
             >
+              {/* Render actual images */}
               {imageUrls.map((imgUrl, index) => (
                 <div
                   key={`image-${index}`}
@@ -264,29 +308,47 @@ export default function FormStep3({
                   </div>
                 </div>
               ))}
-              {formData.experienceImages.length < visibleImages &&
-                Array.from({
-                  length: visibleImages - formData.experienceImages.length,
-                }).map((_, index) => (
+
+              {/* Render one empty slot when under limit */}
+              {formData.experienceImages.length < 20 && (
+                <div
+                  className="px-2"
+                  style={{ width: `${100 / visibleImages}%` }}
+                >
                   <div
-                    key={`empty-${index}`}
-                    className="px-2"
-                    style={{ width: `${100 / visibleImages}%` }}
+                    className={`relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer hover:border-ocean-blue/50 transition-all duration-200 ${
+                      dragOver ? "border-ocean-blue bg-ocean-blue/5" : "border-gray-300"
+                    }`}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setDragOver(true);
+                    }}
+                    onDragLeave={() => setDragOver(false)}
+                    onDrop={handleDrop}
+                    onClick={() => document.getElementById('image-upload')?.click()}
                   >
-                    <div className="relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                      <span className="text-gray-400 text-sm">Empty Slot</span>
+                    <div className="text-center">
+                      <Camera className={`w-6 h-6 mx-auto mb-2 transition-colors ${
+                        dragOver ? "text-ocean-blue" : "text-gray-400"
+                      }`} />
+                      <span className={`text-sm transition-colors ${
+                        dragOver ? "text-ocean-blue" : "text-gray-400"
+                      }`}>
+                        {dragOver ? "Drop here" : "Add Image"}
+                      </span>
                     </div>
                   </div>
-                ))}
+                </div>
+              )}
             </div>
 
-            {/* Navigation buttons */}
-            {formData.experienceImages.length > visibleImages && (
+            {/* Fixed Navigation buttons */}
+            {totalSlots > visibleImages && (
               <>
                 <button
                   onClick={slideLeft}
                   type="button"
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50"
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50 transition-opacity"
                   disabled={startIndex === 0}
                 >
                   <ChevronLeft className="w-6 h-6 text-midnight-blue" />
@@ -294,11 +356,8 @@ export default function FormStep3({
                 <button
                   type="button"
                   onClick={slideRight}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50"
-                  disabled={
-                    startIndex >=
-                    formData.experienceImages.length - visibleImages
-                  }
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50 transition-opacity"
+                  disabled={startIndex >= maxStartIndex}
                 >
                   <ChevronRight className="w-6 h-6 text-midnight-blue" />
                 </button>

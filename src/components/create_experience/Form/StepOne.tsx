@@ -70,7 +70,7 @@ export default function FormStep1({
   initialData,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  
+
   const [citiesData, setCitiesData] = useState<CityData>({});
   const [isDragOver, setIsDragOver] = useState(false);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -154,8 +154,6 @@ export default function FormStep1({
       setImagePreview(null);
     }
   }, [formData.experienceImage]); // Changed from gigImage
-
-  
 
   // Load cities data
   useEffect(() => {
@@ -340,7 +338,11 @@ export default function FormStep1({
 
           {errors.experienceImage && ( // Changed from gigImage
             <p className="text-red-500 text-sm mt-1">
-              {errors.experienceImage}
+              {typeof errors.experienceImage === "string"
+                ? errors.experienceImage
+                : Array.isArray(errors.experienceImage)
+                ? errors.experienceImage.join(", ")
+                : null}
             </p>
           )}
         </div>
