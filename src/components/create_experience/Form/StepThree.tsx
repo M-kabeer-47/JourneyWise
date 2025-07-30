@@ -54,15 +54,6 @@ function useImageUrls(experienceImages: (string | File)[]) {
 
     urlsRef.current = newFileUrls;
     setImageUrls(newUrls);
-
-    // Cleanup function
-    // return () => {
-    //   newFileUrls.forEach((url) => {
-    //     if (url.startsWith("blob:")) {
-    //       URL.revokeObjectURL(url);
-    //     }
-    //   });
-    // };
   }, [experienceImages]);
 
   // Cleanup on unmount
@@ -86,45 +77,33 @@ export default function FormStep3({
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [visibleImages, setVisibleImages] = useState(5);
-  const [dragOver, setDragOver] = useState(false);
   const sliderRef = useRef<HTMLDivElement>(null);
+  const [dragOver, setDragOver] = useState(false);
 
   // Use the custom hook
   const imageUrls = useImageUrls(formData.experienceImages);
 
-  // Calculate total slots (images + empty slots when under limit)
-  const totalSlots =
-    formData.experienceImages.length +
-    (formData.experienceImages.length < 20 ? 1 : 0);
-
-  // Calculate maximum start index
-  const maxStartIndex = Math.max(0, totalSlots - visibleImages);
-
-  // Auto-adjust startIndex when it becomes invalid
-  useEffect(() => {
-    if (startIndex > maxStartIndex) {
-      setStartIndex(maxStartIndex);
-    }
-  }, [startIndex, maxStartIndex]);
-
-  const addImages = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const files = e.target.files;
-      if (files) {
-        const newImages = [...formData.experienceImages, ...Array.from(files)];
-        handleInputChange("experienceImages", newImages);
-
-        // Auto-slide to show newly added images
-        const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
-        const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
-        if (newImages.length >= visibleImages) {
-          setStartIndex(newMaxStartIndex);
-        }
-      }
-      e.target.value = "";
-    },
-    [formData.experienceImages, handleInputChange, visibleImages]
+  // Calculate total slots (images + empty slots)
+  const totalSlots = Math.max(
+    formData.experienceImages.length + 1,
+    visibleImages
   );
+  const emptySlots = Math.max(
+    0,
+    visibleImages - formData.experienceImages.length
+  );
+
+  const handleBlur = useCallback(() => setFocusedField(null), []);
+
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setDragOver(false);
+  };
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -133,72 +112,62 @@ export default function FormStep3({
     if (files.length > 0) {
       const newImages = [...formData.experienceImages, ...Array.from(files)];
       handleInputChange("experienceImages", newImages);
-
-      // Auto-slide to show newly added images
-      const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
-      const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
-      if (newImages.length >= visibleImages) {
-        setStartIndex(newMaxStartIndex);
-      }
     }
   };
 
-  // Fixed removeImage function
   const removeImage = (index: number) => {
     const newImages = formData.experienceImages.filter((_, i) => i !== index);
     handleInputChange("experienceImages", newImages);
 
-    // Calculate new constraints
-    const newTotalSlots = newImages.length + (newImages.length < 20 ? 1 : 0);
-    const newMaxStartIndex = Math.max(0, newTotalSlots - visibleImages);
-
-    // Adjust startIndex to keep it within valid bounds
-    if (startIndex > newMaxStartIndex) {
-      setStartIndex(newMaxStartIndex);
+    // Adjust startIndex if we removed images and slider is at the end
+    const maxStartIndex = Math.max(0, newImages.length - visibleImages + 1);
+    if (startIndex >= maxStartIndex) {
+      setStartIndex(maxStartIndex);
     }
   };
 
-  // Fixed slide functions - move exactly one position
   const slideLeft = useCallback(() => {
-    setStartIndex((prev) => Math.max(0, prev - 1));
-  }, []);
+    if (startIndex > 0) {
+      setStartIndex(startIndex - 1);
+    }
+  }, [startIndex]);
 
   const slideRight = useCallback(() => {
-    setStartIndex((prev) => Math.min(maxStartIndex, prev + 1));
-  }, [maxStartIndex]);
-
-  // Apply transform based on startIndex
-  useEffect(() => {
-    if (sliderRef.current) {
-      sliderRef.current.style.transform = `translateX(-${
-        startIndex * (100 / visibleImages)
-      }%)`;
+    const maxStartIndex = Math.max(
+      0,
+      formData.experienceImages.length - visibleImages + 1
+    );
+    if (startIndex < maxStartIndex) {
+      setStartIndex(startIndex + 1);
     }
-  }, [startIndex, visibleImages]);
+  }, [startIndex, formData.experienceImages.length, visibleImages]);
 
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setVisibleImages(5);
-      } else if (window.innerWidth >= 768) {
-        setVisibleImages(4);
-      } else if (window.innerWidth >= 640) {
-        setVisibleImages(3);
-      } else {
-        setVisibleImages(2);
+  const addImages = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const files = e.target.files;
+      if (files) {
+        const newImages = [...formData.experienceImages, ...Array.from(files)];
+        handleInputChange("experienceImages", newImages);
+
+        // Auto-slide logic: when images reach or exceed visible capacity
+        if (formData.experienceImages.length >= visibleImages - 1) {
+          const newStartIndex = Math.max(
+            0,
+            newImages.length - visibleImages + 1
+          );
+          setStartIndex(newStartIndex);
+        }
       }
-    };
-
-    handleResize();
-    window.addEventListener("resize", handleResize);
-    return () => window.removeEventListener("resize", handleResize);
-  }, []);
+      // Reset the input
+      e.target.value = "";
+    },
+    [formData.experienceImages, handleInputChange, visibleImages]
+  );
 
   const handleFocus = useCallback(
     (fieldName: string) => setFocusedField(fieldName),
     []
   );
-  const handleBlur = useCallback(() => setFocusedField(null), []);
 
   const addService = useCallback(
     (type: "included" | "excluded") => {
@@ -235,6 +204,47 @@ export default function FormStep3({
     },
     [formData, handleInputChange]
   );
+
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) {
+        setVisibleImages(5);
+      } else if (window.innerWidth >= 768) {
+        setVisibleImages(4);
+      } else if (window.innerWidth >= 640) {
+        setVisibleImages(3);
+      } else {
+        setVisibleImages(2);
+      }
+    };
+
+    handleResize();
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  // Fixed transform calculation
+  useEffect(() => {
+    if (sliderRef.current) {
+      // Each slot takes up (100 / visibleImages)% of the viewport
+      // To move by one slot, we translate by that percentage
+      const translatePercentage = startIndex * (100 / visibleImages);
+      sliderRef.current.style.transform = `translateX(${translatePercentage}%)`;
+    }
+  }, [startIndex, visibleImages]);
+
+  // Auto-slide when images are added
+  useEffect(() => {
+    if (formData.experienceImages.length >= visibleImages) {
+      const maxStartIndex = Math.max(
+        0,
+        formData.experienceImages.length - visibleImages + 1
+      );
+      if (startIndex > maxStartIndex) {
+        setStartIndex(maxStartIndex);
+      }
+    }
+  }, [formData.experienceImages.length, visibleImages, startIndex]);
 
   return (
     <div className="space-y-8">
@@ -280,7 +290,7 @@ export default function FormStep3({
               ref={sliderRef}
               className="flex transition-transform duration-300 ease-in-out"
               style={{
-                // Total width based on actual slots needed
+                // Total width = total slots * individual slot width
                 width: `${totalSlots * (100 / visibleImages)}%`,
               }}
             >
@@ -309,46 +319,40 @@ export default function FormStep3({
                 </div>
               ))}
 
-              {/* Render one empty slot when under limit */}
-              {formData.experienceImages.length < 20 && (
+              {/* Render empty slots - always show at least one for drag/drop */}
+              {Array.from({
+                length: Math.max(1, emptySlots),
+              }).map((_, index) => (
                 <div
+                  key={`empty-${index}`}
                   className="px-2"
                   style={{ width: `${100 / visibleImages}%` }}
                 >
                   <div
-                    className={`relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed flex items-center justify-center cursor-pointer hover:border-ocean-blue/50 transition-all duration-200 ${
-                      dragOver ? "border-ocean-blue bg-ocean-blue/5" : "border-gray-300"
+                    className={`relative aspect-square bg-gray-100 rounded-lg border-2 border-dashed flex items-center justify-center transition-colors ${
+                      dragOver
+                        ? "border-ocean-blue bg-ocean-blue/5"
+                        : "border-gray-300"
                     }`}
-                    onDragOver={(e) => {
-                      e.preventDefault();
-                      setDragOver(true);
-                    }}
-                    onDragLeave={() => setDragOver(false)}
+                    onDragOver={handleDragOver}
                     onDrop={handleDrop}
-                    onClick={() => document.getElementById('image-upload')?.click()}
+                    onDragLeave={handleDragLeave}
                   >
-                    <div className="text-center">
-                      <Camera className={`w-6 h-6 mx-auto mb-2 transition-colors ${
-                        dragOver ? "text-ocean-blue" : "text-gray-400"
-                      }`} />
-                      <span className={`text-sm transition-colors ${
-                        dragOver ? "text-ocean-blue" : "text-gray-400"
-                      }`}>
-                        {dragOver ? "Drop here" : "Add Image"}
-                      </span>
-                    </div>
+                    <span className="text-gray-400 text-sm">
+                      {index === 0 ? "Drop images here" : "Empty Slot"}
+                    </span>
                   </div>
                 </div>
-              )}
+              ))}
             </div>
 
-            {/* Fixed Navigation buttons */}
+            {/* Navigation buttons - show when there are more slots than visible */}
             {totalSlots > visibleImages && (
               <>
                 <button
                   onClick={slideLeft}
                   type="button"
-                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50 transition-opacity"
+                  className="absolute left-0 top-1/2 transform -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-lg disabled:opacity-50 hover:bg-white transition-colors"
                   disabled={startIndex === 0}
                 >
                   <ChevronLeft className="w-6 h-6 text-midnight-blue" />
@@ -356,8 +360,8 @@ export default function FormStep3({
                 <button
                   type="button"
                   onClick={slideRight}
-                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-md disabled:opacity-50 transition-opacity"
-                  disabled={startIndex >= maxStartIndex}
+                  className="absolute right-0 top-1/2 transform -translate-y-1/2 bg-white/90 p-2 rounded-full shadow-lg disabled:opacity-50 hover:bg-white transition-colors"
+                  disabled={startIndex >= totalSlots - visibleImages}
                 >
                   <ChevronRight className="w-6 h-6 text-midnight-blue" />
                 </button>
