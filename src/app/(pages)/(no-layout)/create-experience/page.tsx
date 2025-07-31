@@ -3,10 +3,10 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LivePreview from "@/components/create_experience/LivePreview/LivePreview";
-import FormStep1 from "@/components/create_experience/Form/StepOne";
-import FormStep2 from "@/components/create_experience/Form/StepTwo";
-import FormStep3 from "@/components/create_experience/Form/StepThree";
-import FormStep4 from "@/components/create_experience/Form/StepFour";
+import FormStep1 from "@/components/create_experience/Form/steps/StepOne";
+import FormStep2 from "@/components/create_experience/Form/steps/StepTwo";
+import FormStep3 from "@/components/create_experience/Form/steps/StepThree";
+import FormStep4 from "@/components/create_experience/Form/steps/StepFour";
 import {
   stepOneSchema,
   stepTwoSchema,
@@ -19,17 +19,14 @@ import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import { toast } from "@/components/ui/Toast";
 import axios from "axios";
 
-import {  Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 export default function CreateExperience() {
   const [currentStep, setCurrentStep] = useState(1);
   const [activeTierIndex, setActiveTierIndex] = useState(0);
   const [submit, setSubmit] = useState(false);
   const [clickedNext, setClickedNext] = useState(false);
-  const [isOverlayVisible, setIsOverlayVisible] = useState(false);
   const [errors, setErrors] = useState<Partial<ExperienceData>>({});
-
-  // Memoize initial form data
   const initialFormData = useMemo(
     (): ExperienceData => ({
       title: "",
@@ -37,7 +34,7 @@ export default function CreateExperience() {
       city: "",
       category: "",
       countryCode: "",
-      duration: 0,
+      duration: 0, // This might be changing unexpectedly
       tags: [],
       description: "",
       availability: "available",
@@ -48,35 +45,27 @@ export default function CreateExperience() {
       experienceImages: [],
       includedServices: [""],
       excludedServices: [""],
-      destinations: [
-        {
-          id: "1",
-          day: 1,
-          name: "Start",
-          activities: [{ id: "1", name: "Departure" }],
-        },
-      ],
+      destinations: [], // Start with empty array
     }),
     []
   );
-
   const [formData, setFormData] = useState<ExperienceData>(initialFormData);
+
   const totalSteps = 4;
+
+  // Memoize initial form data
 
   useEffect(() => {
     scrollTo(0, 0);
   }, [currentStep]);
 
   // Memoize validation schemas
-  const validationSchemas = useMemo(
-    () => ({
-      1: stepOneSchema,
-      2: stepTwoSchema,
-      3: stepThreeSchema,
-      4: stepFourSchema,
-    }),
-    []
-  );
+  const validationSchemas = () => ({
+    1: stepOneSchema,
+    2: stepTwoSchema,
+    3: stepThreeSchema,
+    4: stepFourSchema,
+  });
 
   const validateStep = useCallback(() => {
     const schema =
@@ -196,11 +185,8 @@ export default function CreateExperience() {
           },
           minPrice: minPrice,
           averageRating: 0,
-          itineraryDetails:formData.destinations,
-          isAvailable: formData.availability === "available" ? true : false
-
-          
-
+          itineraryDetails: formData.destinations,
+          isAvailable: formData.availability === "available" ? true : false,
         };
 
         const response = await axios.post("/api/create-experience", {
@@ -216,55 +202,59 @@ export default function CreateExperience() {
         toast.error("Experience creation failed!");
       } finally {
         setSubmit(false);
-        setIsOverlayVisible(false);
       }
     },
     [formData, validateStep]
   );
 
   // Memoize step components to prevent unnecessary re-renders
-  const stepComponents = useMemo(
-    () => ({
-      1: (
-        <FormStep1
-          initialData={formData}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          errors={errors}
-        />
-      ),
-      2: (
-        <FormStep2
-          clickedNext={clickedNext}
-          formData={formData}
-          handleInputChange={handleInputChange}
-          errors={errors}
-        />
-      ),
-      3: (
-        <FormStep3
-          formData={formData}
-          handleInputChange={handleInputChange}
-          errors={errors}
-        />
-      ),
-      4: (
-        <FormStep4
-          formData={formData}
-          handleInputChange={handleInputChange}
-          setActiveTierIndex={setActiveTierIndex}
-          errors={errors}
-          submit={submit}
-        />
-      ),
-    }),
-    [formData, handleInputChange, errors, clickedNext, submit]
-  );
+  const renderCurrentStep = () => {
+    switch (currentStep) {
+      case 1:
+        return (
+          <FormStep1
+            initialData={formData}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
+        );
+      case 2:
+        return (
+          <FormStep2
+            clickedNext={clickedNext}
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
+        );
+      case 3:
+        return (
+          <FormStep3
+            formData={formData}
+            handleInputChange={handleInputChange}
+            errors={errors}
+          />
+        );
+      case 4:
+        return (
+          <FormStep4
+            formData={formData}
+            handleInputChange={handleInputChange}
+            setActiveTierIndex={setActiveTierIndex}
+            errors={errors}
+            submit={submit}
+          />
+        );
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#FAFAFA] p-4 md:p-6">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid lg:grid-cols-[1fr,1fr] gap-6">
+        <div className="grid lg:grid-cols-[50%_50%] gap-6">
           {/* Preview Section */}
           <div className="lg:sticky lg:top-6 h-fit order-2 lg:order-1">
             <LivePreview
@@ -286,7 +276,7 @@ export default function CreateExperience() {
                   exit={{ opacity: 0, y: -20 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {stepComponents[currentStep as keyof typeof stepComponents]}
+                  {renderCurrentStep()}
                 </motion.div>
               </AnimatePresence>
 

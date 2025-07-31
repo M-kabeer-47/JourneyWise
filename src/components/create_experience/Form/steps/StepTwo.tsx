@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { Plus, Trash, Clock, MapPin, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import type { ExperienceData } from "@/lib/schemas/experience";
-import TimeInput from "./TimeInput";
+import TimeInput from "../components/TimeInput";
 interface FormStep2Props {
   formData: ExperienceData;
   handleInputChange: (field: keyof ExperienceData, value: any) => void;
@@ -31,9 +31,9 @@ export default function FormStep2({
   clickedNext,
 }: FormStep2Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
+  const duration= formData.duration
   useEffect(() => {
-    if (formData.duration && formData.destinations.length < formData.duration) {
+     alert("Yeah buddy")
       const newDestinations = Array.from(
         { length: formData.duration },
         (_, i) => ({
@@ -44,8 +44,8 @@ export default function FormStep2({
         })
       );
       handleInputChange("destinations", newDestinations);
-    }
-  }, [formData.duration, handleInputChange]);
+
+  }, [duration]);
 
   const handleFocus = (fieldName: string) => setFocusedField(fieldName);
   const handleBlur = () => setFocusedField(null);

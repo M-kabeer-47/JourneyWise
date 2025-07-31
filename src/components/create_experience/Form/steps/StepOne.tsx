@@ -526,8 +526,8 @@ export default function FormStep1({
                                ? "bg-ocean-blue text-white"
                                : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
                            }`}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
+                
+                
               >
                 {tag}
                 {formData.tags.includes(tag) && (
