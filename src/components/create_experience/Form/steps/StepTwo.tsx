@@ -31,21 +31,7 @@ export default function FormStep2({
   clickedNext,
 }: FormStep2Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-  const duration= formData.duration
-  useEffect(() => {
-     alert("Yeah buddy")
-      const newDestinations = Array.from(
-        { length: formData.duration },
-        (_, i) => ({
-          id: Math.random().toString(36).substr(2, 9),
-          day: i + 1,
-          name: `Destination ${i + 1}`,
-          activities: [],
-        })
-      );
-      handleInputChange("destinations", newDestinations);
-
-  }, [duration]);
+  const duration = formData.duration;
 
   const handleFocus = (fieldName: string) => setFocusedField(fieldName);
   const handleBlur = () => setFocusedField(null);
@@ -96,6 +82,22 @@ export default function FormStep2({
       field as keyof Activity
     ];
   };
+
+  useEffect(() => {
+    alert("Yeah buddy");
+    // Initialize destinations based on duration
+    if (formData.destinations.length === duration) return;
+    const newDestinations = Array.from(
+      { length: formData.duration },
+      (_, i) => ({
+        id: Math.random().toString(36).substr(2, 9),
+        day: i + 1,
+        name: `Destination ${i + 1}`,
+        activities: [],
+      })
+    );
+    handleInputChange("destinations", newDestinations);
+  }, [duration]);
 
   return (
     <div className="space-y-8">
@@ -173,10 +175,8 @@ export default function FormStep2({
                       (activity: Activity, activityIndex: number) => (
                         <motion.div
                           key={activity.id}
-                          initial={{ opacity: 0, y: 20 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: -20 }}
-                          className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 bg-gray-50 rounded-lg"
+                          transition={{ duration: 0.1, ease: "easeIn" }}
+                          className="flex flex-col sm:flex-row sm:items-center gap-2 p-4 bg-gray-50 rounded-lg transition-all duration-50 "
                         >
                           <div className="flex-grow space-y-2">
                             <input

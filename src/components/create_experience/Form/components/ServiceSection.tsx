@@ -37,13 +37,13 @@ export default function ServiceSection({
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
-              <HelpCircle className="w-5 h-5 text-gray-400" />
+              <HelpCircle className="w-4 h-4 text-gray-400" />
             </TooltipTrigger>
             <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg text-sm">
               <p>
                 List services that are{" "}
                 {type === "included" ? "included in" : "not included in"} your
-                experience (max 20 characters each)
+                experience 
               </p>
             </TooltipContent>
           </Tooltip>

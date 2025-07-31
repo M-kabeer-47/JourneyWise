@@ -1,5 +1,12 @@
 import { useState, useRef, useEffect } from "react";
-import { Camera, X, ChevronLeft, ChevronRight, HelpCircle } from "lucide-react";
+import {
+  Camera,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  HelpCircle,
+  Trash,
+} from "lucide-react";
 import {
   Tooltip,
   TooltipContent,
@@ -17,15 +24,11 @@ interface FormStep3Props {
   errors: Partial<ExperienceData>;
 }
 
-// Custom hook for image URL management
-
 interface FormStep3Props {
   formData: ExperienceData;
   handleInputChange: (field: keyof ExperienceData, value: any) => void;
   errors: Partial<ExperienceData>;
 }
-
-// Custom hook for image URL management
 
 export default function FormStep3({
   formData,
@@ -104,6 +107,11 @@ export default function FormStep3({
       }
     }
     e.target.value = "";
+  };
+
+  const removeImages = () => {
+    handleInputChange("experienceImages", []);
+    setStartIndex(0);
   };
 
   // Remove image handler
@@ -268,8 +276,8 @@ export default function FormStep3({
                 </TooltipTrigger>
                 <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg text-sm max-w-[300px]">
                   <p>
-                    Upload up to 20 clear, high-quality experienceImages
-                    showcasing hotels, attractions, and key experiences
+                    Upload up to 20 images showcasing hotels, attractions, and
+                    key experiences
                   </p>
                 </TooltipContent>
               </Tooltip>
@@ -310,7 +318,17 @@ export default function FormStep3({
 
           {/* Upload button */}
           {formData.experienceImages.length < 20 && (
-            <div className="flex justify-center mt-4">
+            <div className="flex justify-between mt-4">
+              {/* remove all Images button */}
+              <button
+                type="button"
+                onClick={removeImages}
+                className="flex items-center space-x-2 px-4 py-2 bg-[#c1121f] text-white rounded-lg transition-colors duration-200"
+              >
+                <Trash className="w-5 h-5" />
+                <span>Remove all images</span>
+              </button>
+
               <label htmlFor="image-upload" className="cursor-pointer">
                 <input
                   type="file"

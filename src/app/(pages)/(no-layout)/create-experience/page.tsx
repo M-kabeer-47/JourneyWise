@@ -2,11 +2,11 @@
 
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import LivePreview from "@/components/create_experience/LivePreview/LivePreview";
-import FormStep1 from "@/components/create_experience/Form/steps/StepOne";
-import FormStep2 from "@/components/create_experience/Form/steps/StepTwo";
-import FormStep3 from "@/components/create_experience/Form/steps/StepThree";
-import FormStep4 from "@/components/create_experience/Form/steps/StepFour";
+import LivePreview from "@/components/create_experience/live-preview/LivePreview";
+import FormStep1 from "@/components/create_experience/form/steps/StepOne";
+import FormStep2 from "@/components/create_experience/form/steps/StepTwo";
+import FormStep3 from "@/components/create_experience/form/steps/StepThree";
+import FormStep4 from "@/components/create_experience/form/steps/StepFour";
 import {
   stepOneSchema,
   stepTwoSchema,
@@ -68,8 +68,9 @@ export default function CreateExperience() {
   });
 
   const validateStep = useCallback(() => {
+    const schemas = validationSchemas();
     const schema =
-      validationSchemas[currentStep as keyof typeof validationSchemas] ||
+      schemas[currentStep as keyof typeof schemas] ||
       formSchema;
     let imageError = false;
     console.log("Current step: " + currentStep);
