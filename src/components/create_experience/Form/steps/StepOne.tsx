@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
@@ -15,15 +16,20 @@ import {
   TooltipContent,
 } from "@/components/ui/tooltip";
 import axios from "axios";
-import type { ExperienceData } from "@/lib/schemas/experience";
 import { stepOneSchema } from "@/lib/schemas/experience";
 import countries from "@/lib/data/countries";
+import z from "zod";
 
+import { FieldErrors,  UseFormRegister } from "react-hook-form";
+type stepOneType = z.infer<typeof stepOneSchema>;
 interface FormStep1Props {
-  formData: ExperienceData;
-  handleInputChange: (field: keyof ExperienceData, value: any) => void;
-  errors: Partial<ExperienceData>;
-  initialData: Partial<ExperienceData>;
+  formData: stepOneType;
+  setValue: (field: keyof stepOneType, value: any) => void;
+  errors: FieldErrors<stepOneType>;
+  // correct the type for register
+  
+  register: UseFormRegister<stepOneType>;
+  
 }
 
 const categories = [
@@ -65,9 +71,9 @@ interface CityData {
 
 export default function FormStep1({
   formData,
-  handleInputChange,
+  setValue,
   errors,
-  initialData,
+  register,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -83,13 +89,13 @@ export default function FormStep1({
     const updatedTags = formData.tags.includes(tag)
       ? formData.tags.filter((t: string) => t !== tag)
       : [...formData.tags, tag];
-    handleInputChange("tags", updatedTags);
+    setValue("tags", updatedTags);
   };
 
   // Handle file selection (both click and drop)
   const handleFileSelect = (file: File) => {
     if (file && file.type.startsWith("image/")) {
-      handleInputChange("experienceImage", file); // Changed from gigImage
+      setValue("experienceImage", file); // Changed from gigImage
 
       // Create preview URL
       const previewUrl = URL.createObjectURL(file);
@@ -130,7 +136,7 @@ export default function FormStep1({
 
   // Remove image
   const handleRemoveImage = () => {
-    handleInputChange("experienceImage", ""); // Changed from gigImage
+    setValue("experienceImage", ""); // Changed from gigImage
     setImagePreview(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -189,9 +195,10 @@ export default function FormStep1({
             <input
               type="text"
               value={formData.title}
-              onChange={(e) => handleInputChange("title", e.target.value)}
-              onFocus={() => handleFocus("title")}
-              onBlur={handleBlur}
+              {...register("title")}
+              // onChange={(e) => setValue("title", e.target.value)}
+              // onFocus={() => handleFocus("title")}
+              // onBlur={handleBlur}
               className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
                          transition-all duration-200 outline-none
                          ${
@@ -202,7 +209,7 @@ export default function FormStep1({
               placeholder="Enter experience title"
             />
             {errors.title && (
-              <p className="text-red-500 text-sm mt-1">{errors.title}</p>
+              <p className="text-red-500 text-sm mt-1">Title is required</p>
             )}
           </div>
           <div className="space-y-2">
@@ -225,7 +232,7 @@ export default function FormStep1({
                     type="radio"
                     value={status}
                     checked={formData.availability === status}
-                    onChange={() => handleInputChange("availability", status)}
+                    onChange={() => setValue("availability", status)}
                     className="hidden"
                   />
                   <span
@@ -245,7 +252,7 @@ export default function FormStep1({
               ))}
             </div>
             {errors.availability && (
-              <p className="text-red-500 text-sm mt-1">{errors.availability}</p>
+              <p className="text-red-500 text-sm mt-1">Availability is required</p>
             )}
           </div>
         </div>
@@ -338,11 +345,7 @@ export default function FormStep1({
 
           {errors.experienceImage && ( // Changed from gigImage
             <p className="text-red-500 text-sm mt-1">
-              {typeof errors.experienceImage === "string"
-                ? errors.experienceImage
-                : Array.isArray(errors.experienceImage)
-                ? errors.experienceImage.join(", ")
-                : null}
+              Experience image is required
             </p>
           )}
         </div>
@@ -359,16 +362,16 @@ export default function FormStep1({
                 type="text"
                 value={formData.country}
                 onChange={(e) => {
-                  handleInputChange("country", e.target.value);
+                  setValue("country", e.target.value);
                   const country = countries.find(
                     (c) => c.name.toLowerCase() === e.target.value.toLowerCase()
                   );
                   if (country) {
-                    handleInputChange("countryCode", country.cca2);
-                    handleInputChange("city", "");
+                    setValue("countryCode", country.cca2);
+                    setValue("city", "");
                   } else {
-                    handleInputChange("countryCode", "");
-                    handleInputChange("city", "");
+                    setValue("countryCode", "");
+                    setValue("city", "");
                   }
                 }}
                 onBlur={() => {
@@ -377,9 +380,9 @@ export default function FormStep1({
                       c.name.toLowerCase() === formData.country.toLowerCase()
                   );
                   if (!country) {
-                    handleInputChange("country", "");
-                    handleInputChange("countryCode", "");
-                    handleInputChange("city", "");
+                    setValue("country", "");
+                    setValue("countryCode", "");
+                    setValue("city", "");
                   }
                 }}
                 className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
@@ -395,7 +398,7 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.country && (
-              <p className="text-red-500 text-sm mt-1">{errors.country}</p>
+              <p className="text-red-500 text-sm mt-1">Country is required</p>
             )}
           </div>
 
@@ -424,7 +427,7 @@ export default function FormStep1({
                 type="text"
                 list="city-list"
                 value={formData.city}
-                onChange={(e) => handleInputChange("city", e.target.value)}
+                onChange={(e) => setValue("city", e.target.value)}
                 className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
                 placeholder="Select city"
                 disabled={!formData.countryCode}
@@ -438,7 +441,7 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.city && (
-              <p className="text-red-500 text-sm mt-1">{errors.city}</p>
+              <p className="text-red-500 text-sm mt-1">City is required</p>
             )}
           </div>
         </div>
@@ -453,13 +456,13 @@ export default function FormStep1({
               <input
                 type="text"
                 value={formData.category}
-                onChange={(e) => handleInputChange("category", e.target.value)}
+                onChange={(e) => setValue("category", e.target.value)}
                 onBlur={(e) => {
                   const category = categories.find(
                     (c) => c.toLowerCase() === e.target.value.toLowerCase()
                   );
                   if (!category) {
-                    handleInputChange("category", "");
+                    setValue("category", "");
                   }
                 }}
                 list="category-list"
@@ -475,7 +478,7 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.category && (
-              <p className="text-red-500 text-sm mt-1">{errors.category}</p>
+              <p className="text-red-500 text-sm mt-1">Category is required</p>
             )}
           </div>
           <div className="space-y-2">
@@ -488,7 +491,7 @@ export default function FormStep1({
               onChange={(e) => {
                 const value =
                   e.target.value === "" ? 0 : Number(e.target.value);
-                handleInputChange("duration", value);
+                setValue("duration", value);
               }}
               onFocus={() => handleFocus("duration")}
               onBlur={handleBlur}
@@ -503,7 +506,7 @@ export default function FormStep1({
               min="1"
             />
             {errors.duration && (
-              <p className="text-red-500 text-sm mt-1">{errors.duration}</p>
+              <p className="text-red-500 text-sm mt-1">Duration is required</p>
             )}
           </div>
         </div>
@@ -526,8 +529,6 @@ export default function FormStep1({
                                ? "bg-ocean-blue text-white"
                                : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
                            }`}
-                
-                
               >
                 {tag}
                 {formData.tags.includes(tag) && (
@@ -537,7 +538,7 @@ export default function FormStep1({
             ))}
           </div>
           {errors.tags && (
-            <p className="text-red-500 text-sm mt-1">{errors.tags}</p>
+            <p className="text-red-500 text-sm mt-1">Atleast 3 tags are required</p>
           )}
         </div>
 
@@ -549,7 +550,7 @@ export default function FormStep1({
           <div className="relative">
             <textarea
               value={formData.description}
-              onChange={(e) => handleInputChange("description", e.target.value)}
+              onChange={(e) => setValue("description", e.target.value)}
               onFocus={() => handleFocus("description")}
               onBlur={handleBlur}
               maxLength={500}
@@ -567,7 +568,7 @@ export default function FormStep1({
             </span>
           </div>
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description}</p>
+            <p className="text-red-500 text-sm mt-1">Description is required</p>
           )}
         </div>
       </div>

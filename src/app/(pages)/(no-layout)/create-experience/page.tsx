@@ -3,10 +3,7 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import LivePreview from "@/components/create_experience/live-preview/LivePreview";
-import FormStep1 from "@/components/create_experience/form/steps/StepOne";
-import FormStep2 from "@/components/create_experience/form/steps/StepTwo";
-import FormStep3 from "@/components/create_experience/form/steps/StepThree";
-import FormStep4 from "@/components/create_experience/form/steps/StepFour";
+
 import {
   stepOneSchema,
   stepTwoSchema,
@@ -20,6 +17,10 @@ import { toast } from "@/components/ui/Toast";
 import axios from "axios";
 
 import { Loader2 } from "lucide-react";
+import FormStep1 from "@/components/create_experience/form/steps/StepOne";
+import FormStep2 from "@/components/create_experience/form/steps/StepTwo";
+import FormStep3 from "@/components/create_experience/form/steps/StepThree";
+import FormStep4 from "@/components/create_experience/form/steps/StepFour";
 
 export default function CreateExperience() {
   const [currentStep, setCurrentStep] = useState(1);

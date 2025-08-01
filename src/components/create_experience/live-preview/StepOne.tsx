@@ -1,45 +1,33 @@
+"use client"
 import { CheckCircle, CheckCircle2, Clock, Upload, Ban } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
+import { stepOneSchema } from "@/lib/schemas/experience";
+import { z } from "zod";
+
+type stepOneType = z.infer<typeof stepOneSchema>;
 
 type StepOneProps = {
-  title: string;
-  availability: string;
-  experienceImage: string | File | null; // Changed from gigImage
-  city: string;
-  country: string;
-  category: string;
-  duration: number;
-  tags: string[];
-  description: string;
+  data: stepOneType;
   itemVariants: any;
 };
 
-export default function StepOne({
-  title,
-  availability,
-  experienceImage, // Changed from gigImage
-  city,
-  country,
-  category,
-  duration,
-  tags,
-  description,
-  itemVariants,
-}: StepOneProps) {
+export default function StepOne({ data, itemVariants }: StepOneProps) {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const blobURL = useRef<string | null>(null);
   // Fixed image URL management
   useEffect(() => {
+    
+
     if (blobURL.current) {
       URL.revokeObjectURL(blobURL.current); // Cleanup previous blob URL
       blobURL.current = null; // Reset the ref
     }
-    if (experienceImage) {
-      if (typeof experienceImage === "string") {
-        setImageUrl(experienceImage);
-      } else if (experienceImage instanceof File) {
-        const url = URL.createObjectURL(experienceImage);
+    if (data.experienceImage) {
+      if (typeof data.experienceImage === "string") {
+        setImageUrl(data.experienceImage);
+      } else if (data.experienceImage instanceof File) {
+        const url = URL.createObjectURL(data.experienceImage);
         setImageUrl(url);
         blobURL.current = url; // Store the blob URL for cleanup
 
@@ -51,7 +39,7 @@ export default function StepOne({
     } else {
       setImageUrl(null);
     }
-  }, [experienceImage]);
+  }, [data.experienceImage]);
 
   useEffect(() => {
     return () => {
@@ -69,20 +57,20 @@ export default function StepOne({
             variants={itemVariants}
             className="text-2xl md:text-4xl font-[800] text-midnight-blue"
           >
-            {title || "Experience Title"}
+            {data.title || "Experience Title"}
           </motion.h1>
           <motion.div
             variants={itemVariants}
             className={`flex items-center space-x-2 text-sm font-medium ${
-              availability === "available"
+              data.availability === "available"
                 ? "text-green-600"
                 : "text-orange-600"
             }`}
           >
-            {availability === "available" ? (
+            {data.availability === "available" ? (
               <CheckCircle2
                 className={`w-5 h-5 ${
-                  availability === "available"
+                  data.availability === "available"
                     ? "text-green-600"
                     : "text-orange-600"
                 }`}
@@ -92,7 +80,7 @@ export default function StepOne({
             )}
 
             <span>
-              {availability === "available" ? "Available" : "Unavailable"}
+              {data.availability === "available" ? "Available" : "Unavailable"}
             </span>
           </motion.div>
         </div>
@@ -126,25 +114,25 @@ export default function StepOne({
           className="flex flex-wrap items-center gap-4 text-sm"
         >
           <div className="flex items-center space-x-2 text-charcoal">
-            <span className="font-medium">{city || "City"}</span>
+            <span className="font-medium">{data.city || "City"}</span>
             <span>•</span>
-            <span className="font-medium">{country || "Country"}</span>
+            <span className="font-medium">{data.country || "Country"}</span>
           </div>
-          {category && (
+          {data.category && (
             <span className="px-3 py-1 bg-ocean-blue/10 text-ocean-blue rounded-md font-medium">
-              {category}
+              {data.category}
             </span>
           )}
           <div className="flex items-center space-x-2">
             <Clock className="w-4 h-4 text-ocean-blue" />
             <span className="text-ocean-blue font-medium">
-              {duration ? `${duration} days` : "Duration"}
+              {data.duration ? `${data.duration} days` : "Duration"}
             </span>
           </div>
         </motion.div>
 
         <motion.div variants={itemVariants} className="flex flex-wrap gap-2">
-          {tags.map((tag: string, index: number) => (
+          {data.tags.map((tag: string, index: number) => (
             <span
               key={index}
               className="px-3 py-1 bg-midnight-blue/5 text-midnight-blue text-sm rounded-md 
@@ -161,7 +149,7 @@ export default function StepOne({
             Description
           </h3>
           <p className="text-base text-charcoal leading-relaxed">
-            {description || "Add your experience description..."}
+            {data.description || "Add your experience description..."}
           </p>
         </motion.div>
       </div>

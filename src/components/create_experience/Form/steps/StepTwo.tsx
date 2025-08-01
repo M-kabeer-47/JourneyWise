@@ -151,9 +151,11 @@ export default function FormStep2({
                              }`}
                     placeholder="Enter destination name"
                   />
-                  {errors.destinations?.[destination.day - 1]?.name && (
-                    <p className="text-red-500 text-sm mt-1 flex items-center">
-                      Destination name is required
+                  {clickedNext &&
+                    formData.destinations?.[destination.day - 1]?.name ===
+                      "" && (
+                      <p className="text-red-500 text-sm mt-1 flex items-center">
+                        Destination name is required
                       </p>
                     )}
                 </div>
@@ -163,8 +165,7 @@ export default function FormStep2({
                     Activities
                   </label>
                   <AnimatePresence mode="popLayout">
-
-                    {errors.destinations?.[destination.day - 1]?.activities && (
+                    {destination.activities.length === 0 && clickedNext && (
                       <p className="text-red-500 text-sm mt-1 flex items-center">
                         At least one activity is required
                       </p>
@@ -224,7 +225,9 @@ export default function FormStep2({
                                      }`}
                               placeholder="Activity name"
                             />
-                            {errors.destinations?.[destination.day - 1]?.activities?.[activityIndex]?.name && (
+                            {clickedNext &&
+                              formData.destinations?.[destination.day - 1]
+                                ?.activities?.[activityIndex]?.name === "" && (
                                 <p className="text-red-500 text-sm mt-1 flex items-center">
                                   Activity name is required
                                 </p>
