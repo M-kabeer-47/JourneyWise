@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import {
@@ -20,16 +19,16 @@ import { stepOneSchema } from "@/lib/schemas/experience";
 import countries from "@/lib/data/countries";
 import z from "zod";
 
-import { FieldErrors,  UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
 type stepOneType = z.infer<typeof stepOneSchema>;
 interface FormStep1Props {
   formData: stepOneType;
-  setValue: (field: keyof stepOneType, value: any) => void;
+  setValue: UseFormSetValue<stepOneType>; // ← Correct type
+
   errors: FieldErrors<stepOneType>;
   // correct the type for register
-  
+
   register: UseFormRegister<stepOneType>;
-  
 }
 
 const categories = [
@@ -89,13 +88,13 @@ export default function FormStep1({
     const updatedTags = formData.tags.includes(tag)
       ? formData.tags.filter((t: string) => t !== tag)
       : [...formData.tags, tag];
-    setValue("tags", updatedTags);
+    setValue("tags", updatedTags, { shouldValidate: true });
   };
 
   // Handle file selection (both click and drop)
   const handleFileSelect = (file: File) => {
     if (file && file.type.startsWith("image/")) {
-      setValue("experienceImage", file); // Changed from gigImage
+      setValue("experienceImage", file, { shouldValidate: true }); // Changed from gigImage
 
       // Create preview URL
       const previewUrl = URL.createObjectURL(file);
@@ -194,11 +193,9 @@ export default function FormStep1({
             </label>
             <input
               type="text"
-              value={formData.title}
               {...register("title")}
-              // onChange={(e) => setValue("title", e.target.value)}
-              // onFocus={() => handleFocus("title")}
-              // onBlur={handleBlur}
+              onFocus={() => handleFocus("title")}
+              onBlur={handleBlur}
               className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
                          transition-all duration-200 outline-none
                          ${
@@ -209,7 +206,9 @@ export default function FormStep1({
               placeholder="Enter experience title"
             />
             {errors.title && (
-              <p className="text-red-500 text-sm mt-1">Title is required</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.title.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
@@ -217,42 +216,45 @@ export default function FormStep1({
               Availability Status
             </label>
             <div className="flex gap-4">
-              {["available", "unavailable"].map((status) => (
+              {[true, false].map((status) => (
                 <label
-                  key={status}
+                  key={status.toString()}
                   className={`flex items-center gap-2 px-4 h-11 rounded-lg border cursor-pointer
                              transition-all duration-200
                              ${
-                               formData.availability === status
+                               formData.available === status
                                  ? "border-ocean-blue bg-ocean-blue text-white"
                                  : "border-gray-200 hover:border-ocean-blue/50"
                              }`}
                 >
                   <input
                     type="radio"
-                    value={status}
-                    checked={formData.availability === status}
-                    onChange={() => setValue("availability", status)}
+                    onChange={() => setValue("available", status)}
+                    checked={formData.available === status}
                     className="hidden"
                   />
                   <span
                     className={`w-5 h-5 rounded-full border-2 flex items-center justify-center
                                     ${
-                                      formData.availability === status
+                                      formData.available === status
                                         ? "border-white"
                                         : "border-gray-400"
                                     }`}
                   >
-                    {formData.availability === status && (
+                    {formData.available === status && (
                       <Check className="w-3 h-3 text-white" />
                     )}
                   </span>
-                  <span className="text-sm capitalize">{status}</span>
+                  <span className="text-sm capitalize">
+                    {status ? "available" : "unavailable"}
+                  </span>
                 </label>
               ))}
             </div>
-            {errors.availability && (
-              <p className="text-red-500 text-sm mt-1">Availability is required</p>
+            {errors.available && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.available.message}
+              </p>
             )}
           </div>
         </div>
@@ -343,9 +345,11 @@ export default function FormStep1({
             )}
           </div>
 
-          {errors.experienceImage && ( // Changed from gigImage
+          {errors.experienceImage && (
             <p className="text-red-500 text-sm mt-1">
-              Experience image is required
+              {typeof errors.experienceImage.message !== "string"
+                ? errors.experienceImage.message
+                : "Experience image is required"}
             </p>
           )}
         </div>
@@ -360,9 +364,8 @@ export default function FormStep1({
             <div className="relative">
               <input
                 type="text"
-                value={formData.country}
                 onChange={(e) => {
-                  setValue("country", e.target.value);
+                  setValue("country", e.target.value, { shouldValidate: true });
                   const country = countries.find(
                     (c) => c.name.toLowerCase() === e.target.value.toLowerCase()
                   );
@@ -398,7 +401,9 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.country && (
-              <p className="text-red-500 text-sm mt-1">Country is required</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.country.message}
+              </p>
             )}
           </div>
 
@@ -427,7 +432,9 @@ export default function FormStep1({
                 type="text"
                 list="city-list"
                 value={formData.city}
-                onChange={(e) => setValue("city", e.target.value)}
+                onChange={(e) =>
+                  setValue("city", e.target.value, { shouldValidate: true })
+                }
                 className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
                 placeholder="Select city"
                 disabled={!formData.countryCode}
@@ -441,7 +448,7 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.city && (
-              <p className="text-red-500 text-sm mt-1">City is required</p>
+              <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
             )}
           </div>
         </div>
@@ -456,7 +463,9 @@ export default function FormStep1({
               <input
                 type="text"
                 value={formData.category}
-                onChange={(e) => setValue("category", e.target.value)}
+                onChange={(e) =>
+                  setValue("category", e.target.value, { shouldValidate: true })
+                }
                 onBlur={(e) => {
                   const category = categories.find(
                     (c) => c.toLowerCase() === e.target.value.toLowerCase()
@@ -478,7 +487,9 @@ export default function FormStep1({
               </datalist>
             </div>
             {errors.category && (
-              <p className="text-red-500 text-sm mt-1">Category is required</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.category.message}
+              </p>
             )}
           </div>
           <div className="space-y-2">
@@ -491,7 +502,7 @@ export default function FormStep1({
               onChange={(e) => {
                 const value =
                   e.target.value === "" ? 0 : Number(e.target.value);
-                setValue("duration", value);
+                setValue("duration", value, { shouldValidate: true });
               }}
               onFocus={() => handleFocus("duration")}
               onBlur={handleBlur}
@@ -506,7 +517,9 @@ export default function FormStep1({
               min="1"
             />
             {errors.duration && (
-              <p className="text-red-500 text-sm mt-1">Duration is required</p>
+              <p className="text-red-500 text-sm mt-1">
+                {errors.duration.message}
+              </p>
             )}
           </div>
         </div>
@@ -538,7 +551,7 @@ export default function FormStep1({
             ))}
           </div>
           {errors.tags && (
-            <p className="text-red-500 text-sm mt-1">Atleast 3 tags are required</p>
+            <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
           )}
         </div>
 
@@ -549,8 +562,7 @@ export default function FormStep1({
           </label>
           <div className="relative">
             <textarea
-              value={formData.description}
-              onChange={(e) => setValue("description", e.target.value)}
+              {...register("description")}
               onFocus={() => handleFocus("description")}
               onBlur={handleBlur}
               maxLength={500}
@@ -568,7 +580,7 @@ export default function FormStep1({
             </span>
           </div>
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1">Description is required</p>
+            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
           )}
         </div>
       </div>

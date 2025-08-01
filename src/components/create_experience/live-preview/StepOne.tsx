@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { CheckCircle, CheckCircle2, Clock, Upload, Ban } from "lucide-react";
 import { motion } from "framer-motion";
 import { useEffect, useRef, useState } from "react";
@@ -17,8 +17,6 @@ export default function StepOne({ data, itemVariants }: StepOneProps) {
   const blobURL = useRef<string | null>(null);
   // Fixed image URL management
   useEffect(() => {
-    
-
     if (blobURL.current) {
       URL.revokeObjectURL(blobURL.current); // Cleanup previous blob URL
       blobURL.current = null; // Reset the ref
@@ -62,26 +60,20 @@ export default function StepOne({ data, itemVariants }: StepOneProps) {
           <motion.div
             variants={itemVariants}
             className={`flex items-center space-x-2 text-sm font-medium ${
-              data.availability === "available"
-                ? "text-green-600"
-                : "text-orange-600"
+              data.available === true ? "text-green-600" : "text-orange-600"
             }`}
           >
-            {data.availability === "available" ? (
+            {data.available === true ? (
               <CheckCircle2
                 className={`w-5 h-5 ${
-                  data.availability === "available"
-                    ? "text-green-600"
-                    : "text-orange-600"
+                  data.available === true ? "text-green-600" : "text-orange-600"
                 }`}
               />
             ) : (
               <Ban className={"w-5 h-5"} />
             )}
 
-            <span>
-              {data.availability === "available" ? "Available" : "Unavailable"}
-            </span>
+            <span>{data.available === true ? "Available" : "Unavailable"}</span>
           </motion.div>
         </div>
 

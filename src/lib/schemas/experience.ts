@@ -7,11 +7,11 @@ export const stepOneSchema = z.object({
   city: z.string().min(1, "City is required"),
   category: z.string().min(1, "Category is required"),
   duration: z.number().min(1, "Duration is required"),
-  tags: z.array(z.string()).min(1, "At least one tag is required"),
+  tags: z.array(z.string()).min(3, "At least three tags are required"),
   description: z
     .string()
     .min(10, "Description must be at least 10 characters long"),
-  availability: z.enum(["available", "unavailable"]),
+  available: z.boolean(),
   experienceImage: z
     .union(
       [

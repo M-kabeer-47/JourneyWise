@@ -39,7 +39,7 @@ export default function CreateExperience() {
       tags: [],
       description: "",
       availability: "available",
-      experienceImage: "",
+      experienceImage: null,
       currency: "USD",
       tiers: [{ name: "", members: 0, price: 0, description: "" }],
       requirements: [""],

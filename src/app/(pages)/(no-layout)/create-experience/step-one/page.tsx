@@ -16,7 +16,7 @@ const initialData: Partial<ExperienceData> = {
   duration: 0, // This might be changing unexpectedly
   tags: [],
   description: "",
-  availability: "available",
+  available: true,
   experienceImage: "",
 };
 

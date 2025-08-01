@@ -113,7 +113,7 @@ export default function Navbar() {
 
   return (
     <AnimatePresence mode="wait">
-      {isVisible && (
+      
         <motion.nav
           key="navbar"
           variants={navVariants}
@@ -381,7 +381,7 @@ export default function Navbar() {
             )}
           </AnimatePresence>
         </motion.nav>
-      )}
+    
     </AnimatePresence>
   )
 }
