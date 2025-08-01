@@ -31,7 +31,7 @@ import { ExperienceResponse } from "@/lib/types/Experience";
 import Spinner from "../ui/Spinner";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import axios from "axios";
-import {bookingFormSchema} from "@/lib/schemas/Booking";
+import {bookingFormSchema} from "@/lib/schemas/booking";
 
 
 

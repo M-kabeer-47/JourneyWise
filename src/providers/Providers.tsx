@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import StoreProvider from "./redux";
 import { useState } from "react";
+import { Toast } from "@/components/ui/Toast";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Create QueryClient inside the component to avoid SSR issues
@@ -23,6 +24,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
         <ReactQueryDevtools initialIsOpen={false} />
         {children}
       </StoreProvider>
+      <Toast />
     </QueryClientProvider>
   );
 }
