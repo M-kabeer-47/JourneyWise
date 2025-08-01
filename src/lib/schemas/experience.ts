@@ -54,16 +54,14 @@ export const stepTwoSchema = z.object({
       id: z.string(),
       day: z.number(),
       name: z.string().min(1, "Destination name is required"),
-      activities: z
-        .array(
-          z.object({
-            id: z.string(),
-            name: z.string().min(1, "Activity name is required"),
-            time: z.string().optional(),
-            spot: z.string().optional(),
-          })
-        )
-        .min(1, "At least one activity is required"),
+      activities: z.array(
+        z.object({
+          id: z.string(),
+          name: z.string().min(1, "Activity name is required"),
+          time: z.string().optional(),
+          spot: z.string().optional(),
+        })
+      ),
     })
   ),
 });

@@ -58,7 +58,7 @@ export default function Navbar() {
   const [isMobileBlogDropdownOpen, setIsMobileBlogDropdownOpen] = useState(false)
   const searchRef = useRef<HTMLDivElement>(null)
   const blogDropdownRef = useRef<HTMLDivElement>(null)
-  const isVisible = useAppSelector((state) => state.navbar.isVisible)
+  
   const { scrollY } = useScroll()
   const pathName = usePathname()
 

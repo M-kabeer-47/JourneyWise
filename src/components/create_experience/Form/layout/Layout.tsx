@@ -32,25 +32,58 @@ export default function StepLayout({
   const showPrevious = stepKey !== "step1";
   const showNext = stepKey !== "step4";
   onSubmit = showNext ? onNext : onSubmit;
+  const containerVariants = {
+    hidden: {
+      opacity: 0,
+      y: 40,
+      transition: { duration: 0.7, ease: "easeInOut" },
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.7, ease: "easeInOut" },
+    },
+    exit: {
+      opacity: 0,
+      y: -40,
+      transition: { duration: 0.5, ease: "easeInOut" },
+    },
+  };
+  const itemVariants = {
+    hidden: { opacity: 0, y: 10 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
+  };
+
   return (
     <div className="min-h-screen bg-[#FAFAFA] p-4 md:p-6">
       <div className="max-w-[1400px] mx-auto">
         <div className="grid lg:grid-cols-[50%_50%] gap-6">
           {/* Preview Section */}
           <div className="lg:sticky lg:top-6 h-fit order-2 lg:order-1">
-            {preview}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={stepKey}
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="flex flex-col gap-6 md:gap-8"
+              >
+                {preview}
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           {/* Form Section */}
           <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 order-1 lg:order-2">
             <form onSubmit={onNext}>
-              <AnimatePresence mode="wait">
+              <AnimatePresence>
                 <motion.div
                   key={stepKey}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
+                  variants={containerVariants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
                 >
                   {form}
                 </motion.div>

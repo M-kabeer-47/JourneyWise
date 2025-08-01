@@ -364,6 +364,7 @@ export default function FormStep1({
             <div className="relative">
               <input
                 type="text"
+                value={formData.country}
                 onChange={(e) => {
                   setValue("country", e.target.value, { shouldValidate: true });
                   const country = countries.find(

@@ -1,9 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
-import navbar from '../slices/navbar'
+import experienceData from '../slices/experienceData'
 export const makeStore = () => {
   return configureStore({
     reducer: {
-        navbar: navbar
+        experienceData: experienceData
     }
   })
 }
