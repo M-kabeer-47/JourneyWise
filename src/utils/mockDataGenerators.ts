@@ -1,5 +1,5 @@
 // Mock data generation utilities
-import { Experience } from "@/lib/types/Experience";
+import { Experience } from "@/lib/types/experience";
 
 
 export const shuffleArray = <T,>(array: T[]): T[] => {

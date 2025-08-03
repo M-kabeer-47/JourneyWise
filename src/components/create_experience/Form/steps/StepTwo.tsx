@@ -30,8 +30,10 @@ export default function FormStep2({
   setValue,
 }: FormStep2Props) {
   useEffect(() => {
+
     // Initialize destinations based on duration
     if (data.destinations.length === duration) return;
+    alert("Yeah buddy")
     const newDestinations = Array.from(
       { length: duration ? duration : 0 },
       (_, i) => ({

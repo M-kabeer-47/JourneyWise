@@ -1,6 +1,6 @@
 import React from 'react';
 import ExperienceCard from '@/components/experiences/ExperienceCard';
-import { Experience } from '@/lib/types/Experience';
+import { Experience } from '@/lib/types/experience';
 import { Plus } from 'lucide-react';
 
 interface ExperiencesSectionProps {

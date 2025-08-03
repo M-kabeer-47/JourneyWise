@@ -15,8 +15,8 @@ import ExperienceSkeleton from "@/components/skeletons/ExperienceCardSkeleton";
 import Pagination from "@/components/ui/Pagination";
 import SortBy from "@/components/ui/SortBy";
 import useFetchExperiences from "@/hooks/useFetchExperiences";
-import { Filters } from "@/lib/types/Experience";
-import { Experience } from "@/lib/types/Experience";
+import { Filters } from "@/lib/types/experience";
+import { Experience } from "@/lib/types/experience";
 import SearchBar from "@/components/ui/SearchBar";
 // Data
 

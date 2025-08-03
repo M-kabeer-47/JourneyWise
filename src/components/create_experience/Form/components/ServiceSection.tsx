@@ -5,6 +5,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Minus, Plus, HelpCircle } from "lucide-react";
+import { FieldErrors } from "react-hook-form";
+import { StepThreeType } from "@/lib/types/create-experience-steps";
+
 interface ServiceSectionProps {
   title: string;
   services: string[];
@@ -15,7 +18,7 @@ interface ServiceSectionProps {
   onFocus: (field: string) => void;
   onBlur: () => void;
   type: "included" | "excluded";
-  error?: string;
+  errors: FieldErrors<StepThreeType>;
 }
 
 export default function ServiceSection({
@@ -28,7 +31,7 @@ export default function ServiceSection({
   onFocus,
   onBlur,
   type,
-  error,
+  errors,
 }: ServiceSectionProps) {
   return (
     <div className="space-y-4">
@@ -43,7 +46,7 @@ export default function ServiceSection({
               <p>
                 List services that are{" "}
                 {type === "included" ? "included in" : "not included in"} your
-                experience 
+                experience
               </p>
             </TooltipContent>
           </Tooltip>
@@ -76,9 +79,20 @@ export default function ServiceSection({
             >
               <Minus className="w-4 h-4" />
             </button>
+            {(type === "included"
+              ? errors?.includedServices?.[index]
+              : errors?.excludedServices?.[index]) && (
+              <p className="text-red-500 text-sm mt-1">
+                {
+                  (type === "included"
+                    ? errors.includedServices?.[index]?.message
+                    : errors.excludedServices?.[index]?.message) as string
+                }
+              </p>
+            )}
           </div>
         ))}
-        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
+
         <button
           type="button"
           onClick={onAddService}

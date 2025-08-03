@@ -6,13 +6,16 @@ import { stepTwoSchema } from "@/lib/schemas/experience";
 import Layout from "@/components/create_experience/form/layout/Layout";
 import StepTwoPreview from "@/components/create_experience/live-preview/StepTwo";
 import StepTwoForm from "@/components/create_experience/form/steps/StepTwo";
-import { useAppSelector } from "@/hooks/redux";
+import { useAppSelector, useAppDispatch } from "@/hooks/redux";
+import { setExperienceData } from "@/lib/redux/slices/experienceData";
+import { useRouter } from "next/navigation";
 type StepTwoType = z.infer<typeof stepTwoSchema>;
 
 export default function StepTwo() {
   const duration = useAppSelector((state) => state.experienceData.duration);
   const initialData = useAppSelector((state) => state.experienceData);
-
+  const dispatch = useAppDispatch();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -32,6 +35,12 @@ export default function StepTwo() {
 
   const onSubmit = (data: StepTwoType) => {
     console.log("Form submitted:", data);
+    dispatch(setExperienceData(data));
+    router.push("/create-experience/step-three");
+  };
+  const handlePrevious = () => {
+    dispatch(setExperienceData(watch()));
+    router.push("/create-experience/step-one");
   };
 
   const data = watch();
@@ -56,9 +65,7 @@ export default function StepTwo() {
       }
       stepKey="step2"
       onNext={handleSubmit(onSubmit)}
-      onPrevious={() => {
-        window.history.back();
-      }}
+      onPrevious={handlePrevious}
     />
   );
 }

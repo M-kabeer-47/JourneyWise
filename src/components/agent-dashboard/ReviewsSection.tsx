@@ -1,6 +1,6 @@
 import React from 'react';
 import ReviewItem from '@/components/ui/ReviewItem';
-import { Review } from '@/lib/types/Experience';
+import { Review } from '@/lib/types/experience';
 
 interface ReviewsSectionProps {
   reviews: Review[];

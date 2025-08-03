@@ -89,7 +89,7 @@ export default function Navbar() {
         setIsFetchingUser(true);
         const userData = await fetchUserFromClient();
         console.log("User data fetched:", userData);
-        setUser(userData);
+        setUser(userData ? userData : null);
         setIsFetchingUser(false);
       } catch (error) {
         console.error("Error fetching user:", error);

@@ -12,7 +12,7 @@ import {
   Trophy,
 } from "lucide-react";
 import BookingsTable from "@/components/agent-dashboard/Bookings/BookingsTable";
-import { Booking } from "@/lib/types/Booking";
+import { Booking } from "@/lib/types/booking";
 
 // Sample data - replace with API call later
 const mockBookings: Booking[] = [

@@ -1,7 +1,7 @@
-import { Experience, Review } from "@/lib/types/Experience";
-import { Metric, Notification } from "@/lib/types/Notification";
-import { Agent } from "@/lib/types/User";
-import { Booking } from "@/lib/types/Booking";
+import { Experience, Review } from "@/lib/types/experience";
+import { Metric, Notification } from "@/lib/types/notification";
+import { Agent } from "@/lib/types/user";
+import { Booking } from "@/lib/types/booking";
 
 export const agent: Agent = {
   id: "1",

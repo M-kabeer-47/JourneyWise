@@ -70,9 +70,7 @@ export default function CreateExperience() {
 
   const validateStep = useCallback(() => {
     const schemas = validationSchemas();
-    const schema =
-      schemas[currentStep as keyof typeof schemas] ||
-      formSchema;
+    const schema = schemas[currentStep as keyof typeof schemas] || formSchema;
     let imageError = false;
     console.log("Current step: " + currentStep);
 

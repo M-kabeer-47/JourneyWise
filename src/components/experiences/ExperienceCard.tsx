@@ -2,7 +2,7 @@
 import React from "react";
 import { Star, Edit3, Eye } from "lucide-react";
 import { motion } from "framer-motion";
-import { Experience } from "@/lib/types/Experience";
+import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
 
 interface ExperienceCardProps {

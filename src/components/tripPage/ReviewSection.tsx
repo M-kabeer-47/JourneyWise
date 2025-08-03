@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 import ReviewModal from "./ReviewModal";
 import ImageModal from "../ui/ImageModal";
 import ReviewItem from "../ui/ReviewItem";
-import { Review } from "@/lib/types/Experience";
+import { Review } from "@/lib/types/experience";
 
 interface ReviewSectionProps {
   rating: number;

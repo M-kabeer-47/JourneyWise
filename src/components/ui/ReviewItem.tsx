@@ -2,7 +2,7 @@
 import React from "react";
 import { Star, User } from "lucide-react";
 import Link from "next/link";
-import { Review } from "@/lib/types/Experience";
+import { Review } from "@/lib/types/experience";
 
 interface ReviewItemProps {
   review: Review;

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Star } from 'lucide-react';
-import { Review } from '@/lib/types/Experience';
+import { Review } from '@/lib/types/experience';
 
 interface ReviewItemProps {
   review: Review;

@@ -2,124 +2,29 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
-
+import { StepThreeType } from "@/lib/types/create-experience-steps";
+import useImageUrls from "@/hooks/create-experience/useImageUrls";
 type StepThreeProps = {
-  images: (string | File)[];
-  includedServices: string[];
-  excludedServices: string[];
+  data: StepThreeType;
   itemVariants: any;
+  imageUrls: string[];
 };
 
 // Fixed custom hook for stable image URLs
-function useStableImageUrls(images: (string | File)[]) {
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const urlMapRef = useRef<Map<string, string>>(new Map()); // Use string key instead of File
-  const lastImagesRef = useRef<(string | File)[]>([]);
 
-  useEffect(() => {
-    // Create a serializable key for each image
-    const currentImageKeys = images.map((img, index) => {
-      if (typeof img === "string") {
-        return img;
-      } else if (img instanceof File) {
-        // Create a unique key combining file properties
-        return `file_${img.name}_${img.size}_${img.lastModified}_${index}`;
-      }
-      return `unknown_${index}`;
-    });
 
-    // Check if images actually changed by comparing keys
-    const lastImageKeys = lastImagesRef.current.map((img, index) => {
-      if (typeof img === "string") {
-        return img;
-      } else if (img instanceof File) {
-        return `file_${img.name}_${img.size}_${img.lastModified}_${index}`;
-      }
-      return `unknown_${index}`;
-    });
-
-    const imagesChanged =
-      currentImageKeys.length !== lastImageKeys.length ||
-      currentImageKeys.some((key, index) => key !== lastImageKeys[index]);
-
-    if (!imagesChanged && imageUrls.length > 0) {
-      return; // No change needed
-    }
-
-    console.log("Images changed, updating URLs...", {
-      currentImageKeys,
-      lastImageKeys,
-    });
-
-    const newUrls: string[] = [];
-    const newUrlMap = new Map<string, string>();
-
-    images.forEach((img, index) => {
-      if (typeof img === "string") {
-        newUrls.push(img);
-        newUrlMap.set(img, img);
-      } else if (img instanceof File) {
-        const key = `file_${img.name}_${img.size}_${img.lastModified}_${index}`;
-
-        // Try to reuse existing URL
-        let url = urlMapRef.current.get(key);
-        if (!url || !url.startsWith("blob:")) {
-          // Create new URL if none exists or invalid
-          url = URL.createObjectURL(img);
-          console.log("Created new blob URL:", url, "for key:", key);
-        }
-
-        newUrls.push(url);
-        newUrlMap.set(key, url);
-      }
-    });
-
-    // Clean up old URLs that are no longer needed
-    urlMapRef.current.forEach((url, key) => {
-      if (!newUrlMap.has(key) && url.startsWith("blob:")) {
-        console.log("Revoking old URL:", url);
-        URL.revokeObjectURL(url);
-      }
-    });
-
-    urlMapRef.current = newUrlMap;
-    setImageUrls(newUrls);
-    lastImagesRef.current = [...images]; // Store a copy
-  }, [images]); // Only depend on images array
-
-  // Cleanup all URLs on unmount
-  useEffect(() => {
-    return () => {
-      console.log("Cleaning up all URLs on unmount");
-      urlMapRef.current.forEach((url) => {
-        if (url.startsWith("blob:")) {
-          URL.revokeObjectURL(url);
-        }
-      });
-      urlMapRef.current.clear();
-    };
-  }, []);
-
-  return imageUrls;
-}
-
-export default function StepThree({
-  images,
-  includedServices,
-  excludedServices,
-  itemVariants,
-}: StepThreeProps) {
+export default function StepThree({ data, itemVariants,imageUrls }: StepThreeProps) {
   const [activeImageIndex, setActiveImageIndex] = useState(0);
-  const imageUrls = useStableImageUrls(images);
+  
 
   console.log("StepThree render:", {
-    imagesLength: images.length,
+    imagesLength: data.experienceImages.length,
     imageUrlsLength: imageUrls.length,
     activeImageIndex,
     imageUrls: imageUrls.slice(0, 3), // Log first 3 URLs
   });
 
-  // Reset active index when images change significantly
+  // Reset active index when data.images change significantly
   useEffect(() => {
     if (activeImageIndex >= imageUrls.length && imageUrls.length > 0) {
       setActiveImageIndex(0);
@@ -244,24 +149,27 @@ export default function StepThree({
             <h4 className="text-lg font-semibold text-white mb-3">
               Included Services
             </h4>
-            <div className="overflow-hidden"> {/* Add overflow container */}
+            <div className="overflow-hidden">
+              {" "}
+              {/* Add overflow container */}
               <ul className="space-y-2 max-h-48 overflow-y-auto">
-                {includedServices.filter(Boolean).map((service, index) => (
+                {data.includedServices.filter(Boolean).map((service, index) => (
                   <motion.li
                     key={`included-${index}-${service}`}
-                    
                     transition={{ delay: index * 0.05, duration: 0.3 }} // Shorter delay and duration
                     className="flex items-center text-white overflow-hidden" // Add overflow-hidden
                   >
                     <Check className="w-4 h-4 mr-2 flex-shrink-0 text-ocean-blue" />
-                    <span className="text-sm truncate flex-1" title={service}> {/* Add truncate and flex-1 */}
+                    <span className="text-sm truncate flex-1" title={service}>
+                      {" "}
+                      {/* Add truncate and flex-1 */}
                       {service.length > 25
                         ? service.substring(0, 25) + "..."
                         : service}
                     </span>
                   </motion.li>
                 ))}
-                {includedServices.filter(Boolean).length === 0 && (
+                {data.includedServices.filter(Boolean).length === 0 && (
                   <li className="text-white/70 text-sm italic">
                     No services added yet
                   </li>
@@ -275,24 +183,29 @@ export default function StepThree({
             <h4 className="text-lg font-semibold text-midnight-blue mb-3">
               Excluded Services
             </h4>
-            <div className="overflow-hidden"> {/* Add overflow container */}
+            <div className="overflow-hidden">
+              {" "}
+              {/* Add overflow container */}
               <ul className="space-y-2 max-h-48 overflow-y-auto">
-                {excludedServices.filter(Boolean).map((service, index) => (
-                  <motion.li
-                    key={`excluded-${index}-${service}`}
-                    
-                    transition={{ delay: index * 0.05, duration: 0.3 }} // Shorter delay and duration
-                    className="flex items-center text-midnight-blue overflow-hidden" // Add overflow-hidden
-                  >
-                    <X className="w-4 h-4 mr-2 flex-shrink-0 text-red-600" />
-                    <span className="text-sm truncate flex-1" title={service}> {/* Add truncate and flex-1 */}
-                      {service.length > 25
-                        ? service.substring(0, 25) + "..."
-                        : service}
-                    </span>
-                  </motion.li>
-                ))}
-                {excludedServices.filter(Boolean).length === 0 && (
+                {data.excludedServices
+                  .filter(Boolean)
+                  .map((service: string, index: number) => (
+                    <motion.li
+                      key={`excluded-${index}-${service}`}
+                      transition={{ delay: index * 0.05, duration: 0.3 }} // Shorter delay and duration
+                      className="flex items-center text-midnight-blue overflow-hidden" // Add overflow-hidden
+                    >
+                      <X className="w-4 h-4 mr-2 flex-shrink-0 text-red-600" />
+                      <span className="text-sm truncate flex-1" title={service}>
+                        {" "}
+                        {/* Add truncate and flex-1 */}
+                        {service.length > 25
+                          ? service.substring(0, 25) + "..."
+                          : service}
+                      </span>
+                    </motion.li>
+                  ))}
+                {data.excludedServices.filter(Boolean).length === 0 && (
                   <li className="text-midnight-blue/70 text-sm italic">
                     No services added yet
                   </li>

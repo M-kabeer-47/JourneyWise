@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Booking } from "@/lib/types/Booking";
+import { Booking } from "@/lib/types/booking";
 import { Filter, Search } from "lucide-react";
 import SearchBar from "@/components/ui/SearchBar";
 import SortBy from "@/components/ui/SortBy";

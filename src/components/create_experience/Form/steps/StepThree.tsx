@@ -14,33 +14,32 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 
-import useImageUrls from "@/hooks/create-experience/useImageUrls";
-import type { ExperienceData } from "@/lib/schemas/experience";
 import ServiceSection from "../components/ServiceSection";
+import { UseFormSetValue, FieldErrors } from "react-hook-form";
+import { z } from "zod";
+import { stepThreeSchema } from "@/lib/schemas/experience";
+import useImageUrls from "@/hooks/create-experience/useImageUrls";
+
+type StepThreeType = z.infer<typeof stepThreeSchema>;
 
 interface FormStep3Props {
-  formData: ExperienceData;
-  handleInputChange: (field: keyof ExperienceData, value: any) => void;
-  errors: Partial<ExperienceData>;
-}
-
-interface FormStep3Props {
-  formData: ExperienceData;
-  handleInputChange: (field: keyof ExperienceData, value: any) => void;
-  errors: Partial<ExperienceData>;
+  formData: StepThreeType;
+  setValue: UseFormSetValue<StepThreeType>;
+  errors: FieldErrors<StepThreeType>;
+  imageUrls: string[];
 }
 
 export default function FormStep3({
   formData,
-  handleInputChange,
+  setValue,
   errors,
+  imageUrls,
 }: FormStep3Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(0);
   const [visibleImages, setVisibleImages] = useState(5);
   const sliderRef = useRef<HTMLDivElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const imageUrls = useImageUrls(formData.experienceImages);
 
   const totalSlots = 20;
   const maxStartIndex = Math.max(0, totalSlots - visibleImages);
@@ -51,17 +50,17 @@ export default function FormStep3({
   const addService = (type: "included" | "excluded") => {
     const currentServices =
       formData[type === "included" ? "includedServices" : "excludedServices"];
-    handleInputChange(
-      type === "included" ? "includedServices" : "excludedServices",
-      [...currentServices, ""]
-    );
+    setValue(type === "included" ? "includedServices" : "excludedServices", [
+      ...currentServices,
+      "",
+    ]);
   };
 
   const removeService = (type: "included" | "excluded", index: number) => {
     const currentServices =
       formData[type === "included" ? "includedServices" : "excludedServices"];
     const newServices = currentServices.filter((_, i) => i !== index);
-    handleInputChange(
+    setValue(
       type === "included" ? "includedServices" : "excludedServices",
       newServices
     );
@@ -75,7 +74,7 @@ export default function FormStep3({
     const field = type === "included" ? "includedServices" : "excludedServices";
     const currentServices = [...formData[field]];
     currentServices[index] = value;
-    handleInputChange(field, currentServices);
+    setValue(field, currentServices);
   };
 
   const slideLeft = () => {
@@ -95,7 +94,12 @@ export default function FormStep3({
     const files = e.target.files;
     if (files && formData.experienceImages.length + files.length <= 20) {
       const newImages = [...formData.experienceImages, ...Array.from(files)];
-      handleInputChange("experienceImages", newImages);
+      // Update image URLs
+      let newImageUrls = Array.from(files).map((file) =>
+        URL.createObjectURL(file)
+      );
+
+      setValue("experienceImages", newImages);
 
       // Auto-slide to show newly added images if needed
       if (newImages.length >= visibleImages) {
@@ -110,16 +114,15 @@ export default function FormStep3({
   };
 
   const removeImages = () => {
-    handleInputChange("experienceImages", []);
+    setValue("experienceImages", []);
     setStartIndex(0);
   };
 
   // Remove image handler
   const removeImage = (index: number) => {
     const newImages = formData.experienceImages.filter((_, i) => i !== index);
-    handleInputChange("experienceImages", newImages);
+    setValue("experienceImages", newImages);
   };
-
   // Handle drag and drop
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -130,7 +133,7 @@ export default function FormStep3({
       formData.experienceImages.length + files.length <= 20
     ) {
       const newImages = [...formData.experienceImages, ...Array.from(files)];
-      handleInputChange("experienceImages", newImages);
+      setValue("experienceImages", newImages);
 
       // Auto-slide to show newly added images
       if (newImages.length >= visibleImages) {
@@ -345,15 +348,6 @@ export default function FormStep3({
               </label>
             </div>
           )}
-          {errors.experienceImages && (
-            <p className="text-red-500 text-sm mt-1">
-              {typeof errors.experienceImages === "string"
-                ? errors.experienceImages
-                : Array.isArray(errors.experienceImages)
-                ? errors.experienceImages.join(", ")
-                : String(errors.experienceImages)}
-            </p>
-          )}
         </div>
 
         {/* Service sections remain the same */}
@@ -369,11 +363,7 @@ export default function FormStep3({
           onFocus={handleFocus}
           onBlur={handleBlur}
           type="included"
-          error={
-            Array.isArray(errors.includedServices)
-              ? errors.includedServices.join(", ")
-              : errors.includedServices
-          }
+          errors={errors}
         />
 
         <ServiceSection
@@ -384,11 +374,7 @@ export default function FormStep3({
           onUpdateService={(index, value) =>
             updateService("excluded", index, value)
           }
-          error={
-            Array.isArray(errors.excludedServices)
-              ? errors.excludedServices.join(", ")
-              : errors.excludedServices
-          }
+          errors={errors}
           onFocus={handleFocus}
           onBlur={handleBlur}
           type="excluded"
