@@ -1,16 +1,16 @@
 "use client";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { stepThreeSchema } from "@/lib/schemas/experience";
 
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { setExperienceData } from "@/lib/redux/slices/experienceData";
+import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import Layout from "@/components/create_experience/form/layout/Layout";
 import StepThreePreview from "@/components/create_experience/live-preview/StepThree";
 import StepThreeForm from "@/components/create_experience/form/steps/StepThree";
-type StepThreeType = z.infer<typeof stepThreeSchema>;
+import { StepThreeType } from "@/lib/types/create-experience-steps";
 import useImageUrls from "@/hooks/create-experience/useImageUrls";
 export default function StepThree() {
   const initialData = useAppSelector((state) => state.experienceData);
@@ -19,11 +19,13 @@ export default function StepThree() {
     handleSubmit,
     watch,
     setValue,
+    register,
     formState: { errors: formErrors },
   } = useForm<StepThreeType>({
     defaultValues: initialData,
     resolver: zodResolver(stepThreeSchema),
   });
+
   const data = watch();
   const imageUrls = useImageUrls(data.experienceImages);
   const dispatch = useAppDispatch();
@@ -44,10 +46,10 @@ export default function StepThree() {
 
   const convertImagesToBase64 = async () => {
     await Promise.all(
-      initialData.experienceImages.map(async (image, index) => {
+      data.experienceImages.map(async (image, index) => {
         if (image instanceof File) {
           const base64String = await convertFileToBase64(image);
-          data.experienceImages[index] = base64String;
+          setValue(`experienceImages.${index}`, base64String);
         }
       })
     );
@@ -55,15 +57,14 @@ export default function StepThree() {
 
   const handlePrevious = async () => {
     await convertImagesToBase64();
+
     dispatch(setExperienceData(data));
     router.push("/create-experience/step-two");
   };
 
   const onSubmit = async (data: StepThreeType) => {
     try {
-      let processedData = { ...data };
-
-      dispatch(setExperienceData(processedData));
+      dispatch(setExperienceData(data));
       router.push("/create-experience/step-two");
     } catch (error) {
       // ✅ Now dispatch serializable data
@@ -88,6 +89,7 @@ export default function StepThree() {
           errors={formErrors}
           formData={data}
           imageUrls={imageUrls}
+          register={register}
         />
       }
       stepKey="step3"

@@ -16,7 +16,7 @@ interface FormStep2Props {
   register: UseFormRegister<StepTwoType>;
   data: StepTwoType;
   errors: FieldErrors<StepTwoType>;
-  duration?: number;
+  duration: number;
   control: Control<StepTwoType>;
   setValue: UseFormSetValue<StepTwoType>;
 }
@@ -30,26 +30,22 @@ export default function FormStep2({
   setValue,
 }: FormStep2Props) {
   useEffect(() => {
-
     // Initialize destinations based on duration
     if (data.destinations.length === duration) return;
-    alert("Yeah buddy")
-    const newDestinations = Array.from(
-      { length: duration ? duration : 0 },
-      (_, i) => ({
-        id: Math.random().toString(36).substr(2, 9),
-        day: i + 1,
-        name: `Destination ${i + 1}`,
-        activities: [
-          {
-            id: Math.random().toString(36).substr(2, 9),
-            name: "",
-            time: "",
-            spot: "",
-          },
-        ],
-      })
-    );
+
+    const newDestinations = Array.from({ length: duration }, (_, i) => ({
+      id: Math.random().toString(36).substr(2, 9),
+      day: i + 1,
+      name: `Destination ${i + 1}`,
+      activities: [
+        {
+          id: Math.random().toString(36).substr(2, 9),
+          name: "",
+          time: "12:00 AM",
+          spot: "",
+        },
+      ],
+    }));
     setValue("destinations", newDestinations);
   }, [duration]);
 
@@ -75,6 +71,7 @@ export default function FormStep2({
               register={register}
               errors={errors}
               setValue={setValue}
+              activities={data.destinations[index].activities}
             />
           ))}
         </AnimatePresence>

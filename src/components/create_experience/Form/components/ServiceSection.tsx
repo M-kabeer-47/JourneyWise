@@ -5,7 +5,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Minus, Plus, HelpCircle } from "lucide-react";
-import { FieldErrors } from "react-hook-form";
+import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { StepThreeType } from "@/lib/types/create-experience-steps";
 
 interface ServiceSectionProps {
@@ -13,12 +13,12 @@ interface ServiceSectionProps {
   services: string[];
   onAddService: () => void;
   onRemoveService: (index: number) => void;
-  onUpdateService: (index: number, value: string) => void;
   focusedField: string | null;
   onFocus: (field: string) => void;
   onBlur: () => void;
   type: "included" | "excluded";
   errors: FieldErrors<StepThreeType>;
+  register: UseFormRegister<StepThreeType>;
 }
 
 export default function ServiceSection({
@@ -26,7 +26,7 @@ export default function ServiceSection({
   services,
   onAddService,
   onRemoveService,
-  onUpdateService,
+  register,
   focusedField,
   onFocus,
   onBlur,
@@ -37,6 +37,17 @@ export default function ServiceSection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold text-midnight-blue">{title}</h3>
+        {errors.includedServices && type === "included" && (
+          <p className="text-red-500 text-sm">
+            {errors.includedServices.message}
+          </p>
+        )}
+
+        {errors.excludedServices && type === "excluded" && (
+          <p className="text-red-500 text-sm">
+            {errors.excludedServices.message}
+          </p>
+        )}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -57,8 +68,7 @@ export default function ServiceSection({
           <div key={`${type}-${index}`} className="flex items-center gap-2">
             <input
               type="text"
-              value={service}
-              onChange={(e) => onUpdateService(index, e.target.value)}
+              {...register(`${type}Services.${index}`)}
               onFocus={() => onFocus(`${type}Services.${index}`)}
               onBlur={onBlur}
               className={`flex-grow px-4 h-11 rounded-lg border text-charcoal text-sm
@@ -75,7 +85,11 @@ export default function ServiceSection({
             <button
               type="button"
               onClick={() => onRemoveService(index)}
-              className="p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200"
+              disabled={services.length <= 1}
+              
+              className={`p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 ${
+                index === 0 ? "opacity-50 cursor-not-allowed" : ""
+              }`}
             >
               <Minus className="w-4 h-4" />
             </button>

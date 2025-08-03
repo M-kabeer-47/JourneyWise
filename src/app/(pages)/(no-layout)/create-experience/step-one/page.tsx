@@ -8,7 +8,7 @@ import Layout from "@/components/create_experience/form/layout/Layout";
 import StepOnePreview from "@/components/create_experience/live-preview/StepOne";
 import StepOneForm from "@/components/create_experience/form/steps/StepOne";
 import { useAppDispatch,useAppSelector } from "@/hooks/redux";
-import { setExperienceData } from "@/lib/redux/slices/experienceData";
+import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 const initialData: Partial<ExperienceData> = {

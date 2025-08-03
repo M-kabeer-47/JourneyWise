@@ -2,7 +2,7 @@
 
 import { motion } from 'framer-motion'
 import { CalendarDays, Compass, BookOpen } from 'lucide-react'
-import { toggleNavbar } from '@/lib/redux/slices/experienceData'
+import { toggleNavbar } from '@/lib/redux/slices/experience'
 import { useEffect,useRef } from 'react'
 import { useAppDispatch } from '@/hooks/redux'
 const tools = [

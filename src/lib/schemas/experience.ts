@@ -31,9 +31,6 @@ export const stepOneSchema = z.object({
             return false;
           }
           // Check file size (10MB limit)
-          if (value.size > 10 * 1024 * 1024) {
-            return false;
-          }
         }
         // Check if string is not empty
         if (typeof value === "string" && value.trim() === "") {
@@ -71,11 +68,11 @@ export const stepThreeSchema = z.object({
     .array(z.union([z.string().min(1), z.instanceof(File)]))
     .min(5, "At least 5 images are required"),
   includedServices: z
-    .array(z.string().min(1, "service is required"))
-    .min(1, "At least one included service is required"),
+    .array(z.string().min(1, "Service is required"))
+    .min(1, "Please mention at least one included service"),
   excludedServices: z
-    .array(z.string().min(1, "service is required"))
-    .min(1, "At least one excluded service is required"),
+    .array(z.string().min(1, "Service is required"))
+    .min(1, "Please mention at least one excluded service"),
 });
 
 export const stepFourSchema = z.object({

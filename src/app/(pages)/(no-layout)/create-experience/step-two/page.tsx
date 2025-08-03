@@ -7,9 +7,9 @@ import Layout from "@/components/create_experience/form/layout/Layout";
 import StepTwoPreview from "@/components/create_experience/live-preview/StepTwo";
 import StepTwoForm from "@/components/create_experience/form/steps/StepTwo";
 import { useAppSelector, useAppDispatch } from "@/hooks/redux";
-import { setExperienceData } from "@/lib/redux/slices/experienceData";
+import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
-type StepTwoType = z.infer<typeof stepTwoSchema>;
+import { StepTwoType } from "@/lib/types/create-experience-steps";
 
 export default function StepTwo() {
   const duration = useAppSelector((state) => state.experienceData.duration);

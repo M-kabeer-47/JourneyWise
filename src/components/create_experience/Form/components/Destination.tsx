@@ -25,6 +25,7 @@ interface DestinationProps {
   register: UseFormRegister<StepTwoType>;
   errors: FieldErrors<StepTwoType>;
   setValue: UseFormSetValue<StepTwoType>;
+  activities: StepTwoType["destinations"][number]["activities"];
 }
 
 function Destination({
@@ -34,9 +35,10 @@ function Destination({
   register,
   errors,
   setValue,
+  activities = [],
 }: DestinationProps) {
   const {
-    fields: activityFields,
+    
     append: addActivity,
     remove: removeActivity,
   } = useFieldArray({
@@ -92,7 +94,7 @@ function Destination({
             Activities
           </label>
           <AnimatePresence mode="popLayout">
-            {activityFields.map((activity, activityIndex) => (
+            {activities.map((activity, activityIndex) => (
               <motion.div
                 key={activity.id}
                 transition={{ duration: 0.1, ease: "easeIn" }}
@@ -122,11 +124,12 @@ function Destination({
                   <div className="sm:flex flex flex-col gap-2">
                     <div className="flex-grow relative">
                       <TimeInput
-                        value={activity.time ?? ""}
+                        value={activity.time || ""}
                         onChange={(timeValue) =>
                           setValue(
                             `destinations.${index}.activities.${activityIndex}.time`,
-                            timeValue
+                            timeValue,
+                            
                           )
                         }
                         onFocus={() =>
@@ -186,7 +189,7 @@ function Destination({
               addActivity({
                 id: Math.random().toString(36).substr(2, 9),
                 name: "",
-                time: "",
+                time: "12:00 AM",
                 spot: "",
               })
             }

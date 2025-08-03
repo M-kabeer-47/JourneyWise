@@ -20,7 +20,9 @@ const TimeInput = ({
   const [hours, setHours] = useState("12");
   const [minutes, setMinutes] = useState("00");
   const [period, setPeriod] = useState("AM");
-  const [openDropdown, setOpenDropdown] = useState<'hours' | 'minutes' | 'period' | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<
+    "hours" | "minutes" | "period" | null
+  >(null);
   const timeInputRef = useRef<HTMLDivElement>(null);
 
   // Parse existing value when component mounts or value changes
@@ -52,18 +54,18 @@ const TimeInput = ({
   );
 
   // Custom Select Component
-  const CustomSelect = ({ 
-    value, 
-    options, 
-    onChange, 
+  const CustomSelect = ({
+    value,
+    options,
+    onChange,
     label,
-    dropdownKey 
+    dropdownKey,
   }: {
     value: string;
     options: string[];
     onChange: (value: string) => void;
     label: string;
-    dropdownKey: 'hours' | 'minutes' | 'period';
+    dropdownKey: "hours" | "minutes" | "period";
   }) => (
     <div>
       <label className="block text-xs font-medium text-charcoal mb-2">
@@ -78,20 +80,21 @@ const TimeInput = ({
           }}
           className={`w-full px-3 py-2 text-sm border rounded-lg text-left flex items-center justify-between
                      transition-all duration-200 outline-none 
-                     ${openDropdown === dropdownKey 
-                       ? "border-ocean-blue ring-2 ring-ocean-blue/20" 
-                       : "border-gray-200"
+                     ${
+                       openDropdown === dropdownKey
+                         ? "border-ocean-blue ring-2 ring-ocean-blue/20"
+                         : "border-gray-200"
                      }
                      `}
         >
           <span className="text-charcoal">{value}</span>
-          <ChevronDown 
+          <ChevronDown
             className={`w-3 h-3 text-gray-400 transition-transform ${
               openDropdown === dropdownKey ? "rotate-180" : ""
-            }`} 
+            }`}
           />
         </button>
-        
+
         {openDropdown === dropdownKey && (
           <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-50 max-h-32 overflow-y-auto">
             {options.map((option) => (
@@ -104,7 +107,11 @@ const TimeInput = ({
                   setOpenDropdown(null);
                 }}
                 className={`w-full px-3 py-2 text-sm text-left hover:bg-ocean-blue/10 transition-colors
-                           ${value === option ? "bg-ocean-blue/10 text-ocean-blue font-medium" : "text-charcoal"}
+                           ${
+                             value === option
+                               ? "bg-ocean-blue/10 text-ocean-blue font-medium"
+                               : "text-charcoal"
+                           }
                            first:rounded-t-lg last:rounded-b-lg`}
               >
                 {option}
@@ -119,7 +126,10 @@ const TimeInput = ({
   // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (timeInputRef.current && !timeInputRef.current.contains(event.target as Node)) {
+      if (
+        timeInputRef.current &&
+        !timeInputRef.current.contains(event.target as Node)
+      ) {
         setIsOpen(false);
         setOpenDropdown(null);
         onBlur();
@@ -127,8 +137,9 @@ const TimeInput = ({
     };
 
     if (isOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-      return () => document.removeEventListener('mousedown', handleClickOutside);
+      document.addEventListener("mousedown", handleClickOutside);
+      return () =>
+        document.removeEventListener("mousedown", handleClickOutside);
     }
   }, [isOpen, onBlur]);
 
@@ -154,7 +165,7 @@ const TimeInput = ({
                  `}
       >
         <span className={value ? "text-charcoal" : "text-gray-400"}>
-          {value.toString()}
+          {value}
         </span>
         <ChevronDown
           className={`w-4 h-4 text-gray-400 transition-transform ${

@@ -15,10 +15,11 @@ import {
 } from "@/components/ui/tooltip";
 
 import ServiceSection from "../components/ServiceSection";
-import { UseFormSetValue, FieldErrors } from "react-hook-form";
+import { UseFormSetValue, FieldErrors, UseFormRegister } from "react-hook-form";
 import { z } from "zod";
 import { stepThreeSchema } from "@/lib/schemas/experience";
 import useImageUrls from "@/hooks/create-experience/useImageUrls";
+import { register } from "module";
 
 type StepThreeType = z.infer<typeof stepThreeSchema>;
 
@@ -27,6 +28,7 @@ interface FormStep3Props {
   setValue: UseFormSetValue<StepThreeType>;
   errors: FieldErrors<StepThreeType>;
   imageUrls: string[];
+  register: UseFormRegister<StepThreeType>;
 }
 
 export default function FormStep3({
@@ -34,6 +36,7 @@ export default function FormStep3({
   setValue,
   errors,
   imageUrls,
+  register,
 }: FormStep3Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
   const [startIndex, setStartIndex] = useState(0);
@@ -66,17 +69,7 @@ export default function FormStep3({
     );
   };
 
-  const updateService = (
-    type: "included" | "excluded",
-    index: number,
-    value: string
-  ) => {
-    const field = type === "included" ? "includedServices" : "excludedServices";
-    const currentServices = [...formData[field]];
-    currentServices[index] = value;
-    setValue(field, currentServices);
-  };
-
+ 
   const slideLeft = () => {
     if (startIndex > 0) {
       setStartIndex((prev) => prev - 1);
@@ -95,11 +88,9 @@ export default function FormStep3({
     if (files && formData.experienceImages.length + files.length <= 20) {
       const newImages = [...formData.experienceImages, ...Array.from(files)];
       // Update image URLs
-      let newImageUrls = Array.from(files).map((file) =>
-        URL.createObjectURL(file)
-      );
+  
 
-      setValue("experienceImages", newImages);
+      setValue("experienceImages", newImages, { shouldValidate: true });
 
       // Auto-slide to show newly added images if needed
       if (newImages.length >= visibleImages) {
@@ -114,14 +105,14 @@ export default function FormStep3({
   };
 
   const removeImages = () => {
-    setValue("experienceImages", []);
+    setValue("experienceImages", [], { shouldValidate: true });
     setStartIndex(0);
   };
 
   // Remove image handler
   const removeImage = (index: number) => {
     const newImages = formData.experienceImages.filter((_, i) => i !== index);
-    setValue("experienceImages", newImages);
+    setValue("experienceImages", newImages, { shouldValidate: true });
   };
   // Handle drag and drop
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
@@ -317,6 +308,11 @@ export default function FormStep3({
                 <ChevronRight className="w-6 h-6 text-midnight-blue" />
               </button>
             </>
+            {errors.experienceImages && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.experienceImages.message}
+              </p>
+            )}
           </div>
 
           {/* Upload button */}
@@ -356,9 +352,7 @@ export default function FormStep3({
           services={formData.includedServices}
           onAddService={() => addService("included")}
           onRemoveService={(index) => removeService("included", index)}
-          onUpdateService={(index, value) =>
-            updateService("included", index, value)
-          }
+          register={register}
           focusedField={focusedField}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -371,9 +365,7 @@ export default function FormStep3({
           services={formData.excludedServices}
           onAddService={() => addService("excluded")}
           onRemoveService={(index) => removeService("excluded", index)}
-          onUpdateService={(index, value) =>
-            updateService("excluded", index, value)
-          }
+          register={register}
           errors={errors}
           onFocus={handleFocus}
           onBlur={handleBlur}

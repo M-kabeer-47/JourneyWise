@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
-import experienceData from '../slices/experienceData'
+import experienceData from '../slices/experience'
 export const makeStore = () => {
   return configureStore({
     reducer: {

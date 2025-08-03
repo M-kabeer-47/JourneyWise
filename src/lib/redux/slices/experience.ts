@@ -25,7 +25,7 @@ const initialState: ExperienceData = {
         {
           id: Math.random().toString(36).substr(2, 9),
           name: "",
-          time: "",
+          time: "12:00 AM",
           spot: "",
         },
       ],
