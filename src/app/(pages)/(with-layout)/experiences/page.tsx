@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin, Search, ArrowRight, X, SlidersHorizontal } from "lucide-react";
+import { MapPin,   X, SlidersHorizontal } from "lucide-react";
 
 // Custom Components
 import { LocationSelector } from "@/components/experiences/LocationSelector";
@@ -238,10 +238,10 @@ export default function ExperiencesPage() {
 
         <div className="px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center relative top-[40px]">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-raleway font-bold mb-4">
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
               Discover Amazing Experiences
             </h1>
-            <p className="text-xl text-blue-100 mb-4">
+            <p className="text-base text-blue-100 mb-4">
               Find and book unique activities led by local experts
             </p>
           </div>

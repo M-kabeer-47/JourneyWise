@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+
+
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Raleway:wght@700&display=swap");
+
 :root {
   --midnight-blue: #003366;
   --ocean-blue: #0077b6;
@@ -16,7 +22,6 @@ body {
   overflow-y: auto;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Raleway:wght@700&display=swap");
 
 h1 {
   font-family: "Raleway", sans-serif;

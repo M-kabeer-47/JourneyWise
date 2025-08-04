@@ -6,17 +6,25 @@ import { stepFourSchema } from "@/lib/schemas/experience";
 import Layout from "@/components/create_experience/form/layout/Layout";
 import StepFourPreview from "@/components/create_experience/live-preview/StepFour";
 import StepFourForm from "@/components/create_experience/form/steps/StepFour";
+import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useAppSelector, useAppDispatch } from "@/hooks/redux";
 import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import { StepFourType } from "@/lib/types/create-experience-steps";
 import { useState } from "react";
-import { toast } from "@/components/ui/Toast";
+import { useExperienceSubmission } from "@/hooks/create-experience/useSubmitForm";
+import { CheckCircle } from "lucide-react";
+
 export default function StepFour() {
   const [activeTierIndex, setActiveTierIndex] = useState(0);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [pendingData, setPendingData] = useState<StepFourType | null>(null);
+
   const initialData = useAppSelector((state) => state.experienceData);
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { submitExperience, isSubmitting, error } = useExperienceSubmission();
+
   const {
     register,
     handleSubmit,
@@ -35,11 +43,21 @@ export default function StepFour() {
   };
 
   const onSubmit = (data: StepFourType) => {
-    console.log("Form submitted:", data);
+    console.log("Form validated:", data);
     dispatch(setExperienceData(data));
-    toast.success("Experience saved successfully!");
-    
+    setPendingData(data);
+    setShowConfirmModal(true);
   };
+
+  const handleConfirmSubmission = async () => {
+    if (!pendingData) return;
+
+    const result = await submitExperience(pendingData);
+
+    setShowConfirmModal(false);
+    // Error handling is done in the hook via toast
+  };
+
   const handlePrevious = () => {
     dispatch(setExperienceData(watch()));
     router.push("/create-experience/step-three");
@@ -59,31 +77,44 @@ export default function StepFour() {
   const data = watch();
 
   return (
-    <Layout
-      preview={
-        <StepFourPreview
-          itemVariants={itemVariants}
-          activeTierIndex={activeTierIndex}
-          setActiveTierIndex={setActiveTierIndex}
-          data={data}
-          agentName="John Doe"
-          title="Experience Title"
-          formatPrice={formatPrice}
-        />
-      }
-      form={
-        <StepFourForm
-          control={control}
-          register={register}
-          setValue={setValue}
-          errors={formErrors}
-          data={data}
-          setActiveTierIndex={setActiveTierIndex}
-        />
-      }
-      stepKey="step2"
-      onNext={handleSubmit(onSubmit)}
-      onPrevious={handlePrevious}
-    />
+    <>
+      <Layout
+        preview={
+          <StepFourPreview
+            itemVariants={itemVariants}
+            activeTierIndex={activeTierIndex}
+            setActiveTierIndex={setActiveTierIndex}
+            data={data}
+            agentName="John Doe"
+            title="Experience Title"
+            formatPrice={formatPrice}
+          />
+        }
+        form={
+          <StepFourForm
+            control={control}
+            register={register}
+            setValue={setValue}
+            errors={formErrors}
+            data={data}
+            setActiveTierIndex={setActiveTierIndex}
+          />
+        }
+        stepKey="step4"
+        onNext={handleSubmit(onSubmit)}
+        onPrevious={handlePrevious}
+      />
+
+      <ConfirmModal
+        isOpen={showConfirmModal}
+        onClose={() => setShowConfirmModal(false)}
+        onConfirm={handleConfirmSubmission}
+        title="Create Experience"
+        description="Are you sure you want to create this experience? Once created, you can edit it later from your dashboard."
+        confirmText="Create Experience"
+        cancelText="Review Again"
+        loading={isSubmitting}
+      />
+    </>
   );
 }

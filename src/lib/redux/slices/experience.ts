@@ -42,8 +42,11 @@ let experienceData = createSlice({
     setExperienceData: (state, action) => {
       return { ...state, ...action.payload };
     },
+    clearExperienceData: () => {
+      return initialState;
+    },
   },
 });
 
-export const { setExperienceData } = experienceData.actions;
+export const { setExperienceData, clearExperienceData } = experienceData.actions;
 export default experienceData.reducer;

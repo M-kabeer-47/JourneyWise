@@ -56,7 +56,7 @@ export default function ServiceSection({
       <div className="space-y-3">
         {services.map((service, index) => (
           <div key={`${type}-${index}`}>
-            <div  className="flex items-center gap-2">
+            <div className="flex items-center gap-2">
               <input
                 type="text"
                 {...register(`${type}Services.${index}`)}
@@ -87,7 +87,7 @@ export default function ServiceSection({
             {(type === "included"
               ? errors?.includedServices?.[index]
               : errors?.excludedServices?.[index]) && (
-              <p className="text-red-500 text-sm mt-1">
+              <p className="text-red-500 text-sm mt-1 relative left-[5px]">
                 {
                   (type === "included"
                     ? errors.includedServices?.[index]?.message
@@ -95,17 +95,17 @@ export default function ServiceSection({
                 }
               </p>
             )}
-            <button
-              type="button"
-              onClick={onAddService}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-ocean-blue hover:bg-ocean-blue/10 rounded-lg transition-colors duration-200"
-            >
-              <Plus className="w-4 h-4" />
-              Add Service
-            </button>
           </div>
         ))}
       </div>
+      <button
+        type="button"
+        onClick={onAddService}
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-ocean-blue hover:bg-ocean-blue/10 rounded-lg transition-colors duration-200"
+      >
+        <Plus className="w-4 h-4" />
+        Add Service
+      </button>
     </div>
   );
 }

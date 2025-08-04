@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import {  NextResponse } from "next/server";
 import db from "@/lib/server/db";
 import { experience as ExperienceTable } from "@/../auth-schema";
 
