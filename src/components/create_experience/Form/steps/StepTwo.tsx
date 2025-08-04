@@ -8,7 +8,7 @@ import {
   UseFormSetValue,
 } from "react-hook-form";
 import { z } from "zod";
-import Destination from "../components/Destination"; // Adjust import path as needed
+import Destination from "../components/step-two/Destination"; // Adjust import path as needed
 
 type StepTwoType = z.infer<typeof stepTwoSchema>;
 

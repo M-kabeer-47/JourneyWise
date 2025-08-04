@@ -6,7 +6,13 @@ export const stepOneSchema = z.object({
   countryCode: z.string().min(1, "Country code is required"),
   city: z.string().min(1, "City is required"),
   category: z.string().min(1, "Category is required"),
-  duration: z.number().min(1, "Duration is required"),
+  duration: z
+    .number({
+      invalid_type_error: "Duration is required",
+      required_error: "Duration is required",
+    }).positive("Duration must be greater than 0")
+    .min(1, "Duration is required"),
+
   tags: z.array(z.string()).min(3, "At least three tags are required"),
   description: z
     .string()
@@ -83,17 +89,17 @@ export const stepFourSchema = z.object({
         name: z.string().min(1, "Tier name is required"),
         members: z
           .number({
-            required_error: "Number of members is required",
-            invalid_type_error: "Members must be a number",
+            required_error: "Members is required",
+            invalid_type_error: "Members is required",
           })
           .int()
-          .positive("Number of members must be positive"),
+          .positive("Members must be greater than 0"),
         price: z
           .number({
             required_error: "Price is required",
-            invalid_type_error: "Price must be a number",
+            invalid_type_error: "Price is required",
           })
-          .positive("Price must be positive"),
+          .positive("Price must be greater than 0"),
         description: z.string().min(1, "Description is required"),
       })
     )

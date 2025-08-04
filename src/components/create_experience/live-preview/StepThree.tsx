@@ -56,7 +56,7 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
     <div className="space-y-6 md:space-y-8">
       {/* Gallery Section */}
       <motion.div variants={itemVariants} className="space-y-4">
-        <h3 className="text-xl font-semibold text-midnight-blue">Gallery</h3>
+        <h3 className="text-3xl font-bold text-midnight-blue">Gallery</h3>
         <div className="relative overflow-hidden rounded-lg aspect-video bg-gray-100">
           {imageUrls.length > 0 ? (
             <>
@@ -140,7 +140,7 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
 
       {/* Services Section */}
       <motion.div variants={itemVariants} className="space-y-4">
-        <h3 className="text-xl font-semibold text-midnight-blue mb-4">
+        <h3 className="text-3xl font-bold text-midnight-blue mb-4">
           Services
         </h3>
         <div className="grid md:grid-cols-2 gap-6">

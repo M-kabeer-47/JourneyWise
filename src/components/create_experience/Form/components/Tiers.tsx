@@ -142,7 +142,7 @@ export default function Tiers({
                     handleTierFocus(index);
                     handleFocus(`tiers.${tiers.length - index - 1}.price`);
                   }}
-                  min={1}
+                  
                   onBlur={handleBlur}
                   className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
                                   transition-all duration-200 outline-none
@@ -169,7 +169,7 @@ export default function Tiers({
                   setValueAs: (v) =>
                     v === "" || isNaN(Number(v)) ? 0 : Number(v),
                 })}
-                min={1}
+                
                 onFocus={() => {
                   handleTierFocus(index);
                   handleFocus(`tiers.${tiers.length - index - 1}.members`);

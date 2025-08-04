@@ -1,6 +1,6 @@
 import { Plus, Trash, Clock, MapPin, AlertCircle } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import TimeInput from "../components/TimeInput";
+import TimeInput from "../TimeInput";
 import {
   Control,
   FieldErrors,

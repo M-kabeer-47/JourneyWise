@@ -20,6 +20,7 @@ export default function StepThree() {
     watch,
     setValue,
     register,
+    control,
     formState: { errors: formErrors },
   } = useForm<StepThreeType>({
     defaultValues: initialData,
@@ -45,32 +46,32 @@ export default function StepThree() {
   };
 
   const convertImagesToBase64 = async () => {
-
-   let images =  await Promise.all(
+    let images = await Promise.all(
       data.experienceImages.map(async (image, index) => {
         if (image instanceof File) {
           const base64String = await convertFileToBase64(image);
           return base64String;
-        }
-        else {
-          return null
+        } else {
+          return image;
         }
       })
     );
-    setValue("experienceImages",images.filter((img) => img !== null));
+    setValue(
+      "experienceImages",
+      images.filter((img) => img !== null)
+    );
   };
 
   const handlePrevious = async () => {
     await convertImagesToBase64();
-
-    dispatch(setExperienceData(data));
+    dispatch(setExperienceData(watch()));
     router.push("/create-experience/step-two");
   };
 
   const onSubmit = async (data: StepThreeType) => {
     try {
       await convertImagesToBase64();
-      let latestData = watch()
+      let latestData = watch();
       dispatch(setExperienceData(latestData));
       router.push("/create-experience/step-four");
     } catch (error) {
@@ -92,6 +93,7 @@ export default function StepThree() {
       }
       form={
         <StepThreeForm
+          control={control}
           setValue={setValue}
           errors={formErrors}
           formData={data}

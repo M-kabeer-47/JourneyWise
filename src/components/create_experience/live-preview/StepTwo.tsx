@@ -35,7 +35,7 @@ export default function StepTwo({ destinations = [], itemVariants }: StepTwoProp
   return (
     <div className="space-y-6 md:space-y-8">
       <motion.div variants={itemVariants} className="space-y-4">
-        <h3 className="text-xl font-semibold text-midnight-blue">Itinerary Overview</h3>
+        <h3 className="text-3xl font-bold text-midnight-blue">Itinerary Overview</h3>
 
         <div className="relative">
           {/* Timeline visualization */}

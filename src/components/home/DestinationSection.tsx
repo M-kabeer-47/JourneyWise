@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion'
 import Image from 'next/image'
 import { MapPin, Utensils, Calendar, ChevronDown } from 'lucide-react'
 import { useAppDispatch } from '@/hooks/redux'
-import { toggleNavbar } from '@/lib/redux/slices/experience'
+
 const destinations = [
   {
     id: 1,
@@ -94,10 +94,10 @@ export default function TravelDestinations() {
     const sectionObserver = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-         dispatch(toggleNavbar(false))
+        //  dispatch(toggleNavbar(false))
         }
         else{
-          dispatch(toggleNavbar(true))
+          // dispatch(toggleNavbar(true))
         }
       },
       { threshold: 0.1 }

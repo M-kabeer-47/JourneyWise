@@ -1,39 +1,31 @@
-import { useState, useEffect, useRef } from "react";
-import { motion } from "framer-motion";
-import {
-  CircleCheck,
-  Upload,
-  Check,
-  HelpCircle,
-  X,
-  ImageIcon,
-} from "lucide-react";
-import {
-  TooltipProvider,
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-} from "@/components/ui/tooltip";
+import { useState, useEffect } from "react";
+import { Check } from "lucide-react";
 import axios from "axios";
 import { stepOneSchema } from "@/lib/schemas/experience";
-import countries from "@/lib/data/countries";
 import z from "zod";
-import { Controller } from "react-hook-form";
 import {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
+  Controller,
   Control,
 } from "react-hook-form";
-import { StepOneType } from "@/lib/types/create-experience-steps";
+
+// Import your new components
+import CategoryDropdown from "../components/step-one/Category";
+import CountrySelector from "../components/step-one/CountrySelector";
+import Tags from "../components/step-one/Tags";
+import ImageUpload from "../components/step-one/ImageUpload";
+import Description from "../components/step-one/Description";
+import City from "../components/step-one/CitySelector";
+
 type stepOneType = z.infer<typeof stepOneSchema>;
+
 interface FormStep1Props {
   formData: stepOneType;
-  setValue: UseFormSetValue<StepOneType>; // ← Correct type
-  control: Control<StepOneType>;
-  errors: FieldErrors<StepOneType>;
-  // correct the type for register
-
+  setValue: UseFormSetValue<stepOneType>;
+  control: Control<stepOneType>;
+  errors: FieldErrors<stepOneType>;
   register: UseFormRegister<stepOneType>;
 }
 
@@ -44,31 +36,8 @@ const categories = [
   "Food & Drink",
   "Nature",
 ];
-const tagOptions = [
-  "Adventure",
-  "Cultural",
-  "Food",
-  "Nature",
-  "Relaxation",
-  "Beach",
-  "Mountain",
-  "City",
-  "Historical",
-  "Wildlife",
-  "Photography",
-  "Hiking",
-  "Family-friendly",
-  "Romantic",
-  "Budget",
-  "Luxury",
-];
 
 const CITIES_DATA_URL = "/data/cities.json";
-
-interface Country {
-  name: string;
-  cca2: string;
-}
 
 interface CityData {
   [countryCode: string]: string[];
@@ -82,90 +51,10 @@ export default function FormStep1({
   control,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
-
   const [citiesData, setCitiesData] = useState<CityData>({});
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFocus = (fieldName: string) => setFocusedField(fieldName);
   const handleBlur = () => setFocusedField(null);
-
-  const handleTagToggle = (tag: string) => {
-    const updatedTags = formData.tags.includes(tag)
-      ? formData.tags.filter((t: string) => t !== tag)
-      : [...formData.tags, tag];
-    setValue("tags", updatedTags, { shouldValidate: false });
-  };
-
-  // Handle file selection (both click and drop)
-  const handleFileSelect = (file: File) => {
-    if (file && file.type.startsWith("image/")) {
-      setValue("experienceImage", file, { shouldValidate: false }); // Changed from gigImage
-
-      // Create preview URL
-      const previewUrl = URL.createObjectURL(file);
-      setImagePreview(previewUrl);
-    }
-  };
-
-  // Handle drag and drop events
-  const handleDragOver = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(true);
-  };
-
-  const handleDragLeave = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    setIsDragOver(false);
-
-    const files = Array.from(e.dataTransfer.files);
-    const imageFile = files.find((file) => file.type.startsWith("image/"));
-
-    if (imageFile) {
-      handleFileSelect(imageFile);
-    }
-  };
-
-  // Handle file input change
-  const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      handleFileSelect(file);
-    }
-  };
-
-  // Remove image
-  const handleRemoveImage = () => {
-    setValue("experienceImage", ""); // Changed from gigImage
-    setImagePreview(null);
-    if (fileInputRef.current) {
-      fileInputRef.current.value = "";
-    }
-  };
-
-  // Set initial preview if formData has an image
-  useEffect(() => {
-    if (formData.experienceImage) {
-      // Changed from gigImage
-      if (typeof formData.experienceImage === "string") {
-        setImagePreview(formData.experienceImage);
-      } else if ((formData.experienceImage as any) instanceof File) {
-        const previewUrl = URL.createObjectURL(formData.experienceImage);
-        setImagePreview(previewUrl);
-
-        // Cleanup function
-        return () => URL.revokeObjectURL(previewUrl);
-      }
-    } else {
-      setImagePreview(null);
-    }
-  }, [formData.experienceImage]); // Changed from gigImage
 
   // Load cities data
   useEffect(() => {
@@ -218,6 +107,7 @@ export default function FormStep1({
               </p>
             )}
           </div>
+
           <div className="space-y-2">
             <label className="block text-base font-medium text-midnight-blue">
               Availability Status
@@ -266,306 +156,75 @@ export default function FormStep1({
           </div>
         </div>
 
-        {/* Enhanced Experience Image Upload with Drag & Drop */}
-        <div className="space-y-2">
-          <label className="block text-base font-medium text-midnight-blue">
-            Experience Image
-          </label>
-          <Controller
-            name="experienceImage"
-            control={control}
-            render={({ field }) => {
-              // Update these handlers to use field.onChange
-              const handleFileSelect = (file: File) => {
-                if (file && file.type.startsWith("image/")) {
-                  field.onChange(file); // Use field.onChange instead of setValue
-                  const previewUrl = URL.createObjectURL(file);
-                  setImagePreview(previewUrl);
-                }
-              };
-
-              const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                const file = e.target.files?.[0];
-                if (file) {
-                  handleFileSelect(file);
-                }
-              };
-
-              const handleRemoveImage = () => {
-                field.onChange(""); // Use field.onChange instead of setValue
-                setImagePreview(null);
-                if (fileInputRef.current) {
-                  fileInputRef.current.value = "";
-                }
-              };
-
-              return (
-                <div
-                  onDragOver={handleDragOver}
-                  onDragLeave={handleDragLeave}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setIsDragOver(false);
-                    const files = Array.from(e.dataTransfer.files);
-                    const imageFile = files.find((file) => file.type.startsWith("image/"));
-                    if (imageFile) {
-                      field.onChange(imageFile); // Use field.onChange
-                      const previewUrl = URL.createObjectURL(imageFile);
-                      setImagePreview(previewUrl);
-                    }
-                  }}
-                  className={`relative border-2 border-dashed rounded-lg transition-all duration-200 ${
-                    isDragOver
-                      ? "border-ocean-blue bg-ocean-blue/5"
-                      : "border-gray-200 hover:border-gray-300"
-                  }`}
-                >
-                  {imagePreview ? (
-                    // Image Preview
-                    <div className="relative group">
-                      <img
-                        src={imagePreview}
-                        alt="Experience preview"
-                        className="w-full h-48 object-cover rounded-lg"
-                      />
-                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
-                        <div className="flex gap-2">
-                          <label
-                            htmlFor="experienceImageUpload"
-                            className="px-3 py-2 bg-white text-midnight-blue rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
-                          >
-                            Change
-                          </label>
-                          <button
-                            type="button"
-                            onClick={handleRemoveImage}
-                            className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
-                          >
-                            Remove
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    // Upload Area - use handleFileInputChange that uses field.onChange
-                    <label
-                      htmlFor="experienceImageUpload"
-                      className="block p-8 text-center cursor-pointer"
-                    >
-                      <input
-                        type="file"
-                        id="experienceImageUpload"
-                        accept="image/*"
-                        ref={fileInputRef}
-                        onChange={handleFileInputChange}
-                        className="hidden"
-                      />
-                      <div className="flex flex-col items-center">
-                        <div
-                          className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
-                            isDragOver
-                              ? "bg-ocean-blue text-white"
-                              : "bg-gray-100 text-gray-400"
-                          }`}
-                        >
-                          <ImageIcon className="w-8 h-8" />
-                        </div>
-                        <div className="text-lg font-medium text-midnight-blue mb-2">
-                          {isDragOver
-                            ? "Drop image here"
-                            : "Upload Experience Image"}
-                        </div>
-                        <div className="text-sm text-gray-500 mb-4">
-                          Drag and drop an image or click to browse
-                        </div>
-                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg text-sm font-medium hover:bg-ocean-blue/90 transition-colors">
-                          <Upload className="w-4 h-4" />
-                          Choose File
-                        </div>
-                        <div className="text-xs text-gray-400 mt-2">
-                          Supports: JPG, PNG, WebP (Max 10MB)
-                        </div>
-                      </div>
-                    </label>
-                  )}
-                </div>
-              );
-            }}
-          />
-          {errors.experienceImage && (
-            <p className="text-red-500 text-sm mt-1">
-              {typeof errors.experienceImage.message === "string"
-                ? errors.experienceImage.message
-                : "Experience image is required"}
-            </p>
+        {/* Enhanced Experience Image Upload with Controller */}
+        <Controller
+          name="experienceImage"
+          control={control}
+          render={({ field, fieldState }) => (
+            <ImageUpload
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+            />
           )}
-        </div>
+        />
 
         {/* Location */}
         <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-midnight-blue">
-              Country
-            </label>
-
-            <Controller
-              name="country"
-              control={control}
-              render={({ field }) => (
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={field.value}
-                    onChange={(e) => {
-                      field.onChange(e.target.value);
-                      const country = countries.find(
-                        (c) =>
-                          c.name.toLowerCase() === e.target.value.toLowerCase()
-                      );
-                      if (country) {
-                        setValue("countryCode", country.cca2, {
-                          shouldValidate: false,
-                        });
-                        setValue("city", "", { shouldValidate: false });
-                      } else {
-                        setValue("countryCode", "", { shouldValidate: false });
-                        setValue("city", "", { shouldValidate: false });
-                      }
-                    }}
-                    onBlur={() => {
-                      field.onBlur();
-                      const country = countries.find(
-                        (c) =>
-                          c.name.toLowerCase() === field.value.toLowerCase()
-                      );
-                      if (!country) {
-                        field.onChange("");
-                        setValue("countryCode", "", { shouldValidate: false });
-                        setValue("city", "", { shouldValidate: false });
-                      }
-                    }}
-                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                    placeholder="Search for a country"
-                    list="country-list"
-                  />
-                  <datalist id="country-list">
-                    {countries.map((country) => (
-                      <option key={country.cca2} value={country.name}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </datalist>
-                </div>
-              )}
-            />
-            {errors.country && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.country.message}
-              </p>
+          <Controller
+            name="country"
+            control={control}
+            render={({ field }) => (
+              <CountrySelector
+                onChange={field.onChange}
+                setValue={setValue}
+                errors={errors}
+                value={field.value}
+              />
             )}
-          </div>
+          />
 
-          {/* City Select */}
-          <div className="space-y-2">
-            <div className="flex items-center space-x-2">
-              <label className="block text-base font-medium text-midnight-blue">
-                City/District
-              </label>
-              <TooltipProvider delayDuration={0}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <HelpCircle className="w-4 h-4 text-gray-400" />
-                  </TooltipTrigger>
-                  <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-1 rounded-lg text-[13px]">
-                    <p className="">
-                      If your city is not listed, please enter it manually.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-            <Controller
-              name="city"
-              control={control}
-              render={({ field }) => (
-                <div className="relative">
-                  <input
-                    type="text"
-                    list="city-list"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                    placeholder="Select city"
-                    disabled={!formData.countryCode}
-                  />
-                  <datalist id="city-list">
-                    {cities.map((city) => (
-                      <option key={city} value={city}>
-                        {city}
-                      </option>
-                    ))}
-                  </datalist>
-                </div>
-              )}
-            />
-            {errors.city && (
-              <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
-            )}
-          </div>
+          <City
+            register={register}
+            errors={errors}
+            cities={cities}
+            disabled={!formData.countryCode}
+            value={formData.city}
+          />
         </div>
 
         {/* Category and Duration */}
         <div className="grid sm:grid-cols-2 gap-4 md:gap-6">
-          <div className="space-y-2">
-            <label className="block text-base font-medium text-midnight-blue">
-              Category
-            </label>
-            <Controller
-              name="category"
-              control={control}
-              render={({ field }) => (
-                <div className="relative">
-                  <input
-                    type="text"
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onBlur={(e) => {
-                      field.onBlur();
-                      const category = categories.find(
-                        (c) => c.toLowerCase() === e.target.value.toLowerCase()
-                      );
-                      if (!category) {
-                        field.onChange("");
-                      }
-                    }}
-                    list="category-list"
-                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                    placeholder="Select category"
-                  />
-                  <datalist id="category-list">
-                    {categories.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </datalist>
-                </div>
-              )}
-            />
-            {errors.category && (
-              <p className="text-red-500 text-sm mt-1">
-                {errors.category.message}
-              </p>
+          <Controller
+            name="category"
+            control={control}
+            render={({ field, fieldState }) => (
+              <CategoryDropdown
+                label="Category"
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                options={categories}
+                placeholder="Select category"
+                error={fieldState.error?.message}
+              />
             )}
-          </div>
+          />
+
           <div className="space-y-2">
             <label className="block text-base font-medium text-midnight-blue">
               Duration (days)
             </label>
             <input
               type="number"
-              value={formData.duration === 0 ? "" : formData.duration}
-              {...register("duration")}
+              {...register("duration", {
+                valueAsNumber: true,
+                setValueAs(value) {
+                  return value === "" || isNaN(Number(value))
+                    ? 0
+                    : Number(value);
+                },
+              })}
               onFocus={() => handleFocus("duration")}
               onBlur={handleBlur}
               className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
@@ -576,7 +235,6 @@ export default function FormStep1({
                              : "border-gray-200"
                          }`}
               placeholder="Enter duration"
-              min="1"
             />
             {errors.duration && (
               <p className="text-red-500 text-sm mt-1">
@@ -586,78 +244,25 @@ export default function FormStep1({
           </div>
         </div>
 
-        {/* Tags */}
-        <div className="space-y-2">
-          <label className="block text-base font-medium text-midnight-blue">
-            Tags
-          </label>
-          <Controller
-            name="tags"
-            control={control}
-            render={({ field }) => (
-              <div className="flex flex-wrap gap-2">
-                {tagOptions.map((tag) => (
-                  <motion.button
-                    key={tag}
-                    type="button"
-                    onClick={() => {
-                      const updatedTags = formData.tags.includes(tag)
-                        ? formData.tags.filter((t) => t !== tag)
-                        : [...formData.tags, tag];
-                      field.onChange(updatedTags);
-                    }}
-                    className={`px-4 h-9 rounded-lg text-sm font-medium transition-all duration-200
-                               flex items-center gap-1.5
-                               ${
-                                 formData.tags.includes(tag)
-                                   ? "bg-ocean-blue text-white"
-                                   : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
-                               }`}
-                  >
-                    {tag}
-                    {formData.tags.includes(tag) && (
-                      <CircleCheck className="w-4 h-4" />
-                    )}
-                  </motion.button>
-                ))}
-              </div>
-            )}
-          />
-          {errors.tags && (
-            <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
+        {/* Tags with Controller */}
+        <Controller
+          name="tags"
+          control={control}
+          render={({ field, fieldState }) => (
+            <Tags
+              value={field.value}
+              onChange={field.onChange}
+              error={fieldState.error?.message}
+            />
           )}
-        </div>
+        />
 
         {/* Description */}
-        <div className="space-y-2">
-          <label className="block text-base font-medium text-midnight-blue">
-            Description
-          </label>
-          <div className="relative">
-            <textarea
-              {...register("description")}
-              onFocus={() => handleFocus("description")}
-              onBlur={handleBlur}
-              maxLength={500}
-              className={`w-full px-4 py-3 rounded-lg border text-charcoal text-sm
-                         transition-all duration-200 outline-none h-[120px]
-                         ${
-                           focusedField === "description"
-                             ? "border-ocean-blue ring-2 ring-ocean-blue/20"
-                             : "border-gray-200"
-                         }`}
-              placeholder="Describe your experience..."
-            />
-            <span className="absolute bottom-2 right-2 text-xs text-charcoal">
-              {formData.description?.length || 0}/500
-            </span>
-          </div>
-          {errors.description && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.description.message}
-            </p>
-          )}
-        </div>
+        <Description
+          register={register}
+          errors={errors}
+          value={formData.description}
+        />
       </div>
     </div>
   );
