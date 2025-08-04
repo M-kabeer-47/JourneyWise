@@ -37,17 +37,7 @@ export default function ServiceSection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="text-xl font-semibold text-midnight-blue">{title}</h3>
-        {errors.includedServices && type === "included" && (
-          <p className="text-red-500 text-sm">
-            {errors.includedServices.message}
-          </p>
-        )}
 
-        {errors.excludedServices && type === "excluded" && (
-          <p className="text-red-500 text-sm">
-            {errors.excludedServices.message}
-          </p>
-        )}
         <TooltipProvider>
           <Tooltip>
             <TooltipTrigger asChild>
@@ -65,34 +55,35 @@ export default function ServiceSection({
       </div>
       <div className="space-y-3">
         {services.map((service, index) => (
-          <div key={`${type}-${index}`} className="flex items-center gap-2">
-            <input
-              type="text"
-              {...register(`${type}Services.${index}`)}
-              onFocus={() => onFocus(`${type}Services.${index}`)}
-              onBlur={onBlur}
-              className={`flex-grow px-4 h-11 rounded-lg border text-charcoal text-sm
+          <div key={`${type}-${index}`}>
+            <div  className="flex items-center gap-2">
+              <input
+                type="text"
+                {...register(`${type}Services.${index}`)}
+                onFocus={() => onFocus(`${type}Services.${index}`)}
+                onBlur={onBlur}
+                className={`flex-grow px-4 h-11 rounded-lg border text-charcoal text-sm
                          transition-all duration-200 outline-none
                          ${
                            focusedField === `${type}Services.${index}`
                              ? "border-ocean-blue ring-2 ring-ocean-blue/20"
                              : "border-gray-200"
                          }`}
-              placeholder={`Enter ${
-                type === "included" ? "an included" : "an excluded"
-              } service`}
-            />
-            <button
-              type="button"
-              onClick={() => onRemoveService(index)}
-              disabled={services.length <= 1}
-              
-              className={`p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 ${
-                index === 0 ? "opacity-50 cursor-not-allowed" : ""
-              }`}
-            >
-              <Minus className="w-4 h-4" />
-            </button>
+                placeholder={`Enter ${
+                  type === "included" ? "an included" : "an excluded"
+                } service`}
+              />
+              <button
+                type="button"
+                onClick={() => onRemoveService(index)}
+                disabled={services.length <= 1}
+                className={`p-2 text-red-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200 ${
+                  index === 0 ? "opacity-50 cursor-not-allowed" : ""
+                }`}
+              >
+                <Minus className="w-4 h-4" />
+              </button>
+            </div>
             {(type === "included"
               ? errors?.includedServices?.[index]
               : errors?.excludedServices?.[index]) && (
@@ -104,17 +95,16 @@ export default function ServiceSection({
                 }
               </p>
             )}
+            <button
+              type="button"
+              onClick={onAddService}
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-ocean-blue hover:bg-ocean-blue/10 rounded-lg transition-colors duration-200"
+            >
+              <Plus className="w-4 h-4" />
+              Add Service
+            </button>
           </div>
         ))}
-
-        <button
-          type="button"
-          onClick={onAddService}
-          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-ocean-blue hover:bg-ocean-blue/10 rounded-lg transition-colors duration-200"
-        >
-          <Plus className="w-4 h-4" />
-          Add Service
-        </button>
       </div>
     </div>
   );

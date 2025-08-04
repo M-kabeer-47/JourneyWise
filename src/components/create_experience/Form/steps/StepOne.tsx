@@ -18,14 +18,20 @@ import axios from "axios";
 import { stepOneSchema } from "@/lib/schemas/experience";
 import countries from "@/lib/data/countries";
 import z from "zod";
-
-import { FieldErrors, UseFormRegister, UseFormSetValue } from "react-hook-form";
+import { Controller } from "react-hook-form";
+import {
+  FieldErrors,
+  UseFormRegister,
+  UseFormSetValue,
+  Control,
+} from "react-hook-form";
+import { StepOneType } from "@/lib/types/create-experience-steps";
 type stepOneType = z.infer<typeof stepOneSchema>;
 interface FormStep1Props {
   formData: stepOneType;
-  setValue: UseFormSetValue<stepOneType>; // ← Correct type
-
-  errors: FieldErrors<stepOneType>;
+  setValue: UseFormSetValue<StepOneType>; // ← Correct type
+  control: Control<StepOneType>;
+  errors: FieldErrors<StepOneType>;
   // correct the type for register
 
   register: UseFormRegister<stepOneType>;
@@ -73,6 +79,7 @@ export default function FormStep1({
   setValue,
   errors,
   register,
+  control,
 }: FormStep1Props) {
   const [focusedField, setFocusedField] = useState<string | null>(null);
 
@@ -88,13 +95,13 @@ export default function FormStep1({
     const updatedTags = formData.tags.includes(tag)
       ? formData.tags.filter((t: string) => t !== tag)
       : [...formData.tags, tag];
-    setValue("tags", updatedTags, { shouldValidate: true });
+    setValue("tags", updatedTags, { shouldValidate: false });
   };
 
   // Handle file selection (both click and drop)
   const handleFileSelect = (file: File) => {
     if (file && file.type.startsWith("image/")) {
-      setValue("experienceImage", file, { shouldValidate: true }); // Changed from gigImage
+      setValue("experienceImage", file, { shouldValidate: false }); // Changed from gigImage
 
       // Create preview URL
       const previewUrl = URL.createObjectURL(file);
@@ -264,90 +271,130 @@ export default function FormStep1({
           <label className="block text-base font-medium text-midnight-blue">
             Experience Image
           </label>
+          <Controller
+            name="experienceImage"
+            control={control}
+            render={({ field }) => {
+              // Update these handlers to use field.onChange
+              const handleFileSelect = (file: File) => {
+                if (file && file.type.startsWith("image/")) {
+                  field.onChange(file); // Use field.onChange instead of setValue
+                  const previewUrl = URL.createObjectURL(file);
+                  setImagePreview(previewUrl);
+                }
+              };
 
-          {/* Upload Area */}
-          <div
-            onDragOver={handleDragOver}
-            onDragLeave={handleDragLeave}
-            onDrop={handleDrop}
-            className={`relative border-2 border-dashed rounded-lg transition-all duration-200 ${
-              isDragOver
-                ? "border-ocean-blue bg-ocean-blue/5"
-                : "border-gray-200 hover:border-gray-300"
-            }`}
-          >
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileInputChange}
-              className="hidden"
-              id="experienceImageUpload" // Changed from gigImageUpload
-            />
+              const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+                const file = e.target.files?.[0];
+                if (file) {
+                  handleFileSelect(file);
+                }
+              };
 
-            {imagePreview ? (
-              // Image Preview
-              <div className="relative group">
-                <img
-                  src={imagePreview}
-                  alt="Experience preview"
-                  className="w-full h-48 object-cover rounded-lg"
-                />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
-                  <div className="flex gap-2">
+              const handleRemoveImage = () => {
+                field.onChange(""); // Use field.onChange instead of setValue
+                setImagePreview(null);
+                if (fileInputRef.current) {
+                  fileInputRef.current.value = "";
+                }
+              };
+
+              return (
+                <div
+                  onDragOver={handleDragOver}
+                  onDragLeave={handleDragLeave}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    setIsDragOver(false);
+                    const files = Array.from(e.dataTransfer.files);
+                    const imageFile = files.find((file) => file.type.startsWith("image/"));
+                    if (imageFile) {
+                      field.onChange(imageFile); // Use field.onChange
+                      const previewUrl = URL.createObjectURL(imageFile);
+                      setImagePreview(previewUrl);
+                    }
+                  }}
+                  className={`relative border-2 border-dashed rounded-lg transition-all duration-200 ${
+                    isDragOver
+                      ? "border-ocean-blue bg-ocean-blue/5"
+                      : "border-gray-200 hover:border-gray-300"
+                  }`}
+                >
+                  {imagePreview ? (
+                    // Image Preview
+                    <div className="relative group">
+                      <img
+                        src={imagePreview}
+                        alt="Experience preview"
+                        className="w-full h-48 object-cover rounded-lg"
+                      />
+                      <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-200 rounded-lg flex items-center justify-center">
+                        <div className="flex gap-2">
+                          <label
+                            htmlFor="experienceImageUpload"
+                            className="px-3 py-2 bg-white text-midnight-blue rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
+                          >
+                            Change
+                          </label>
+                          <button
+                            type="button"
+                            onClick={handleRemoveImage}
+                            className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  ) : (
+                    // Upload Area - use handleFileInputChange that uses field.onChange
                     <label
-                      htmlFor="experienceImageUpload" // Changed from gigImageUpload
-                      className="px-3 py-2 bg-white text-midnight-blue rounded-lg text-sm font-medium cursor-pointer hover:bg-gray-100 transition-colors"
+                      htmlFor="experienceImageUpload"
+                      className="block p-8 text-center cursor-pointer"
                     >
-                      Change
+                      <input
+                        type="file"
+                        id="experienceImageUpload"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleFileInputChange}
+                        className="hidden"
+                      />
+                      <div className="flex flex-col items-center">
+                        <div
+                          className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
+                            isDragOver
+                              ? "bg-ocean-blue text-white"
+                              : "bg-gray-100 text-gray-400"
+                          }`}
+                        >
+                          <ImageIcon className="w-8 h-8" />
+                        </div>
+                        <div className="text-lg font-medium text-midnight-blue mb-2">
+                          {isDragOver
+                            ? "Drop image here"
+                            : "Upload Experience Image"}
+                        </div>
+                        <div className="text-sm text-gray-500 mb-4">
+                          Drag and drop an image or click to browse
+                        </div>
+                        <div className="inline-flex items-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg text-sm font-medium hover:bg-ocean-blue/90 transition-colors">
+                          <Upload className="w-4 h-4" />
+                          Choose File
+                        </div>
+                        <div className="text-xs text-gray-400 mt-2">
+                          Supports: JPG, PNG, WebP (Max 10MB)
+                        </div>
+                      </div>
                     </label>
-                    <button
-                      type="button"
-                      onClick={handleRemoveImage}
-                      className="px-3 py-2 bg-red-500 text-white rounded-lg text-sm font-medium hover:bg-red-600 transition-colors"
-                    >
-                      Remove
-                    </button>
-                  </div>
+                  )}
                 </div>
-              </div>
-            ) : (
-              // Upload Area
-              <label
-                htmlFor="experienceImageUpload" // Changed from gigImageUpload
-                className="block p-8 text-center cursor-pointer"
-              >
-                <div className="flex flex-col items-center">
-                  <div
-                    className={`w-16 h-16 rounded-full flex items-center justify-center mb-4 transition-colors ${
-                      isDragOver
-                        ? "bg-ocean-blue text-white"
-                        : "bg-gray-100 text-gray-400"
-                    }`}
-                  >
-                    <ImageIcon className="w-8 h-8" />
-                  </div>
-                  <div className="text-lg font-medium text-midnight-blue mb-2">
-                    {isDragOver ? "Drop image here" : "Upload Experience Image"}
-                  </div>
-                  <div className="text-sm text-gray-500 mb-4">
-                    Drag and drop an image or click to browse
-                  </div>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg text-sm font-medium hover:bg-ocean-blue/90 transition-colors">
-                    <Upload className="w-4 h-4" />
-                    Choose File
-                  </div>
-                  <div className="text-xs text-gray-400 mt-2">
-                    Supports: JPG, PNG, WebP (Max 10MB)
-                  </div>
-                </div>
-              </label>
-            )}
-          </div>
-
+              );
+            }}
+          />
           {errors.experienceImage && (
             <p className="text-red-500 text-sm mt-1">
-              {typeof errors.experienceImage.message !== "string"
+              {typeof errors.experienceImage.message === "string"
                 ? errors.experienceImage.message
                 : "Experience image is required"}
             </p>
@@ -361,46 +408,56 @@ export default function FormStep1({
               Country
             </label>
 
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.country}
-                onChange={(e) => {
-                  setValue("country", e.target.value, { shouldValidate: true });
-                  const country = countries.find(
-                    (c) => c.name.toLowerCase() === e.target.value.toLowerCase()
-                  );
-                  if (country) {
-                    setValue("countryCode", country.cca2);
-                    setValue("city", "");
-                  } else {
-                    setValue("countryCode", "");
-                    setValue("city", "");
-                  }
-                }}
-                onBlur={() => {
-                  const country = countries.find(
-                    (c) =>
-                      c.name.toLowerCase() === formData.country.toLowerCase()
-                  );
-                  if (!country) {
-                    setValue("country", "");
-                    setValue("countryCode", "");
-                    setValue("city", "");
-                  }
-                }}
-                className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                placeholder="Search for a country"
-                list="country-list"
-              />
-              <datalist id="country-list">
-                {countries.map((country) => (
-                  <option key={country.cca2} value={country.name}>
-                    {country.name}
-                  </option>
-                ))}
-              </datalist>
-            </div>
+            <Controller
+              name="country"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={field.value}
+                    onChange={(e) => {
+                      field.onChange(e.target.value);
+                      const country = countries.find(
+                        (c) =>
+                          c.name.toLowerCase() === e.target.value.toLowerCase()
+                      );
+                      if (country) {
+                        setValue("countryCode", country.cca2, {
+                          shouldValidate: false,
+                        });
+                        setValue("city", "", { shouldValidate: false });
+                      } else {
+                        setValue("countryCode", "", { shouldValidate: false });
+                        setValue("city", "", { shouldValidate: false });
+                      }
+                    }}
+                    onBlur={() => {
+                      field.onBlur();
+                      const country = countries.find(
+                        (c) =>
+                          c.name.toLowerCase() === field.value.toLowerCase()
+                      );
+                      if (!country) {
+                        field.onChange("");
+                        setValue("countryCode", "", { shouldValidate: false });
+                        setValue("city", "", { shouldValidate: false });
+                      }
+                    }}
+                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
+                    placeholder="Search for a country"
+                    list="country-list"
+                  />
+                  <datalist id="country-list">
+                    {countries.map((country) => (
+                      <option key={country.cca2} value={country.name}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              )}
+            />
             {errors.country && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.country.message}
@@ -427,27 +484,30 @@ export default function FormStep1({
                 </Tooltip>
               </TooltipProvider>
             </div>
-
-            <div className="relative">
-              <input
-                type="text"
-                list="city-list"
-                value={formData.city}
-                onChange={(e) =>
-                  setValue("city", e.target.value, { shouldValidate: true })
-                }
-                className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                placeholder="Select city"
-                disabled={!formData.countryCode}
-              />
-              <datalist id="city-list">
-                {cities.map((city) => (
-                  <option key={city} value={city}>
-                    {city}
-                  </option>
-                ))}
-              </datalist>
-            </div>
+            <Controller
+              name="city"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <input
+                    type="text"
+                    list="city-list"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
+                    placeholder="Select city"
+                    disabled={!formData.countryCode}
+                  />
+                  <datalist id="city-list">
+                    {cities.map((city) => (
+                      <option key={city} value={city}>
+                        {city}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              )}
+            />
             {errors.city && (
               <p className="text-red-500 text-sm mt-1">{errors.city.message}</p>
             )}
@@ -460,33 +520,38 @@ export default function FormStep1({
             <label className="block text-base font-medium text-midnight-blue">
               Category
             </label>
-            <div className="relative">
-              <input
-                type="text"
-                value={formData.category}
-                onChange={(e) =>
-                  setValue("category", e.target.value, { shouldValidate: true })
-                }
-                onBlur={(e) => {
-                  const category = categories.find(
-                    (c) => c.toLowerCase() === e.target.value.toLowerCase()
-                  );
-                  if (!category) {
-                    setValue("category", "");
-                  }
-                }}
-                list="category-list"
-                className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
-                placeholder="Select category"
-              />
-              <datalist id="category-list">
-                {categories.map((category) => (
-                  <option key={category} value={category}>
-                    {category}
-                  </option>
-                ))}
-              </datalist>
-            </div>
+            <Controller
+              name="category"
+              control={control}
+              render={({ field }) => (
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={field.value}
+                    onChange={(e) => field.onChange(e.target.value)}
+                    onBlur={(e) => {
+                      field.onBlur();
+                      const category = categories.find(
+                        (c) => c.toLowerCase() === e.target.value.toLowerCase()
+                      );
+                      if (!category) {
+                        field.onChange("");
+                      }
+                    }}
+                    list="category-list"
+                    className="w-full px-4 h-11 rounded-lg border text-charcoal text-sm transition-all duration-200 outline-none border-gray-200 focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
+                    placeholder="Select category"
+                  />
+                  <datalist id="category-list">
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </datalist>
+                </div>
+              )}
+            />
             {errors.category && (
               <p className="text-red-500 text-sm mt-1">
                 {errors.category.message}
@@ -500,11 +565,7 @@ export default function FormStep1({
             <input
               type="number"
               value={formData.duration === 0 ? "" : formData.duration}
-              onChange={(e) => {
-                const value =
-                  e.target.value === "" ? 0 : Number(e.target.value);
-                setValue("duration", value, { shouldValidate: true });
-              }}
+              {...register("duration")}
               onFocus={() => handleFocus("duration")}
               onBlur={handleBlur}
               className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
@@ -530,27 +591,38 @@ export default function FormStep1({
           <label className="block text-base font-medium text-midnight-blue">
             Tags
           </label>
-          <div className="flex flex-wrap gap-2">
-            {tagOptions.map((tag) => (
-              <motion.button
-                key={tag}
-                type="button"
-                onClick={() => handleTagToggle(tag)}
-                className={`px-4 h-9 rounded-lg text-sm font-medium transition-all duration-200
-                           flex items-center gap-1.5
-                           ${
-                             formData.tags.includes(tag)
-                               ? "bg-ocean-blue text-white"
-                               : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
-                           }`}
-              >
-                {tag}
-                {formData.tags.includes(tag) && (
-                  <CircleCheck className="w-4 h-4" />
-                )}
-              </motion.button>
-            ))}
-          </div>
+          <Controller
+            name="tags"
+            control={control}
+            render={({ field }) => (
+              <div className="flex flex-wrap gap-2">
+                {tagOptions.map((tag) => (
+                  <motion.button
+                    key={tag}
+                    type="button"
+                    onClick={() => {
+                      const updatedTags = formData.tags.includes(tag)
+                        ? formData.tags.filter((t) => t !== tag)
+                        : [...formData.tags, tag];
+                      field.onChange(updatedTags);
+                    }}
+                    className={`px-4 h-9 rounded-lg text-sm font-medium transition-all duration-200
+                               flex items-center gap-1.5
+                               ${
+                                 formData.tags.includes(tag)
+                                   ? "bg-ocean-blue text-white"
+                                   : "bg-midnight-blue/5 text-midnight-blue hover:bg-midnight-blue/10"
+                               }`}
+                  >
+                    {tag}
+                    {formData.tags.includes(tag) && (
+                      <CircleCheck className="w-4 h-4" />
+                    )}
+                  </motion.button>
+                ))}
+              </div>
+            )}
+          />
           {errors.tags && (
             <p className="text-red-500 text-sm mt-1">{errors.tags.message}</p>
           )}
@@ -581,7 +653,9 @@ export default function FormStep1({
             </span>
           </div>
           {errors.description && (
-            <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.description.message}
+            </p>
           )}
         </div>
       </div>

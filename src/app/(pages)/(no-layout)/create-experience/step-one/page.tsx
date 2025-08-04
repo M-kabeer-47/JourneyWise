@@ -7,10 +7,10 @@ import { ExperienceData } from "@/lib/schemas/experience";
 import Layout from "@/components/create_experience/form/layout/Layout";
 import StepOnePreview from "@/components/create_experience/live-preview/StepOne";
 import StepOneForm from "@/components/create_experience/form/steps/StepOne";
-import { useAppDispatch,useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
-import { motion } from "framer-motion";
+
 const initialData: Partial<ExperienceData> = {
   title: "",
   country: "",
@@ -26,7 +26,7 @@ const initialData: Partial<ExperienceData> = {
 type StepOneType = z.infer<typeof stepOneSchema>;
 
 export default function StepOne() {
-  const formData = useAppSelector((state) => state.experienceData);  
+  const formData = useAppSelector((state) => state.experienceData);
 
   const router = useRouter();
   const {
@@ -34,6 +34,7 @@ export default function StepOne() {
     handleSubmit,
     watch,
     setValue,
+    control,
     formState: { errors: formErrors },
   } = useForm<StepOneType>({
     defaultValues: formData || initialData,
@@ -41,7 +42,6 @@ export default function StepOne() {
   });
   const dispatch = useAppDispatch();
   const data = watch();
-
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
@@ -87,6 +87,7 @@ export default function StepOne() {
           setValue={setValue}
           errors={formErrors}
           formData={data}
+          control={control}
         />
       }
       stepKey="step1"

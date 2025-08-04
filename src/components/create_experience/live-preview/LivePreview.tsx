@@ -74,16 +74,6 @@ export default function LivePreview({
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
   };
 
-  function formatPrice(price: number | string | null): string {
-    if (price === null) return "0";
-    const numericPrice =
-      typeof price === "string" ? Number.parseFloat(price) : price;
-    if (isNaN(numericPrice)) return "0";
-    return numericPrice.toLocaleString("en-US", {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    });
-  }
 
   return (
     <div className="bg-white rounded-xl shadow-sm p-4 md:p-6 overflow-hidden">

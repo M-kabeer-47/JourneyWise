@@ -82,16 +82,24 @@ export const stepFourSchema = z.object({
       z.object({
         name: z.string().min(1, "Tier name is required"),
         members: z
-          .number()
+          .number({
+            required_error: "Number of members is required",
+            invalid_type_error: "Members must be a number",
+          })
           .int()
           .positive("Number of members must be positive"),
-        price: z.number().positive("Price must be positive"),
+        price: z
+          .number({
+            required_error: "Price is required",
+            invalid_type_error: "Price must be a number",
+          })
+          .positive("Price must be positive"),
         description: z.string().min(1, "Description is required"),
       })
     )
     .min(1, "At least one tier is required"),
   requirements: z.array(
-    z.string().min(1, "Atleast one requirement is required")
+    z.string().min(1, "At least one requirement is required")
   ),
 });
 

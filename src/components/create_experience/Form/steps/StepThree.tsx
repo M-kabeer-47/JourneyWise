@@ -18,8 +18,6 @@ import ServiceSection from "../components/ServiceSection";
 import { UseFormSetValue, FieldErrors, UseFormRegister } from "react-hook-form";
 import { z } from "zod";
 import { stepThreeSchema } from "@/lib/schemas/experience";
-import useImageUrls from "@/hooks/create-experience/useImageUrls";
-import { register } from "module";
 
 type StepThreeType = z.infer<typeof stepThreeSchema>;
 
@@ -69,7 +67,6 @@ export default function FormStep3({
     );
   };
 
- 
   const slideLeft = () => {
     if (startIndex > 0) {
       setStartIndex((prev) => prev - 1);
@@ -88,7 +85,6 @@ export default function FormStep3({
     if (files && formData.experienceImages.length + files.length <= 20) {
       const newImages = [...formData.experienceImages, ...Array.from(files)];
       // Update image URLs
-  
 
       setValue("experienceImages", newImages, { shouldValidate: true });
 
@@ -348,6 +344,7 @@ export default function FormStep3({
 
         {/* Service sections remain the same */}
         <ServiceSection
+          key={"included-services"}
           title="Included Services"
           services={formData.includedServices}
           onAddService={() => addService("included")}
@@ -361,6 +358,7 @@ export default function FormStep3({
         />
 
         <ServiceSection
+          key={"excluded-services"}
           title="Excluded Services"
           services={formData.excludedServices}
           onAddService={() => addService("excluded")}

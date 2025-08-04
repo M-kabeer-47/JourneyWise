@@ -45,14 +45,19 @@ export default function StepThree() {
   };
 
   const convertImagesToBase64 = async () => {
-    await Promise.all(
+
+   let images =  await Promise.all(
       data.experienceImages.map(async (image, index) => {
         if (image instanceof File) {
           const base64String = await convertFileToBase64(image);
-          setValue(`experienceImages.${index}`, base64String);
+          return base64String;
+        }
+        else {
+          return null
         }
       })
     );
+    setValue("experienceImages",images.filter((img) => img !== null));
   };
 
   const handlePrevious = async () => {
@@ -64,8 +69,10 @@ export default function StepThree() {
 
   const onSubmit = async (data: StepThreeType) => {
     try {
-      dispatch(setExperienceData(data));
-      router.push("/create-experience/step-two");
+      await convertImagesToBase64();
+      let latestData = watch()
+      dispatch(setExperienceData(latestData));
+      router.push("/create-experience/step-four");
     } catch (error) {
       // ✅ Now dispatch serializable data
 
