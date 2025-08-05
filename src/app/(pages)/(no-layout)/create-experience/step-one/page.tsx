@@ -10,24 +10,11 @@ import StepOneForm from "@/components/create_experience/form/steps/StepOne";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
+import { StepOneType } from "@/lib/types/create-experience-steps";
 
-const initialData: Partial<ExperienceData> = {
-  title: "",
-  country: "",
-  city: "",
-  category: "",
-  countryCode: "",
-  duration: 0, // This might be changing unexpectedly
-  tags: [],
-  description: "",
-  available: true,
-  experienceImage: "",
-};
-type StepOneType = z.infer<typeof stepOneSchema>;
 
 export default function StepOne() {
   const formData = useAppSelector((state) => state.experienceData);
-
   const router = useRouter();
   const {
     register,
@@ -37,12 +24,11 @@ export default function StepOne() {
     control,
     formState: { errors: formErrors },
   } = useForm<StepOneType>({
-    defaultValues: formData || initialData,
+    defaultValues: formData,
     resolver: zodResolver(stepOneSchema),
   });
   const dispatch = useAppDispatch();
   const data = watch();
-
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },

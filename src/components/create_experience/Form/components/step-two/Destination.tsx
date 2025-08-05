@@ -64,7 +64,7 @@ function Destination({
       className="border border-gray-200 rounded-lg p-6 space-y-4 bg-white shadow-sm"
     >
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-midnight-blue">
+        <h3 className="text-xl font-bold text-midnight-blue">
           Day {destination.day}
         </h3>
       </div>
@@ -90,7 +90,7 @@ function Destination({
         </div>
 
         <div className="space-y-3">
-          <label className="block text-sm font-medium text-charcoal">
+          <label className="block text-sm font-bold  relative top-[10px]">
             Activities
           </label>
           <AnimatePresence mode="popLayout">

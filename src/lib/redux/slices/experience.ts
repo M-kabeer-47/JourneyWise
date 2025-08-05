@@ -6,14 +6,14 @@ const initialState: ExperienceData = {
   country: "",
   city: "",
   category: "",
-  countryCode: "",
-  duration: 0, // This might be changing unexpectedly
+  countryCode: "", //@ts-ignore
+  duration: undefined, // This might be changing unexpectedly
   tags: [],
   description: "",
   available: true,
   experienceImage: "",
-  currency: "USD",
-  tiers: [{ name: "", members: 0, price: 0, description: "" }],
+  currency: "USD", // @ts-ignore
+  tiers: [{ name: "", members: undefined, price: undefined, description: "" }],
   requirements: [""],
   experienceImages: [],
   includedServices: [""],
@@ -48,5 +48,6 @@ let experienceData = createSlice({
   },
 });
 
-export const { setExperienceData, clearExperienceData } = experienceData.actions;
+export const { setExperienceData, clearExperienceData } =
+  experienceData.actions;
 export default experienceData.reducer;

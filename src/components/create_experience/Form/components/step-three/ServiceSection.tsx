@@ -36,14 +36,14 @@ export default function ServiceSection({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-midnight-blue">{title}</h3>
+        <h3 className="text-xl font-bold text-midnight-blue">{title}</h3>
 
-        <TooltipProvider>
+        <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <HelpCircle className="w-4 h-4 text-gray-400" />
             </TooltipTrigger>
-            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg text-sm">
+            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg">
               <p>
                 List services that are{" "}
                 {type === "included" ? "included in" : "not included in"} your

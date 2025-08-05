@@ -42,7 +42,12 @@ export default function Tiers({
 
   const addTier = () => {
     if (tiers.length < 3) {
-      append({ name: "", members: 0, price: 0, description: "" });
+      append({
+        name: "", //@ts-ignore
+        members: undefined, //@ts-ignore
+        price: undefined,
+        description: "",
+      });
       setActiveTierIndex(tiers.length - 1);
     }
   };
@@ -56,16 +61,14 @@ export default function Tiers({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-midnight-blue">
-          Pricing Tiers
-        </h3>
+        <h3 className="text-xl font-bold text-midnight-blue">Pricing Tiers</h3>
         <div className="flex items-center gap-4">
-          <TooltipProvider>
+          <TooltipProvider delayDuration={0}>
             <Tooltip>
               <TooltipTrigger asChild>
                 <HelpCircle className="w-4 h-4 text-gray-400" />
               </TooltipTrigger>
-              <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-1 rounded-lg text-[13px]">
+              <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-1 rounded-lg">
                 <p className="text-black">
                   Create up to 3 pricing tiers for your experience
                 </p>
@@ -142,7 +145,6 @@ export default function Tiers({
                     handleTierFocus(index);
                     handleFocus(`tiers.${tiers.length - index - 1}.price`);
                   }}
-                  
                   onBlur={handleBlur}
                   className={`w-full px-4 h-11 rounded-lg border text-charcoal text-sm
                                   transition-all duration-200 outline-none
@@ -169,7 +171,6 @@ export default function Tiers({
                   setValueAs: (v) =>
                     v === "" || isNaN(Number(v)) ? 0 : Number(v),
                 })}
-                
                 onFocus={() => {
                   handleTierFocus(index);
                   handleFocus(`tiers.${tiers.length - index - 1}.members`);
@@ -193,7 +194,7 @@ export default function Tiers({
 
               <textarea
                 {...register(`tiers.${tiers.length - index - 1}.description`)}
-                onFocus={() => {    
+                onFocus={() => {
                   handleTierFocus(index);
                   handleFocus(`tiers.${tiers.length - index - 1}.description`);
                 }}

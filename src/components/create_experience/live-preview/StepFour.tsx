@@ -25,7 +25,7 @@ export default function StepFour({
   const { tiers, requirements, currency } = data;
   return (
     <>
-      <div className="space-y-6 md:space-y-8">
+      <div className="space-y-6 md:space-y-8 md:mt-5">
         {/* Header Section */}
         <div className="flex items-center justify-between border-b border-gray-200 pb-4">
           <div className="flex items-center space-x-4">

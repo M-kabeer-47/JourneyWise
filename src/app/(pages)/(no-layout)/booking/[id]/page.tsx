@@ -1,11 +1,9 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { format } from "date-fns";
+
 import BookingForm from "@/components/booking/BookingForm";
 import IllustrationSection from "@/components/booking/IllustrationSection";
 import { toast } from "@/components/ui/Toast";
@@ -59,7 +57,11 @@ export default function BookingPage() {
               </p>
             </div>
 
-            {isLoading ? <BookingSkeleton /> : <BookingForm tripData={tripData} />}
+            {isLoading ? (
+              <BookingSkeleton />
+            ) : (
+              <BookingForm tripData={tripData} />
+            )}
           </div>
         </div>
       </div>

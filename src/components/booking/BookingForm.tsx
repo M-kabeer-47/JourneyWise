@@ -31,9 +31,7 @@ import { ExperienceResponse } from "@/lib/types/experience";
 import Spinner from "../ui/Spinner";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import axios from "axios";
-import {bookingFormSchema} from "@/lib/schemas/booking";
-
-
+import { bookingFormSchema } from "@/lib/schemas/booking";
 
 interface BookingFormProps {
   tripData: ExperienceResponse;
@@ -57,7 +55,7 @@ export default function BookingForm({ tripData }: BookingFormProps) {
       email: "",
       phone: "",
       notes: "",
-      tier: tripData.experience.tier.tierInfo[0],
+      tier: tripData.experience.tiers.tiers[0],
 
       startDate: undefined,
       customMembers: "",
@@ -89,10 +87,10 @@ export default function BookingForm({ tripData }: BookingFormProps) {
 
   const handleTierSelect = (index: number) => {
     setSelectedTierIndex(index);
-    setValue("tier", tripData.experience?.tier?.tierInfo[index]);
+    setValue("tier", tripData.experience?.tiers.tiers[index]);
     // If a regular tier is selected, uncheck custom tier
     if (
-      tripData.experience?.tier?.tierInfo[index]?.name !== "custom" &&
+      tripData.experience?.tiers.tiers[index]?.name !== "custom" &&
       isCustomTierSelected
     ) {
       setIsCustomTierSelected(false);
@@ -122,7 +120,7 @@ export default function BookingForm({ tripData }: BookingFormProps) {
       ...data,
       tier: {
         ...data.tier,
-        currency: tripData.experience.tier.currency,
+        currency: tripData.experience.tiers.currency,
       },
       agentID: tripData.agent.agentID,
       customerID: customerID,
@@ -282,11 +280,11 @@ export default function BookingForm({ tripData }: BookingFormProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {tripData.experience.tier.tierInfo.map((tier, index) => (
+          {tripData.experience.tiers.tiers.map((tier, index) => (
             <TierSelectionCard
               key={index}
               tier={tier}
-              currency={tripData.experience.currency}
+              currency={tripData.experience.tiers.currency}
               isSelected={selectedTierIndex === index}
               onSelect={() => handleTierSelect(index)}
             />

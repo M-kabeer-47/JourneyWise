@@ -2,7 +2,6 @@ import {
   FieldErrors,
   UseFormRegister,
   UseFormSetValue,
-  useFieldArray,
 } from "react-hook-form";
 import { Plus, Trash2, HelpCircle } from "lucide-react";
 import {
@@ -48,7 +47,7 @@ export default function RequirementsList({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-midnight-blue">
+        <h3 className="text-xl font-bold text-midnight-blue">
           Requirements
         </h3>
         <div className="flex items-center gap-4">

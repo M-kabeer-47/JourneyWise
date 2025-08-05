@@ -200,23 +200,21 @@ export default function ImageGallery({
     <div className="space-y-4">
       {/* Title and count */}
       <div className="flex items-center justify-between">
-        <h3 className="text-xl font-semibold text-midnight-blue">
+        <h3 className="text-xl font-bold text-midnight-blue">
           Gallery experience images
         </h3>
-        <TooltipProvider>
+        <TooltipProvider delayDuration={0}>
           <Tooltip>
             <TooltipTrigger asChild>
               <div className="flex items-center space-x-2">
-                <span className="text-sm text-charcoal">
-                  {value.length}/20
-                </span>
+                <span className="text-sm text-charcoal">{value.length}/20</span>
                 <HelpCircle className="w-4 h-4 text-gray-400" />
               </div>
             </TooltipTrigger>
-            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg text-sm max-w-[300px]">
+            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-2 rounded-lg  max-w-[300px]">
               <p>
-                Upload up to 20 images showcasing hotels, attractions, and
-                key experiences
+                Upload up to 20 images showcasing hotels, attractions, and key
+                experiences
               </p>
             </TooltipContent>
           </Tooltip>
@@ -253,11 +251,7 @@ export default function ImageGallery({
       </div>
 
       {/* Error message */}
-      {error && (
-        <p className="text-red-500 text-sm mt-2">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
 
       {/* Upload and remove buttons */}
       {value.length < 20 && (

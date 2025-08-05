@@ -68,7 +68,7 @@ export default function FormStep4({
       <div className="space-y-8">
         {/* Currency Selection */}
         <div className="space-y-2 mb-6">
-          <label className="block text-base font-medium text-midnight-blue">
+          <label className="block text-xl font-bold text-midnight-blue">
             Currency
           </label>
           <div className="relative">

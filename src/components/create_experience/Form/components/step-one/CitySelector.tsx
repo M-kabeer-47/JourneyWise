@@ -34,8 +34,8 @@ export default function City({
             <TooltipTrigger asChild>
               <HelpCircle className="w-4 h-4 text-gray-400" />
             </TooltipTrigger>
-            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-1 rounded-lg text-[13px]">
-              <p className="">
+            <TooltipContent className="bg-white text-midnight-blue border border-gray-200 p-1 rounded-lg ">
+              <p >
                 If your city is not listed, please enter it manually.
               </p>
             </TooltipContent>

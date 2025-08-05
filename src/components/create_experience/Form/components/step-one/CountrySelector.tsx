@@ -1,20 +1,17 @@
 import { StepOneType } from "@/lib/types/create-experience-steps";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
 import countries from "@/lib/data/countries";
-interface CountrySelectorProps{
-    
-    onChange: (value: string) => void;
-    setValue: UseFormSetValue<StepOneType>;
-    errors: FieldErrors<StepOneType>;
-    value: string;
-
+interface CountrySelectorProps {
+  onChange: (value: string) => void;
+  setValue: UseFormSetValue<StepOneType>;
+  errors: FieldErrors<StepOneType>;
+  value: string;
 }
 export default function CountrySelector({
-  
   onChange,
   setValue,
   errors,
-  value
+  value,
 }: CountrySelectorProps) {
   return (
     <div className="space-y-2">
@@ -41,7 +38,8 @@ export default function CountrySelector({
           }}
           onBlur={() => {
             const country = countries.find(
-              (c: { name: string }) => c.name.toLowerCase() === value.toLowerCase()
+              (c: { name: string }) =>
+                c.name.toLowerCase() === value.toLowerCase()
             );
             if (!country) {
               setValue("country", "");

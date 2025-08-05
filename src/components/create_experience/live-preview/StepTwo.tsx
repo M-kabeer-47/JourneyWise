@@ -33,7 +33,7 @@ export default function StepTwo({ destinations = [], itemVariants }: StepTwoProp
   const allDestinations = destinations.length > 0 ? destinations : [defaultDestination]
 
   return (
-    <div className="space-y-6 md:space-y-8">
+    <div className="space-y-6 md:space-y-8 md:mt-5">
       <motion.div variants={itemVariants} className="space-y-4">
         <h3 className="text-3xl font-bold text-midnight-blue">Itinerary Overview</h3>
 

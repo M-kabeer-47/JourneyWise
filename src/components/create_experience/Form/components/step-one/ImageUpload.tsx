@@ -161,9 +161,6 @@ export default function ImageUpload({
                 <Upload className="w-4 h-4" />
                 Choose File
               </div>
-              <div className="text-xs text-gray-400 mt-2">
-                Supports: JPG, PNG, WebP (Max 10MB)
-              </div>
             </div>
           </label>
         )}

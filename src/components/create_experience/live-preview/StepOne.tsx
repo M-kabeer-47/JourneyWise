@@ -49,7 +49,7 @@ export default function StepOne({ data, itemVariants }: StepOneProps) {
 
   return (
     <>
-      <div className="space-y-6 md:space-y-8">
+      <div className="space-y-6 md:space-y-8 sm:mt-6">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <motion.h1
             variants={itemVariants}
