@@ -1,4 +1,5 @@
 "use client";
+
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { stepOneSchema } from "@/lib/schemas/experience";
@@ -10,9 +11,13 @@ import { setExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import { StepOneType } from "@/lib/types/create-experience-steps";
 
-export default function StepOne() {
+export default function StepOnePage({
+  nextStepUrl,
+}: {
+  initialData: StepOneType;
+  nextStepUrl: string;
+}) {
   const initialData = useAppSelector((state) => state.experienceData);
-
   const router = useRouter();
   const {
     register,
@@ -27,7 +32,6 @@ export default function StepOne() {
   });
   const dispatch = useAppDispatch();
   const data = watch();
-
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
@@ -56,7 +60,7 @@ export default function StepOne() {
 
       // ✅ Now dispatch serializable data
       dispatch(setExperienceData(processedData));
-      router.push("/create-experience/step-two");
+      router.push(nextStepUrl);
     } catch (error) {
       console.error("Error processing image:", error);
       // Handle error - maybe show toast
