@@ -7,16 +7,11 @@ import Layout from "@/components/create_experience/form/layout/Layout";
 import StepOnePreview from "@/components/create_experience/live-preview/StepOne";
 import StepOneForm from "@/components/create_experience/form/steps/StepOne";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
-import { setExperienceData } from "@/lib/redux/slices/experience";
+import { updateExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import { StepOneType } from "@/lib/types/create-experience-steps";
 
-export default function StepOnePage({
-  nextStepUrl,
-}: {
-  initialData: StepOneType;
-  nextStepUrl: string;
-}) {
+export default function StepOnePage({ nextStepUrl }: { nextStepUrl: string }) {
   const initialData = useAppSelector((state) => state.experienceData);
   const router = useRouter();
   const {
@@ -59,7 +54,7 @@ export default function StepOnePage({
       }
 
       // ✅ Now dispatch serializable data
-      dispatch(setExperienceData(processedData));
+      dispatch(updateExperienceData(processedData));
       router.push(nextStepUrl);
     } catch (error) {
       console.error("Error processing image:", error);

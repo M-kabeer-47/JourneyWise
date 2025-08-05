@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 interface EnhancedLocationInfoProps {
   city: string;
   country: string;
-  duration: string;
+  duration: number;
   className?: string;
 }
 

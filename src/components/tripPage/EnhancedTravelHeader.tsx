@@ -11,7 +11,7 @@ interface EnhancedTravelHeaderProps {
   user?: {
     name: string;
     avatar?: string;
-    agentId: string;
+    id: string;
   };
 }
 
@@ -35,7 +35,7 @@ const EnhancedTravelHeader = ({ title, isAvailable, className, user }: EnhancedT
           {/* Agent Info Card */}
           {user && (
             <Link 
-              href={`/agent/${user.agentId}`}
+              href={`/agent/${user.id}`}
               className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors group"
             >
               <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full overflow-hidden bg-ocean-blue/10 flex items-center justify-center border-2 border-ocean-blue/20 shadow-sm">

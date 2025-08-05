@@ -8,7 +8,7 @@ import Pagination from "@/components/ui/Pagination";
 import SearchBar from "@/components/ui/SearchBar";
 import SortBy from "@/components/ui/SortBy";
 import ExperienceGrid from "@/components/experiences/ExperienceGrid";
-import useFetchExperiences from "@/hooks/useFetchExperiences";
+import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function AgentExperiences() {

@@ -3,7 +3,7 @@ import { Check, X, ChevronLeft, ChevronRight } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
 import { StepThreeType } from "@/lib/types/create-experience-steps";
-import useImageUrls from "@/hooks/create-experience/useImageUrls";
+import useImageUrls from "@/hooks/experience/useImageUrls";
 type StepThreeProps = {
   data: StepThreeType;
   itemVariants: any;
@@ -69,10 +69,7 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
                   onLoad={() =>
                     console.log("Image loaded successfully:", currentImageUrl)
                   }
-                  onError={(e) => {
-                    console.error("Image failed to load:", currentImageUrl);
-                    e.currentTarget.src = "/placeholder.svg";
-                  }}
+                  
                 />
               </div>
 

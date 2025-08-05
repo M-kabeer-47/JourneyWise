@@ -165,7 +165,7 @@ const TimeInput = ({
                  `}
       >
         <span className={value ? "text-charcoal" : "text-gray-400"}>
-          {value}
+          {value==="" ? placeholder : value}
         </span>
         <ChevronDown
           className={`w-4 h-4 text-gray-400 transition-transform ${

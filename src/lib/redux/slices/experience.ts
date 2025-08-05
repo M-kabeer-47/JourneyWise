@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { ExperienceData } from "@/lib/schemas/experience";
 
 const initialState: ExperienceData = {
+  id: "",
   title: "",
   country: "",
   city: "",
@@ -18,28 +19,14 @@ const initialState: ExperienceData = {
   experienceImages: [],
   includedServices: [""],
   excludedServices: [""],
-  destinations: [
-    {
-      name: "",
-      activities: [
-        {
-          id: Math.random().toString(36).substr(2, 9),
-          name: "",
-          time: "12:00 AM",
-          spot: "",
-        },
-      ],
-      day: 1,
-      id: Math.random().toString(36).substr(2, 9),
-    },
-  ],
+  destinations: [],
 }; // Start with empty array
 
 let experienceData = createSlice({
   name: "experienceData",
   initialState,
   reducers: {
-    setExperienceData: (state, action) => {
+    updateExperienceData: (state, action) => {
       return { ...state, ...action.payload };
     },
     clearExperienceData: () => {
@@ -48,6 +35,6 @@ let experienceData = createSlice({
   },
 });
 
-export const { setExperienceData, clearExperienceData } =
+export const { updateExperienceData, clearExperienceData } =
   experienceData.actions;
 export default experienceData.reducer;

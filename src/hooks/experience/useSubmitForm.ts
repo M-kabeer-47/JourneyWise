@@ -6,7 +6,7 @@ import { toast } from "@/components/ui/Toast";
 import axios from "axios";
 import { StepFourType } from "@/lib/types/create-experience-steps";
 
-export const useExperienceSubmission = () => {
+export const useExperienceSubmission = ({type}:{type:string}) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -36,6 +36,7 @@ export const useExperienceSubmission = () => {
 
       // Format submission data
       const submissionData = {
+        
         title: completeData.title,
         country: completeData.country,
         city: completeData.city,
@@ -66,6 +67,10 @@ export const useExperienceSubmission = () => {
         itineraryDetails: completeData.destinations,
         isAvailable: completeData.available,
       };
+      if(type === "edit") {
+        submissionData.id = completeData.id; // Include ID for edit
+
+      }
 
       const response = await axios.post("/api/create-experience", {
         data: submissionData,

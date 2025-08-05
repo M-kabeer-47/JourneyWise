@@ -1,0 +1,11 @@
+"use client"
+import StepFourPage from "@/components/create_experience/form/step-pages/StepFourPage";
+import { useParams } from "next/navigation";
+export default function StepFour() {
+  const params = useParams();
+  const id = typeof params.id === "string" ? params.id : "";
+
+  return (
+    <StepFourPage previousStepUrl={`/update-experience/${id}/step-three`} type="edit" />
+  );
+}

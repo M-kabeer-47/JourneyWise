@@ -14,27 +14,15 @@ import axios from "axios";
 import ReviewSection from "@/components/tripPage/ReviewSection";
 import ExperiencePageSkeleton from "@/components/skeletons/ExperiencePageSkeleton";
 import { reviews } from "@/lib/data/dashboardMockData";
+import useFetchExperience from "@/hooks/experience/useFetchExperience";
 const TripPage = async ({ params }: { params: { id: string } }) => {
   let { id } = await params;
-  let isLoading = true;
 
-  const fetchTrip = async () => {
-    try {
-      let response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/experience/${id}`
-      );
-      isLoading = false;
-      return response.data;
-    } catch (error) {
-      return null;
-    }
-  };
-
-  const experienceData = await fetchTrip();
+  const { experience: experienceData, isLoading } = useFetchExperience(id);
 
   return (
     <>
-      {isLoading ? (
+      {isLoading || !experienceData ? (
         <ExperiencePageSkeleton />
       ) : (
         // Rest of your component remains unchanged
@@ -80,7 +68,7 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
                     />
                     <EnhancedCategoryTags
                       category={experienceData.experience.category}
-                      tags={experienceData.experience.tags}
+                      tags={experienceData.experience.tags || []}
                     />
                   </div>
 

@@ -11,12 +11,26 @@ export interface tier {
   members: number;
   description: string;
 }
-
+export interface Activity {
+  id: string;
+  name: string;
+  time?: string;
+  spot?: string;
+}
+export interface ItineraryDay {
+  id: string;
+  day: number;
+  name: string;
+  description: string;
+  image: string;
+  activities: Activity[];
+}
 export interface Experience {
   id: string;
   title: string;
   description: string;
   experienceImage: string;
+  experienceImages: string[];
   averageRating: number;
   isAvailable: boolean;
   duration: number;
@@ -29,7 +43,9 @@ export interface Experience {
   category: string;
   minPrice: number;
   maxPrice: number;
+  itineraryDetails: ItineraryDay[];
 
+  requirements: string[];
   tiers: {
     currency: string;
     tiers: tier[];
@@ -39,6 +55,8 @@ export interface Experience {
     name: string;
     avatar: string;
   };
+  includedServices: string[];
+  excludedServices: string[];
 }
 
 export interface ExperienceResponse {

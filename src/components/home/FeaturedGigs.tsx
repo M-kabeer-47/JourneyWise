@@ -1,6 +1,6 @@
 "use client";
 
-import useFetchExperiences from "@/hooks/useFetchExperiences";
+import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import GigCarousel from "../experiences/ExperienceCarousel";
 
 export default function FeaturedGigs() {

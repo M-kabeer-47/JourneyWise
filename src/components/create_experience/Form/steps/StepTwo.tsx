@@ -31,7 +31,8 @@ export default function FormStep2({
 }: FormStep2Props) {
   useEffect(() => {
     // Initialize destinations based on duration
-    if (data.destinations.length === duration) return;
+    if (data.destinations.length === duration || data.destinations.length !== 0)
+      return;
 
     const newDestinations = Array.from({ length: duration }, (_, i) => ({
       id: Math.random().toString(36).substr(2, 9),
@@ -41,7 +42,7 @@ export default function FormStep2({
         {
           id: Math.random().toString(36).substr(2, 9),
           name: "",
-          time: "12:00 AM",
+          time: "",
           spot: "",
         },
       ],
