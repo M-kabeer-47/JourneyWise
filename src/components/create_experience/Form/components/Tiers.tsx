@@ -54,8 +54,8 @@ export default function Tiers({
 
   const removeTier = (index: number) => {
     if (tiers.length > 1) {
-      remove(index);
-      setActiveTierIndex(tiers.length - index - 1);
+      remove(tiers.length - index - 1);
+      setActiveTierIndex(tiers.length - 2);
     }
   };
   return (
@@ -155,7 +155,7 @@ export default function Tiers({
                                       : "border-gray-200"
                                   }`}
                   placeholder="Price"
-                  step="0.01"
+                  
                 />
               </div>
               {errors.tiers?.[tiers.length - index - 1]?.price && (

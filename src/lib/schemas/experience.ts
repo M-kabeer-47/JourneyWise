@@ -3,14 +3,15 @@ import * as z from "zod";
 export const stepOneSchema = z.object({
   title: z.string().min(1, "Title is required"),
   country: z.string().min(1, "Country is required"),
-  countryCode: z.string().min(1, "Country code is required"),
+  countryCode: z.string().optional(),
   city: z.string().min(1, "City is required"),
   category: z.string().min(1, "Category is required"),
   duration: z
     .number({
       invalid_type_error: "Duration is required",
       required_error: "Duration is required",
-    }).positive("Duration must be greater than 0")
+    })
+    .positive("Duration must be greater than 0")
     .min(1, "Duration is required"),
 
   tags: z.array(z.string()).min(3, "At least three tags are required"),

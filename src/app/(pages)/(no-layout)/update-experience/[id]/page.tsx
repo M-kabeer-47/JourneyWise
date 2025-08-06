@@ -19,6 +19,7 @@ export default function updateExperience() {
         updateExperienceData({
           ...experience.experience,
           ...experience.experience.location,
+          available: experience.experience.isAvailable,
           destinations: [...experience.experience.itineraryDetails],
         })
       ); // Update the experience data in the store

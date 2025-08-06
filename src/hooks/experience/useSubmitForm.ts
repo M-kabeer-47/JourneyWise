@@ -6,7 +6,7 @@ import { toast } from "@/components/ui/Toast";
 import axios from "axios";
 import { StepFourType } from "@/lib/types/create-experience-steps";
 
-export const useExperienceSubmission = ({type}:{type:string}) => {
+export const useExperienceSubmission = ({ type }: { type: string }) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -23,7 +23,7 @@ export const useExperienceSubmission = ({type}:{type:string}) => {
         ...experienceData,
         ...stepFourData,
       };
-
+      
       // Upload images concurrently
       const [uploadedMainImage, uploadedGalleryImages] = await Promise.all([
         uploadToCloudinary(completeData.experienceImage),
@@ -36,27 +36,9 @@ export const useExperienceSubmission = ({type}:{type:string}) => {
 
       // Format submission data
       const submissionData = {
-        
-        title: completeData.title,
-        country: completeData.country,
-        city: completeData.city,
-        category: completeData.category,
-        countryCode: completeData.countryCode,
-        duration: completeData.duration,
-        tags: completeData.tags,
-        description: completeData.description,
-        available: completeData.available,
+        ...completeData,
         experienceImage: uploadedMainImage,
         experienceImages: uploadedGalleryImages,
-        includedServices: completeData.includedServices,
-        excludedServices: completeData.excludedServices,
-        destinations: completeData.destinations,
-        currency: completeData.currency,
-        tiers: {
-          tiers: completeData.tiers,
-          currency: completeData.currency,
-        },
-        requirements: completeData.requirements,
         agentID: "4d19d13d-4c4b-4462-98a1-ab88c19aeb32",
         location: {
           country: completeData.country,
@@ -67,16 +49,27 @@ export const useExperienceSubmission = ({type}:{type:string}) => {
         itineraryDetails: completeData.destinations,
         isAvailable: completeData.available,
       };
-      if(type === "edit") {
-        submissionData.id = completeData.id; // Include ID for edit
-
+      if (type === "edit") {
+        const response = await axios.put(
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/update-experience/${completeData.id}`,
+          {
+            experience: submissionData,
+          }
+        );
+        if (response.status === 200) {
+          toast.success("Experience updated successfully!");
+          dispatch(clearExperienceData());
+          return { success: true, data: response.data };
+        } else {
+          toast.error("Failed to update experience!");
+        }
       }
 
-      const response = await axios.post("/api/create-experience", {
+      const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create-experience`, {
         data: submissionData,
       });
 
-      if (response.status === 200) {
+      if (response.status === 201) {
         toast.success("Experience created successfully!");
 
         // Clear the form data after successful submission
@@ -92,7 +85,7 @@ export const useExperienceSubmission = ({type}:{type:string}) => {
         "Experience creation failed! Please try again.";
       setError(errorMessage);
       toast.error(errorMessage);
-      
+
       return { success: false, error: errorMessage };
     } finally {
       setIsSubmitting(false);
@@ -106,6 +99,7 @@ export const useExperienceSubmission = ({type}:{type:string}) => {
 
   return {
     submitExperience,
+
     isSubmitting,
     error,
     reset,

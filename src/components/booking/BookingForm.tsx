@@ -55,8 +55,7 @@ export default function BookingForm({ tripData }: BookingFormProps) {
       email: "",
       phone: "",
       notes: "",
-      tier: tripData.experience.tiers.tiers[0],
-
+      tier: tripData.experience.tiers[0],
       startDate: undefined,
       customMembers: "",
       customNotes: "",
@@ -87,10 +86,10 @@ export default function BookingForm({ tripData }: BookingFormProps) {
 
   const handleTierSelect = (index: number) => {
     setSelectedTierIndex(index);
-    setValue("tier", tripData.experience?.tiers.tiers[index]);
+    setValue("tier", tripData.experience?.tiers[index]);
     // If a regular tier is selected, uncheck custom tier
     if (
-      tripData.experience?.tiers.tiers[index]?.name !== "custom" &&
+      tripData.experience?.tiers[index]?.name !== "custom" &&
       isCustomTierSelected
     ) {
       setIsCustomTierSelected(false);
@@ -120,7 +119,7 @@ export default function BookingForm({ tripData }: BookingFormProps) {
       ...data,
       tier: {
         ...data.tier,
-        currency: tripData.experience.tiers.currency,
+        currency: tripData.experience.currency,
       },
       agentID: tripData.agent.agentID,
       customerID: customerID,
@@ -280,11 +279,11 @@ export default function BookingForm({ tripData }: BookingFormProps) {
         </div>
 
         <div className="grid grid-cols-1 gap-4">
-          {tripData.experience.tiers.tiers.map((tier, index) => (
+          {tripData.experience.tiers.map((tier, index) => (
             <TierSelectionCard
               key={index}
               tier={tier}
-              currency={tripData.experience.tiers.currency}
+              currency={tripData.experience.currency}
               isSelected={selectedTierIndex === index}
               onSelect={() => handleTierSelect(index)}
             />

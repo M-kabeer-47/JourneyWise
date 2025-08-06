@@ -29,7 +29,7 @@ const EnhancedLocationInfo = ({ city, country, duration, className }: EnhancedLo
         </div>
         <div>
           <div className="text-sm font-medium text-midnight-blue">Duration</div>
-          <div className="text-sm">{duration}</div>
+          <div className="text-sm">{duration + " days"}</div>
         </div>
       </div>
     </div>

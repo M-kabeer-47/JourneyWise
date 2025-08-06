@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       { message: "Experiences created successfully!" },
-      { status: 200 }
+      { status: 201 }
     );
   } catch (error) {
     console.error("Error creating experiences:", error);

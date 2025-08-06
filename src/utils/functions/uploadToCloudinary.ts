@@ -2,9 +2,9 @@
 import dotenv from "dotenv"
 dotenv.config()
 export const uploadToCloudinary = async (file: File | string): Promise<string> => {
-    console.log("env",process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME)
-    console.log("env",process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET)
-    console.log("env",process.env.NEXT_PUBLIC_CLOUDINARY_API_KEY)
+  if (typeof file === "string") {
+    return file;
+  }
     const formData = new FormData();
     console.log("file",file)
     formData.append("file", file);

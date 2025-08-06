@@ -14,14 +14,20 @@ import { StepFourType } from "@/lib/types/create-experience-steps";
 import { useState } from "react";
 import { useExperienceSubmission } from "@/hooks/experience/useSubmitForm";
 
-export default function StepFour({ type, previousStepUrl }: { type: "create" | "edit", previousStepUrl: string }) {
+export default function StepFour({
+  type,
+  previousStepUrl,
+}: {
+  type: "create" | "edit";
+  previousStepUrl: string;
+}) {
   const [activeTierIndex, setActiveTierIndex] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [submitData, setsubmitData] = useState<StepFourType | null>(null);
   const initialData = useAppSelector((state) => state.experienceData);
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { submitExperience, isSubmitting } = useExperienceSubmission({type});
+  const { submitExperience, isSubmitting } = useExperienceSubmission({ type });
 
   const {
     register,
@@ -35,6 +41,7 @@ export default function StepFour({ type, previousStepUrl }: { type: "create" | "
     resolver: zodResolver(stepFourSchema),
   });
 
+  const data = watch();
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: { opacity: 1, y: 0, transition: { duration: 0.3 } },
@@ -65,18 +72,7 @@ export default function StepFour({ type, previousStepUrl }: { type: "create" | "
     router.push(previousStepUrl);
   };
 
-  function formatPrice(price: number | string | null): string {
-    if (price === null) return "0";
-    const numericPrice =
-      typeof price === "string" ? Number.parseFloat(price) : price;
-    if (isNaN(numericPrice)) return "0";
-    return numericPrice.toLocaleString("en-US", {
-      maximumFractionDigits: 0,
-      minimumFractionDigits: 0,
-    });
-  }
-
-  const data = watch();
+  
 
   return (
     <>
@@ -89,7 +85,7 @@ export default function StepFour({ type, previousStepUrl }: { type: "create" | "
             data={data}
             agentName="John Doe"
             title="Experience Title"
-            formatPrice={formatPrice}
+            
           />
         }
         form={
@@ -111,11 +107,12 @@ export default function StepFour({ type, previousStepUrl }: { type: "create" | "
         isOpen={showConfirmModal}
         onClose={() => setShowConfirmModal(false)}
         onConfirm={handleConfirmSubmission}
-        title="Create Experience"
-        description="Are you sure you want to create this experience? Once created, you can edit it later from your dashboard."
-        confirmText="Create Experience"
+        title={`${type === "create" ? "Create" : "Update"} Experience`}
+        description={`Are you sure you want to ${type === "create" ? "create" : "update"} this experience? Once ${type === "create" ? "created" : "updated"}, you can manage it later from your dashboard.`}
+        confirmText={`${type === "create" ? "Create" : "Update"} Experience`}
         cancelText="Review Again"
         loading={isSubmitting}
+        loadingText={`${type === "create" ? "Creating" : "Updating"}...`}
       />
     </>
   );

@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { updateExperienceData } from "@/lib/redux/slices/experience";
 import { useRouter } from "next/navigation";
 import { StepOneType } from "@/lib/types/create-experience-steps";
-
+import { DevTool } from "@hookform/devtools";
 export default function StepOnePage({ nextStepUrl }: { nextStepUrl: string }) {
   const initialData = useAppSelector((state) => state.experienceData);
   const router = useRouter();
@@ -45,7 +45,7 @@ export default function StepOnePage({ nextStepUrl }: { nextStepUrl: string }) {
     try {
       let processedData = { ...formData };
 
-      // ✅ If experienceImage is a File, convert to Base64
+      // ✅ If experienceImage is a  File, convert to Base64
       if (formData.experienceImage instanceof File) {
         const base64String = await convertFileToBase64(
           formData.experienceImage
@@ -63,19 +63,22 @@ export default function StepOnePage({ nextStepUrl }: { nextStepUrl: string }) {
   };
 
   return (
-    <Layout
-      preview={<StepOnePreview itemVariants={itemVariants} data={data} />}
-      form={
-        <StepOneForm
-          register={register}
-          setValue={setValue}
-          errors={formErrors}
-          formData={data}
-          control={control}
-        />
-      }
-      stepKey="step1"
-      onNext={handleSubmit(onSubmit)}
-    />
+    <>
+      <Layout
+        preview={<StepOnePreview itemVariants={itemVariants} data={data} />}
+        form={
+          <StepOneForm
+            register={register}
+            setValue={setValue}
+            errors={formErrors}
+            formData={data}
+            control={control}
+          />
+        }
+        stepKey="step1"
+        onNext={handleSubmit(onSubmit)}
+      />
+      <DevTool control={control} /> {/* set up the dev tool */}
+    </>
   );
 }

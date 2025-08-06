@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { FileText, Compass, Check, Star } from "lucide-react";
 import EnhancedTravelHeader from "@/components/tripPage/EnhancedTravelHeader";
@@ -10,13 +11,18 @@ import BookingCTA from "@/components/tripPage/BookingCTA";
 import PricingTier from "@/components/tripPage/PricingTier";
 import MainImage from "@/components/tripPage/MainImage";
 import ImagesCarousel from "@/components/tripPage/ImagesCarousel";
-import axios from "axios";
+
 import ReviewSection from "@/components/tripPage/ReviewSection";
 import ExperiencePageSkeleton from "@/components/skeletons/ExperiencePageSkeleton";
 import { reviews } from "@/lib/data/dashboardMockData";
 import useFetchExperience from "@/hooks/experience/useFetchExperience";
-const TripPage = async ({ params }: { params: { id: string } }) => {
-  let { id } = await params;
+import { useParams } from "next/navigation";
+const TripPage =  () => {
+  let { id } = useParams();
+  id = typeof id === "string" ? id : "";
+  if (!id) {
+    return <div>Error: No ID provided</div>;
+  }
 
   const { experience: experienceData, isLoading } = useFetchExperience(id);
 
@@ -132,8 +138,8 @@ const TripPage = async ({ params }: { params: { id: string } }) => {
                     {/* Pricing Tiers */}
                     <div className="bg-white p-3 rounded-xl shadow-sm border border-gray-100">
                       <PricingTier
-                        currency={experienceData.experience.tiers.currency}
-                        tiers={experienceData.experience.tiers.tiers}
+                        currency={experienceData.experience.currency}
+                        tiers={experienceData.experience.tiers}
                       />
 
                       {/* Booking CTA - Desktop */}

@@ -4,6 +4,7 @@ import { Star, Edit3, Eye } from "lucide-react";
 import { motion } from "framer-motion";
 import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
+import {formatPrice} from "@/utils/functions/formatPrice";
 
 interface ExperienceCardProps {
   experience: Experience;
@@ -83,7 +84,7 @@ function ExperienceContent({
         <div className="text-right shrink-0">
           <div className="text-xs text-white/90">Starting at</div>
           <div className="text-2xl font-bold">
-            ${experience?.tiers?.tiers[0].price}
+            ${formatPrice(experience.minPrice)}
           </div>
         </div>
       </div>

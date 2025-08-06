@@ -113,7 +113,6 @@ export async function GET(request: NextRequest) {
       title: experience.title,
       description: experience.description,
       minPrice: experience.minPrice,
-      maxPrice: experience.maxPrice,
       duration: experience.duration,
       createdAt: experience.createdAt,
       averageRating: experience.averageRating,
@@ -176,6 +175,9 @@ export async function GET(request: NextRequest) {
         experienceImage: experience.experienceImage, // Adjust if needed
         tiers: experience.tiers,
         tags: experience.tags,
+        minPrice: experience.minPrice,
+        location: experience.location,
+        currency: experience.currency,
         averageRating: experience.averageRating || 0,
         agent: {
           id: agentData.agentId,

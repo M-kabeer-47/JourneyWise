@@ -10,6 +10,7 @@ interface ConfirmModalProps {
   confirmText?: string;
   cancelText?: string;
   loading?: boolean;
+  loadingText: string;
 }
 
 export default function ConfirmModal({
@@ -21,6 +22,7 @@ export default function ConfirmModal({
   confirmText = "Confirm",
   cancelText = "Cancel",
   loading = false,
+  loadingText
 }: ConfirmModalProps) {
   if (!isOpen) return null;
 
@@ -84,7 +86,7 @@ export default function ConfirmModal({
                    {loading ? (
                     <div className="flex items-center justify-center gap-2">
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      <span>Creating...</span>
+                      <span>{loadingText}</span>
                     </div>
                   ) : (
                     confirmText

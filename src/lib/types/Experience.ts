@@ -42,14 +42,11 @@ export interface Experience {
   };
   category: string;
   minPrice: number;
-  maxPrice: number;
   itineraryDetails: ItineraryDay[];
 
   requirements: string[];
-  tiers: {
-    currency: string;
-    tiers: tier[];
-  };
+  tiers:  tier[];
+  
   agent?: {
     id: string;
     name: string;
@@ -57,6 +54,7 @@ export interface Experience {
   };
   includedServices: string[];
   excludedServices: string[];
+  currency: string;
 }
 
 export interface ExperienceResponse {

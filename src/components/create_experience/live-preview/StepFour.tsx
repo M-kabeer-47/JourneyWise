@@ -2,14 +2,14 @@ import { StepFourType } from "@/lib/types/create-experience-steps";
 import { AnimatePresence, motion } from "framer-motion";
 import { Check, Star, User, Users } from "lucide-react";
 
-
+import { formatPrice } from "@/utils/functions/formatPrice";
 type LivePreviewProps = {
   data: StepFourType;
   activeTierIndex: number;
   setActiveTierIndex: React.Dispatch<React.SetStateAction<number>>;
   agentName: string;
   title: string;
-  formatPrice: (price: number) => string;
+  
   itemVariants: any;
 };
 
@@ -20,7 +20,6 @@ export default function StepFour({
   agentName,
   title,
   data,
-  formatPrice,
 }: LivePreviewProps) {
   const { tiers, requirements, currency } = data;
   return (

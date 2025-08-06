@@ -45,7 +45,6 @@ export const experience = pgTable("experience", {
   experienceImage: text("experienceImage").notNull(),
   tiers: jsonb("tiers").notNull(),
   minPrice: integer("minPrice").default(0),
-  maxPrice: integer("maxPrice").default(0),
   experienceImages: jsonb("experienceImages").notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),
@@ -63,6 +62,7 @@ export const experience = pgTable("experience", {
   averageRating: doublePrecision("averageRating").notNull(),
   isAvailable: boolean("isAvailable").notNull(),
   createdAt: timestamp("createdAt").notNull(),
+  currency: text("currency").default("USD")
 });
 
 export const session = pgTable("session", {

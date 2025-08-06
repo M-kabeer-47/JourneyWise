@@ -1,0 +1,1 @@
+ALTER TABLE "experience" ALTER COLUMN "currency" DROP NOT NULL;

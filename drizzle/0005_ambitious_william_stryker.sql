@@ -1,0 +1,1 @@
+ALTER TABLE "experience" ALTER COLUMN "currency" SET DEFAULT 'USD';

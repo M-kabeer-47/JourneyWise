@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin,   X, SlidersHorizontal } from "lucide-react";
+import { MapPin, X, SlidersHorizontal } from "lucide-react";
 
 // Custom Components
 import { LocationSelector } from "@/components/experiences/LocationSelector";
@@ -95,8 +95,6 @@ export default function ExperiencesPage() {
       : [],
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [isDefaultFilters, setIsDefaultFilters] = useState(true);
-
   const { experiences, isLoading, isFetching, totalPages, totalExperiences } =
     useFetchExperiences();
 
@@ -202,7 +200,6 @@ export default function ExperiencesPage() {
   // Update query parameters helper
 
   function updateQueryParams(params: Record<string, string | null>) {
-    
     // Update or add new parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value === "" || value === null || value === undefined) {

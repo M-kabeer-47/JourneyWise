@@ -7,22 +7,23 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { experience } = await request.json();
-  const experienceId = params.id;
+  let Params = await params;
+  const experienceId = Params.id;
 
   // Validate the request experience
   if (
     !experience ||
     !experience.title ||
-    !experience.country ||
-    !experience.city
+    !experience.location ||
+    !experience.currency
   ) {
     return new Response("Invalid data", { status: 400 });
   }
-
+  
   // Update the experience in the database
   const updatedExperience = await db
     .update(ExperienceTable)
-    .set(experience)
+    .set({...experience, createdAt: new Date() })
     .where(eq(ExperienceTable.id, experienceId));
   // Check if the experience was found and updated
 

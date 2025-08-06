@@ -106,6 +106,7 @@ export default function FormStep1({
                 {errors.title.message}
               </p>
             )}
+            
           </div>
 
           <div className="space-y-2">

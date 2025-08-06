@@ -7,7 +7,7 @@ import { useSearchParams } from "next/navigation";
 export default function useFetchExperiences() {
   const params = useSearchParams();
   const fetchExperiences = async () => {
-    const res = await axios.get(`/api/experiences?${params.toString()}`);
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/experiences?${params.toString()}`);
     if (res.status !== 200) {
       throw new Error("Network response was not ok");
     }
