@@ -9,7 +9,7 @@ interface ConfirmModalProps {
   description: string;
   confirmText?: string;
   cancelText?: string;
-  loading?: boolean;
+  loading: boolean;
   loadingText: string;
 }
 

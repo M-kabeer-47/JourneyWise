@@ -87,11 +87,9 @@ export const booking = pgTable("booking", {
   customerID: text("customerID")
     .notNull()
     .references(() => user.id),
-
   customerName: text("customerName").notNull(),
   customerEmail: text("customerEmail").notNull(),
   customerPhone: text("customerPhone").notNull(),
-
   experienceID: uuid("experienceID")
     .notNull()
     .references(() => experience.id),
@@ -102,9 +100,12 @@ export const booking = pgTable("booking", {
   startDate: date("startDate").notNull(),
   endDate: date("endDate").notNull(),
   tier: jsonb("tier").notNull(),
+  totalPrice: integer("totalPrice").notNull(),
   paymentID: uuid("paymentID").references(() => payment.id),
   isCustomRequest: boolean("isCustomRequest").default(false),
+  noOfPackages: integer("noOfPackages"),
   notes: text("notes"),
+
 });
 
 export const faq = pgTable("faq", {

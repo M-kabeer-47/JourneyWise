@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Check, DollarSign } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { User } from "lucide-react";
-import { CustomCheckbox } from "@/components/ui/CheckBox";
+import { CustomCheckbox } from "@/components/ui/Checkbox";
 
 export function TierSelectionCard({
   tier,
@@ -93,7 +93,6 @@ export function TierSelectionCard({
 
 // First, let's create a custom styled checkbox component
 
-
 export const CustomTierSection = ({
   isCustomTierSelected,
   handleCustomTierSelect,
@@ -139,24 +138,14 @@ export const CustomTierSection = ({
         >
           <div className="space-y-4">
             <div>
-              <Label
-                htmlFor="customMembers"
-                className="text-sm font-medium text-gray-700"
-              >
-                Number of travelers
-              </Label>
               <div className="mt-1 relative">
                 <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 <input
                   id="customMembers"
                   type="number"
-                  min="1"
-                  max="20"
                   {...register("tier.members", {
                     valueAsNumber: true,
-                    
                   })}
-                  defaultValue="2"
                   className="pl-10 w-full h-10 rounded-lg border-gray-200 text-charcoal text-sm
                   transition-all duration-200 outline-none border border-gray-200 focus:outline-none focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20"
                   placeholder="Enter number of travelers"
@@ -175,7 +164,6 @@ export const CustomTierSection = ({
                   min={1}
                   {...register("tier.price", {
                     valueAsNumber: true,
-                    
                   })}
                   defaultValue="2"
                   className="pl-10 w-full h-10 rounded-lg border-gray-200 text-charcoal text-sm

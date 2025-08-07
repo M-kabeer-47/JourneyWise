@@ -3,15 +3,27 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-
+import { Toast } from "@/components/ui/Toast";
 import BookingForm from "@/components/booking/BookingForm";
 import IllustrationSection from "@/components/booking/IllustrationSection";
 import { toast } from "@/components/ui/Toast";
 import BookingSkeleton from "@/components/skeletons/BookingSkeleton";
-
+import { useState, useEffect } from "react";
+import { useCreateBooking } from "@/hooks/useCreateBooking";
+import fetchUserFromClient from "@/hooks/fetchUserFromClient";
+import ConfirmModal from "@/components/ui/ConfirmModal";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { Booking } from "@/lib/schemas/booking";
+import { bookingFormSchema } from "@/lib/schemas/booking";
+import { useRouter } from "next/navigation";
 export default function BookingPage() {
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isCustomTierSelected, setIsCustomTierSelected] = useState(false);
+  const [customerID, setCustomerID] = useState<string>("");
+  const router = useRouter();
   const { id } = useParams();
-  const { data: tripData, isLoading } = useQuery({
+  const { data: experienceData, isLoading } = useQuery({
     queryKey: ["experience", id],
     queryFn: async () => {
       try {
@@ -19,12 +31,67 @@ export default function BookingPage() {
         return res.data;
       } catch (error) {
         toast.error("Failed to load trip information");
-        console.error("Error loading trip data:", error);
         throw error;
       }
     },
-    staleTime: 1000 * 60 * 10, // Consider data fresh for 10 minutes
   });
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+    control,
+  } = useForm<Booking>({
+    resolver: zodResolver(bookingFormSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      phone: "",
+      notes: "", //@ts-ignore
+      packageCount: "", //@ts-ignore
+      tier: null,
+      startDate: undefined,
+      customMembers: "",
+      customNotes: "",
+      endDate: undefined,
+    },
+  });
+  const { createBooking, isSubmitting } = useCreateBooking({
+    experienceData,
+    customerID,
+    isCustomTierSelected,
+  });
+
+  const handleBoookingSubmit = async () => {
+    setIsConfirmModalOpen(true);
+    let submitted = await createBooking(watch());
+    if (submitted) {
+      setIsConfirmModalOpen(false);
+      toast.success("Booking submitted successfully!");
+      router.push("/success/booking");
+    } else {
+      toast.error("Failed to submit booking. Please try again.");
+      setIsConfirmModalOpen(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchCustomer = async () => {
+      let customer = await fetchUserFromClient();
+      if (customer) {
+        setCustomerID((customer as any).id);
+      }
+    };
+    fetchCustomer();
+  }, []);
+
+  useEffect(() => {
+    if (experienceData?.experience?.tiers?.length) {
+      setValue("tier", experienceData.experience.tiers[0]);
+    }
+  }, [experienceData]);
 
   return (
     <div className="min-h-screen bg-gray-50 py-4 sm:py-8 md:py-16 relative top-0 sm:top-[-40px]">
@@ -60,11 +127,35 @@ export default function BookingPage() {
             {isLoading ? (
               <BookingSkeleton />
             ) : (
-              <BookingForm tripData={tripData} />
+              <BookingForm
+                experienceData={experienceData}
+                formFunctions={{
+                  register,
+                  control,
+                  errors,
+                  setValue,
+                  watch,
+                }}
+                isCustomTierSelected={isCustomTierSelected}
+                setIsCustomTierSelected={setIsCustomTierSelected}
+                handleSubmit={handleSubmit(() => {
+                  setIsConfirmModalOpen(true);
+                })}
+              />
             )}
           </div>
         </div>
       </div>
+      <ConfirmModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleBoookingSubmit}
+        loading={isSubmitting}
+        title="Confirm Booking"
+        description="Are you sure you want to submit this booking request?"
+        loadingText="Processing..."
+      />
+      <Toast />
     </div>
   );
 }

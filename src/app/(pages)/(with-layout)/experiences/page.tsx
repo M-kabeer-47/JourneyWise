@@ -357,7 +357,7 @@ export default function ExperiencesPage() {
         {/* Toggle button for filters - only visible on mobile */}
         <button
           onClick={toggleSidebar}
-          className="md:hidden fixed left-0 top-1/2 -translate-y-1/2 bg-midnight-blue text-white p-3 rounded-r-lg shadow-lg z-30 flex items-center gap-2"
+          className="lg:hidden fixed left-0 top-1/2 -translate-y-1/2 bg-midnight-blue text-white p-3 rounded-r-lg shadow-lg z-30 flex items-center gap-2"
         >
           {sidebarOpen ? (
             <>
@@ -377,15 +377,15 @@ export default function ExperiencesPage() {
           <div
             className={`
               md:w-72 flex-shrink-0 
-              fixed md:static left-0 top-0 h-full md:h-auto z-20 
+              fixed lg:static left-0 top-0 h-full lg:h-auto z-20 
               transform transition-transform duration-300 ease-in-out
               ${
                 sidebarOpen
                   ? "translate-x-0"
-                  : "-translate-x-full md:translate-x-0"
+                  : "-translate-x-full lg:translate-x-0"
               }
-              bg-white md:bg-transparent
-              border-r border-gray-200 md:border-0
+              bg-white lg:bg-transparent
+              border-r border-gray-200 lg:border-0
             `}
           >
             <div className="p-4 md:p-0 h-full overflow-y-auto overflow-x-hidden">
@@ -409,7 +409,7 @@ export default function ExperiencesPage() {
                 tagOptions={tagOptions}
                 onApplyFilters={(newFilters) => {
                   handleApplyFilters(newFilters);
-                  if (window.innerWidth < 768) setSidebarOpen(false);
+                  if (window.innerWidth < 1100) setSidebarOpen(false);
                 }}
                 onClearFilters={clearAllFilters}
               />
@@ -419,7 +419,7 @@ export default function ExperiencesPage() {
           {/* Overlay to close sidebar on mobile */}
           {sidebarOpen && (
             <div
-              className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
+              className="fixed inset-0 bg-black bg-opacity-50 z-10 lg:hidden"
               onClick={toggleSidebar}
             ></div>
           )}
@@ -449,7 +449,7 @@ export default function ExperiencesPage() {
 
             {/* Results Grid */}
             {isLoading || isFetching ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 min-[1919px]:grid-cols-4 min-[2400px]:grid-cols-5 gap-6">
                 {Array(6)
                   .fill(0)
                   .map((_, i) => (
@@ -479,7 +479,7 @@ export default function ExperiencesPage() {
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3  gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2  xl:grid-cols-3 min-[1919px]:grid-cols-4 min-[2400px]:grid-cols-5 gap-6"
               >
                 {experiences.map((experience: Experience) => (
                   <motion.div

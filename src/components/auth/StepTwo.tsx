@@ -5,11 +5,12 @@ import { stepTwoSchema } from "../../lib/schemas/user";
 import DatePicker from "./Date-Picker";
 import CountrySelect from "./Country-Select";
 import { SignupData } from "@/app/(pages)/(auth)/sign-up/types";
-import PhoneInput from "./PhoneInput";
-import { parsePhoneNumber } from "libphonenumber-js";
+import PhoneInput from "../ui/PhoneInput";
+
 import Spinner from "../ui/Spinner";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
+import { validatePhoneNumber } from "@/utils/functions/validatePhoneNumber";
 type PhoneError = {
   message: string;
   status: boolean;
@@ -33,7 +34,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
   setPhoneError,
   secondStepLoading,
 }) => {
-
   const pathname = usePathname();
   const [selectedCountry, setSelectedCountry] = useState(
     initialData.country || ""
@@ -51,28 +51,18 @@ const StepTwo: React.FC<StepTwoProps> = ({
     defaultValues: initialData,
   });
 
-  const validatePhoneNumber = (value: string) => {
-    if (!value) return "Phone number is required";
-    try {
-      const phoneNumber = parsePhoneNumber(value, selectedCountry);
-      if (!phoneNumber || !phoneNumber.isValid()) {
-        return "Invalid phone number for the selected country";
-        
-      }
-    } catch (error) {
-      
-    }
-    return true;
-  };
   const handleSubmitForm = (data: any) => {
-    if (validatePhoneNumber(data.phoneNumber) !== true) {
+    if (validatePhoneNumber(data.phoneNumber, selectedCountry) !== true) {
       setPhoneError({
-        message: validatePhoneNumber(data.phoneNumber) as string,
+        message: validatePhoneNumber(
+          data.phoneNumber,
+          selectedCountry
+        ) as string,
         status: true,
       });
       return;
     }
-    
+
     onSubmit(data);
   };
 
@@ -143,7 +133,11 @@ const StepTwo: React.FC<StepTwoProps> = ({
       </div>
 
       {/* Buttons will now be positioned at the bottom */}
-      <div className={`flex justify-between gap-4 relative ${pathname.includes("agent") ? "top-0": " top-[100px]"}`}>
+      <div
+        className={`flex justify-between gap-4 relative ${
+          pathname.includes("agent") ? "top-0" : " top-[100px]"
+        }`}
+      >
         <button
           type="button"
           onClick={onBack}

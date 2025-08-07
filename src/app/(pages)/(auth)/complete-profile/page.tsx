@@ -14,7 +14,7 @@ import { authClient } from "@/lib/auth/authClient";
 // Dynamically import client-side components
 const DatePicker = dynamic(() => import("@/components/auth/Date-Picker"), { ssr: false });
 const CountrySelect = dynamic(() => import("@/components/auth/Country-Select"), { ssr: false });
-const PhoneInput = dynamic(() => import("@/components/auth/PhoneInput"), { ssr: false });
+const PhoneInput = dynamic(() => import("@/components/ui/PhoneInput"), { ssr: false });
 const Toast = dynamic(() => import("@/components/auth/Custom-Toast"), { ssr: false });
 
 const stepTwoSchema = z.object({
