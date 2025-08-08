@@ -1,6 +1,6 @@
 "use client";
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-import "@blocknote/core/fonts/inter.css";
+import "@blocknote/shadcn/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import "@blocknote/shadcn/style.css";
@@ -13,11 +13,13 @@ import {
   ImageOff,
   MoreHorizontal,
 } from "lucide-react";
+import axios from "axios";
+import { Toast, toast } from "../ui/Toast";
 
 export default function App() {
   const [hasUnsaved, setHasUnsaved] = useState(false);
   const lastSavedRef = useRef<string | null>(null);
-
+  const [isSaving, setIsSaving] = useState(false);
   // Cover image preview (Notion-like)
   const [coverUrl, setCoverUrl] = useState<string | null>(null);
   const coverInputRef = useRef<HTMLInputElement>(null);
@@ -99,14 +101,24 @@ export default function App() {
 
   // Your save function (replace with API call as needed)
   const saveBlog = async () => {
-    const json = getDocJson();
-    if (!json) return;
+    const html = await (editor.blocksToFullHTML(editor.document));
+    console.log("Content:", html);
+    setIsSaving(true);
+    try {
+      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog`, {
+        title,
+        content: html,
+        blocks: { text: "Hello" },
+        coverUrl: coverUrl || null,
+      });
+      toast.success("Blog saved successfully");
+    } catch (error) {
+      toast.error("Error saving blog");
+    } finally {
+      setIsSaving(false);
+    }
     // Save draft locally; replace with API call later
-    localStorage.setItem(
-      "blog-last-saved",
-      JSON.stringify({ title, content: JSON.parse(json), coverUrl })
-    );
-    lastSavedRef.current = json;
+
     setHasUnsaved(false);
   };
 
@@ -180,7 +192,7 @@ export default function App() {
 
   // UI: navbar + cover + editor container with heading
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white pb-20">
       {/* Navbar (left-aligned, no centering) */}
       <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
@@ -193,55 +205,38 @@ export default function App() {
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-colors"
           >
             <Save className="w-4 h-4" />
-            <span className="text-sm">Save</span>
+            <span className="text-sm">{isSaving ? "Saving..." : "Save"}</span>
           </button>
         </div>
       </nav>
 
       {/* Notion-like cover (hidden by default) */}
       {coverUrl && (
-        <div className="w-full h-48 sm:h-56 md:h-64 relative bg-light-gray">
+        <div className="w-full h-48 sm:h-56 md:h-64 relative bg-light-gray group">
           <img
             src={coverUrl}
             alt="Cover"
             className="w-full h-full object-cover"
           />
           {/* Kebab menu (3 dots) with hover dropdown */}
-          <div className="absolute top-3 right-3 z-10 group">
+
+          <div className="absolute bottom-5 right-[20px] z-10  hidden group-hover:flex absolute gap-6 right-0 mt-2">
             <button
               type="button"
-              className="p-2  text-white  transition shadow-sm"
-              aria-label="Cover actions"
+              onClick={removeCover}
+              className="w-full flex w-[150px]  gap-2 px-3 py-2 text-sm text-charcoal rounded-sm  items-center justify-center bg-white   "
             >
-              <MoreHorizontal className="w-6 h-6" />
+              <ImageOff className="w-4 h-4 text-coral-red" />
+              Remove image
             </button>
-
-            <div className="hidden group-hover:block absolute right-0 mt-2 w-44 rounded-md border border-gray-200 bg-white shadow-lg">
-              <button
-                type="button"
-                onClick={saveBlog}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-charcoal hover:bg-gray-50"
-              >
-                <Save className="w-4 h-4 text-ocean-blue" />
-                Save
-              </button>
-              <button
-                type="button"
-                onClick={removeCover}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-charcoal hover:bg-gray-50"
-              >
-                <ImageOff className="w-4 h-4 text-coral-red" />
-                Remove image
-              </button>
-              <button
-                type="button"
-                onClick={pickCover}
-                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-charcoal hover:bg-gray-50"
-              >
-                <Camera className="w-4 h-4 text-midnight-blue" />
-                Change cover
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={pickCover}
+              className="w-full flex w-[150px]  gap-2 px-3 py-2 text-sm text-charcoal rounded-sm flex items-center justify-center bg-white"
+            >
+              <Camera className="w-4 h-4 text-midnight-blue" />
+              Change cover
+            </button>
           </div>
         </div>
       )}
@@ -290,6 +285,7 @@ export default function App() {
         onChange={onCoverPicked}
         className="hidden"
       />
+      <Toast />
     </div>
   );
 }

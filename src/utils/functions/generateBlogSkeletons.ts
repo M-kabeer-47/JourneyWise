@@ -1,6 +1,6 @@
 export function generateBlogSkeleton(): string {
   return `
-    <article className="max-w-3xl mx-auto  py-[50px]">
+    <article className="max-w-3xl mx-auto  py-[100px]">
       <div className="animate-pulse">
         
         <!-- Blog Title Skeleton -->

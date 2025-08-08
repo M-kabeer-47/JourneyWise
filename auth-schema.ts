@@ -224,13 +224,15 @@ export const trip = pgTable("trip", {
 });
 export const blog = pgTable("blog", {
   id: uuid("id").primaryKey().defaultRandom(),
-  title: jsonb("title").notNull(),
+  title: text("title").notNull(),
   content: text("content").notNull(),
 
   blocks: jsonb("blocks").notNull(),
   authorID: text("authorID")
     .notNull()
     .references(() => user.id),
+
+  coverUrl: text("coverUrl"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
