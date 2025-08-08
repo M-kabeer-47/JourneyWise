@@ -19,7 +19,7 @@ import { Block } from "@/components/editor/block"
 import { Toolbar } from "@/components/editor/toolbar"
 import { DroppableContainer } from "@/components/editor/droppable-container"
 import { cn } from "@/lib/utils"
-import type { BlockType } from "@/lib/types/Block"
+import type { BlockType } from "@/lib/types/block"
 import SaveBlog  from "@/utils/functions/SaveBlog"
 
 import axios from "axios"

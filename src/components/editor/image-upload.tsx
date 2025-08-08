@@ -4,7 +4,7 @@ import type React from "react"
 import { useState } from "react"
 import { Upload, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import Input from "@/components/ui/Input"
+import {Input} from "@/components/ui/Input"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 
@@ -107,7 +107,7 @@ export function ImageUpload({
           </div>
           <p className="text-xs text-charcoal/70 mt-1">SVG, PNG, JPG or GIF</p>
           <Input
-            label=""
+            label="Select image"
             type="file"
             className="hidden"
             accept="image/*"

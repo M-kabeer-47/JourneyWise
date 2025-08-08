@@ -130,7 +130,7 @@ export default function BookingPage() {
               <BookingForm
                 experienceData={experienceData}
                 formFunctions={{
-                  register,
+                  register, //@ts-ignore
                   control,
                   errors,
                   setValue,

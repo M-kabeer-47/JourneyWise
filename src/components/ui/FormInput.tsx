@@ -20,6 +20,7 @@ type InputProps = {
   disabled?: boolean;
   icon?: string;
   required?: boolean;
+  ref?: React.Ref<HTMLInputElement>;
 };
 
 export default function FormInput({
@@ -35,6 +36,7 @@ export default function FormInput({
   disabled = false,
   icon,
   required = false,
+  ref,
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -81,6 +83,7 @@ export default function FormInput({
         
         <input
           id={id || name}
+          ref={ref}
           type={type === "password" ? (showPassword ? "text" : "password") : type}
           className={cn(
             "pl-10 w-full h-10 rounded-lg text-charcoal text-sm",
