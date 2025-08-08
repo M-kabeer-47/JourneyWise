@@ -64,7 +64,7 @@ export const useExperienceSubmission = ({ type }: { type: string }) => {
           toast.error("Failed to update experience!");
         }
       }
-
+      delete submissionData.id; // Remove ID for new experience creation
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create-experience`, {
         data: submissionData,
       });

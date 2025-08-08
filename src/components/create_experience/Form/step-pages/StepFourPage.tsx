@@ -60,7 +60,7 @@ export default function StepFour({
     const result = await submitExperience(submitData);
     if (result?.success) {
       dispatch(updateExperienceData({})); // Clear experience data after submission
-      router.push("/create-experience/success");
+      router.push("/success/experience");
     }
 
     setShowConfirmModal(false);

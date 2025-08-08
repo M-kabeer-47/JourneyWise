@@ -1,10 +1,10 @@
 "use client";
 import React from "react";
-import { Star, Edit3, Eye } from "lucide-react";
+import { Star, Edit3, Eye, CircleCheck } from "lucide-react";
 import { motion } from "framer-motion";
 import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
-import {formatPrice} from "@/utils/functions/formatPrice";
+import { formatPrice } from "@/utils/functions/formatPrice";
 
 interface ExperienceCardProps {
   experience: Experience;
@@ -32,24 +32,11 @@ export default function ExperienceCard({
 
       {/* Enhanced Availability Badge */}
       <div className="absolute top-4 left-4 z-10">
-        <div
-          className={`flex items-center px-3 py-1.5 rounded-full backdrop-blur-sm ${
-            experience.isAvailable
-              ? "bg-green-500/20 text-green-50 border border-green-300/30"
-              : "bg-red-500/20 text-red-50 border border-red-300/30"
-          }`}
-        >
-          <span
-            className={`h-2 w-2 rounded-full mr-2 ${
-              experience.isAvailable
-                ? "bg-green-400 animate-pulse"
-                : "bg-red-400"
-            }`}
-          ></span>
-          <span className="text-xs font-medium">
-            {experience.isAvailable ? "Available" : "Unavailable"}
-          </span>
-        </div>
+        {experience.isAvailable ? (
+          <CircleCheck className="w-5 h-5 text-green-500" />
+        ) : (
+          <CircleCheck className="w-5 h-5 text-red-500" />
+        )}
       </div>
 
       {/* Agent Action Buttons */}
@@ -78,7 +65,7 @@ function ExperienceContent({
     <div className="relative h-full flex flex-col justify-end p-5 text-white">
       {/* Title & Price */}
       <div className="flex items-start justify-between mb-3 gap-2">
-        <h3 className="text-xl font-bold leading-tight line-clamp-2 flex-1 drop-shadow-sm">
+        <h3 className="text-3xl font-bold font-raleway leading-tight line-clamp-2 flex-1 drop-shadow-sm">
           {experience.title}
         </h3>
         <div className="text-right shrink-0">
