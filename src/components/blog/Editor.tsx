@@ -4,29 +4,26 @@ import "@blocknote/shadcn/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
 import "@blocknote/shadcn/style.css";
-import React, { useEffect, useMemo, useRef, useState } from "react";
-import confirmModal from "@/components/ui/ConfirmModal";
-import {
-  Camera,
-  Save,
-  MoreVertical,
-  ImageOff,
-  MoreHorizontal,
-} from "lucide-react";
-import axios from "axios";
-import { Toast, toast } from "../ui/Toast";
+import React, { useEffect, useRef, useState } from "react";
+import { Camera, Save, ImageOff, Upload } from "lucide-react";
+
+import { Toast } from "../ui/Toast";
+import usePublishBlog from "@/hooks/blog/usePublishBlog";
+import useSaveBlog from "@/hooks/blog/useSaveBlog";
+import ConfirmModal from "../ui/ConfirmModal";
 
 export default function App() {
-  const [hasUnsaved, setHasUnsaved] = useState(false);
-  const lastSavedRef = useRef<string | null>(null);
-  const [isSaving, setIsSaving] = useState(false);
-  // Cover image preview (Notion-like)
-  const [coverUrl, setCoverUrl] = useState<string | null>(null);
+  const [coverUrl, setCoverUrl] = useState<string | null>(localStorage.getItem("blog-cover") || null);
+  const [title, setTitle] = useState<string>(localStorage.getItem("blog-title") || "");
+  const [blogID, setBlogID] = useState<string | null>(null);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const coverInputRef = useRef<HTMLInputElement>(null);
   const prevCoverUrlRef = useRef<string | null>(null);
+  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // NEW: simple blog title
-  const [title, setTitle] = useState<string>("");
+  const { publishBlog: postBlog, isPending: isPublishing } = usePublishBlog({
+    setBlogID,
+  });
 
   const pickCover = () => coverInputRef.current?.click();
   const onCoverPicked = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +31,9 @@ export default function App() {
     if (!file) return;
     const url = URL.createObjectURL(file); // local preview
     setCoverUrl(url);
-    setHasUnsaved(true);
+    localStorage.setItem("blog-cover", url);
+
+
     // reset input so picking same file again still triggers onChange
     e.target.value = "";
   };
@@ -63,31 +62,41 @@ export default function App() {
   // Creates a new editor instance.
   const editor = useCreateBlockNote({
     uploadFile,
+    initialContent: (() => {
+      const draft = localStorage.getItem("blog-draft");
+      if (!draft) return undefined;
+      try {
+        const parsed = JSON.parse(draft);
+        return parsed?.content ? JSON.parse(parsed.content) : undefined;
+      } catch {
+        return undefined;
+      }
+    })(),
   });
 
   // Serialize editor content safely
-  const getDocJson = useMemo(
-    () => () => {
-      try {
-        // BlockNote editor.document is JSON-serializable
-        return JSON.stringify(editor.document);
-      } catch {
-        return null;
-      }
-    },
-    [editor]
-  );
+  const getDocJson = () => {
+    try {
+      // BlockNote editor.document is JSON-serializable
+      return JSON.stringify(editor.document);
+    } catch {
+      return null;
+    }
+  };
 
   // Mark as dirty on any change
   const handleEditorChange = () => {
     const json = getDocJson();
     if (!json) return;
-    if (json !== lastSavedRef.current) {
-      setHasUnsaved(true);
-    }
-    try {
-      localStorage.setItem("blog-draft", json);
-    } catch {}
+    timeoutRef.current && clearTimeout(timeoutRef.current);
+    timeoutRef.current = setTimeout(() => {
+      let blogData = {
+        title,
+        content: json,
+        coverUrl,
+      };
+      localStorage.setItem("blog-draft", JSON.stringify(blogData));
+    }, 5000);
   };
 
   const removeCover = () => {
@@ -96,117 +105,105 @@ export default function App() {
       prevCoverUrlRef.current = null;
     }
     setCoverUrl(null);
-    setHasUnsaved(true);
   };
 
   // Your save function (replace with API call as needed)
-  const saveBlog = async () => {
-    const html = await (editor.blocksToFullHTML(editor.document));
-    console.log("Content:", html);
-    setIsSaving(true);
-    try {
-      await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog`, {
-        title,
-        content: html,
-        blocks: { text: "Hello" },
-        coverUrl: coverUrl || null,
-      });
-      toast.success("Blog saved successfully");
-    } catch (error) {
-      toast.error("Error saving blog");
-    } finally {
-      setIsSaving(false);
-    }
-    // Save draft locally; replace with API call later
+  const publishBlog = async () => {
+    const html = await editor.blocksToFullHTML(editor.document);
+    await postBlog({
+      title,
+      html,
+      coverUrl,
+      isPublished: true,
+    });
+  };
 
-    setHasUnsaved(false);
+  const saveBlog = async () => {
+    if (!blogID) return;
+    const html = await editor.blocksToFullHTML(editor.document);
+    await postBlog({
+      title,
+      html,
+      coverUrl,
+      isPublished: false,
+    });
   };
 
   // Guard: tab/window close => show native prompt, autosave draft synchronously
-  useEffect(() => {
-    const onBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (!hasUnsaved) return;
-      const json = getDocJson();
-      if (json) {
-        try {
-          localStorage.setItem("blog-draft", json);
-        } catch {}
-      }
-      e.preventDefault();
-      e.returnValue = ""; // triggers native confirm dialog
-    };
+  // useEffect(() => {
+  //   const onBeforeUnload = (e: BeforeUnloadEvent) => {
+  //     if (!hasSaved) return;
+  //     const json = getDocJson();
+  //     if (json) {
+  //       try {
+  //         localStorage.setItem("blog-draft", json);
+  //       } catch {}
+  //     }
+  //     e.preventDefault();
+  //     e.returnValue = ""; // triggers native confirm dialog
+  //   };
 
-    window.addEventListener("beforeunload", onBeforeUnload);
-    return () => window.removeEventListener("beforeunload", onBeforeUnload);
-  }, [hasUnsaved, getDocJson]);
+  //   window.addEventListener("beforeunload", onBeforeUnload);
+  //   return () => window.removeEventListener("beforeunload", onBeforeUnload);
+  // }, [hasSaved, getDocJson]);
 
   // Guard: in-app navigation (clicking links) => show custom confirmModal
-  useEffect(() => {
-    const handleLinkClick = async (e: MouseEvent) => {
-      if (!hasUnsaved) return;
-      if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+  // useEffect(() => {
+  //   const handleLinkClick = async (e: MouseEvent) => {
+  //     if (!hasSaved) return;
+  //     if (e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
 
-      const target = e.target as HTMLElement | null;
-      const anchor = target?.closest?.("a") as HTMLAnchorElement | null;
-      if (!anchor) return;
+  //     const target = e.target as HTMLElement | null;
+  //     const anchor = target?.closest?.("a") as HTMLAnchorElement | null;
+  //     if (!anchor) return;
 
-      const url = new URL(anchor.href, window.location.href);
-      const isSameOrigin = url.origin === window.location.origin;
-      const isSamePage = url.href === window.location.href;
-      const newTab = anchor.target === "_blank";
-      if (!isSameOrigin || isSamePage || newTab) return;
+  //     const url = new URL(anchor.href, window.location.href);
+  //     const isSameOrigin = url.origin === window.location.origin;
+  //     const isSamePage = url.href === window.location.href;
+  //     const newTab = anchor.target === "_blank";
+  //     if (!isSameOrigin || isSamePage || newTab) return;
 
-      e.preventDefault();
+  //     e.preventDefault();
+  //   };
 
-      const confirmed = confirmModal({
-        title: "Unsaved Changes",
-        description:
-          "You have unsaved changes. Do you want to save before navigating away?",
-        confirmText: "Save and Navigate",
-        cancelText: "Stay on Page",
-        onConfirm: async () => {
-          await saveBlog();
-        },
-        onClose: () => {
-          setHasUnsaved(false);
-        },
-        isOpen: true,
-        loading: false,
-        loadingText: "Saving...",
-      } as any);
-
-      if (confirmed) {
-        try {
-          await saveBlog();
-        } catch (err) {
-          console.error("Save failed:", err);
-          return;
-        }
-        window.location.href = url.href;
-      }
-    };
-
-    window.addEventListener("click", handleLinkClick, true);
-    return () => window.removeEventListener("click", handleLinkClick, true);
-  }, [hasUnsaved]);
+  //   window.addEventListener("click", handleLinkClick, true);
+  //   return () => window.removeEventListener("click", handleLinkClick, true);
+  // }, [hasSaved]);
 
   // UI: navbar + cover + editor container with heading
   return (
     <div className="min-h-screen bg-white pb-20">
       {/* Navbar (left-aligned, no centering) */}
-      <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200">
-        <div className="px-4 sm:px-6 py-3 flex items-center justify-between">
-          <div className="text-xl font-bold font-['Raleway'] text-midnight-blue">
+      <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200 sm:px-14">
+        <div className="px-8 py-3 flex items-center justify-between">
+          <h1 className="text-2xl font-bold font-raleway text-midnight-blue">
             JourneyWise
+          </h1>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={saveBlog}
+              disabled={isPublishing}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md border-2 border-ocean-blue bg-white text-white hover:bg-ocean-blue/90 transition-colors group"
+            >
+              <Save className="w-4 h-4 text-ocean-blue group-hover:text-white" />
+              <span className="text-sm text-ocean-blue group-hover:text-white">
+                {isPublishing ? "Saving..." : "Save as draft"}
+              </span>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => setIsConfirmModalOpen(true)}
+              disabled={isPublishing}
+              className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-colors"
+            >
+              <Upload className="w-4 h-4" />
+              <span className="text-sm">
+                {isPublishing ? "Publishing..." : "Publish"}
+              </span>
+            </button>
           </div>
-          <button
-            type="button"
-            onClick={saveBlog}
-            className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-colors"
-          >
-            <Save className="w-4 h-4" />
-            <span className="text-sm">{isSaving ? "Saving..." : "Save"}</span>
-          </button>
         </div>
       </nav>
 
@@ -260,7 +257,7 @@ export default function App() {
             value={title}
             onChange={(e) => {
               setTitle(e.target.value);
-              setHasUnsaved(true);
+              localStorage.setItem("blog-title", e.target.value);
             }}
             placeholder="Title"
             className="w-full text-4xl sm:text-6xl font-bold placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0"
@@ -286,6 +283,15 @@ export default function App() {
         className="hidden"
       />
       <Toast />
+      <ConfirmModal
+        title="Publish Blog"
+        description="Are you sure you want to publish this blog post?"
+        isOpen={isConfirmModalOpen}
+        onConfirm={publishBlog}
+        onClose={() => setIsConfirmModalOpen(false)}
+        loading={isPublishing}
+        loadingText="Publishing..."
+      />
     </div>
   );
 }
