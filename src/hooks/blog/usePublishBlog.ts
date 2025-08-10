@@ -24,8 +24,8 @@ export default function usePublishBlog({
           }
         );
         toast.success("Blog published successfully");
+        alert("Response: " + JSON.stringify(response.data.id));
         setBlogID(response.data.id);
-        return response.data;
       } catch (error) {
         toast.error("Error publishing blog");
       } finally {
@@ -35,6 +35,5 @@ export default function usePublishBlog({
   return {
     publishBlog: mutateAsync,
     isPending,
-    
   };
 }

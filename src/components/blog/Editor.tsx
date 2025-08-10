@@ -116,9 +116,11 @@ export default function App() {
       coverUrl,
       isPublished: true,
     });
+    setIsConfirmModalOpen(false);
   };
 
   const saveBlog = async () => {
+    alert("ID: " + JSON.stringify(blogID));
     if (!blogID) return;
     const html = await editor.blocksToFullHTML(editor.document);
     await postBlog({
@@ -289,7 +291,7 @@ export default function App() {
         isOpen={isConfirmModalOpen}
         onConfirm={publishBlog}
         onClose={() => setIsConfirmModalOpen(false)}
-        loading={isPublishing}
+        loading={isPublishing ? true : false}
         loadingText="Publishing..."
       />
     </div>

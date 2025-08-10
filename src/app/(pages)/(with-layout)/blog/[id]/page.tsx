@@ -18,7 +18,7 @@ export default function BlogPage() {
   const fetchBlog = async () => {
     try {
       const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/blog/?id=${id}`
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-blog/${id}`
       );
       setBlog(response.data.blog);
       setUser(response.data.user)
