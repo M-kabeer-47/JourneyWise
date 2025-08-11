@@ -1,12 +1,16 @@
 "use client";
 import { useParams } from "next/navigation";
-import Editor from "@/components/blog/Editor";
+
 import useSaveBlog from "@/hooks/blog/useSaveBlog";
 import useFetchBlog from "@/hooks/blog/useFetchBlog";
 import { useRouter } from "next/navigation";
-import { Loader2 } from "lucide-react";
-import parse from "html-react-parser";
 import Spinner from "@/components/ui/Spinner";
+import dynamic from "next/dynamic"; // Add this import
+
+// Dynamically import Editor with SSR disabled
+const Editor = dynamic(() => import("@/components/blog/Editor"), {
+  ssr: false,
+});
 
 export default function UpdateBlogPage() {
   const params = useParams();
@@ -23,7 +27,7 @@ export default function UpdateBlogPage() {
     await saveBlog({
       id: blogId,
       title: data.title,
-      html: data.html,
+      html: data.content,
       coverUrl: data.coverUrl,
     });
   };

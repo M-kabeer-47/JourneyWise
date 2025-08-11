@@ -10,7 +10,7 @@ export default function usePublishBlog() {
       isPublished: boolean;
     }) => {
       try {
-        let response = await axios.post(
+        await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/publish-blog`,
           {
             title: data.title,
@@ -19,7 +19,11 @@ export default function usePublishBlog() {
             isPublished: data.isPublished,
           }
         );
-        toast.success("Blog published successfully");
+        if (data.isPublished) {
+          toast.success("Blog published successfully");
+        } else {
+          toast.success("Blog saved as draft successfully");
+        }
       } catch (error) {
         toast.error("Error publishing blog");
       } finally {

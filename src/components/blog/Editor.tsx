@@ -8,7 +8,7 @@ import { Toast } from "../ui/Toast";
 import ConfirmModal from "../ui/ConfirmModal";
 import { BlogNav } from "./BlogNavbar";
 import { BlogCover } from "./BlogCover";
-
+import { useQueryClient } from "@tanstack/react-query";
 interface EditorProps {
   type: "create" | "update";
   initialTitle?: string;
@@ -33,6 +33,7 @@ export default function Editor({
   onSuccess,
 }: EditorProps) {
   // Common states
+  const queryClient = useQueryClient();
   const [coverUrl, setCoverUrl] = useState<string | null>(
     type === "update" ? initialCoverUrl : null
   );
@@ -60,9 +61,6 @@ export default function Editor({
   // Editor initialization
   const editor = useCreateBlockNote({
     uploadFile,
-    initialContent: (() => {
-      return undefined;
-    })(),
   });
 
   // Revoke old object URLs to avoid memory leaks
@@ -80,8 +78,9 @@ export default function Editor({
       if (changesCount === 0) {
         setChangesCount((prev) => prev + 1);
       }
-      if (changesCount > 0) {
+      if (changesCount === 1 || changesCount === 2) {
         setHasChanges(true);
+        setChangesCount((prev) => prev + 1);
       }
       return;
     }
@@ -92,11 +91,11 @@ export default function Editor({
     timeoutRef.current && clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
       let blogData = json;
-      localStorage.setItem("blog-draft", JSON.stringify(blogData));
-    }, 5000);
+      localStorage.setItem("blog-draft", blogData);
+    }, 3000);
   };
 
-  const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTitle(e.target.value);
 
     if (type === "create") {
@@ -158,7 +157,7 @@ export default function Editor({
         await updateBlog(blogData);
         setHasChanges(false);
       }
-
+      queryClient.invalidateQueries({ queryKey: ["blog"] }); // Invalidate blog queries to refresh data
       setIsConfirmModalOpen(false);
       onSuccess?.();
     } catch (error) {
@@ -202,8 +201,6 @@ export default function Editor({
       if (savedDraft) {
         alert("Found saved draft");
         editor.replaceBlocks(editor.document, JSON.parse(savedDraft));
-      } else {
-        editor.replaceBlocks(editor.document, []);
       }
       if (savedTitle) setTitle(savedTitle);
       if (savedCover) setCoverUrl(savedCover);
@@ -238,9 +235,8 @@ export default function Editor({
       />
 
       <div className="py-8">
-        <div className="relative group mb-4 px-4 sm:px-24">
-          <input
-            type="text"
+        <div className="relative group px-[50px] sm:px-24">
+          <textarea
             value={title}
             onChange={handleTitleChange}
             placeholder={type === "create" ? "Title" : "Blog title"}
@@ -248,14 +244,12 @@ export default function Editor({
           />
         </div>
 
-        <div className="px-12">
-          {initialContent !== undefined && (
-            <BlockNoteView
-              editor={editor}
-              theme="light"
-              onChange={handleEditorChange}
-            />
-          )}
+        <div className="sm:px-12 relative top-[-20px]">
+          <BlockNoteView
+            editor={editor}
+            theme="light"
+            onChange={handleEditorChange}
+          />
         </div>
       </div>
 

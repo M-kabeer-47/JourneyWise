@@ -68,7 +68,7 @@ export const BlogNav: React.FC<BlogNavProps> = ({
             disabled={isPublishing || (type === "update" && !hasChanges)}
             className="inline-flex items-center gap-2 px-3 py-1.5 rounded-md bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            {isPublishing ? (
+            {isPublishing && !isSavedDraftClicked ? (
               <>
                 <Loader2 className="w-4 h-4 animate-spin" />
                 <span className="text-sm">

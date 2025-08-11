@@ -1,7 +1,13 @@
 "use client";
-import Editor from "@/components/blog/Editor";
+
 import usePublishBlog from "@/hooks/blog/usePublishBlog";
 import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic"; // Add this import
+
+// Dynamically import Editor with SSR disabled
+const Editor = dynamic(() => import("@/components/blog/Editor"), {
+  ssr: false,
+});
 
 export default function CreateBlogPage() {
   const { publishBlog, isPending } = usePublishBlog();
@@ -23,6 +29,12 @@ export default function CreateBlogPage() {
       coverUrl: data.coverUrl,
       isPublished: false,
     });
+    localStorage.removeItem("blog-draft");
+    localStorage.removeItem("blog-title");
+    localStorage.removeItem("blog-cover");
+    setTimeout(() => {
+      router.push("/");
+    }, 1000);
   };
 
   return (
