@@ -34,12 +34,10 @@ export default function Editor({
 }: EditorProps) {
   // Common states
   const [coverUrl, setCoverUrl] = useState<string | null>(
-    type === "create"
-      ? localStorage.getItem("blog-cover") || null
-      : initialCoverUrl
+    type === "update" ? initialCoverUrl : null
   );
   const [title, setTitle] = useState<string>(
-    type === "create" ? localStorage.getItem("blog-title") || "" : initialTitle
+    type === "update" ? initialTitle : ""
   );
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
@@ -63,16 +61,7 @@ export default function Editor({
   const editor = useCreateBlockNote({
     uploadFile,
     initialContent: (() => {
-      if (type === "update") return undefined;
-
-      const draft = localStorage.getItem("blog-draft");
-      if (!draft) return undefined;
-      try {
-        const parsed = JSON.parse(draft);
-        return parsed?.content ? JSON.parse(parsed.content) : undefined;
-      } catch {
-        return undefined;
-      }
+      return undefined;
     })(),
   });
 
@@ -102,11 +91,7 @@ export default function Editor({
     if (!json) return;
     timeoutRef.current && clearTimeout(timeoutRef.current);
     timeoutRef.current = setTimeout(() => {
-      let blogData = {
-        title,
-        content: json,
-        coverUrl,
-      };
+      let blogData = json;
       localStorage.setItem("blog-draft", JSON.stringify(blogData));
     }, 5000);
   };
@@ -210,6 +195,20 @@ export default function Editor({
   };
 
   useEffect(() => {
+    if (type === "create") {
+      const savedTitle = localStorage.getItem("blog-title");
+      const savedCover = localStorage.getItem("blog-cover");
+      const savedDraft = localStorage.getItem("blog-draft");
+      if (savedDraft) {
+        alert("Found saved draft");
+        editor.replaceBlocks(editor.document, JSON.parse(savedDraft));
+      } else {
+        editor.replaceBlocks(editor.document, []);
+      }
+      if (savedTitle) setTitle(savedTitle);
+      if (savedCover) setCoverUrl(savedCover);
+    }
+
     if (type === "update") {
       const convertHTMLToBlocks = async () => {
         let blocks = await editor.tryParseHTMLToBlocks(initialContent);
