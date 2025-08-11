@@ -14,7 +14,6 @@ export async function GET(request: NextRequest,{params}: {params: {id: string}})
           id: blog.id,
           title: blog.title,
           content: blog.content,
-          author: user.name,
           createdAt: blog.createdAt,
           updatedAt: blog.updatedAt,
           coverUrl: blog.coverUrl,

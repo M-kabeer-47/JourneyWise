@@ -1,33 +1,11 @@
 "use client";
 import { useEffect, useState } from "react";
-
+import Spinner from "@/components/ui/Spinner";
 export default function FormulaBreakdownPage() {
-  const [currentStep, setCurrentStep] = useState(1);
-  function checkingUseEffect() {
-    console.log("useEffect is running");
-  }
-  useEffect(() => {
-    alert("Yeah buddy");
-    // Simulate some logic that determines when to show the div
-  }, [checkingUseEffect]); // This runs when currentStep changes
-
   return (
-    <div>
-      <h1>Formula Breakdown</h1>
-      <button
-        onClick={() => {
-          setCurrentStep((prev) => prev + 1);
-          checkingUseEffect();
-        }}
-      >
-        Next Step
-      </button>
-      <button onClick={() => setCurrentStep((prev) => prev - 1)}>
-        Previous Step
-      </button>
-      {currentStep === 1 && <div>Here are the details for step 1...</div>}
-      {currentStep === 2 && <StepTwo />}
-      {currentStep === 3 && <div>Here are the details for step 3...</div>}
+    <div className="h-screen items-center w-full flex  justify-center">
+      <Spinner size="small" />
+      <h1>Hello there</h1>
     </div>
   );
 }

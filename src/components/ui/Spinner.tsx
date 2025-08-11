@@ -6,13 +6,13 @@ interface SpinnerProps {
 
 const Spinner: React.FC<SpinnerProps> = ({ size = "medium" }) => {
   const sizeClasses = {
-    small: "w-6 h-6",
+    small: "w-9 h-9",
     medium: "w-12 h-12",
     large: "w-16 h-16",
   }
 
   const borderClasses = {
-    small: "border-2 border-gray-200 border-t-gray-600",
+    small: "border-[4px] border-gray-200 border-t-midnight-blue",
     medium: "border-3 border-gray-200 border-t-midnight-blue",
     large: "border-4 border-gray-200 border-t-midnight-blue",
   }

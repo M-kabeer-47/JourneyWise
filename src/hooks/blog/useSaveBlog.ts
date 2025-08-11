@@ -10,13 +10,12 @@ export default function usePublishBlog() {
       id: string;
     }) => {
       try {
-        let response = await axios.post(
+        let response = await axios.put(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/update-blog/${data.id}`,
           {
             title: data.title,
             content: data.html,
             coverUrl: data.coverUrl || null,
-            
           }
         );
         toast.success("Blog saved successfully");
@@ -30,6 +29,5 @@ export default function usePublishBlog() {
   return {
     saveBlog: mutateAsync,
     isPending,
-    
   };
 }

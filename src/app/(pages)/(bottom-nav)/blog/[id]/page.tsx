@@ -37,9 +37,17 @@ export default function BlogPage() {
       {isFetching ? (
         <>{parse(generateSkeleton())}</>
       ) : (
-        <article className="max-w-full px-[300px] py-[100px]">
+        <>
+        <header className="">
+          <img
+            src={blog?.coverUrl || "https://via.placeholder.com/1200x600"}
+            alt="Blog Cover"
+            className="w-full h-[200px] sm:h-[300px] object-cover sm:mb-8"
+          />
+        </header>
+        <article className="max-w-full px-[30px] sm:px-[100px] ">
           <h1
-            className={`text-3xl md:text-6xl font-[800] mb-6 font-raleway text-black text-left`}
+            className={`text-4xl md:text-6xl font-[800] mb-6 font-raleway text-black text-left`}
           >
             {blog?.title}
           </h1>
@@ -76,6 +84,7 @@ export default function BlogPage() {
 
           <div></div>
         </article>
+        </>
       )}
     </>
   );

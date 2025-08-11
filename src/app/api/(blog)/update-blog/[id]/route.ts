@@ -18,6 +18,8 @@ export async function PUT(
       })
 
       .where(eq(blog.id, id));
+
+      return NextResponse.json("Updated blog successfully")
   } catch (error) {
     console.error("Error updating blog:", error);
     return NextResponse.json(

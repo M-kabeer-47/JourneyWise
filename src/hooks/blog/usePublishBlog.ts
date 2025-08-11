@@ -1,11 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/Toast";
-export default function usePublishBlog({
-  setBlogID,
-}: {
-  setBlogID: React.Dispatch<React.SetStateAction<string | null>>;
-}) {
+export default function usePublishBlog() {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (data: {
       title: string;
@@ -24,8 +20,6 @@ export default function usePublishBlog({
           }
         );
         toast.success("Blog published successfully");
-        alert("Response: " + JSON.stringify(response.data.id));
-        setBlogID(response.data.id);
       } catch (error) {
         toast.error("Error publishing blog");
       } finally {

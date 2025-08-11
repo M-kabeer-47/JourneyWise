@@ -29,6 +29,13 @@ const successConfig = {
     buttonText: "Back to Dashboard",
     buttonHref: "/dashboard",
   },
+  blog: {
+    title: "Blog published",
+    description: "Your blog post has been published successfully.",
+    buttonText: "View Blog",
+    buttonHref: "/blog",
+  },
+  
   default: {
     title: "Success!",
     description: "Your action was successful.",
