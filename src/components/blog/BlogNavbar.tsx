@@ -21,7 +21,7 @@ export const BlogNav: React.FC<BlogNavProps> = ({
 }) => {
   return (
     <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200 sm:px-14">
-      <div className="px-8 py-3 flex items-center justify-between">
+      <div className="px-12 py-3 flex items-center justify-between">
         <h1 className="text-2xl font-bold font-raleway text-midnight-blue">
           JourneyWise
         </h1>

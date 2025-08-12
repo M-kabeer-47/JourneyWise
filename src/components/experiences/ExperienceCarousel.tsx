@@ -1,50 +1,44 @@
-'use client';
+"use client";
 
-import { motion, useAnimation } from 'framer-motion';
-import { useState, useEffect, useRef } from 'react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import ExperienceCard from './ExperienceCard';
-import ExperienceCardSkeleton from '@/components/skeletons/ExperienceCardSkeleton';
-import { Experience  } from '@/lib/types/experience';
-import { Button } from '@/components/ui/button';
-
+import { motion, useAnimation } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import ExperienceCard from "./ExperienceCard";
+import ExperienceCardSkeleton from "@/components/skeletons/ExperienceCardSkeleton";
+import { Experience } from "@/lib/types/experience";
+import { Button } from "@/components/ui/button";
 
 interface ExperienceCarouselProps {
   title: string;
-  experiences?: Experience[];  
+  experiences?: Experience[];
   sectionRef?: React.RefObject<HTMLElement>;
   isLoading?: boolean;
 }
 
-export default function ExperienceCarousel({ 
-  title, 
+export default function ExperienceCarousel({
+  title,
   experiences = [], // Default to empty array
   sectionRef,
-  isLoading = false
+  isLoading = false,
 }: ExperienceCarouselProps) {
-
-  
   // Initialize with a function to get the correct initial value
   const [cardsPerView, setCardsPerView] = useState(1);
   const [currentIndex, setCurrentIndex] = useState(0);
   const controls = useAnimation();
   const containerRef = useRef<HTMLDivElement>(null);
-  
 
   const updateCardsPerView = () => {
     const width = window.innerWidth;
-    if (width >= 1736) setCardsPerView(5); // 2xl
-    else if (width >= 1280) setCardsPerView(4); // xl
+
+    if (width >= 1280) setCardsPerView(4); // xl
     else if (width >= 768) setCardsPerView(2); // md
     else setCardsPerView(1); // mobile
   };
   // Update cards per view based on screen size
   useEffect(() => {
-    
-
     updateCardsPerView();
-    window.addEventListener('resize', updateCardsPerView);
-    return () => window.removeEventListener('resize', updateCardsPerView);
+    window.addEventListener("resize", updateCardsPerView);
+    return () => window.removeEventListener("resize", updateCardsPerView);
   }, []);
 
   // Only calculate these values when not loading
@@ -72,28 +66,30 @@ export default function ExperienceCarousel({
 
     const cardWidth = 100 / cardsPerView;
     const movePercentage = currentIndex * cardWidth;
-    
-    controls.start({ 
+
+    controls.start({
       x: `-${movePercentage}%`,
-      transition: { 
-        type: "spring", 
+      transition: {
+        type: "spring",
         stiffness: 70,
         damping: 20,
-        mass: 1
-      }
+        mass: 1,
+      },
     });
   }, [currentIndex, controls, cardsPerView, isLoading]);
 
   // Create skeleton cards array for loading state
-  const skeletonCards = Array(cardsPerView).fill(null).map((_, i) => i);
+  const skeletonCards = Array(cardsPerView)
+    .fill(null)
+    .map((_, i) => i);
 
   return (
-    <section 
+    <section
       ref={sectionRef || null}
       className="py-20 bg-gradient-to-b from-midnight-blue/5 to-ocean-blue/5 relative overflow-hidden"
     >
       <div className="px-4 md:px-12">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
@@ -132,27 +128,28 @@ export default function ExperienceCarousel({
               </div>
             ) : (
               // Actual content with animation
-              <motion.div 
-                className="flex"
-                animate={controls}
-                initial={false}
-              >
-                {experiences.length > 0 ? experiences.map((experience, index) => (
-                  <motion.div
-                    key={experience.id || `experience-${index}`}
-                    className="flex-shrink-0 flex-grow-0 px-4"
-                    style={{ width: `${100 / cardsPerView}%` }}
-                    initial={{ opacity: 0, y: 50 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5, delay: Math.min(index * 0.1, 0.5) }}
-                    viewport={{ once: true }}
-                    whileHover={{ y: -5, transition: { duration: 0.2 } }}
-                  >
-                    <div className="h-full  transform transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
-                      <ExperienceCard experience={experience}/>
-                    </div>
-                  </motion.div>
-                )) : (
+              <motion.div className="flex" animate={controls} initial={false}>
+                {experiences.length > 0 ? (
+                  experiences.map((experience, index) => (
+                    <motion.div
+                      key={experience.id || `experience-${index}`}
+                      className="flex-shrink-0 flex-grow-0 px-4"
+                      style={{ width: `${100 / cardsPerView}%` }}
+                      initial={{ opacity: 0, y: 50 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      transition={{
+                        duration: 0.5,
+                        delay: Math.min(index * 0.1, 0.5),
+                      }}
+                      viewport={{ once: true }}
+                      whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                    >
+                      <div className="h-full  transform transition-all duration-300 hover:shadow-xl rounded-xl overflow-hidden">
+                        <ExperienceCard experience={experience} />
+                      </div>
+                    </motion.div>
+                  ))
+                ) : (
                   <div className="w-full text-center py-12">
                     <p className="text-gray-500">No experiences available</p>
                   </div>
@@ -172,7 +169,7 @@ export default function ExperienceCarousel({
               >
                 <ChevronLeft className="h-5 w-5 text-ocean-blue" />
               </Button>
-              
+
               <Button
                 variant="outline"
                 size="icon"
@@ -184,20 +181,21 @@ export default function ExperienceCarousel({
               </Button>
             </>
           )}
-          
+
           {!isLoading && totalGroups > 1 && (
             <div className="flex justify-center mt-8 gap-2">
               {Array.from({ length: totalGroups }).map((_, idx) => {
-                const isActive = Math.floor(currentIndex / cardsPerView) === idx;
-                
+                const isActive =
+                  Math.floor(currentIndex / cardsPerView) === idx;
+
                 return (
                   <button
                     key={`page-${idx}`}
                     onClick={() => setCurrentIndex(idx * cardsPerView)}
                     className={`transition-all duration-300 rounded-full ${
-                      isActive 
-                        ? 'bg-ocean-blue w-8 h-1.5' 
-                        : 'bg-gray-200 w-2.5 h-1.5 hover:bg-gray-300 hover:w-4'
+                      isActive
+                        ? "bg-ocean-blue w-8 h-1.5"
+                        : "bg-gray-200 w-2.5 h-1.5 hover:bg-gray-300 hover:w-4"
                     }`}
                     aria-label={`Go to slide group ${idx + 1}`}
                   />

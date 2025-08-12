@@ -32,7 +32,7 @@ export const BlogCover: React.FC<BlogCoverProps> = ({
           <button
             type="button"
             onClick={pickCover}
-            className="absolute -top-6 left-[100px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-2 text-sm rounded-sm bg-white py-2 px-2 hover:bg-neutral-100"
+            className="absolute top-2 left-[100px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-2 text-sm rounded-sm bg-white py-2 px-2 hover:bg-neutral-100"
           >
             📸 Add cover
           </button>

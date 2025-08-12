@@ -3,12 +3,19 @@ import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import "@blocknote/shadcn/style.css";
 import { useCreateBlockNote } from "@blocknote/react";
 import { BlockNoteView } from "@blocknote/shadcn";
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Toast } from "../ui/Toast";
 import ConfirmModal from "../ui/ConfirmModal";
 import { BlogNav } from "./BlogNavbar";
 import { BlogCover } from "./BlogCover";
 import { useQueryClient } from "@tanstack/react-query";
+
 interface EditorProps {
   type: "create" | "update";
   initialTitle?: string;
@@ -40,15 +47,15 @@ export default function Editor({
   const [title, setTitle] = useState<string>(
     type === "update" ? initialTitle : ""
   );
+  const [changesCount, setChangesCount] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
   const [isSavedDraftClicked, setIsSavedDraftClicked] = useState(false);
-  const [changesCount, setChangesCount] = useState(0);
   const [hasChanges, setHasChanges] = useState(false);
   const prevCoverUrlRef = useRef<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  async function uploadFile(file: File) {
+  const uploadFile = useCallback(async (file: File) => {
     try {
       const response = await uploadToCloudinary(file);
       return response;
@@ -56,14 +63,17 @@ export default function Editor({
       console.error("File upload failed:", error);
       throw new Error("File upload failed");
     }
-  }
+  }, []);
+
+  const editorOptions = useMemo(
+    () => ({
+      uploadFile,
+    }),
+    [uploadFile]
+  );
 
   // Editor initialization
-  const editor = useCreateBlockNote({
-    uploadFile,
-  });
-
-  // Revoke old object URLs to avoid memory leaks
+  const editor = useCreateBlockNote(editorOptions);
 
   const getDocJson = () => {
     try {
@@ -97,7 +107,6 @@ export default function Editor({
 
   const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTitle(e.target.value);
-
     if (type === "create") {
       localStorage.setItem("blog-title", e.target.value);
     } else {
@@ -111,7 +120,6 @@ export default function Editor({
     setCoverImage(file);
     const url = URL.createObjectURL(file);
     setCoverUrl(url);
-
     if (type === "create") {
       localStorage.setItem("blog-cover", url);
     } else {
@@ -125,7 +133,7 @@ export default function Editor({
       prevCoverUrlRef.current = null;
     }
     setCoverUrl(null);
-
+    localStorage.removeItem("blog-cover");
     if (type === "update") {
       setHasChanges(true);
     }
@@ -134,20 +142,16 @@ export default function Editor({
   const handlePublish = async () => {
     try {
       let finalCoverUrl = coverUrl;
-
-      if (coverImage) {
+      if (coverImage!==null) {
         finalCoverUrl = await uploadToCloudinary(coverImage);
       }
-
       const html = await editor.blocksToFullHTML(editor.document);
-
       const blogData = {
         title,
         content: html,
-        coverUrl: finalCoverUrl,
+        coverUrl: coverImage === null ? null : finalCoverUrl,
         isPublished: true,
       };
-
       if (type === "create" && publishBlog) {
         await publishBlog(blogData);
         localStorage.removeItem("blog-draft");
@@ -157,7 +161,7 @@ export default function Editor({
         await updateBlog(blogData);
         setHasChanges(false);
       }
-      queryClient.invalidateQueries({ queryKey: ["blog"] }); // Invalidate blog queries to refresh data
+      queryClient.invalidateQueries({ queryKey: ["blog"] });
       setIsConfirmModalOpen(false);
       onSuccess?.();
     } catch (error) {
@@ -167,18 +171,14 @@ export default function Editor({
 
   const handleSaveDraft = async () => {
     if (!saveAsDraftBlog) return;
-
     setIsSavedDraftClicked(true);
     try {
       let finalCoverUrl = coverUrl;
-
       if (coverImage) {
         finalCoverUrl = await uploadToCloudinary(coverImage);
       }
-
       const html = await editor.blocksToFullHTML(editor.document);
       const blocks = getDocJson();
-
       await saveAsDraftBlog({
         title,
         content: html,
@@ -193,6 +193,15 @@ export default function Editor({
     }
   };
 
+  // FIX: Memoize event handlers with useCallback
+  const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  }, []);
+
+  const handlePaste = useCallback((e: React.ClipboardEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+  }, []);
+
   useEffect(() => {
     if (type === "create") {
       const savedTitle = localStorage.getItem("blog-title");
@@ -205,21 +214,17 @@ export default function Editor({
       if (savedTitle) setTitle(savedTitle);
       if (savedCover) setCoverUrl(savedCover);
     }
-
-    if (type === "update") {
+    if (type === "update" && initialContent) {
       const convertHTMLToBlocks = async () => {
         let blocks = await editor.tryParseHTMLToBlocks(initialContent);
         editor.replaceBlocks(editor.document, blocks);
       };
       convertHTMLToBlocks();
     }
-    return () => {
-      if (coverUrl) URL.revokeObjectURL(coverUrl);
-    };
   }, []);
 
   return (
-    <div className="min-h-screen bg-white pb-20">
+    <div className="min-h-screen bg-white pb-[200px]">
       <BlogNav
         type={type}
         isPublishing={isPublishing}
@@ -233,9 +238,8 @@ export default function Editor({
         onCoverPicked={onCoverPicked}
         onRemoveCover={removeCover}
       />
-
-      <div className="py-8">
-        <div className="relative group px-[50px] sm:px-24">
+      <div className="">
+        <div className="relative group px-[50px] sm:px-24 top-[20px]">
           <textarea
             value={title}
             onChange={handleTitleChange}
@@ -243,18 +247,18 @@ export default function Editor({
             className="w-full text-4xl sm:text-6xl font-bold placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0"
           />
         </div>
-
         <div className="sm:px-12 relative top-[-20px]">
           <BlockNoteView
             editor={editor}
             theme="light"
             onChange={handleEditorChange}
+            // FIX: Pass the memoized handlers
+            onScroll={handleScroll}
+            onPaste={handlePaste}
           />
         </div>
       </div>
-
       <Toast />
-
       <ConfirmModal
         title={type === "create" ? "Publish Blog" : "Update Blog"}
         description={

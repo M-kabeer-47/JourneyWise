@@ -12,18 +12,10 @@ type BottomNavItem = {
   href: string;
   icon: IconType;
   badge?: number;
-  matchExact?: boolean; // if true, matches exact path
 };
 
 interface BottomNavbarProps {
   items?: BottomNavItem[];
-  centerAction?: {
-    label?: string;
-    href: string;
-    icon?: IconType;
-  };
-  className?: string;
-  hideOnDesktop?: boolean;
 }
 
 const defaultItems: BottomNavItem[] = [
@@ -42,6 +34,8 @@ export default function BottomNavbar({
   const isActive = (item: BottomNavItem) => {
     if (pathname.includes(item.name.toLowerCase())) {
       return true;
+    } else {
+      return false;
     }
   };
 
@@ -82,7 +76,9 @@ function NavItem({ item, active }: { item: BottomNavItem; active: boolean }) {
         "group relative",
         "px-3 py-2 rounded-xl",
         "text-charcoal hover:text-midnight-blue",
-        active ? "text-midnight-blue bg-midnight-blue/5" : "hover:bg-midnight-blue/5",
+        active
+          ? "text-midnight-blue bg-midnight-blue/5"
+          : "hover:bg-midnight-blue/5",
         "transition-colors",
       ].join(" ")}
       aria-current={active ? "page" : undefined}

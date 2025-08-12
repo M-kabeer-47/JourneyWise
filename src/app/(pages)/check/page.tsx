@@ -2,10 +2,18 @@
 import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/Spinner";
 export default function FormulaBreakdownPage() {
+  const [isLoading, setIsLoading] = useState(true);
+  useEffect(() => {
+    alert(
+      "This is a formula breakdown page. It will be used to explain the formula used in the app."
+    );
+  }, []);
+
   return (
     <div className="h-screen items-center w-full flex  justify-center">
       <Spinner size="small" />
       <h1>Hello there</h1>
+      <button onClick={() => setIsLoading(!isLoading)}>Reload</button>
     </div>
   );
 }
