@@ -7,7 +7,7 @@ import { ArrowRight, Globe, DollarSign, Users } from "lucide-react";
 export default function AgentRegistration() {
   return (
     <section className="py-12 sm:py-16 px-8 md:py-24 bg-gray-50 relative top-[140px]">
-      <div className="max-w-8xl mx-auto px-4">
+      <div className="max-w-[1400px] mx-auto ">
         <div className="bg-white rounded-lg overflow-hidden shadow-xl">
           <div className="flex flex-col lg:flex-row">
             <div className="lg:w-1/2 relative min-h-[500px] xl:min-h-[700px] ">

@@ -1,177 +1,232 @@
 "use client";
-import React from "react";
-import { Star, Edit3, Eye, CircleCheck } from "lucide-react";
+import React, { useState } from "react";
+import {
+  Star,
+  Edit3,
+  Eye,
+  CircleCheck,
+  Bookmark,
+  BookmarkCheck,
+  Clock,
+  MapPin,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
 import { formatPrice } from "@/utils/functions/formatPrice";
+import Image from "next/image";
 
 interface ExperienceCardProps {
   experience: Experience;
   isAgent?: boolean;
+  onSave?: (experienceId: string) => void;
+  onUnsave?: (experienceId: string) => void;
 }
 
 export default function ExperienceCard({
   experience,
   isAgent = false,
+  onSave,
+  onUnsave,
 }: ExperienceCardProps) {
+  const [isSaved, setIsSaved] = useState(false);
+
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (isSaved) {
+      onUnsave?.(experience.id);
+      setIsSaved(false);
+    } else {
+      onSave?.(experience.id);
+      setIsSaved(true);
+    }
+  };
+
   return (
     <motion.div
-      transition={{ duration: 0.2 }}
-      className="relative w-full h-[400px] group rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+      className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-full flex flex-col"
     >
-      {/* Background Image */}
-      <div className="absolute inset-0">
-        <img
+      {/* Cover Image with Overlay - Fixed Height */}
+      <div className="relative h-64 overflow-hidden flex-shrink-0">
+        <Image
           src={experience.experienceImage}
           alt={experience.title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          fill
+          className="object-cover group-hover:scale-110 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-70 group-hover:opacity-60 transition-opacity duration-300" />
-      </div>
 
-      {/* Enhanced Availability Badge */}
-      <div className="absolute top-4 left-4 z-10">
-        {experience.isAvailable ? (
-          <CircleCheck className="w-5 h-5 text-green-500" />
-        ) : (
-          <CircleCheck className="w-5 h-5 text-red-500" />
-        )}
-      </div>
+        {/* Gradient Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
 
-      {/* Agent Action Buttons */}
-
-      {/* Main content wrapper - clickable for non-agent mode */}
-      {!isAgent ? (
-        <Link href={`/experience/${experience.id}`} className="block h-full">
-          <ExperienceContent experience={experience} isAgent={isAgent} />
-        </Link>
-      ) : (
-        <ExperienceContent experience={experience} isAgent={isAgent} />
-      )}
-    </motion.div>
-  );
-}
-
-// Separate component for the content to avoid code duplication
-function ExperienceContent({
-  experience,
-  isAgent,
-}: {
-  experience: Experience;
-  isAgent: boolean;
-}) {
-  return (
-    <div className="relative h-full flex flex-col justify-end p-5 text-white">
-      {/* Title & Price */}
-      <div className="flex items-start justify-between mb-3 gap-2">
-        <h3 className="text-3xl font-bold font-raleway leading-tight line-clamp-2 flex-1 drop-shadow-sm">
-          {experience.title}
-        </h3>
-        <div className="text-right shrink-0">
-          <div className="text-xs text-white/90">Starting at</div>
-          <div className="text-2xl font-bold">
-            ${formatPrice(experience.minPrice)}
-          </div>
-        </div>
-      </div>
-
-      {/* Duration */}
-      <div className="flex items-center mb-3">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="h-4 w-4 text-white/70 mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <span className="text-xs text-white/90 drop-shadow-sm">
-          {experience.duration} {experience.duration === 1 ? "day" : "days"}
-        </span>
-      </div>
-
-      {/* Tags */}
-      {experience.tags && experience.tags.length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-3">
-          {experience.tags.slice(0, 3).map((tag, index) => (
-            <span
-              key={index}
-              className="px-2.5 py-1 bg-ocean-blue/30 backdrop-blur-sm rounded-full text-xs font-medium text-white"
-            >
-              {tag}
+        {/* Top Row: Availability & Save Button */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+          {/* Availability Badge */}
+          <div
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-full backdrop-blur-sm ${
+              experience.isAvailable
+                ? "bg-green-500/20 text-green-100 border border-green-500/30"
+                : "bg-red-500/20 text-red-100 border border-red-500/30"
+            }`}
+          >
+            <CircleCheck className="w-4 h-4" />
+            <span className="text-xs font-medium">
+              {experience.isAvailable ? "Available" : "Unavailable"}
             </span>
-          ))}
-        </div>
-      )}
+          </div>
 
-      {/* User Info & Rating / Action Buttons */}
-      <div className="flex items-center justify-between pt-3 border-t border-white/30">
-        <div className="flex items-center space-x-2">
-          <img
-            src={
-              (experience.agent && experience.agent.avatar) ||
-              "/default-avatar.png"
-            }
-            alt={(experience.agent && experience.agent.name) || "Agent Avatar"}
-            className="w-8 h-8 rounded-full border-2 border-white/70"
-          />
-          <div>
-            <p className="text-sm font-medium text-white drop-shadow-sm">
-              {experience.agent && experience.agent.name}
-            </p>
-            <div className="flex items-center">
-              <Star
-                className="w-3.5 h-3.5 text-yellow-400"
-                fill="currentColor"
+          {/* Save Button (only for non-agent) */}
+          {!isAgent && (
+            <button
+              onClick={handleSaveToggle}
+              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+            >
+              {isSaved ? (
+                <BookmarkCheck className="w-4 h-4 text-ocean-blue" />
+              ) : (
+                <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
+              )}
+            </button>
+          )}
+        </div>
+
+        {/* Bottom Left: Agent Info */}
+        <div className="absolute bottom-4 left-4 flex items-center gap-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-100">
+          <div className="relative w-6 h-6 rounded-full overflow-hidden">
+            {experience.agent?.avatar ? (
+              <Image
+                src={experience.agent.avatar}
+                alt={experience.agent.name || "Agent"}
+                fill
+                className="object-cover"
               />
-              <span className="ml-1 text-xs text-white/90 drop-shadow-sm">
+            ) : (
+              <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-sm font-medium">
+                {experience.agent?.name?.charAt(0).toUpperCase() || "A"}
+              </div>
+            )}
+          </div>
+          <div>
+            <div className="text-xs font-medium text-gray-800">
+              {experience.agent?.name || "Agent"}
+            </div>
+            <div className="flex items-center gap-1">
+              <Star className="w-3 h-3 text-yellow-500" fill="currentColor" />
+              <span className="text-xs text-gray-600">
                 {experience.averageRating}
               </span>
             </div>
           </div>
         </div>
 
-        {/* Action Button for non-agent mode */}
-        {!isAgent && (
-          <motion.button
-            whileTap={{ scale: 0.95 }}
-            className="px-3 py-1.5 bg-white text-midnight-blue rounded-full text-sm font-semibold hover:bg-light-gray transition-colors duration-300"
-          >
-            View Details
-          </motion.button>
-        )}
-
-        {/* Action Buttons for agent mode */}
+        {/* Agent Action Buttons (overlay on image) */}
         {isAgent && (
-          <div className="flex gap-2">
+          <div className="absolute bottom-4 right-4 flex gap-2 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-100">
             <Link href={`/agent/experiences/edit/${experience.id}`}>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="px-3 py-1.5 bg-white/90 text-midnight-blue rounded-full text-sm font-semibold hover:bg-white transition-colors duration-300 flex items-center gap-1"
+                className="px-3 py-2 bg-white/95 backdrop-blur-sm text-midnight-blue rounded-full text-sm font-semibold hover:bg-white transition-colors duration-300 flex items-center gap-2 shadow-lg"
               >
-                <Edit3 className="w-3.5 h-3.5" />
+                <Edit3 className="w-4 h-4" />
                 Edit
               </motion.button>
             </Link>
             <Link href={`/agent/experiences/${experience.id}`}>
               <motion.button
                 whileTap={{ scale: 0.95 }}
-                className="px-3 py-1.5 bg-ocean-blue/90 text-white rounded-full text-sm font-semibold hover:bg-ocean-blue transition-colors duration-300 flex items-center gap-1"
+                className="px-3 py-2 bg-ocean-blue/95 backdrop-blur-sm text-white rounded-full text-sm font-semibold hover:bg-ocean-blue transition-colors duration-300 flex items-center gap-2 shadow-lg"
               >
-                <Eye className="w-3.5 h-3.5" />
+                <Eye className="w-4 h-4" />
                 View
               </motion.button>
             </Link>
           </div>
         )}
       </div>
-    </div>
+
+      {/* Content Section - Flexible Height */}
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Tags */}
+        {experience.tags && experience.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-4">
+            {experience.tags.slice(0, 3).map((tag, index) => (
+              <span
+                key={index}
+                className="inline-block px-3 py-1 text-xs font-medium bg-ocean-blue/10 text-midnight-blue rounded-full"
+              >
+                {tag}
+              </span>
+            ))}
+            {experience.tags.length > 3 && (
+              <span className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+                +{experience.tags.length - 3}
+              </span>
+            )}
+          </div>
+        )}
+
+        {/* Title */}
+        <h3 className="text-2xl font-[800] text-gray-900 line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
+          {experience.title}
+        </h3>
+
+        {/* Spacer to push content to bottom */}
+        <div className="flex-grow"></div>
+
+        {/* Meta Info */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4 text-sm text-gray-500">
+            <div className="flex items-center gap-1.5">
+              <Clock className="w-4 h-4" />
+              <span>
+                {experience.duration}{" "}
+                {experience.duration === 1 ? "day" : "days"}
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Star className="w-4 h-4 text-yellow-500" fill="currentColor" />
+              <span>{experience.averageRating}</span>
+            </div>
+          </div>
+
+          {/* Action Button for non-agent mode */}
+          {!isAgent ? (
+            <Link href={`/experience/${experience.id}`}>
+              <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <span>View Details</span>
+                <svg
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            </Link>
+          ) : (
+            <div className="text-sm text-gray-600">Agent Dashboard</div>
+          )}
+        </div>
+
+        {/* Price Row - Always at bottom */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-600">Starting at</span>
+            <span className="text-2xl font-bold text-midnight-blue">
+              ${formatPrice(experience.minPrice)}
+            </span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 }

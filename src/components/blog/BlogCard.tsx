@@ -12,32 +12,92 @@ import { useState } from "react";
 
 interface BlogCardProps {
   blog: {
-    id: string;
-    title: string;
-    coverUrl?: string;
+    blog: {
+      id: string;
+      title: string;
+      content: string;
+      coverUrl?: string;
+      isPublished: boolean;
+      authorID: string;
+      createdAt: string;
+      updatedAt: string;
+      commentsCount: number;
+    };
     author: {
       name: string;
-      avatar?: string;
+      image?: string;
     };
-    publishedAt: string;
-    commentsCount: number;
-    isSaved?: boolean;
   };
   onSave?: (blogId: string) => void;
   onUnsave?: (blogId: string) => void;
 }
 
-export function BlogCard({ blog, onSave, onUnsave }: BlogCardProps) {
-  const [isSaved, setIsSaved] = useState(blog.isSaved || false);
+const getDefaultCoverImage = (title: string) => {
+  const defaults = {
+    adventure:
+      "https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&h=600&fit=crop&q=80",
+    food: "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&h=600&fit=crop&q=80",
+    culture:
+      "https://images.unsplash.com/photo-1469474968028-56623f02e42e?w=800&h=600&fit=crop&q=80",
+    nature:
+      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80",
+    city: "https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=800&h=600&fit=crop&q=80",
+    default:
+      "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop&q=80",
+  };
+
+  const titleLower = title.toLowerCase();
+
+  if (
+    titleLower.includes("food") ||
+    titleLower.includes("restaurant") ||
+    titleLower.includes("cuisine")
+  ) {
+    return defaults.food;
+  }
+  if (
+    titleLower.includes("mountain") ||
+    titleLower.includes("nature") ||
+    titleLower.includes("forest")
+  ) {
+    return defaults.nature;
+  }
+  if (
+    titleLower.includes("city") ||
+    titleLower.includes("urban") ||
+    titleLower.includes("street")
+  ) {
+    return defaults.city;
+  }
+  if (
+    titleLower.includes("culture") ||
+    titleLower.includes("museum") ||
+    titleLower.includes("history")
+  ) {
+    return defaults.culture;
+  }
+  if (
+    titleLower.includes("adventure") ||
+    titleLower.includes("hiking") ||
+    titleLower.includes("climbing")
+  ) {
+    return defaults.adventure;
+  }
+
+  return defaults.default;
+};
+
+export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
+  const [isSaved, setIsSaved] = useState(false); // Static false for now
 
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (isSaved) {
-      onUnsave?.(blog.id);
+      onUnsave?.(blogData.blog.id);
       setIsSaved(false);
     } else {
-      onSave?.(blog.id);
+      onSave?.(blogData.blog.id);
       setIsSaved(true);
     }
   };
@@ -51,18 +111,16 @@ export function BlogCard({ blog, onSave, onUnsave }: BlogCardProps) {
     });
   };
 
-  // Travel-themed default blog cover
-  const defaultCoverImage =
-    "https://images.unsplash.com/photo-1488646953014-85cb44e25828?w=800&h=600&fit=crop&q=80";
+  const defaultCoverImage = getDefaultCoverImage(blogData.blog.title);
 
   return (
-    <Link href={`/blog/${blog.id}`}>
-      <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform hover:-translate-y-1">
+    <Link href={`/blog/${blogData.blog.id}`}>
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform">
         {/* Cover Image with Overlay */}
         <div className="relative h-56 overflow-hidden">
           <Image
-            src={blog.coverUrl || defaultCoverImage}
-            alt={blog.title}
+            src={blogData.blog.coverUrl || defaultCoverImage}
+            alt={blogData.blog.title}
             fill
             className="object-cover group-hover:scale-110 transition-transform duration-700"
           />
@@ -85,21 +143,21 @@ export function BlogCard({ blog, onSave, onUnsave }: BlogCardProps) {
           {/* Author Badge on Image */}
           <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
             <div className="relative w-6 h-6 rounded-full overflow-hidden">
-              {blog.author.avatar ? (
+              {blogData.author.image ? (
                 <Image
-                  src={blog.author.avatar}
-                  alt={blog.author.name}
+                  src={blogData.author.image}
+                  alt={blogData.author.name}
                   fill
                   className="object-cover"
                 />
               ) : (
                 <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-xs font-medium">
-                  {blog.author.name.charAt(0).toUpperCase()}
+                  {blogData.author.name.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
             <span className="text-xs font-medium text-gray-700">
-              {blog.author.name}
+              {blogData.author.name}
             </span>
           </div>
         </div>
@@ -108,7 +166,7 @@ export function BlogCard({ blog, onSave, onUnsave }: BlogCardProps) {
         <div className="p-6">
           {/* Title */}
           <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight">
-            {blog.title}
+            {blogData.blog.title}
           </h3>
 
           {/* Meta Info */}
@@ -116,11 +174,11 @@ export function BlogCard({ blog, onSave, onUnsave }: BlogCardProps) {
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
-                <span>{formatDate(blog.publishedAt)}</span>
+                <span>{formatDate(blogData.blog.createdAt)}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <MessageCircle className="w-4 h-4" />
-                <span>{blog.commentsCount}</span>
+                <span>{blogData.blog.commentsCount}</span>
               </div>
             </div>
 

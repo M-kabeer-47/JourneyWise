@@ -15,6 +15,7 @@ export async function PUT(
         title,
         content,
         coverUrl,
+        updatedAt: new Date()
       })
 
       .where(eq(blog.id, id));

@@ -1,103 +1,18 @@
 "use client";
-import { useState, useMemo, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { BookOpen, Compass, Map, Sparkles } from "lucide-react";
 import { BlogCard } from "@/components/blog/BlogCard";
+import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
 import SearchBar from "@/components/ui/SearchBar";
 import SortBy from "@/components/ui/SortBy";
-
-// Sample data with travel-themed blogs
-const sampleBlogs = [
-  {
-    id: "1",
-    title: "Hidden Waterfalls of Iceland: A Photographer's Dream Journey",
-    coverUrl:
-      "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=800&h=600&fit=crop&q=80",
-    author: {
-      name: "Elena Rodriguez",
-      avatar:
-        "https://images.unsplash.com/photo-1494790108755-2616b612b786?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-15",
-    commentsCount: 34,
-    isSaved: false,
-  },
-  {
-    id: "2",
-    title: "Street Food Adventures: Exploring Bangkok's Night Markets",
-    coverUrl:
-      "https://images.unsplash.com/photo-1504754524776-8f4f37790ca0?w=800&h=600&fit=crop&q=80",
-    author: {
-      name: "Marcus Chen",
-      avatar:
-        "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-12",
-    commentsCount: 28,
-    isSaved: true,
-  },
-  {
-    id: "3",
-    title: "Solo Backpacking Through the Scottish Highlands: Lessons Learned",
-    // No coverUrl - will use default travel image
-    author: {
-      name: "Sarah MacLeod",
-      avatar:
-        "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-10",
-    commentsCount: 45,
-    isSaved: false,
-  },
-  {
-    id: "4",
-    title: "The Art of Slow Travel: Why Less Is More in Modern Tourism",
-    coverUrl:
-      "https://images.unsplash.com/photo-1539650116574-75c0c6d68bc7?w=800&h=600&fit=crop&q=80",
-    author: {
-      name: "Alessandro Rossi",
-      avatar:
-        "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-08",
-    commentsCount: 52,
-    isSaved: false,
-  },
-  {
-    id: "5",
-    title: "Digital Nomad Life: Working from Bali's Rice Terraces",
-    coverUrl:
-      "https://images.unsplash.com/photo-1537953773345-d172ccf13cf1?w=800&h=600&fit=crop&q=80",
-    author: {
-      name: "Jake Morrison",
-      avatar:
-        "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-05",
-    commentsCount: 19,
-    isSaved: true,
-  },
-  {
-    id: "6",
-    title: "Sustainable Tourism: How to Travel Responsibly in 2024",
-    coverUrl:
-      "https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=800&h=600&fit=crop&q=80",
-    author: {
-      name: "Dr. Priya Sharma",
-      avatar:
-        "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=150&h=150&fit=crop",
-    },
-    publishedAt: "2024-01-03",
-    commentsCount: 67,
-    isSaved: false,
-  },
-];
+import Pagination from "@/components/ui/Pagination";
+import { useFetchBlogs } from "@/hooks/blog/useFetchBlogs";
 
 const sortOptions = [
-  { value: "date", label: "Latest" },
-  { value: "comments", label: "Most Discussed" },
-  { value: "trending", label: "Trending" },
+  { value: "updatedAt", label: "Latest" },
+  { value: "commentsCount", label: "Most Discussed" },
 ];
 
 export default function BlogsPage() {
@@ -105,48 +20,40 @@ export default function BlogsPage() {
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
 
+  const [currentPage, setCurrentPage] = useState(
+    Number(current.get("page")) || 1
+  );
   const [searchValue, setSearchValue] = useState(current.get("search") || "");
-  const [sortBy, setSortBy] = useState<"date" | "comments" | "trending">(
-    (current.get("sort") as "date" | "comments" | "trending") || "date"
+  const [sortBy, setSortBy] = useState<"updatedAt" | "commentsCount">(
+    (current.get("sort") as "updatedAt" | "commentsCount") || "updatedAt"
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (current.get("order") as "asc" | "desc") || "desc"
   );
 
-  // Filter and sort blogs
-  const filteredAndSortedBlogs = useMemo(() => {
-    let filtered = sampleBlogs.filter(
-      (blog) =>
-        blog.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-        blog.author.name.toLowerCase().includes(searchValue.toLowerCase())
-    );
+  // Fetch blogs using your hook
+  const { data, isLoading, isFetching } = useFetchBlogs();
 
-    return filtered.sort((a, b) => {
-      if (sortBy === "date") {
-        const dateA = new Date(a.publishedAt).getTime();
-        const dateB = new Date(b.publishedAt).getTime();
-        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-      } else if (sortBy === "comments") {
-        return sortOrder === "desc"
-          ? b.commentsCount - a.commentsCount
-          : a.commentsCount - b.commentsCount;
-      }
-      return 0;
-    });
-  }, [searchValue, sortBy, sortOrder]);
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    updateQueryParams({ page: page.toString() });
+  };
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
-    updateQueryParams({ search: value || null });
+    setCurrentPage(1); // Reset to first page when searching
+    updateQueryParams({ search: value || null, page: "1" });
   };
 
   const handleSortChange = useCallback(
     (key: string, direction: "asc" | "desc") => {
-      setSortBy(key as "date" | "comments" | "trending");
+      setSortBy(key as "updatedAt" | "commentsCount");
       setSortOrder(direction);
+      setCurrentPage(1); // Reset to first page when sorting
       updateQueryParams({
         sort: key,
         order: direction,
+        page: "1",
       });
     },
     []
@@ -167,14 +74,36 @@ export default function BlogsPage() {
 
   const handleSaveBlog = (blogId: string) => {
     console.log("Save blog:", blogId);
+    // TODO: Implement save functionality
   };
 
   const handleUnsaveBlog = (blogId: string) => {
     console.log("Unsave blog:", blogId);
+    // TODO: Implement unsave functionality
   };
 
+  // Client-side filtering and sorting (since your API doesn't handle these yet)
+  const filteredAndSortedBlogs = data?.blogs
+    ?.filter(
+      (blog) =>
+        blog.blog.title.toLowerCase().includes(searchValue.toLowerCase()) ||
+        blog.author.name.toLowerCase().includes(searchValue.toLowerCase())
+    )
+    ?.sort((a, b) => {
+      if (sortBy === "updatedAt") {
+        const dateA = new Date(a.blog.updatedAt).getTime();
+        const dateB = new Date(b.blog.updatedAt).getTime();
+        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
+      } else if (sortBy === "commentsCount") {
+        return sortOrder === "desc"
+          ? b.blog.commentsCount - a.blog.commentsCount
+          : a.blog.commentsCount - b.blog.commentsCount;
+      }
+      return 0;
+    }) || [];
+
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-[200px]">
       {/* Hero Section */}
       <div className="relative bg-gradient-to-r from-midnight-blue to-ocean-blue text-white overflow-hidden">
         <div className="absolute inset-0">
@@ -192,7 +121,7 @@ export default function BlogsPage() {
               className="mb-6"
             >
               <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Sparkles className="w-4 h-4 text-yellow-300" />
+                <Sparkles className="w-4 h-4 text-accent" />
                 <span className="text-sm font-medium">
                   Travel Stories & Adventures
                 </span>
@@ -206,7 +135,7 @@ export default function BlogsPage() {
               className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
             >
               Discover Amazing
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">
+              <span className="block text-transparent text-accent">
                 Travel Stories
               </span>
             </motion.h1>
@@ -228,15 +157,15 @@ export default function BlogsPage() {
               className="flex items-center justify-center gap-8 text-sm"
             >
               <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-yellow-300" />
-                <span>{sampleBlogs.length}+ Stories</span>
+                <BookOpen className="w-5 h-5 text-accent" />
+                <span>{isLoading ? "Loading..." : `${data.blogs?.length || 0}+ Stories`}</span>
               </div>
               <div className="flex items-center gap-2">
-                <Compass className="w-5 h-5 text-yellow-300" />
+                <Compass className="w-5 h-5 text-accent" />
                 <span>Expert Tips</span>
               </div>
               <div className="flex items-center gap-2">
-                <Map className="w-5 h-5 text-yellow-300" />
+                <Map className="w-5 h-5 text-accent" />
                 <span>Hidden Gems</span>
               </div>
             </motion.div>
@@ -246,10 +175,10 @@ export default function BlogsPage() {
 
       {/* Search and Sort Controls */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
             {/* Search Bar */}
-            <div className="w- lg:w-[75%]">
+            <div className="w-full lg:w-[75%]">
               <SearchBar
                 searchTerm={searchValue}
                 setSearchTerm={handleSearch}
@@ -258,7 +187,7 @@ export default function BlogsPage() {
             </div>
 
             {/* Sort Controls */}
-            <div className="w-full lg:w-[25%] ">
+            <div className="w-full lg:w-[25%]">
               <SortBy
                 options={sortOptions}
                 activeSort={{
@@ -273,10 +202,19 @@ export default function BlogsPage() {
           {/* Results Count */}
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
             <span>
-              {filteredAndSortedBlogs.length}{" "}
-              {filteredAndSortedBlogs.length === 1 ? "story" : "stories"} found
+              {isLoading ? (
+                "Loading stories..."
+              ) : (
+                <>
+                  {filteredAndSortedBlogs.length}{" "}
+                  {filteredAndSortedBlogs.length === 1 ? "story" : "stories"} found
+                </>
+              )}
+              {isFetching && !isLoading && (
+                <span className="ml-2 text-ocean-blue">(Updating...)</span>
+              )}
             </span>
-            {searchValue && (
+            {searchValue && !isLoading && (
               <span>
                 Searching for:{" "}
                 <span className="font-medium text-midnight-blue">
@@ -289,17 +227,28 @@ export default function BlogsPage() {
       </div>
 
       {/* Blog Grid */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {filteredAndSortedBlogs.length > 0 ? (
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        {isLoading ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3  gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+          >
+            {Array.from({ length: 9 }).map((_, index) => (
+              <BlogCardSkeleton key={index} />
+            ))}
+          </motion.div>
+        ) : filteredAndSortedBlogs.length > 0 ? (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
             {filteredAndSortedBlogs.map((blog, index) => (
               <motion.div
-                key={blog.id}
+                key={blog.blog.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
@@ -324,7 +273,7 @@ export default function BlogsPage() {
             <h3 className="text-2xl font-bold text-gray-900 mb-4">
               No stories found
             </h3>
-            <p className="text-gray-600 mb-8 max-w-md mx-auto">
+            <p className="text-gray-600 mb-8 text-sm max-w-md mx-auto">
               {searchValue
                 ? `No stories match your search for "${searchValue}". Try different keywords or browse all stories.`
                 : "No travel stories have been published yet. Check back soon for amazing adventures!"}
@@ -332,7 +281,7 @@ export default function BlogsPage() {
             {searchValue && (
               <button
                 onClick={() => handleSearch("")}
-                className="px-6 py-3 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-lg"
+                className="px-6 py-3 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-lg text-sm"
               >
                 View All Stories
               </button>
@@ -340,6 +289,15 @@ export default function BlogsPage() {
           </motion.div>
         )}
       </div>
+
+      {/* Pagination - Only show if we have data and it's not loading */}
+      {!isLoading && filteredAndSortedBlogs.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={data?.pagination.total} // Calculate based on filtered results
+          onPageChange={handlePageChange}
+        />
+      )}
     </div>
   );
 }

@@ -38,6 +38,7 @@ export const agent = pgTable("agent", {
   verificationStatus: boolean("verificationStatus").notNull().default(false),
   docs: jsonb("docs").notNull(),
   agencyName: text("agencyName").notNull(),
+  rating: doublePrecision("rating").default(0),
 });
 
 export const experience = pgTable("experience", {
@@ -230,8 +231,9 @@ export const blog = pgTable("blog", {
   authorID: text("authorID")
     .notNull()
     .references(() => user.id),
-
+  category: text("category"),
   coverUrl: text("coverUrl"),
+  commentsCount: integer("commentsCount").default(0),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });

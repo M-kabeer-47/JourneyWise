@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     const minDuration = searchParams.get("minDuration");
     const maxDuration = searchParams.get("maxDuration");
     const tags = searchParams.get("tags");
-
+    console.log("Tags:", tags);
     const locations = searchParams.get("locations"); // Comma-separated list of locations
     // Search parameter
     const searchQuery = searchParams.get("search");
@@ -116,7 +116,7 @@ export async function GET(request: NextRequest) {
       duration: experience.duration,
       createdAt: experience.createdAt,
       averageRating: experience.averageRating,
-      // Add any other sortable columns here
+     
     };
 
     const executeQuery = async () => {

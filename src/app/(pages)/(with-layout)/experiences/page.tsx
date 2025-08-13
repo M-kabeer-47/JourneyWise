@@ -236,7 +236,8 @@ export default function ExperiencesPage() {
         <div className="px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24">
           <div className="max-w-3xl mx-auto text-center relative top-[40px]">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
-              Discover Amazing Experiences
+              Discover Amazing
+              <span className="text-accent"> Experiences</span>
             </h1>
             <p className="text-base text-blue-100 mb-4">
               Find and book unique activities led by local experts

@@ -1,74 +1,90 @@
-'use client'
+"use client";
 
-import { motion } from 'framer-motion'
-import { CalendarDays, Compass, BookOpen } from 'lucide-react'
-import { toggleNavbar } from '@/lib/redux/slices/experience'
-import { useEffect,useRef } from 'react'
-import { useAppDispatch } from '@/hooks/redux'
+import { motion } from "framer-motion";
+import { CalendarDays, Compass, BookOpen } from "lucide-react";
+// import { toggleNavbar } from '@/lib/redux/slices/experience'
+import { useEffect, useRef } from "react";
+import { useAppDispatch } from "@/hooks/redux";
 const tools = [
-  { 
-    id: 1, 
-    name: 'Itinerary Builder', 
-    icon: CalendarDays, 
-    description: 'Craft your dream adventure day by day with our intuitive interface.',
-    features: ['Customizable templates', 'AI-powered suggestions', 'Offline access', 'Export to PDF'],
-    buttonText: 'Start Planning',
+  {
+    id: 1,
+    name: "Itinerary Builder",
+    icon: CalendarDays,
+    description:
+      "Craft your dream adventure day by day with our intuitive interface.",
+    features: [
+      "Customizable templates",
+      "AI-powered suggestions",
+      "Offline access",
+      "Export to PDF",
+    ],
+    buttonText: "Start Planning",
   },
-  {   
-    id: 2, 
-    name: 'Experience Explorer',
+  {
+    id: 2,
+    name: "Experience Explorer",
     icon: Compass,
-    description: 'Discover and book unforgettable experiences curated by local experts.',
-    features: ['Personalized recommendations', 'Verified reviews', 'Instant booking', 'Virtual tours'],
-    buttonText: 'Explore Experiences',
+    description:
+      "Discover and book unforgettable experiences curated by local experts.",
+    features: [
+      "Personalized recommendations",
+      "Verified reviews",
+      "Instant booking",
+      "Virtual tours",
+    ],
+    buttonText: "Explore Experiences",
   },
-  { 
+  {
     id: 3,
-    name: 'Travel Insights',
+    name: "Travel Insights",
     icon: BookOpen,
-    description: 'Gain valuable insights and tips from our community of seasoned travelers.',
-    features: ['Destination guides', 'Packing lists', 'Budget calculators', 'Cultural etiquette tips'],
-    buttonText: 'Share Your Story',
+    description:
+      "Gain valuable insights and tips from our community of seasoned travelers.",
+    features: [
+      "Destination guides",
+      "Packing lists",
+      "Budget calculators",
+      "Cultural etiquette tips",
+    ],
+    buttonText: "Share Your Story",
   },
-]
-
+];
 
 export default function TripPlanningTools() {
-  const dispatch = useAppDispatch()
-  const sectionRef = useRef(null)
+  const dispatch = useAppDispatch();
+  const sectionRef = useRef(null);
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // dispatch(toggleNavbar(true))  
-          
+          // dispatch(toggleNavbar(true))
           // Show navbar
-        } 
+        }
       },
       { threshold: 0.1 }
-    )
+    );
 
     if (sectionRef.current) {
-      observer.observe(sectionRef.current)
+      observer.observe(sectionRef.current);
     }
 
     return () => {
       if (sectionRef.current) {
-        observer.unobserve(sectionRef.current)
+        observer.unobserve(sectionRef.current);
       }
-    }
-  }, [dispatch])
+    };
+  }, [dispatch]);
 
   return (
-    <motion.section 
-    ref={sectionRef}
-      className="py-32 bg-gray-50 relative top-[140px]"
+    <motion.section
+      ref={sectionRef}
+      className="py-32 bg-gray-50 relative top-[140px]  "
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <div className="px-12">
+      <div className="max-w-[1400px] mx-auto ">
         <h2 className="text-4xl font-bold mb-16 text-center text-charcoal">
           Elevate Your Travel Experience
         </h2>
@@ -80,17 +96,35 @@ export default function TripPlanningTools() {
             >
               <div className="p-8 flex flex-col h-full">
                 <div className="flex items-center mb-6">
-                  <div className="bg-white bg-opacity-10 p-4 rounded-full mr-5">
+                  <div className="bg-white bg-opacity-10 p-4 rounded-full ">
                     <tool.icon size={32} className="text-ocean-blue" />
                   </div>
-                  <h3 className="text-2xl font-bold text-charcoal">{tool.name}</h3>
+                  <h3 className="text-2xl font-bold text-charcoal">
+                    {tool.name}
+                  </h3>
                 </div>
-                <p className="text-gray-600 mb-8 text-lg leading-relaxed">{tool.description}</p>
+                <p className="text-gray-600 mb-8 text-lg leading-relaxed">
+                  {tool.description}
+                </p>
                 <ul className="space-y-4 mb-8 flex-grow">
                   {tool.features.map((feature, index) => (
-                    <li key={index} className="flex items-center text-base text-gray-700">
-                      <svg className="w-5 h-5 mr-3 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
+                    <li
+                      key={index}
+                      className="flex items-center text-base text-gray-700"
+                    >
+                      <svg
+                        className="w-5 h-5 mr-3 text-accent"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth="2"
+                          d="M5 13l4 4L19 7"
+                        ></path>
                       </svg>
                       {feature}
                     </li>
@@ -108,6 +142,5 @@ export default function TripPlanningTools() {
         </div>
       </div>
     </motion.section>
-  )
+  );
 }
-
