@@ -47,7 +47,8 @@ const DesktopHorizontalTimeline = ({
   progress,
   setIsImageModalOpen,
   setSelectedWaypoint,
-}: DesktopHorizontalTimelineProps) => {
+  showCards = true, // Add this prop
+}: DesktopHorizontalTimelineProps & { showCards?: boolean }) => {
   const n = waypoints.length
   useEffect(() => {
     
@@ -137,51 +138,52 @@ const DesktopHorizontalTimeline = ({
               </button>
 
               {/* Detail Card */}
-              <AnimatePresence>
-                {isActive && (
-                <motion.div
-                initial={{ opacity: 0, y: showAbove && width > 1024 ? 20 : -20 }}
-                animate={{ opacity: 1, y: showAbove && width > 1024 ? -40 : 40 }}
-                exit={{ opacity: 0, y: showAbove && width > 1024 ? 20 : -20 }}
-                transition={{ type: "spring", stiffness: 200, damping: 25, mass: 0.8 }}
-                style={{
-                  top: width <= 1024 ? "calc(60%)" : showAbove ? "auto" : "calc(60%)",
-                  bottom: width > 1024 && showAbove ? "65%" : "auto",
-                }}
-                className={`
-                  absolute h-auto bg-white p-4 rounded-lg shadow-lg w-64 max-w-[300px]
-                  ${index === 0 ? "left-[10px]" : ""}
-                  ${index === waypoints.length - 1 ? "right-[10px]" : ""}
-                `}
-              >
-              
-                    {waypoint.type === "attraction" && waypoint.imageUrl && (
-                      <div className="relative w-full aspect-video mb-2 rounded  bg-gray-100 cursor-pointer">
-                        <img
-                          src={waypoint.imageUrl}
-                          alt={waypoint.name || "Attraction"}
-                          className="w-full h-full object-cover"
-                          onClick={() => {
-                            setSelectedWaypoint(waypoint)
-                            setIsImageModalOpen(true)
-                          }}
-                        />
-                      </div>
-                    )}
-                    <h3 className="text-base font-bold text-midnight-blue mb-1 h-auto">
-                      {waypoint.name ||
-                        (index === 0
-                          ? "Starting Point"
-                          : index === n - 1
-                          ? "Final Destination"
-                          : "New Waypoint")}
-                    </h3>
-                    <p className="text-xs text-gray-600">
-                      {waypoint.description || "No description provided."}
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+              {showCards && (
+                <AnimatePresence>
+                  {isActive && (
+                    <motion.div
+                      initial={{ opacity: 0, y: showAbove && width > 1024 ? 20 : -20 }}
+                      animate={{ opacity: 1, y: showAbove && width > 1024 ? -40 : 40 }}
+                      exit={{ opacity: 0, y: showAbove && width > 1024 ? 20 : -20 }}
+                      transition={{ type: "spring", stiffness: 200, damping: 25, mass: 0.8 }}
+                      style={{
+                        top: width <= 1024 ? "calc(60%)" : showAbove ? "auto" : "calc(60%)",
+                        bottom: width > 1024 && showAbove ? "65%" : "auto",
+                      }}
+                      className={`
+                        absolute h-auto bg-white p-4 rounded-lg shadow-lg w-64 max-w-[300px]
+                        ${index === 0 ? "left-[10px]" : ""}
+                        ${index === waypoints.length - 1 ? "right-[10px]" : ""}
+                      `}
+                    >
+                      {waypoint.type === "attraction" && waypoint.imageUrl && (
+                        <div className="relative w-full aspect-video mb-2 rounded bg-gray-100 cursor-pointer">
+                          <img
+                            src={waypoint.imageUrl}
+                            alt={waypoint.name || "Attraction"}
+                            className="w-full h-full object-cover"
+                            onClick={() => {
+                              setSelectedWaypoint(waypoint)
+                              setIsImageModalOpen(true)
+                            }}
+                          />
+                        </div>
+                      )}
+                      <h3 className="text-base font-bold text-midnight-blue mb-1 h-auto">
+                        {waypoint.name ||
+                          (index === 0
+                            ? "Starting Point"
+                            : index === n - 1
+                            ? "Final Destination"
+                            : "New Waypoint")}
+                      </h3>
+                      <p className="text-xs text-gray-600">
+                        {waypoint.description || "No description provided."}
+                      </p>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              )}
             </div>
           )
         })}
@@ -449,6 +451,7 @@ export function WaypointTimeline({
           progress={progress}
           setIsImageModalOpen={setIsImageModalOpen}
           setSelectedWaypoint={setSelectedWaypoint}
+          showCards={showCards} // Pass down the showCards prop
         />
       </div>
       <div className="block md:hidden">
@@ -460,6 +463,7 @@ export function WaypointTimeline({
           setIsImageModalOpen={setIsImageModalOpen}
           selectedWaypoint={selectedWaypoint}
           progress={progress}
+          showCards={showCards} // Pass down the showCards prop
         />
       </div>
 

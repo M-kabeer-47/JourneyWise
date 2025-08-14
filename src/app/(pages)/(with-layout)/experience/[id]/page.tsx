@@ -17,7 +17,7 @@ import ExperiencePageSkeleton from "@/components/skeletons/ExperiencePageSkeleto
 import { reviews } from "@/lib/constants/dashboardMockData";
 import useFetchExperience from "@/hooks/experience/useFetchExperience";
 import { useParams } from "next/navigation";
-const TripPage =  () => {
+const TripPage = () => {
   let { id } = useParams();
   id = typeof id === "string" ? id : "";
   if (!id) {
@@ -110,7 +110,9 @@ const TripPage =  () => {
                             <div className="flex-shrink-0 w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
                               <Check className="w-3 h-3 text-emerald-600" />
                             </div>
-                            <span className="text-gray-600">{item}</span>
+                            <span className=" text-sm sm:text-basetext-gray-600">
+                              {item}
+                            </span>
                           </div>
                         )
                       )}

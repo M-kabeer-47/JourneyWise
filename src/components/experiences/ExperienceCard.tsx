@@ -119,12 +119,6 @@ export default function ExperienceCard({
             <div className="text-xs font-medium text-gray-800">
               {experience.agent?.name || "Agent"}
             </div>
-            <div className="flex items-center gap-1">
-              <Star className="w-3 h-3 text-yellow-500" fill="currentColor" />
-              <span className="text-xs text-gray-600">
-                {experience.averageRating}
-              </span>
-            </div>
           </div>
         </div>
 
