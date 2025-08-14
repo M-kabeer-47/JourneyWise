@@ -10,7 +10,7 @@ import {
   ChevronUp,
   X,
 } from "lucide-react"
-import type { Waypoint } from "@/lib/types/Waypoint"
+import type { Waypoint } from "@/lib/types/waypoint"
 import { useEffect, useRef, useState } from "react"
 import { Button } from "../ui/button"
 import { cn } from "@/lib/utils"
@@ -21,6 +21,7 @@ interface WaypointTimelineProps {
   onWaypointClick: (index: number) => void
   isLoading?: boolean
   progress: number
+  showCards?: boolean; // NEW: control internal card rendering
 }
 
 // ─── Waypoint Detail Card ────────────────────────────────
@@ -427,25 +428,38 @@ const MobileVerticalTimeline = ({
 
 
 
-export const WaypointTimeline = (props: WaypointTimelineProps) => {
+export function WaypointTimeline({
+  waypoints,
+  activeIndex,
+  onWaypointClick,
+  progress,
+  isLoading,
+  showCards = true, // NEW default: keep old behavior
+}: WaypointTimelineProps) {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false)
   const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(null)
 
   return (
-    <>
+    <div className="w-full">
       <div className="hidden md:block">
         <DesktopHorizontalTimeline
-          {...props}
+          waypoints={waypoints}
+          activeIndex={activeIndex}
+          onWaypointClick={onWaypointClick}
+          progress={progress}
           setIsImageModalOpen={setIsImageModalOpen}
           setSelectedWaypoint={setSelectedWaypoint}
         />
       </div>
       <div className="block md:hidden">
         <MobileVerticalTimeline
-          {...props}
-          selectedWaypoint={selectedWaypoint}
-          setIsImageModalOpen={setIsImageModalOpen}
+          waypoints={waypoints}
+          activeIndex={activeIndex}
+          onWaypointClick={onWaypointClick}
           setSelectedWaypoint={setSelectedWaypoint}
+          setIsImageModalOpen={setIsImageModalOpen}
+          selectedWaypoint={selectedWaypoint}
+          progress={progress}
         />
       </div>
 
@@ -457,6 +471,15 @@ export const WaypointTimeline = (props: WaypointTimelineProps) => {
          onClose={() => setIsImageModalOpen(false)}
         />
       )}
-    </>
-  )
+
+      {/* ─── Waypoint Detail Card ──────────────────────────────── */}
+      {showCards && (
+        <>
+          {/* ...existing code that renders the per-waypoint card(s) above/below timeline... */}
+        </>
+      )}
+
+      {/* ...rest of existing code... */}
+    </div>
+  );
 }
