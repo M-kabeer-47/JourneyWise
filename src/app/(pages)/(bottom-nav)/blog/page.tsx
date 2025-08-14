@@ -19,6 +19,7 @@ export default function CreateBlogPage() {
       html: data.content,
       coverUrl: data.coverUrl,
       isPublished: true,
+      category: data.category,
     });
   };
 

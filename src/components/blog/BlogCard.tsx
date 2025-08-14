@@ -166,7 +166,11 @@ export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
         <div className="p-6">
           {/* Title */}
           <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight">
-            {blogData.blog.title}
+            {blogData.blog.title.length > 30 ? (
+              <>{blogData.blog.title.slice(0, 30)}...</>
+            ) : (
+              <>{blogData.blog.title}</>
+            )}
           </h3>
 
           {/* Meta Info */}

@@ -6,6 +6,7 @@ import useFetchBlog from "@/hooks/blog/useFetchBlog";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/Spinner";
 import dynamic from "next/dynamic"; // Add this import
+import BlogLoader from "@/components/blog/BlogLoader";
 
 // Dynamically import Editor with SSR disabled
 const Editor = dynamic(() => import("@/components/blog/Editor"), {
@@ -29,19 +30,13 @@ export default function UpdateBlogPage() {
       title: data.title,
       html: data.content,
       coverUrl: data.coverUrl,
+      category: data.category,
     });
   };
 
   // Loading state
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
-        <div className="text-center flex flex-col items-center">
-          <Spinner size="small" />
-          <p className="mt-4 text-gray-600">Loading blog...</p>
-        </div>
-      </div>
-    );
+    return <BlogLoader />;
   }
 
   // Error state
@@ -84,14 +79,13 @@ export default function UpdateBlogPage() {
     );
   }
 
-  // Parse blocks content if it exists
-
   return (
     <Editor
       type="update"
       initialTitle={blogData.blog.title}
       initialContent={blogData.blog.content}
       initialCoverUrl={blogData.blog.coverUrl}
+      initialCategory={blogData.blog.category}
       updateBlog={handleUpdate}
       isPublishing={isUpdating}
       onSuccess={() => router.push("/success/blog-updated")}

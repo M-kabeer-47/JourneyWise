@@ -11,7 +11,7 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 export default async function Home() {
   return (
-    <main className="text-charcoal">
+    <main className="bg-gray-100 ">
       <Navbar />
       <HeroSection />
       <FeaturedExperiences />

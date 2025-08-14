@@ -20,8 +20,8 @@ export const BlogNav: React.FC<BlogNavProps> = ({
   hasChanges = false,
 }) => {
   return (
-    <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200 sm:px-14">
-      <div className="sm:px-12 px-2 py-3 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 bg-white/85 backdrop-blur border-b border-gray-200 ">
+      <div className="px-2 sm:px-6 py-3 flex items-center justify-between">
         <h1 className="text-xl sm:text-2xl  font-bold font-raleway text-midnight-blue">
           JourneyWise
         </h1>

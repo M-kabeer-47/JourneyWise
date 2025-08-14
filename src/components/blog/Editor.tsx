@@ -15,12 +15,14 @@ import ConfirmModal from "../ui/ConfirmModal";
 import { BlogNav } from "./BlogNavbar";
 import { BlogCover } from "./BlogCover";
 import { useQueryClient } from "@tanstack/react-query";
+import TextareaAutosize from "react-textarea-autosize";
 
 interface EditorProps {
   type: "create" | "update";
   initialTitle?: string;
   initialContent?: any;
   initialCoverUrl?: string;
+  initialCategory?: string | null;
   publishBlog?: (data: any) => Promise<void>;
   saveAsDraftBlog?: (data: any) => Promise<void>;
   updateBlog?: (data: any) => Promise<void>;
@@ -33,6 +35,7 @@ export default function Editor({
   initialTitle = "",
   initialContent,
   initialCoverUrl = "",
+  initialCategory = null,
   publishBlog,
   saveAsDraftBlog,
   updateBlog,
@@ -108,7 +111,7 @@ export default function Editor({
   const handleTitleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setTitle(e.target.value);
     if (type === "create") {
-      localStorage.setItem("blog-title", e.target.value);
+      localStorage.setItem("blog-title", e.target.value.trim());
     } else {
       if (e.target.value !== initialTitle) {
         setHasChanges(true);
@@ -139,10 +142,10 @@ export default function Editor({
     }
   };
 
-  const handlePublish = async () => {
+  const handlePublish = async (category?: string) => {
     try {
       let finalCoverUrl = coverUrl;
-      if (coverImage!==null) {
+      if (coverImage !== null) {
         finalCoverUrl = await uploadToCloudinary(coverImage);
       }
       const html = await editor.blocksToFullHTML(editor.document);
@@ -150,6 +153,7 @@ export default function Editor({
         title,
         content: html,
         coverUrl: coverImage === null ? null : finalCoverUrl,
+        category: category || null,
         isPublished: true,
       };
       if (type === "create" && publishBlog) {
@@ -184,6 +188,7 @@ export default function Editor({
         content: html,
         blocks,
         coverUrl: finalCoverUrl,
+        category: null, // Drafts don't require category
         isPublished: false,
       });
     } catch (error) {
@@ -211,7 +216,7 @@ export default function Editor({
         alert("Found saved draft");
         editor.replaceBlocks(editor.document, JSON.parse(savedDraft));
       }
-      if (savedTitle) setTitle(savedTitle);
+      if (savedTitle && savedTitle.trim()) setTitle(savedTitle);
       if (savedCover) setCoverUrl(savedCover);
     }
     if (type === "update" && initialContent) {
@@ -238,21 +243,20 @@ export default function Editor({
         onCoverPicked={onCoverPicked}
         onRemoveCover={removeCover}
       />
-      <div className="">
-        <div className="relative group px-[50px] sm:px-24 top-[20px]">
-          <textarea
+      <div className="lg:max-w-[1400px] mx-auto px-[30px] ">
+        <div className="relative group top-[20px]">
+          <TextareaAutosize
             value={title}
             onChange={handleTitleChange}
             placeholder={type === "create" ? "Title" : "Blog title"}
-            className="w-full text-4xl sm:text-6xl font-bold placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0"
+            className="w-full text-4xl sm:text-6xl font-bold placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0 mb-[70px]"
           />
         </div>
-        <div className="sm:px-12 relative top-[-20px]">
+        <div className="relative top-[-20px]">
           <BlockNoteView
             editor={editor}
             theme="light"
             onChange={handleEditorChange}
-            // FIX: Pass the memoized handlers
             onScroll={handleScroll}
             onPaste={handlePaste}
           />
@@ -263,14 +267,16 @@ export default function Editor({
         title={type === "create" ? "Publish Blog" : "Update Blog"}
         description={
           type === "create"
-            ? "Are you sure you want to publish this blog?"
-            : "Are you sure you want to update this blog?"
+            ? "Select a category and publish your travel story to share with the community."
+            : "Update your blog post and optionally change its category."
         }
         isOpen={isConfirmModalOpen}
         onConfirm={handlePublish}
         onClose={() => setIsConfirmModalOpen(false)}
         loading={isPublishing}
         loadingText={type === "create" ? "Publishing..." : "Updating..."}
+        requireCategory={true}
+        initialCategory={initialCategory || ""}
       />
     </div>
   );

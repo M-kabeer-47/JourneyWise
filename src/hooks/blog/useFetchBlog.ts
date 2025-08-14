@@ -3,6 +3,7 @@ import axios from "axios";
 
 interface BlogData {
   blog: {
+    category: string | null | undefined;
     id: string;
     title: string;
     content: string;

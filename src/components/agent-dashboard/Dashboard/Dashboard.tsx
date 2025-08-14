@@ -5,7 +5,7 @@ import BookingsTable from '../Bookings/BookingsTable';
 import ExperiencesSection from '../ExperiencesSection';
 import ReviewsSection from '../ReviewsSection';
 import NotificationsPanel from './NotificationsPanel';
-import { metrics, recentBookings, experiences, reviews, agent, notifications } from '@/lib/data/dashboardMockData';
+import { metrics, recentBookings, experiences, reviews, agent, notifications } from '@/lib/constants/dashboardMockData';
 import { Plus, Sparkles } from 'lucide-react';
 
 const Dashboard: React.FC = () => {

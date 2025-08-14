@@ -8,6 +8,7 @@ export default function usePublishBlog() {
       html: string;
       coverUrl: string | null;
       id: string;
+      category: string | null;
     }) => {
       try {
         let response = await axios.put(
@@ -15,7 +16,8 @@ export default function usePublishBlog() {
           {
             title: data.title,
             content: data.html,
-            coverUrl: data.coverUrl || null,
+            coverUrl: data.coverUrl,
+            category: data.category,
           }
         );
         toast.success("Blog saved successfully");

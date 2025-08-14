@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "framer-motion"
 import { useState } from "react"
-import { currencies } from "../../../lib/data/currencies"
+import { currencies } from "../../../lib/constants/currencies"
 import { MapPin, Users, CheckCircle2, LucideIcon } from "lucide-react"
 import { ModalWrapper } from "./ModalWrapper"
 import { ProgressSteps } from "./ProgressStep"

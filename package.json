@@ -77,6 +77,7 @@
     "react-responsive": "^10.0.1",
     "react-select": "^5.9.0",
     "react-select-country-list": "^2.2.3",
+    "react-textarea-autosize": "^8.5.9",
     "react-toastify": "^10.0.6",
     "reactour": "^1.19.4",
     "shadcn-ui": "^0.9.4",

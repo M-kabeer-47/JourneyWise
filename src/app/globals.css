@@ -2,9 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-
-
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap");
 
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Raleway:wght@700&display=swap");
 
@@ -21,7 +19,6 @@ body {
   min-height: 100vh;
   overflow-y: auto;
 }
-
 
 h1 {
   font-family: "Raleway", sans-serif;
@@ -310,4 +307,8 @@ div[contenteditable][data-placeholder]:empty:before {
   .grid-skeleton-container {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+.bn-editor {
+  padding-inline: 0 !important;
 }

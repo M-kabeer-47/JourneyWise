@@ -8,6 +8,7 @@ export default function usePublishBlog() {
       html: string;
       coverUrl: string | null;
       isPublished: boolean;
+      category?: string | null;
     }) => {
       try {
         await axios.post(
@@ -17,6 +18,7 @@ export default function usePublishBlog() {
             content: data.html,
             coverUrl: data.coverUrl || null,
             isPublished: data.isPublished,
+            category: data.category || null,
           }
         );
         if (data.isPublished) {

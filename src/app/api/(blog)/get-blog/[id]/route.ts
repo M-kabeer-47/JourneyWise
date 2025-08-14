@@ -2,7 +2,10 @@ import { NextRequest, NextResponse } from "next/server";
 import { blog, user } from "@/../auth-schema";
 import db from "@/lib/server/db";
 import { eq } from "drizzle-orm";
-export async function GET(request: NextRequest,{params}: {params: {id: string}}) {
+export async function GET(
+  request: NextRequest,
+  { params }: { params: { id: string } }
+) {
   try {
     const { id } = await params;
     if (!id) {
@@ -10,14 +13,7 @@ export async function GET(request: NextRequest,{params}: {params: {id: string}})
     }
     const blogData = await db
       .select({
-        blog: {
-          id: blog.id,
-          title: blog.title,
-          content: blog.content,
-          createdAt: blog.createdAt,
-          updatedAt: blog.updatedAt,
-          coverUrl: blog.coverUrl,
-        },
+        blog: blog,
         user: {
           id: user.id,
           name: user.name,

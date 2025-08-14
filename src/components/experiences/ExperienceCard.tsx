@@ -43,6 +43,12 @@ export default function ExperienceCard({
     }
   };
 
+  // Function to truncate description
+  const truncateDescription = (text: string, maxLength: number = 120) => {
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength).trim() + "...";
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -169,9 +175,16 @@ export default function ExperienceCard({
         )}
 
         {/* Title */}
-        <h3 className="text-2xl font-[800] text-gray-900 line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
+        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
           {experience.title}
         </h3>
+
+        {/* Description */}
+        {experience.description && (
+          <p className="text-sm text-gray-600 line-clamp-3 mb-4 leading-relaxed">
+            {truncateDescription(experience.description)}
+          </p>
+        )}
 
         {/* Spacer to push content to bottom */}
         <div className="flex-grow"></div>

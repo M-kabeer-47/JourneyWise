@@ -1,6 +1,6 @@
 import { StepOneType } from "@/lib/types/create-experience-steps";
 import { FieldErrors, UseFormSetValue } from "react-hook-form";
-import countries from "@/lib/data/countries";
+import countries from "@/lib/constants/countries";
 interface CountrySelectorProps {
   onChange: (value: string) => void;
   setValue: UseFormSetValue<StepOneType>;

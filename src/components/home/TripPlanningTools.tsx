@@ -78,13 +78,13 @@ export default function TripPlanningTools() {
   return (
     <motion.section
       ref={sectionRef}
-      className="py-32 bg-gray-50 relative top-[140px]  "
+      className="py-32 bg-gray-100 relative top-[140px]  "
       initial={{ opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
       viewport={{ once: true, amount: 0.3 }}
     >
-      <div className="max-w-[1400px] mx-auto ">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-0">
         <h2 className="text-4xl font-bold mb-16 text-center text-charcoal">
           Elevate Your Travel Experience
         </h2>

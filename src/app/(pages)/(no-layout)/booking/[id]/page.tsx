@@ -9,7 +9,7 @@ import IllustrationSection from "@/components/booking/IllustrationSection";
 import { toast } from "@/components/ui/Toast";
 import BookingSkeleton from "@/components/skeletons/BookingSkeleton";
 import { useState, useEffect } from "react";
-import { useCreateBooking } from "@/hooks/useCreateBooking";
+import { useCreateBooking } from "@/hooks/booking/useCreateBooking";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { zodResolver } from "@hookform/resolvers/zod";

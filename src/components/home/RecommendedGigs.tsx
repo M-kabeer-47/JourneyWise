@@ -4,7 +4,7 @@ import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import GigCarousel from "../experiences/ExperienceCarousel";
 
 export default function FeaturedGigs() {
-  const { experiences, isLoading, isFetching } = useFetchExperiences({});
+  const { experiences, isLoading, isFetching } = useFetchExperiences();
 
   if (isLoading || isFetching) {
     return (

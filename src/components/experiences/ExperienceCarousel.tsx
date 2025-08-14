@@ -86,7 +86,7 @@ export default function ExperienceCarousel({
   return (
     <section
       ref={sectionRef || null}
-      className="py-20 bg-gradient-to-b from-midnight-blue/5 to-ocean-blue/5 relative overflow-hidden"
+      className="py-20  relative overflow-hidden"
     >
       <div className="px-4 md:px-12">
         <motion.div

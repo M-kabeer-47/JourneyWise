@@ -1,6 +1,6 @@
 import { motion } from "framer-motion"
 import { MapPin, Users, Wallet } from "lucide-react"
-import { Currency } from "../../../../lib/data/currencies"
+import { Currency } from "../../../../lib/constants/currencies"
 
 interface ReviewStepProps {
   startLocation: string

@@ -1,16 +1,35 @@
-'use client'
+"use client";
 
-import React, { useEffect, useRef } from 'react'
-import Image from 'next/image'
-import { Star } from 'lucide-react'
-import { cn } from "@/lib/auth/utils"
-import {useRouter} from 'next/navigation'
+import React, { useEffect, useRef } from "react";
+import Image from "next/image";
+import { Star } from "lucide-react";
+import { cn } from "@/lib/auth/utils";
+import { useRouter } from "next/navigation";
 
 const testimonials = [
-  { id: 1, name: 'David Bowes', image: '/user1.jpg', rating: 5, quote: 'TravelEase made planning my dream vacation a breeze!' },
-  { id: 2, name: 'Mike Chen', image: '/user2.jpg', rating: 4, quote: 'The trips I found through this app were unforgettable experiences.' },
-  { id: 3, name: 'Shaun Pollock', image: '/user3.jpg', rating: 5, quote: 'I love how easy it is to connect with local guides and plan unique adventures.' },
-]
+  {
+    id: 1,
+    name: "David Bowes",
+    image: "/user1.jpg",
+    rating: 5,
+    quote: "TravelEase made planning my dream vacation a breeze!",
+  },
+  {
+    id: 2,
+    name: "Mike Chen",
+    image: "/user2.jpg",
+    rating: 4,
+    quote: "The trips I found through this app were unforgettable experiences.",
+  },
+  {
+    id: 3,
+    name: "Shaun Pollock",
+    image: "/user3.jpg",
+    rating: 5,
+    quote:
+      "I love how easy it is to connect with local guides and plan unique adventures.",
+  },
+];
 
 const InfiniteMovingCards = ({
   items,
@@ -73,15 +92,25 @@ const InfiniteMovingCards = ({
         {items.map((item) => (
           <div
             key={item.id}
-            className="w-[350px] max-w-full relative rounded-lg flex-shrink-0 bg-light-gray px-8 py-6 shadow-md md:w-[450px]"
+            className="w-[350px] max-w-full relative rounded-lg flex-shrink-0  px-8 py-6 shadow-md md:w-[450px]"
           >
             <div className="flex items-center mb-4">
-              <Image src={item.image} alt={item.name} width={60} height={60} className="rounded-full mr-4" />
+              <Image
+                src={item.image}
+                alt={item.name}
+                width={60}
+                height={60}
+                className="rounded-full mr-4"
+              />
               <div>
                 <h3 className="font-semibold">{item.name}</h3>
                 <div className="flex">
                   {[...Array(item.rating)].map((_, i) => (
-                    <Star key={i} size={16} className="text-accent fill-current" />
+                    <Star
+                      key={i}
+                      size={16}
+                      className="text-accent fill-current"
+                    />
                   ))}
                 </div>
               </div>
@@ -95,15 +124,20 @@ const InfiniteMovingCards = ({
 };
 
 export default function UserTestimonials() {
-  const router = useRouter()
+  const router = useRouter();
   return (
-    <section className="py-16 bg-white mb-[100px]">
+    <section className="py-16 mb-[100px]">
       <div className="mx-auto px-4">
-        <h2 className="text-3xl font-bold mb-8 text-center">What Our Users Say</h2>
-        
-        <InfiniteMovingCards items={testimonials} speed="normal" pauseOnHover={true} />
+        <h2 className="text-3xl font-bold mb-8 text-center">
+          What Our Users Say
+        </h2>
+
+        <InfiniteMovingCards
+          items={testimonials}
+          speed="normal"
+          pauseOnHover={true}
+        />
       </div>
     </section>
-  )
+  );
 }
-

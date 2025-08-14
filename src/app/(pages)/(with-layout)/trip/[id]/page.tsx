@@ -1,12 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { redirect, useParams, useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Share2, ArrowLeft, User } from "lucide-react";
-import Spinner from "@/components/ui/Spinner";
+
 import { Toast, toast } from "@/components/ui/Toast";
 import Link from "next/link";
-import { Waypoint } from "@/lib/types/Waypoint";
+import { Waypoint } from "@/lib/types/waypoint";
 
 // Import the components we created
 import PremiumTimeline from "@/components/my-trips/PremiumTimeline";
@@ -15,7 +15,7 @@ import TripOverview from "@/components/my-trips/TripDetails";
 import ImageModal from "@/components/ui/ImageModal";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
-import useFetchTrip from "@/hooks/useFetchTrip";
+import useFetchTrip from "@/hooks/trip/useFetchTrip";
 
 interface trip {
   id: string;

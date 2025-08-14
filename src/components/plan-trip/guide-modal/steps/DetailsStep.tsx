@@ -1,7 +1,7 @@
 import { motion } from "framer-motion"
 import { Users, Wallet } from "lucide-react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/Select"
-import { Currency } from "../../../../lib/data/currencies" 
+import { Currency } from "../../../../lib/constants/currencies" 
 
 interface DetailsStepProps {
   numPeople: number

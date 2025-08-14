@@ -14,7 +14,7 @@ import ImagesCarousel from "@/components/tripPage/ImagesCarousel";
 
 import ReviewSection from "@/components/tripPage/ReviewSection";
 import ExperiencePageSkeleton from "@/components/skeletons/ExperiencePageSkeleton";
-import { reviews } from "@/lib/data/dashboardMockData";
+import { reviews } from "@/lib/constants/dashboardMockData";
 import useFetchExperience from "@/hooks/experience/useFetchExperience";
 import { useParams } from "next/navigation";
 const TripPage =  () => {
