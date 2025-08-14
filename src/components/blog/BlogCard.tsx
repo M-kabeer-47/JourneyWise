@@ -174,7 +174,7 @@ export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
             <div className="flex items-center gap-4 text-sm text-gray-500">
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
-                <span>{formatDate(blogData.blog.createdAt)}</span>
+                <span>{formatDate(blogData.blog.updatedAt)}</span>
               </div>
               <div className="flex items-center gap-1.5">
                 <MessageCircle className="w-4 h-4" />

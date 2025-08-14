@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { BookOpen, Compass, Map, Sparkles } from "lucide-react";
@@ -25,7 +25,7 @@ export default function BlogsPage() {
   );
   const [searchValue, setSearchValue] = useState(current.get("search") || "");
   const [sortBy, setSortBy] = useState<"updatedAt" | "commentsCount">(
-    (current.get("sort") as "updatedAt" | "commentsCount") || "updatedAt"
+    (current.get("sortBy") as "updatedAt" | "commentsCount") || "updatedAt"
   );
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (current.get("order") as "asc" | "desc") || "desc"
@@ -41,8 +41,6 @@ export default function BlogsPage() {
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
-    setCurrentPage(1); // Reset to first page when searching
-    updateQueryParams({ search: value || null, page: "1" });
   };
 
   const handleSortChange = useCallback(
@@ -51,7 +49,7 @@ export default function BlogsPage() {
       setSortOrder(direction);
       setCurrentPage(1); // Reset to first page when sorting
       updateQueryParams({
-        sort: key,
+        sortBy: key,
         order: direction,
         page: "1",
       });
@@ -82,25 +80,14 @@ export default function BlogsPage() {
     // TODO: Implement unsave functionality
   };
 
+  useEffect(() => {
+    let timeout = setTimeout(() => {
+      setCurrentPage(1); // Reset to first page when searching
+      updateQueryParams({ search: searchValue || null, page: "1" });
+    }, 300);
+    return () => clearTimeout(timeout);
+  }, [searchValue]);
   // Client-side filtering and sorting (since your API doesn't handle these yet)
-  const filteredAndSortedBlogs = data?.blogs
-    ?.filter(
-      (blog) =>
-        blog.blog.title.toLowerCase().includes(searchValue.toLowerCase()) ||
-        blog.author.name.toLowerCase().includes(searchValue.toLowerCase())
-    )
-    ?.sort((a, b) => {
-      if (sortBy === "updatedAt") {
-        const dateA = new Date(a.blog.updatedAt).getTime();
-        const dateB = new Date(b.blog.updatedAt).getTime();
-        return sortOrder === "desc" ? dateB - dateA : dateA - dateB;
-      } else if (sortBy === "commentsCount") {
-        return sortOrder === "desc"
-          ? b.blog.commentsCount - a.blog.commentsCount
-          : a.blog.commentsCount - b.blog.commentsCount;
-      }
-      return 0;
-    }) || [];
 
   return (
     <div className="min-h-screen bg-gray-50 pb-[200px]">
@@ -158,7 +145,11 @@ export default function BlogsPage() {
             >
               <div className="flex items-center gap-2">
                 <BookOpen className="w-5 h-5 text-accent" />
-                <span>{isLoading ? "Loading..." : `${data.blogs?.length || 0}+ Stories`}</span>
+                <span>
+                  {isLoading
+                    ? "Loading..."
+                    : `${data.blogs?.length || 0}+ Stories`}
+                </span>
               </div>
               <div className="flex items-center gap-2">
                 <Compass className="w-5 h-5 text-accent" />
@@ -206,8 +197,8 @@ export default function BlogsPage() {
                 "Loading stories..."
               ) : (
                 <>
-                  {filteredAndSortedBlogs.length}{" "}
-                  {filteredAndSortedBlogs.length === 1 ? "story" : "stories"} found
+                  {data.blogs.length}{" "}
+                  {data.blogs.length === 1 ? "story" : "stories"} found
                 </>
               )}
               {isFetching && !isLoading && (
@@ -239,14 +230,14 @@ export default function BlogsPage() {
               <BlogCardSkeleton key={index} />
             ))}
           </motion.div>
-        ) : filteredAndSortedBlogs.length > 0 ? (
+        ) : data.blogs.length > 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.6 }}
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {filteredAndSortedBlogs.map((blog, index) => (
+            {data.blogs.map((blog, index) => (
               <motion.div
                 key={blog.blog.id}
                 initial={{ opacity: 0, y: 20 }}
@@ -291,10 +282,10 @@ export default function BlogsPage() {
       </div>
 
       {/* Pagination - Only show if we have data and it's not loading */}
-      {!isLoading && filteredAndSortedBlogs.length > 0 && (
+      {!isLoading && data.blogs.length > 0 && (
         <Pagination
           currentPage={currentPage}
-          totalPages={data?.pagination.total} // Calculate based on filtered results
+          totalPages={data?.pagination.pages} // Calculate based on filtered results
           onPageChange={handlePageChange}
         />
       )}

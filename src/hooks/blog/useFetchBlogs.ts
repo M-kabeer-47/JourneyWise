@@ -22,9 +22,9 @@ interface Blog {
   author: BlogAuthor;
 }
 
-const fetchBlogs = async () => {
+const fetchBlogs = async (params: URLSearchParams) => {
   const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-blogs`
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-blogs?${params.toString()}`
   );
   return data;
 };
@@ -34,7 +34,7 @@ export const useFetchBlogs = () => {
 
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["blogs", params.toString()],
-    queryFn: fetchBlogs,
+    queryFn: () => fetchBlogs(params),
     staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
   });

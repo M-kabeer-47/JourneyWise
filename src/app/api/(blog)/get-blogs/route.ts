@@ -1,6 +1,6 @@
 import { eq, ilike, and, asc, desc, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { agent, blog, user } from "../../../../../auth-schema";
+import { blog, user } from "../../../../../auth-schema";
 import db from "@/lib/server/db";
 
 const validSortColumns = {
@@ -16,9 +16,10 @@ export async function GET(request: NextRequest) {
   const page = parseInt(searchParams.get("page") || "1");
   const search = searchParams.get("search") || "";
   const sortBy = searchParams.get("sortBy") || "createdAt";
-  const sortOrder = searchParams.get("sortOrder") || "desc";
+  const order = searchParams.get("order") || "desc";
   const category = searchParams.get("category") || "";
-  const sortDirection = sortOrder === "asc" ? asc : desc;
+
+  const sortDirection = order === "asc" ? asc : desc;
   const sortColumn =
     sortBy in validSortColumns
       ? validSortColumns[sortBy as SortColumnKey]
