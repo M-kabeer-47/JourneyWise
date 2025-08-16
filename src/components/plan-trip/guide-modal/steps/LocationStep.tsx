@@ -1,19 +1,31 @@
 import { motion } from "framer-motion"
 import { MapPin } from "lucide-react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { LocationStepData, locationStepSchema } from "@/lib/schemas/trip"
 
 interface LocationStepProps {
-  startLocation: string
-  endLocation: string
-  onStartLocationChange: (value: string) => void
-  onEndLocationChange: (value: string) => void
+  initialData?: Partial<LocationStepData>
+  onNext: (data: LocationStepData) => void
 }
 
-export const LocationStep = ({
-  startLocation,
-  endLocation,
-  onStartLocationChange,
-  onEndLocationChange,
-}: LocationStepProps) => {
+export const LocationStep = ({ initialData, onNext }: LocationStepProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LocationStepData>({
+    resolver: zodResolver(locationStepSchema),
+    defaultValues: {
+      startLocation: initialData?.startLocation || "",
+      endLocation: initialData?.endLocation || "",
+    }
+  })
+
+  const onSubmit = (data: LocationStepData) => {
+    onNext(data)
+  }
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -28,34 +40,38 @@ export const LocationStep = ({
           Enter your starting point and final destination to begin planning your trip.
         </p>
       </div>
-      <div className="space-y-4">
+      
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id="location-form">
         <div className="space-y-2">
           <label className="block text-sm font-medium text-charcoal">Start Location</label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
-              type="text"
-              value={startLocation}
-              onChange={(e) => onStartLocationChange(e.target.value)}
+              {...register("startLocation")}
               className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
               placeholder="Enter your starting point"
             />
           </div>
+          {errors.startLocation && (
+            <p className="text-red-500 text-xs">{errors.startLocation.message}</p>
+          )}
         </div>
+        
         <div className="space-y-2">
           <label className="block text-sm font-medium text-charcoal">End Location</label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
-              type="text"
-              value={endLocation}
-              onChange={(e) => onEndLocationChange(e.target.value)}
+              {...register("endLocation")}
               className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
               placeholder="Enter your final destination"
             />
           </div>
+          {errors.endLocation && (
+            <p className="text-red-500 text-xs">{errors.endLocation.message}</p>
+          )}
         </div>
-      </div>
+      </form>
     </motion.div>
   )
 }

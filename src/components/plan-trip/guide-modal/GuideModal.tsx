@@ -1,54 +1,72 @@
-"use client"
+"use client";
 
-import { AnimatePresence } from "framer-motion"
-import { useState } from "react"
-import { currencies } from "../../../lib/constants/currencies"
-import { MapPin, Users, CheckCircle2, LucideIcon } from "lucide-react"
-import { ModalWrapper } from "./ModalWrapper"
-import { ProgressSteps } from "./ProgressStep"
-import { LocationStep } from "./steps/LocationStep"
-import { DetailsStep } from "./steps/DetailsStep"
-import { NextStepsStep } from "./steps/WhatsNextStep"
-import { ReviewStep } from "./steps/ReviewStep"
+import { AnimatePresence } from "framer-motion";
+import { useState } from "react";
+import { currencies } from "../../../lib/constants/currencies";
+import { MapPin, Users, CheckCircle2, LucideIcon, Info } from "lucide-react";
+import { ModalWrapper } from "./ModalWrapper";
+import { ProgressSteps } from "./ProgressStep";
+import { LocationStep } from "./steps/LocationStep";
+import { DetailsStep } from "./steps/DetailsStep";
+import { NextStepsStep } from "./steps/WhatsNextStep";
+import { ReviewStep } from "./steps/ReviewStep";
+import { GuideData, LocationStepData, DetailsStepData } from "@/lib/schemas/trip";
 
 interface Step {
-  title: string
-  description: string
-  icon: LucideIcon
-  completed: boolean
+  title: string;
+  description: string;
+  icon: LucideIcon;
 }
+
 interface GuideModalProps {
-  isOpen: boolean
-  onComplete: (tripDetails: {
-    numPeople: number
-    estimatedBudget: number
-    startLocation: string
-    endLocation: string
-    currency: string
-  }) => void
+  isOpen: boolean;
+  onComplete: (tripDetails: GuideData) => void;
 }
 
 export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
-  const [step, setStep] = useState(1)
-  const [numPeople, setNumPeople] = useState(1)
-  const [estimatedBudget, setEstimatedBudget] = useState(1000)
-  const [startLocation, setStartLocation] = useState("")
-  const [endLocation, setEndLocation] = useState("")
-  const [currency, setCurrency] = useState("USD")
+  const [step, setStep] = useState(1);
+  const [guideData, setGuideData] = useState<Partial<GuideData>>({});
+
+  const handleLocationNext = (data: LocationStepData) => {
+    setGuideData((prev) => ({ ...prev, ...data }));
+    setStep(2);
+  };
+
+  const handleDetailsNext = (data: DetailsStepData) => {
+    const completedData = { ...guideData, ...data } as GuideData;
+    setGuideData(completedData);
+    setStep(3);
+  };
 
   const handleNext = () => {
-    if (step < 4) {
-      setStep(step + 1)
-    } else {
-      onComplete({
-        numPeople,
-        estimatedBudget,
-        startLocation,
-        endLocation,
-        currency,
-      })
+    if (step === 1) {
+      // Trigger location form submission
+      const form = document.getElementById(
+        "location-form"
+      ) as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    } else if (step === 2) {
+      // Trigger details form submission
+      const form = document.getElementById(
+        "details-form"
+      ) as HTMLFormElement;
+      if (form) {
+        form.requestSubmit();
+      }
+    } else if (step === 3) {
+      setStep(4);
+    } else if (step === 4) {
+      onComplete(guideData as GuideData);
     }
-  }
+  };
+
+  const handlePrevious = () => {
+    if (step > 1) {
+      setStep(step - 1);
+    }
+  };
 
   const modalVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -68,7 +86,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
         duration: 0.2,
       },
     },
-  }
+  };
 
   const overlayVariants = {
     hidden: { opacity: 0 },
@@ -84,62 +102,55 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
         duration: 0.2,
       },
     },
-  }
+  };
 
-  const selectedCurrency = currencies.find((c) => c.code === currency) || currencies[0]
+  const selectedCurrency =
+    currencies.find((c) => c.code === guideData.currency) || currencies[0];
 
-  const steps = [
+  const steps: Step[] = [
     {
       title: "Location",
       description: "Where are you heading?",
       icon: MapPin,
-      completed: startLocation && endLocation,
     },
     {
       title: "Details",
       description: "Trip essentials",
       icon: Users,
-      completed: numPeople > 1 && estimatedBudget > 1 && currency,
     },
     {
       title: "Next Steps",
       description: "What's ahead",
-      icon: CheckCircle2,
-      completed: false,
+      icon: Info,
     },
     {
       title: "Review",
       description: "Final check",
       icon: CheckCircle2,
-      completed: false,
     },
-  ]
+  ];
 
   return (
     <AnimatePresence>
       {isOpen && (
-        <ModalWrapper overlayVariants={overlayVariants} modalVariants={modalVariants}>
-          <ProgressSteps steps={steps as Step[]} currentStep={step} />
+        <ModalWrapper
+          overlayVariants={overlayVariants}
+          modalVariants={modalVariants}
+        >
+          <ProgressSteps steps={steps} currentStep={step} />
 
           {step === 1 && (
             <LocationStep
-              startLocation={startLocation}
-              endLocation={endLocation}
-              onStartLocationChange={setStartLocation}
-              onEndLocationChange={setEndLocation}
+              initialData={guideData}
+              onNext={handleLocationNext}
             />
           )}
 
           {step === 2 && (
             <DetailsStep
-              numPeople={numPeople}
-              estimatedBudget={estimatedBudget}
-              currency={currency}
-              selectedCurrency={selectedCurrency}
+              initialData={guideData}
               currencies={currencies}
-              onNumPeopleChange={setNumPeople}
-              onEstimatedBudgetChange={setEstimatedBudget}
-              onCurrencyChange={setCurrency}
+              onNext={handleDetailsNext}
             />
           )}
 
@@ -147,10 +158,10 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
 
           {step === 4 && (
             <ReviewStep
-              startLocation={startLocation}
-              endLocation={endLocation}
-              numPeople={numPeople}
-              estimatedBudget={estimatedBudget}
+              startLocation={guideData.startLocation || ""}
+              endLocation={guideData.endLocation || ""}
+              numPeople={guideData.numPeople}
+              estimatedBudget={guideData.estimatedBudget}
               selectedCurrency={selectedCurrency}
             />
           )}
@@ -158,7 +169,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
           <div className="mt-6 sm:mt-8 flex justify-between items-center border-t border-gray-100 pt-4">
             {step > 1 && (
               <button
-                onClick={() => setStep(step - 1)}
+                onClick={handlePrevious}
                 className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-charcoal hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-gray-300"
               >
                 Back
@@ -166,11 +177,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
             )}
             <button
               onClick={handleNext}
-              disabled={
-                (step === 1 && (!startLocation || !endLocation)) ||
-                (step === 2 && (numPeople < 1 || estimatedBudget < 0 || !currency))
-              }
-              className="ml-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
+              className="ml-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
             >
               {step === 4 ? "Start Planning" : "Continue"}
             </button>
@@ -178,5 +185,5 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
         </ModalWrapper>
       )}
     </AnimatePresence>
-  )
-}
+  );
+};

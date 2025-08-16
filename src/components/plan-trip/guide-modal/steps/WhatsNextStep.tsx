@@ -35,9 +35,7 @@ export const NextStepsStep = () => {
             ].map((item, index) => (
               <motion.div
                 key={index}
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 }}
+                
                 className="flex items-start space-x-4 p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200"
               >
                 <div className="flex-shrink-0 w-1 h-1 rounded-full bg-ocean-blue mt-2.5" />

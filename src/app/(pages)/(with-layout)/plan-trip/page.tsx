@@ -4,27 +4,25 @@ import { useState, useEffect } from "react"
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline"
 import { WaypointForm } from "@/components/plan-trip/WaypointForm"
 import { GuideModal } from "@/components/plan-trip/guide-modal/GuideModal"
-import {  toast } from "@/components/ui/Toast"
+import { toast } from "@/components/ui/Toast"
 import { useFieldArray, useForm } from "react-hook-form"
-import { tripData, tripSchema } from "@/lib/schemas/trip"
+import {  TripData,tripSchema, GuideData, WaypointData } from "@/lib/schemas/trip"
 import { zodResolver } from "@hookform/resolvers/zod"
 import ConfirmationModal from "@/components/ui/Modal"
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary"
 import Spinner from "@/components/ui/Spinner"
 import axios from "axios"
+
 export default function Home() {
   const [showGuide, setShowGuide] = useState(true)
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [progress, setProgress] = useState(0)
-  const [guideDetails, setGuideDetails] = useState({
-    numPeople: 0,
-    estimatedBudget: 0,
-    currency: ""
-  })
-    
-
   const [isSubmitting, setIsSubmitting] = useState(false)
+  
+  // Guide data state - properly typed
+  const [guideDetails, setGuideDetails] = useState<GuideData | null>(null)
+
   const {
     register,
     control,
@@ -32,7 +30,7 @@ export default function Home() {
     formState: { errors },
     setValue,
     watch
-  } = useForm<tripData>({
+  } = useForm<TripData>({
     resolver: zodResolver(tripSchema),
     defaultValues: {
       waypoints: [
@@ -57,55 +55,58 @@ export default function Home() {
     mode: "onSubmit"
   })
 
-  const { fields: waypoints,  remove: removeWaypoint, insert: insertWaypoint } = useFieldArray({
+  const { fields: waypoints, remove: removeWaypoint, insert: insertWaypoint } = useFieldArray({
     name: "waypoints",
     control,
   })
   const watchWaypoints = watch("waypoints")
 
-  const handleConfirm = async (data: tripData["waypoints"]) => {
+  const handleConfirm = async (data: WaypointData[]) => {
+    if (!guideDetails) return
+    
     setIsSubmitting(true)
-    await new Promise(resolve => setTimeout(resolve, 5000))
-    await Promise.all(data.map(async (waypoint)=>{
-      if(waypoint.imageUrl !== ""){
-       waypoint.imageUrl = await uploadToCloudinary(waypoint.imageUrl as string)
-      }
-    }))
-    let formData = {
-      userId: "AoZUjvFu9ojeltXIiEbvdUh0hjW6P5cE",
-      ...guideDetails,
-      waypoints: data
-    }
-    await axios.post("/api/create-trip",{data:formData}).then((res)=>{
-      toast.success("Trip planned successfully")
-    }).catch((err)=>{
-      toast.error("Trip planning failed")
-    })
+    try {
+      // Upload images
+      await Promise.all(data.map(async (waypoint) => {
+        if (waypoint.imageUrl && waypoint.imageUrl !== "") {
+          waypoint.imageUrl = await uploadToCloudinary(waypoint.imageUrl as string)
+        }
+      }))
 
-    setIsSubmitting(false)
-    setIsConfirmationModalOpen(false)
+      // Prepare final data with guide details
+      const finalTripData = {
+        userId: "AoZUjvFu9ojeltXIiEbvdUh0hjW6P5cE",
+        ...guideDetails,
+        waypoints: data
+      }
+
+      await axios.post("/api/create-trip", { data: finalTripData })
+      toast.success("Trip planned successfully")
+    } catch (err) {
+      console.error("Error creating trip:", err)
+      toast.error("Trip planning failed")
+    } finally {
+      setIsSubmitting(false)
+      setIsConfirmationModalOpen(false)
+    }
   }
 
-  const handleGuideComplete = (tripDetails: {
-    numPeople: number
-    estimatedBudget: number
-    startLocation: string
-    endLocation: string
-    currency: string
-    estimatedDuration: number
-  }) => {
-    const startWaypoint: tripData["waypoints"][number] = {
+  const handleGuideComplete = (data: GuideData) => {
+    setGuideDetails(data)
+    
+    // Create initial waypoints with guide data
+    const startWaypoint: WaypointData = {
       id: "start",
-      name: tripDetails.startLocation,
+      name: data.startLocation,
       type: "start",
       description: "Starting point of your journey",
       imageUrl: "",
       hotels: [],
     }
 
-    const endWaypoint: tripData["waypoints"][number] = {
+    const endWaypoint: WaypointData = {
       id: "end",
-      name: tripDetails.endLocation,
+      name: data.endLocation,
       type: "end",
       description: "Final destination of your trip",
       imageUrl: "",
@@ -113,12 +114,6 @@ export default function Home() {
     }
 
     setValue("waypoints", [startWaypoint, endWaypoint])
-    setGuideDetails({
-      numPeople: tripDetails.numPeople,
-      estimatedBudget: tripDetails.estimatedBudget,
-      
-      currency: tripDetails.currency
-    })
     setShowGuide(false)
   }
 
@@ -132,8 +127,8 @@ export default function Home() {
   }
 
   const handleAddWaypoint = () => {
-    const newWaypoint = {
-      id: `${String(waypoints.length + 1)}`,
+    const newWaypoint: WaypointData = {
+      id: `waypoint-${Date.now()}`,
       name: "",
       type: "attraction",
       description: "",
@@ -141,12 +136,9 @@ export default function Home() {
       hotels: [],
     }
 
-    // Insert before the last element (the "end" waypoint)
-    insertWaypoint(waypoints.length - 1, newWaypoint as tripData["waypoints"][number])
-
-    // Set the active index to the new waypoint’s position
+    insertWaypoint(waypoints.length - 1, newWaypoint)
     setActiveIndex(waypoints.length - 1)
-    setProgress((waypoints.length - 1) / (waypoints.length))
+    setProgress((waypoints.length - 1) / waypoints.length)
   }
 
   const handleNext = () => {
@@ -161,32 +153,25 @@ export default function Home() {
   const handleRemoveWaypoint = (index: number) => {
     if (index === 0 || index === waypoints.length - 1) return
     removeWaypoint(index)
+    if (activeIndex >= index && activeIndex > 0) {
+      setActiveIndex(activeIndex - 1)
+    }
   }
 
-  function focusOnFirstError(errors: any, setActiveIndex: any) {
-    alert("Errors: " + JSON.stringify(errors))
+  const focusOnFirstError = (errors: any) => {
     if (errors?.waypoints && Array.isArray(errors.waypoints)) {
       const firstErrorIndex = errors.waypoints.findIndex(
-        (waypointError: any) =>
-          waypointError && Object.keys(waypointError).length > 0
+        (waypointError: any) => waypointError && Object.keys(waypointError).length > 0
       )
       if (firstErrorIndex !== -1) {
         setActiveIndex(firstErrorIndex)
-        toast.error("Please fill in all fields")
+        toast.error("Please fill in all required fields")
       }
     }
   }
 
-  const handleFinishPlanning = (data: tripData) => {
-    console.log("FormData: " + data.waypoints)
-    data.waypoints.forEach((waypoint) => {
-      console.log(waypoint)
-    })
+  const handleFinishPlanning = (data: TripData) => {
     setIsConfirmationModalOpen(true)
-  }
-
-  function inValid(Errors: any) {
-    focusOnFirstError(Errors, setActiveIndex)
   }
 
   const handleImageUpload = (file: File) => {
@@ -200,24 +185,21 @@ export default function Home() {
 
   useEffect(() => {
     setProgress(activeIndex / (waypoints.length - 1))
-    console.log("errors: " + JSON.stringify(errors.waypoints))
   }, [activeIndex, waypoints.length])
 
   return (
     <>
-      {/* Spinner overlay with fixed positioning and high z-index */}
       {isSubmitting && (
-        <div className="fixed inset-0 flex justify-center items-center z-50">
+        <div className="fixed inset-0 flex justify-center items-center z-50 bg-black/20">
           <Spinner size="large" />
         </div>
       )}
-      {/* Main content container with conditional opacity */}
+      
       <div className={`min-h-screen bg-[hsl(var(--background))] ${isSubmitting ? "opacity-50" : "opacity-100"}`}>
         <GuideModal isOpen={showGuide} onComplete={handleGuideComplete} />
 
         {/* Desktop Layout */}
         <div className="hidden lg:grid lg:grid-cols-2 lg:h-screen">
-          {/* Waypoint Timeline */}
           <div className="relative h-full flex flex-col justify-center px-6 py-4 bg-white shadow-md border-r border-gray-200 rounded-lg">
             <h2 className="text-3xl font-bold mb-4 absolute top-[50px] left-[37%] text-center">
               Trip Overview
@@ -230,12 +212,11 @@ export default function Home() {
             />
           </div>
 
-          {/* Waypoint Form */}
           <div className="relative min-h-[800px] p-8 bg-gray-50 shadow-md border-l border-gray-200 rounded-lg">
             {waypoints.length > 0 && (
               <WaypointForm
                 isGuideModalOpen={showGuide}
-                inValid={inValid}
+                inValid={focusOnFirstError}
                 activeIndex={activeIndex}
                 type={watchWaypoints[activeIndex].type}
                 errors={errors}
@@ -267,7 +248,7 @@ export default function Home() {
           {waypoints.length > 0 && (
             <div className="mt-4 bg-white shadow-md p-4 rounded-lg min-h-[820px]">
               <WaypointForm
-                inValid={inValid}
+                inValid={focusOnFirstError}
                 isGuideModalOpen={showGuide}
                 activeIndex={activeIndex}
                 type={watchWaypoints[activeIndex].type}
@@ -288,6 +269,7 @@ export default function Home() {
             </div>
           )}
         </div>
+        
         <ConfirmationModal
           data={watchWaypoints}
           isOpen={isConfirmationModalOpen}
