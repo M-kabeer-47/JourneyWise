@@ -51,6 +51,24 @@ export const mockTrip = {
           detailsLink: "#",
           locationLink: "#",
         },
+        {
+          id: "hotel-3",
+          name: "Hakone Yuryo",
+          detailsLink: "#",
+          locationLink: "#",
+        },
+        {
+          id: "hotel-4",
+          name: "Yoshimatsu",
+          detailsLink: "#",
+          locationLink: "#",
+        },
+        {
+          id: "hotel-5",
+          name: "Hotel Green Plaza Hakone",
+          detailsLink: "#",
+          locationLink: "#",
+        },
       ],
     },
     {
@@ -84,5 +102,7 @@ export const mockTrip = {
       description:
         "Arrive in the ancient capital of Japan, ready to explore temples, gardens, and traditional culture.",
     },
+    // add more hotels atleast 5 more
+    
   ] as Waypoint[],
 };

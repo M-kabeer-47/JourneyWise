@@ -5,8 +5,8 @@ import { Currency } from "../../../../lib/constants/currencies"
 interface ReviewStepProps {
   startLocation: string
   endLocation: string
-  numPeople: number
-  estimatedBudget: number
+  numPeople: number | undefined
+  estimatedBudget: number | undefined
   selectedCurrency: Currency
 }
 
@@ -60,7 +60,7 @@ export const ReviewStep = ({
             <div className="flex items-center space-x-2">
               <Wallet className="w-4 h-4 text-ocean-blue" />
               <p className="text-sm font-medium text-charcoal">
-                {selectedCurrency.symbol} {estimatedBudget.toLocaleString()}
+                {selectedCurrency.symbol} {estimatedBudget && estimatedBudget.toLocaleString()}
               </p>
             </div>
           </div>

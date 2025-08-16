@@ -160,9 +160,9 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
             <ReviewStep
               startLocation={guideData.startLocation || ""}
               endLocation={guideData.endLocation || ""}
-              numPeople={guideData.numPeople}
-              estimatedBudget={guideData.estimatedBudget}
-              selectedCurrency={selectedCurrency}
+              numPeople={guideData.numPeople || undefined}
+              estimatedBudget={guideData.estimatedBudget || undefined}
+              selectedCurrency={selectedCurrency }
             />
           )}
 

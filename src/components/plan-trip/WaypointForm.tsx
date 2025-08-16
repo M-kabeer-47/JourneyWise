@@ -19,7 +19,7 @@ import {
   useWatch,
   UseFormHandleSubmit,
 } from "react-hook-form";
-import { tripData } from "@/lib/schemas/trip";
+import { TripData } from "@/lib/schemas/trip";
 import { WaypointType } from "@/lib/types/waypoint";
 
 let rerenders = 0;
@@ -33,21 +33,21 @@ interface Hotel {
 interface WaypointFormProps {
   activeIndex: number;
   type: WaypointType;
-  register: UseFormRegister<tripData>;
-  errors: FieldErrors<tripData>;
-  control: Control<tripData>;
-  handleSubmit: UseFormHandleSubmit<tripData>;
+  register: UseFormRegister<TripData>;
+  errors: FieldErrors<TripData>;
+  control: Control<TripData>;
+  handleSubmit: UseFormHandleSubmit<TripData>;
   onPrevious: () => void;
   onAdd: () => void;
-  onFinish: (data: tripData) => void;
+  onFinish: (data: TripData) => void;
   canGoPrevious: boolean;
   isLastWaypoint: boolean;
-  setValue: UseFormSetValue<tripData>;
+  setValue: UseFormSetValue<TripData>;
   onImageUpload: (file: File) => void;
   onNext: () => void;
   onRemove: () => void;
   isGuideModalOpen: boolean;
-  inValid: (data: tripData) => void;
+  inValid: (data: TripData) => void;
 }
 
 export const WaypointForm = ({

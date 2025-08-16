@@ -50,7 +50,7 @@ export default function WaypointInfoModal({
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.9, y: 20 }}
               onClick={(e) => e.stopPropagation()}
-              className="bg-white rounded-2xl shadow-2xl min-w-6xl max-w-6xl h-[70vh] flex overflow-hidden"
+              className="bg-white rounded-2xl shadow-2xl min-w-6xl max-w-6xl h-[50vh] flex overflow-hidden"
             >
               {/* Left Column - Image */}
               <div className="w-1/2 p-6">

@@ -4,7 +4,7 @@ interface Step {
   title: string
   description: string
   icon: LucideIcon
-  completed: boolean
+  
 }
 
 interface ProgressStepsProps {
@@ -23,7 +23,7 @@ export const ProgressSteps = ({ steps, currentStep }: ProgressStepsProps) => {
                 ${
                   i + 1 === currentStep
                     ? "bg-ocean-blue text-white"
-                    : i + 1 < currentStep || s.completed
+                    : i + 1 < currentStep 
                       ? "bg-midnight-blue text-white"
                       : "bg-white text-gray-400 border border-gray-200"
                 }`}

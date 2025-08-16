@@ -195,13 +195,13 @@ export default function Home() {
         </div>
       )}
       
-      <div className={`min-h-screen bg-[hsl(var(--background))] ${isSubmitting ? "opacity-50" : "opacity-100"}`}>
+      <div className={`min-h-screen relative top-[80px] bg-[hsl(var(--background))] ${isSubmitting ? "opacity-50" : "opacity-100"}`}>
         <GuideModal isOpen={showGuide} onComplete={handleGuideComplete} />
 
         {/* Desktop Layout */}
-        <div className="hidden lg:grid lg:grid-cols-2 lg:h-screen">
+        <div className="hidden lg:grid lg:grid-cols-[65%_35%] lg:h-screen">
           <div className="relative h-full flex flex-col justify-center px-6 py-4 bg-white shadow-md border-r border-gray-200 rounded-lg">
-            <h2 className="text-3xl font-bold mb-4 absolute top-[50px] left-[37%] text-center">
+            <h2 className="text-3xl text-midnight-blue font-bold mb-4 absolute top-[50px] left-[37%] text-center">
               Trip Overview
             </h2>
             <WaypointTimeline

@@ -230,14 +230,11 @@ const MobileVerticalTimeline = ({
   waypoints,
   activeIndex,
   onWaypointClick,
-  setSelectedWaypoint,
-  setIsImageModalOpen,
-  selectedWaypoint,
+  
 }: MobileVerticalTimelineProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [progressHeight, setProgressHeight] = useState(0);
   const [progressBarTop, setProgressBarTop] = useState(0);
-  const [isHotelModalOpen, setIsHotelModalOpen] = useState(false);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
 
   useEffect(() => {
@@ -295,7 +292,7 @@ const MobileVerticalTimeline = ({
   if (!waypoints.length) return <div>No waypoints available</div>;
 
   return (
-    <div ref={containerRef} className="relative pl-8 py-4">
+    <div ref={containerRef} className="relative pl-8 py-4  min-h-[60vh]">
       {/* Vertical line - only between first and last waypoint */}
       <div
         className="absolute left-[52px] w-1 bg-ocean-blue/30"
@@ -316,7 +313,7 @@ const MobileVerticalTimeline = ({
       <div className="space-y-16"> {/* Increased from space-y-6 to space-y-16 */}
         {waypoints.map((waypoint, index) => {
           const isActive = index === activeIndex;
-          const isExpanded = expandedIndex === index;
+        
 
           return (
             <div key={waypoint.id} className="relative">
@@ -367,7 +364,6 @@ export function WaypointTimeline({
   activeIndex,
   onWaypointClick,
   progress,
-  isLoading,
   showCards = true, // NEW default: keep old behavior
 }: WaypointTimelineProps) {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);

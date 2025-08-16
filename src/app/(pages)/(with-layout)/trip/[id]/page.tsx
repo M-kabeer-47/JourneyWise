@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import {
   Route,
@@ -10,15 +10,15 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline";
-import WaypointInfoModal from "@/components/trip/WaypointInfoCard";
 import { mockTrip } from "@/lib/constants/trip";
 import InformationCardsSection from "@/components/trip/InformationCardsSection";
-
+import WaypointMobileModal from "@/components/trip/WaypointMobileModal";
+import WaypointDesktopModal from "@/components/trip/WaypointDesktopModal";
 export default function TripDisplayPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedWaypoint, setSelectedWaypoint] = useState(null);
-
+  const [isDesktop, setIsDesktop] = useState(true);
   const waypoints = mockTrip.waypoints;
   const n = waypoints.length;
   const progress = useMemo(
@@ -31,6 +31,14 @@ export default function TripDisplayPage() {
     setSelectedWaypoint(waypoints[index]);
     setIsModalOpen(true);
   };
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 1280px)");
+    const onChange = () => setIsDesktop(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -120,11 +128,19 @@ export default function TripDisplayPage() {
       </div>
 
       {/* Waypoint Info Modal */}
-      <WaypointInfoModal
-        waypoint={selectedWaypoint}
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {isDesktop ? (
+        <WaypointDesktopModal
+          waypoint={selectedWaypoint}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      ) : (
+        <WaypointMobileModal
+          waypoint={waypoints[activeIndex]}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 }
