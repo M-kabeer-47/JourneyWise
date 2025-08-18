@@ -14,10 +14,11 @@ import { mockTrip } from "@/lib/constants/trip";
 import InformationCardsSection from "@/components/trip/InformationCardsSection";
 import WaypointMobileModal from "@/components/trip/WaypointMobileModal";
 import WaypointDesktopModal from "@/components/trip/WaypointDesktopModal";
+import { Waypoint } from "@/lib/types/waypoint";
 export default function TripDisplayPage() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedWaypoint, setSelectedWaypoint] = useState(null);
+  const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(null);
   const [isDesktop, setIsDesktop] = useState(true);
   const waypoints = mockTrip.waypoints;
   const n = waypoints.length;

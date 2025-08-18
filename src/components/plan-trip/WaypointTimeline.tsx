@@ -31,6 +31,7 @@ interface WaypointTimelineProps {
 interface DesktopHorizontalTimelineProps extends WaypointTimelineProps {
   setIsImageModalOpen: (value: boolean) => void;
   setSelectedWaypoint: (waypoint: Waypoint | null) => void;
+  previewUrl: string; // Optional prop for image preview URL
 }
 
 const DesktopHorizontalTimeline = ({
@@ -41,17 +42,21 @@ const DesktopHorizontalTimeline = ({
   setIsImageModalOpen,
   setSelectedWaypoint,
   showCards = true, // Add this prop
+  previewUrl,
 }: DesktopHorizontalTimelineProps & { showCards?: boolean }) => {
-  const n = waypoints.length;
+  const waypointsLength = waypoints.length;
+
   useEffect(() => {
     console.log(waypoints);
   }, [waypoints]);
   const [width, setWidth] = useState(0);
+
   useEffect(() => {
     setWidth(window.innerWidth);
     window.addEventListener("resize", () => {
       setWidth(window.innerWidth);
     });
+
     return () => {
       window.removeEventListener("resize", () => {
         setWidth(window.innerWidth);
@@ -111,9 +116,9 @@ const DesktopHorizontalTimeline = ({
           const position =
             index === 0
               ? "0%"
-              : index === n - 1
+              : index === waypointsLength - 1
               ? "100%"
-              : `${(index / (n - 1)) * 100}%`;
+              : `${(index / (waypointsLength - 1)) * 100}%`;
 
           return (
             <div
@@ -179,7 +184,7 @@ const DesktopHorizontalTimeline = ({
                       {waypoint.type === "attraction" && waypoint.imageUrl && (
                         <div className="relative w-full aspect-video mb-2 rounded bg-gray-100 cursor-pointer">
                           <img
-                            src={waypoint.imageUrl}
+                            src={previewUrl}
                             alt={waypoint.name || "Attraction"}
                             className="w-full h-full object-cover"
                             onClick={() => {
@@ -193,7 +198,7 @@ const DesktopHorizontalTimeline = ({
                         {waypoint.name ||
                           (index === 0
                             ? "Starting Point"
-                            : index === n - 1
+                            : index === waypointsLength - 1
                             ? "Final Destination"
                             : "New Waypoint")}
                       </h3>
@@ -203,13 +208,15 @@ const DesktopHorizontalTimeline = ({
                     </motion.div>
                   )}
                 </AnimatePresence>
-              )
-              : (
-                <h1 className={`text-xs text-charcoal font-semibold overflow-visible mt-1 h-0 whitespace-nowrap absolute ${index % 2 == 0 ? "top-12" : "-top-10"  }`}>
+              ) : (
+                <h1
+                  className={`text-xs text-charcoal font-semibold overflow-visible mt-1 h-0 whitespace-nowrap absolute ${
+                    index % 2 == 0 ? "top-12" : "-top-10"
+                  }`}
+                >
                   {waypoint.name}
                 </h1>
-              )
-            }
+              )}
             </div>
           );
         })}
@@ -230,7 +237,6 @@ const MobileVerticalTimeline = ({
   waypoints,
   activeIndex,
   onWaypointClick,
-  
 }: MobileVerticalTimelineProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [progressHeight, setProgressHeight] = useState(0);
@@ -310,10 +316,11 @@ const MobileVerticalTimeline = ({
       />
 
       {/* Waypoints with increased spacing */}
-      <div className="space-y-16"> {/* Increased from space-y-6 to space-y-16 */}
+      <div className="space-y-16">
+        {" "}
+        {/* Increased from space-y-6 to space-y-16 */}
         {waypoints.map((waypoint, index) => {
           const isActive = index === activeIndex;
-        
 
           return (
             <div key={waypoint.id} className="relative">
@@ -334,7 +341,7 @@ const MobileVerticalTimeline = ({
                   <div className="flex items-center justify-between">
                     <h3
                       className={`text-lg font-bold ${
-                        isActive ? "text-midnight-blue" : "text-gray-800"
+                        isActive ? "text-midnight-blue" : "text-charcoal"
                       }`}
                     >
                       {waypoint.name ||
@@ -370,6 +377,17 @@ export function WaypointTimeline({
   const [selectedWaypoint, setSelectedWaypoint] = useState<Waypoint | null>(
     null
   );
+  const [previewUrl, setPreviewUrl] = useState("");
+  useEffect(() => {
+    if (waypoints[activeIndex]?.imageUrl) {
+      setPreviewUrl(
+        URL.createObjectURL(waypoints[activeIndex].imageUrl as File)
+      );
+    }
+    return () => {
+      URL.revokeObjectURL(previewUrl);
+    };
+  }, [waypoints, activeIndex]);
 
   return (
     <div className="w-full">
@@ -382,6 +400,7 @@ export function WaypointTimeline({
           setIsImageModalOpen={setIsImageModalOpen}
           setSelectedWaypoint={setSelectedWaypoint}
           showCards={showCards} // Pass down the showCards prop
+          previewUrl={previewUrl || "defaultPreviewUrl"} // Pass the preview
         />
       </div>
       <div className="block md:hidden">
@@ -401,19 +420,10 @@ export function WaypointTimeline({
       {isImageModalOpen && selectedWaypoint && (
         <ImageModal
           isOpen={isImageModalOpen}
-          imageUrl={selectedWaypoint.imageUrl || ""}
+          imageUrl={previewUrl}
           onClose={() => setIsImageModalOpen(false)}
         />
       )}
-
-      {/* ─── Waypoint Detail Card ──────────────────────────────── */}
-      {showCards && (
-        <>
-          {/* ...existing code that renders the per-waypoint card(s) above/below timeline... */}
-        </>
-      )}
-
-      {/* ...rest of existing code... */}
     </div>
   );
 }

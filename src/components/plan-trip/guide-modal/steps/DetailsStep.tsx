@@ -24,7 +24,7 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
     defaultValues: {
       numPeople: initialData?.numPeople || undefined,
       estimatedBudget: initialData?.estimatedBudget || undefined,
-      estimatedDurationHours: initialData?.estimatedDurationHours || undefined,
+
       estimatedDistanceKm: initialData?.estimatedDistanceKm || undefined,
       currency: initialData?.currency || "USD",
     },
@@ -47,7 +47,7 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
     >
       <div>
         <h2 className="text-2xl font-bold text-midnight-blue">Trip Details</h2>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 text-sm mt-2">
           Set your group size, budget, and trip parameters to help us customize
           your trip plan.
         </p>
@@ -97,7 +97,7 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
             </label>
             <div className="relative">
               <Wallet className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              
+
               <input
                 type="number"
                 {...register("estimatedBudget", { valueAsNumber: true })}
@@ -114,47 +114,25 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
         </div>
 
         {/* Row 2: Duration + Distance */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-charcoal">
-              Estimated Duration (Hours)
-            </label>
-            <div className="relative">
-              <Clock className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <input
-                type="number"
-                step="0.5"
-                {...register("estimatedDurationHours", { valueAsNumber: true })}
-                className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
-                placeholder="e.g. 8.5"
-              />
-            </div>
-            {errors.estimatedDurationHours && (
-              <p className="text-red-500 text-xs">
-                {errors.estimatedDurationHours.message}
-              </p>
-            )}
-          </div>
 
-          <div className="space-y-2">
-            <label className="block text-sm font-medium text-charcoal">
-              Estimated Distance (KM)
-            </label>
-            <div className="relative">
-              <Route className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
-              <input
-                type="number"
-                {...register("estimatedDistanceKm", { valueAsNumber: true })}
-                className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
-                placeholder="e.g. 250"
-              />
-            </div>
-            {errors.estimatedDistanceKm && (
-              <p className="text-red-500 text-xs">
-                {errors.estimatedDistanceKm.message}
-              </p>
-            )}
+        <div className="space-y-2">
+          <label className="block text-sm font-medium text-charcoal">
+            Estimated Distance (KM)
+          </label>
+          <div className="relative">
+            <Route className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <input
+              type="number"
+              {...register("estimatedDistanceKm", { valueAsNumber: true })}
+              className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+              placeholder="e.g. 250"
+            />
           </div>
+          {errors.estimatedDistanceKm && (
+            <p className="text-red-500 text-xs">
+              {errors.estimatedDistanceKm.message}
+            </p>
+          )}
         </div>
       </form>
     </motion.div>

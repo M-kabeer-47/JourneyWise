@@ -39,7 +39,7 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
       </label>
 
       <div className="relative">
-        <DollarSign className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+        <DollarSign className="absolute left-3 top-[13px] h-4 w-4 text-gray-400" />
 
         <button
           type="button"
@@ -60,7 +60,7 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
             {selectedCurrency.code} - {selectedCurrency.name} (
             {selectedCurrency.symbol})
           </span>
-          <ChevronDown className="h-4 w-4 ml-2 text-gray-400" />
+          <ChevronDown className="h-4 w-4 relative right-[8px] text-gray-400" />
         </button>
       </div>
 

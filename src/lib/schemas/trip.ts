@@ -13,9 +13,7 @@ export const detailsStepSchema = z.object({
   estimatedBudget: z
     .number({ invalid_type_error: "Budget is required" })
     .min(1, "Budget is required"),
-  estimatedDurationHours: z
-    .number({ invalid_type_error: "Duration is required" })
-    .min(0.5, "Duration is required"),
+
   estimatedDistanceKm: z
     .number({ invalid_type_error: "Distance is required" })
     .min(1, "Distance is required"),
@@ -44,7 +42,7 @@ export const waypointSchema = z.object({
       })
     )
     .optional(),
-  imageUrl: z.string().optional(),
+  imageUrl: z.union([z.string(), z.instanceof(File)]).optional(),
 });
 
 // Only waypoints array for the main form

@@ -217,8 +217,8 @@ export const trip = pgTable("trip", {
     .references(() => user.id),
   waypoints: jsonb("waypoints").notNull(),
   estimatedBudget: integer("estimatedBudget").notNull(),
-  numPeople: integer("numPeople").notNull(),
-
+  numOfPeople: integer("numOfPeople").notNull(),
+  estimatedDistance: integer("estimatedDistance").notNull(),
   currency: text("currency").notNull(),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),

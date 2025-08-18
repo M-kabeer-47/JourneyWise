@@ -1,4 +1,4 @@
-import { motion } from "framer-motion"
+import { motion } from "framer-motion";
 
 export const NextStepsStep = () => {
   return (
@@ -10,38 +10,42 @@ export const NextStepsStep = () => {
       className="space-y-6"
     >
       <div>
-        <h2 className="text-2xl font-bold text-midnight-blue">Your Journey Continues</h2>
+        <h2 className="text-2xl font-bold text-midnight-blue">
+          Your Journey Continues
+        </h2>
         <p className="text-gray-500 mt-2">
           Here's what you can do next to make your trip even better.
         </p>
       </div>
       <div className="space-y-4">
-        <div className="bg-gradient-to-br from-gray-50 to-white rounded-lg p-6 border border-gray-100">
+        <div className="rounded-lg  ">
           <div className="grid gap-4">
             {[
               {
                 title: "Plan Your Route",
-                description: "Add stops and attractions to shape your trip"
+                description: "Add stops and attractions to shape your trip",
               },
               {
                 title: "Showcase Attractions",
-                description: "Upload images and highlight scenic spots"
+                description: "Upload images and highlight scenic spots",
               },
               {
                 title: "Curate Stays",
-                description: "Recommend hotels for a comfy journey"
+                description: "Recommend hotels for a comfy journey",
               },
-              
             ].map((item, index) => (
               <motion.div
                 key={index}
-                
-                className="flex items-start space-x-4 p-3 rounded-lg hover:bg-white hover:shadow-sm transition-all duration-200"
+                className="flex items-start space-x-4 py-2 rounded-lg"
               >
                 <div className="flex-shrink-0 w-1 h-1 rounded-full bg-ocean-blue mt-2.5" />
                 <div>
-                  <h4 className="text-sm font-medium text-midnight-blue">{item.title}</h4>
-                  <p className="text-sm text-gray-500 mt-0.5">{item.description}</p>
+                  <h4 className="text-sm font-medium text-midnight-blue">
+                    {item.title}
+                  </h4>
+                  <p className="text-sm text-gray-500 mt-0.5">
+                    {item.description}
+                  </p>
                 </div>
               </motion.div>
             ))}
@@ -49,5 +53,5 @@ export const NextStepsStep = () => {
         </div>
       </div>
     </motion.div>
-  )
-}
+  );
+};

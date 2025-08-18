@@ -36,14 +36,14 @@ export const LocationStep = ({ initialData, onNext }: LocationStepProps) => {
     >
       <div>
         <h2 className="text-2xl font-bold text-midnight-blue">Set Your Journey Points</h2>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 text-sm mt-2">
           Enter your starting point and final destination to begin planning your trip.
         </p>
       </div>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id="location-form">
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-charcoal">Start Location</label>
+          <label className="block text-sm  text-charcoal">Start Location</label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input
@@ -58,7 +58,7 @@ export const LocationStep = ({ initialData, onNext }: LocationStepProps) => {
         </div>
         
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-charcoal">End Location</label>
+          <label className="block text-sm text-charcoal">End Location</label>
           <div className="relative">
             <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
             <input

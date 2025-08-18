@@ -12,7 +12,7 @@ export interface Waypoint {
   name: string
   type: WaypointType
   description: string
-  imageUrl?: string  
+  imageUrl?: string | File
   hotels?: Hotel[]
 }
 

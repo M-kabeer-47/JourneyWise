@@ -6,11 +6,11 @@ export async function POST(req:NextRequest){
     let {data} = await req.json()
     try{
     await db.insert(trip).values({
-        userId: data.userId,
+        userID: data.userID,
         waypoints: data.waypoints,
         estimatedBudget: data.estimatedBudget,
-        numPeople: data.numPeople,
-        
+        numOfPeople: data.numOfPeople,
+        estimatedDistance: data.estimatedDistance,
         currency: data.currency,
         createdAt: new Date(),
         updatedAt: new Date()
