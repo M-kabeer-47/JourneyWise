@@ -36,19 +36,19 @@ export const LocationStep = ({ initialData, onNext }: LocationStepProps) => {
     >
       <div>
         <h2 className="text-2xl font-bold text-midnight-blue">Set Your Journey Points</h2>
-        <p className="text-gray-500 text-sm mt-2">
+        <p className="text-gray-500 sm:text-sm text-xs mt-2">
           Enter your starting point and final destination to begin planning your trip.
         </p>
       </div>
       
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" id="location-form">
         <div className="space-y-2">
-          <label className="block text-sm  text-charcoal">Start Location</label>
+          <label className="block sm:text-sm text-xs  text-charcoal">Start Location</label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-[13px] sm:top-3 sm:w-5 sm:h-5 w-4 h-4  text-gray-400" />
             <input
               {...register("startLocation")}
-              className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+              className="w-full pl-10 sm:pl-11 pr-4 sm:text-sm text-xs h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
               placeholder="Enter your starting point"
             />
           </div>
@@ -58,12 +58,12 @@ export const LocationStep = ({ initialData, onNext }: LocationStepProps) => {
         </div>
         
         <div className="space-y-2">
-          <label className="block text-sm text-charcoal">End Location</label>
+          <label className="block sm:text-sm text-xs text-charcoal">End Location</label>
           <div className="relative">
-            <MapPin className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-[13px] sm:top-3 sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
             <input
               {...register("endLocation")}
-              className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+              className="w-full pl-10 sm:pl-11 pr-4 sm:text-sm text-xs h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
               placeholder="Enter your final destination"
             />
           </div>

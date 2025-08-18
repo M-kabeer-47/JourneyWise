@@ -25,7 +25,7 @@ export const ModalWrapper = ({ children, overlayVariants, modalVariants }: Modal
         exit="exit"
       >
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-2xl relative overflow-hidden border border-gray-100">
-          <div className="p-4 sm:p-6 md:p-8 max-h-[90vh] overflow-y-auto">
+          <div className="px-7 py-10 sm:p-6 md:p-8 max-h-[90vh] overflow-y-auto">
             {children}
           </div>
         </div>

@@ -12,8 +12,6 @@ import {
 } from "lucide-react";
 import type { Waypoint } from "@/lib/types/waypoint";
 import { useEffect, useRef, useState } from "react";
-import { Button } from "../ui/button";
-import { cn } from "@/lib/utils";
 import ImageModal from "../ui/ImageModal";
 interface WaypointTimelineProps {
   waypoints: Waypoint[];
@@ -181,7 +179,7 @@ const DesktopHorizontalTimeline = ({
                         ${index === waypoints.length - 1 ? "right-[10px]" : ""}
                       `}
                     >
-                      {waypoint.type === "attraction" && waypoint.imageUrl && (
+                      {waypoint.imageUrl && (
                         <div className="relative w-full aspect-video mb-2 rounded bg-gray-100 cursor-pointer">
                           <img
                             src={previewUrl}
@@ -295,7 +293,7 @@ const MobileVerticalTimeline = ({
     setExpandedIndex(expandedIndex === index ? null : index);
   };
 
-  if (!waypoints.length) return <div>No waypoints available</div>;
+  
 
   return (
     <div ref={containerRef} className="relative pl-8 py-4  min-h-[60vh]">
@@ -379,7 +377,7 @@ export function WaypointTimeline({
   );
   const [previewUrl, setPreviewUrl] = useState("");
   useEffect(() => {
-    if (waypoints[activeIndex]?.imageUrl) {
+    if (waypoints[activeIndex]?.imageUrl && waypoints[activeIndex].imageUrl instanceof File) {
       setPreviewUrl(
         URL.createObjectURL(waypoints[activeIndex].imageUrl as File)
       );
@@ -387,7 +385,7 @@ export function WaypointTimeline({
     return () => {
       URL.revokeObjectURL(previewUrl);
     };
-  }, [waypoints, activeIndex]);
+  }, [waypoints[activeIndex]?.imageUrl, activeIndex]);
 
   return (
     <div className="w-full">

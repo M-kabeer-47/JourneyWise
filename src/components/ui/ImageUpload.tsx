@@ -54,10 +54,11 @@ export const ImageUpload = ({
       setPreviewUrl(url);
 
       // Cleanup function
-      return () => URL.revokeObjectURL(url);
+      
     } else {
       setPreviewUrl(null);
     }
+    return () => URL.revokeObjectURL(previewUrl);
   }, [value]);
 
   return (
@@ -68,7 +69,7 @@ export const ImageUpload = ({
       <div className="relative">
         <div {...getRootProps()} className="group relative">
           <div
-            className={`flex items-center justify-center w-full h-32 px-4 transition bg-white border-2 ${
+            className={`flex items-center justify-center w-full h-32  transition bg-white border-2 ${
               isDragging
                 ? "border-ocean-blue bg-ocean-blue/10"
                 : "border-gray-300"

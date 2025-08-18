@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { Home, MapPin, Book, Mail, User, type LucideProps } from "lucide-react";
 
-type IconType = (props: LucideProps) => JSX.Element;
+type IconType = React.ComponentType<LucideProps>;
 
 type BottomNavItem = {
   name: string;
@@ -44,7 +44,7 @@ export default function BottomNavbar({
 
   return (
     <AnimatePresence mode="wait">
-      <div className="w-full  flex justify-center items-center fixed bottom-0 h-[200px]">
+      <div className="w-full  flex justify-center items-center fixed bottom-0 bg-red-500">
         <motion.nav
           key="bottom-navbar"
           initial={{ y: 80, opacity: 0 }}

@@ -21,14 +21,14 @@ export const ProgressSteps = ({ steps, currentStep }: ProgressStepsProps) => {
             className="flex flex-col items-center relative z-10 w-24 sm:w-32"
           >
             <div
-              className={`w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 transition-colors
+              className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 transition-colors relative
                 ${
                   i + 1 === currentStep
                     ? "bg-ocean-blue text-white"
                     : i + 1 < currentStep
                     ? "bg-midnight-blue text-white"
                     : "bg-white text-gray-400 border border-gray-200"
-                } ${i + 1 !== 1 ? "relative -top-1" : ""}`}
+                } ${i + 1 !== 1 ? "relative -top-1" : "sm:top-0 -top-1"}`}
             >
               <s.icon className={`w-4 h-4 sm:w-5 sm:h-5`} />
             </div>

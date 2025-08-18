@@ -13,7 +13,7 @@ export const NextStepsStep = () => {
         <h2 className="text-2xl font-bold text-midnight-blue">
           Your Journey Continues
         </h2>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 mt-2 sm:text-sm text-xs">
           Here's what you can do next to make your trip even better.
         </p>
       </div>
@@ -43,7 +43,7 @@ export const NextStepsStep = () => {
                   <h4 className="text-sm font-medium text-midnight-blue">
                     {item.title}
                   </h4>
-                  <p className="text-sm text-gray-500 mt-0.5">
+                  <p className="sm:text-sm text-xs text-gray-500 mt-0.5">
                     {item.description}
                   </p>
                 </div>

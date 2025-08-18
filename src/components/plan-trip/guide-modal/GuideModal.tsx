@@ -160,24 +160,25 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
             <ReviewStep
               startLocation={guideData.startLocation || ""}
               endLocation={guideData.endLocation || ""}
-              numPeople={guideData.numPeople || undefined}
+              numPeople={guideData.numOfPeople || undefined}
               estimatedBudget={guideData.estimatedBudget || undefined}
               selectedCurrency={selectedCurrency }
+              estimatedDistance={guideData.estimatedDistance}
             />
           )}
 
-          <div className="mt-6 sm:mt-8 flex justify-between items-center border-t border-gray-100 pt-4">
+          <div className={`sm:mt-8 flex justify-between items-center border-t border-gray-100 py-2 ${step===4 ? "mt-8" : "mt-6"}`}>
             {step > 1 && (
               <button
                 onClick={handlePrevious}
-                className="px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-charcoal hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-gray-300"
+                className="px-4 sm:px-6 py-2 text-xs sm:text-sm sm:py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-charcoal hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-gray-300"
               >
                 Back
               </button>
             )}
             <button
               onClick={handleNext}
-              className="ml-auto px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
+              className="ml-auto text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
             >
               {step === 4 ? "Start Planning" : "Continue"}
             </button>

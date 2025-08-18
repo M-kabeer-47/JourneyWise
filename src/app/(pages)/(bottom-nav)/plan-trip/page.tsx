@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline";
 import { WaypointForm } from "@/components/plan-trip/WaypointForm";
 import { GuideModal } from "@/components/plan-trip/guide-modal/GuideModal";
@@ -13,9 +13,7 @@ import {
   WaypointData,
 } from "@/lib/schemas/trip";
 import { zodResolver } from "@hookform/resolvers/zod";
-import ConfirmationModal from "@/components/ui/Modal";
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-import Spinner from "@/components/ui/Spinner";
 import axios from "axios";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 
@@ -73,6 +71,10 @@ export default function Home() {
   const handleConfirm = async () => {
     if (!guideDetails) return;
     let waypointsData = watch("waypoints");
+    if(waypointsData.length <= 2) {
+      toast.error("Please add at least 3 waypoints");
+      return;
+    }
     setIsSubmitting(true);
     try {
       // Upload images
@@ -91,6 +93,7 @@ export default function Home() {
       // Prepare final data with guide details
       const finalTripData = {
         userID: "AoZUjvFu9ojeltXIiEbvdUh0hjW6P5cE",
+        
         ...guideDetails,
         waypoints: waypoints,
       };
@@ -183,9 +186,7 @@ export default function Home() {
 
   return (
     <div
-      className={`min-h-screen relative ${
-        isSubmitting ? "opacity-50" : "opacity-100"
-      }`}
+      className={`min-h-screen relative`}
     >
       <GuideModal isOpen={showGuide} onComplete={handleGuideComplete} />
 
@@ -263,6 +264,8 @@ export default function Home() {
         onConfirm={handleConfirm}
         title="Confirmation"
         description="Are you sure you want to proceed with this action?"
+        loading={isSubmitting}
+        loadingText="Please wait..."
       />
     </div>
   );

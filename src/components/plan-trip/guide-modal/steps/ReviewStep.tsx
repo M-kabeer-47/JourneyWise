@@ -1,5 +1,5 @@
 import { motion } from "framer-motion"
-import { MapPin, Users, Wallet } from "lucide-react"
+import { MapPin, Route, Users, Wallet } from "lucide-react"
 import { Currency } from "../../../../lib/constants/currencies"
 
 interface ReviewStepProps {
@@ -8,6 +8,7 @@ interface ReviewStepProps {
   numPeople: number | undefined
   estimatedBudget: number | undefined
   selectedCurrency: Currency
+  estimatedDistance: number | undefined
 }
 
 export const ReviewStep = ({
@@ -16,6 +17,7 @@ export const ReviewStep = ({
   numPeople,
   estimatedBudget,
   selectedCurrency,
+  estimatedDistance
 }: ReviewStepProps) => {
   return (
     <motion.div
@@ -27,11 +29,11 @@ export const ReviewStep = ({
     >
       <div>
         <h2 className="text-2xl font-bold text-midnight-blue">Review Your Trip</h2>
-        <p className="text-gray-500 mt-2">
+        <p className="text-gray-500 mt-2 sm:text-sm text-xs">
           Confirm your trip details before we create your personalized plan.
         </p>
       </div>
-      <div className="bg-gray-50 rounded-lg p-6">
+      <div className="">
         <h3 className="font-medium text-charcoal mb-4">Trip Summary</h3>
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-1">
@@ -49,11 +51,20 @@ export const ReviewStep = ({
             </div>
           </div>
           <div className="space-y-1">
+            <p className="text-sm text-gray-500">Estimated Distance</p>
+            <div className="flex items-center space-x-2">
+              <Route className="w-4 h-4 text-ocean-blue" />
+              <p className="text-sm font-medium text-charcoal">
+                {estimatedDistance ? `${estimatedDistance} km` : "N/A"}
+              </p>
+            </div>
+          <div className="space-y-1 relative top-[20px]">
             <p className="text-sm text-gray-500">Number of People</p>
             <div className="flex items-center space-x-2">
               <Users className="w-4 h-4 text-ocean-blue" />
               <p className="text-sm font-medium text-charcoal">{numPeople}</p>
             </div>
+          </div>
           </div>
           <div className="space-y-1">
             <p className="text-sm text-gray-500">Budget</p>

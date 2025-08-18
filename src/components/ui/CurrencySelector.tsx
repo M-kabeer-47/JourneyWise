@@ -31,7 +31,7 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
     <div className="space-y-2 relative">
       <label
         className={cn(
-          "block text-sm font-medium text-charcoal",
+          "block text-xs sm:text-sm font-medium text-charcoal",
           error && "text-red-500"
         )}
       >
@@ -39,7 +39,7 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
       </label>
 
       <div className="relative">
-        <DollarSign className="absolute left-3 top-[13px] h-4 w-4 text-gray-400" />
+        <DollarSign className="absolute left-3 top-[14px] sm:top-[12px] sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
 
         <button
           type="button"
@@ -56,7 +56,7 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         >
-          <span>
+          <span className="text-xs sm:text-sm">
             {selectedCurrency.code} - {selectedCurrency.name} (
             {selectedCurrency.symbol})
           </span>

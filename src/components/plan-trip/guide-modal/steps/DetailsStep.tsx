@@ -22,10 +22,10 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
   } = useForm<DetailsStepData>({
     resolver: zodResolver(detailsStepSchema),
     defaultValues: {
-      numPeople: initialData?.numPeople || undefined,
+      numOfPeople: initialData?.numOfPeople || undefined,
       estimatedBudget: initialData?.estimatedBudget || undefined,
 
-      estimatedDistanceKm: initialData?.estimatedDistanceKm || undefined,
+      estimatedDistance: initialData?.estimatedDistance || undefined,
       currency: initialData?.currency || "USD",
     },
   });
@@ -47,7 +47,7 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
     >
       <div>
         <h2 className="text-2xl font-bold text-midnight-blue">Trip Details</h2>
-        <p className="text-gray-500 text-sm mt-2">
+        <p className="text-gray-500 text-xs sm:text-sm mt-2">
           Set your group size, budget, and trip parameters to help us customize
           your trip plan.
         </p>
@@ -74,34 +74,34 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
         {/* Row 1: Number of People + Budget */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-charcoal">
+            <label className="block text-xs sm:text-sm font-medium text-charcoal">
               Number of People
             </label>
             <div className="relative">
-              <Users className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <Users className="absolute left-3 sm:top-3 top-[13px] sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
               <input
                 type="number"
-                {...register("numPeople", { valueAsNumber: true })}
-                className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+                {...register("numOfPeople", { valueAsNumber: true })}
+                className="w-full pl-11 sm:pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-xs sm:text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
                 placeholder="e.g. 2"
               />
             </div>
-            {errors.numPeople && (
-              <p className="text-red-500 text-xs">{errors.numPeople.message}</p>
+            {errors.numOfPeople && (
+              <p className="text-red-500 text-xs">{errors.numOfPeople.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <label className="block text-sm font-medium text-charcoal">
+            <label className="block text-xs sm:text-sm  font-medium text-charcoal">
               Estimated Budget
             </label>
             <div className="relative">
-              <Wallet className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+              <Wallet className="absolute left-3 sm:top-3 top-[13px] sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
 
               <input
                 type="number"
                 {...register("estimatedBudget", { valueAsNumber: true })}
-                className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+                className="w-full pl-11 sm:pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-xs sm:text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
                 placeholder="e.g. 1000"
               />
             </div>
@@ -116,21 +116,21 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
         {/* Row 2: Duration + Distance */}
 
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-charcoal">
+          <label className="block text-xs sm:text-sm font-medium text-charcoal">
             Estimated Distance (KM)
           </label>
           <div className="relative">
-            <Route className="absolute left-3 top-3 w-5 h-5 text-gray-400" />
+            <Route className="absolute left-3 sm:top-3 top-[13px] sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
             <input
               type="number"
-              {...register("estimatedDistanceKm", { valueAsNumber: true })}
-              className="w-full pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
+              {...register("estimatedDistance", { valueAsNumber: true })}
+              className="w-full pl-11 sm:pl-11 pr-4 h-11 rounded-lg border border-gray-200 text-charcoal text-xs sm:text-sm focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 transition-all outline-none"
               placeholder="e.g. 250"
             />
           </div>
-          {errors.estimatedDistanceKm && (
+          {errors.estimatedDistance && (
             <p className="text-red-500 text-xs">
-              {errors.estimatedDistanceKm.message}
+              {errors.estimatedDistance.message}
             </p>
           )}
         </div>
