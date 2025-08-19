@@ -209,7 +209,7 @@ const DesktopHorizontalTimeline = ({
               ) : (
                 <h1
                   className={`text-xs text-charcoal font-semibold overflow-visible mt-1 h-0 whitespace-nowrap absolute ${
-                    index % 2 == 0 ? "top-12" : "-top-10"
+                    index % 2 == 0 ? "top-14" : "-top-8"
                   }`}
                 >
                   {waypoint.name}

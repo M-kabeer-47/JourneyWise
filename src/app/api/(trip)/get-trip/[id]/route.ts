@@ -14,14 +14,7 @@ export async function GET(request:NextRequest,{params}:{params:{id:string}}){
     console.log("Attempting to fetch trip with ID:", id);
     
     let data = await db.select({
-      trip:{
-        waypoints: trip.waypoints,
-        estimatedBudget: trip.estimatedBudget,
-        numPeople: trip.numPeople,
-        currency: trip.currency,
-        createdAt: trip.createdAt,
-        updatedAt: trip.updatedAt,
-      },
+      trip:trip,
       user:{
         id: user.id,
         name: user.name,

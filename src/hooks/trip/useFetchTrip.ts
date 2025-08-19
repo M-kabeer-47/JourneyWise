@@ -6,7 +6,7 @@ export default function useFetchTrip({id}: {id: string}) {
 
   const fetchTrip = async () => {
     try {
-      let response = await axios.get(`/api/trip/${id}`);
+      let response = await axios.get(`/api/get-trip/${id}`);
       return response.data;
     } catch (err) {
       router.push("/not-found");
@@ -16,7 +16,7 @@ export default function useFetchTrip({id}: {id: string}) {
   };
 
   const {
-    data: trip,
+    data,
     isFetching,
     isLoading,
     isError,
@@ -27,5 +27,5 @@ export default function useFetchTrip({id}: {id: string}) {
     refetchOnMount: false,
   });
 
-  return { trip , isLoading, isFetching, isError };
+  return { data , isLoading, isFetching, isError };
 }

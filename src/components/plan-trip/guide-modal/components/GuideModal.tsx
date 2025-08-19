@@ -2,14 +2,14 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { currencies } from "../../../lib/constants/currencies";
+import { currencies } from "../../../../lib/constants/currencies";
 import { MapPin, Users, CheckCircle2, LucideIcon, Info } from "lucide-react";
 import { ModalWrapper } from "./ModalWrapper";
 import { ProgressSteps } from "./ProgressStep";
-import { LocationStep } from "./steps/LocationStep";
-import { DetailsStep } from "./steps/DetailsStep";
-import { NextStepsStep } from "./steps/WhatsNextStep";
-import { ReviewStep } from "./steps/ReviewStep";
+import { LocationStep } from "../steps/LocationStep";
+import { DetailsStep } from "../steps/DetailsStep";
+import { NextStepsStep } from "../steps/WhatsNextStep";
+import { ReviewStep } from "../steps/ReviewStep";
 import { GuideData, LocationStepData, DetailsStepData } from "@/lib/schemas/trip";
 
 interface Step {
@@ -170,6 +170,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
           <div className={`sm:mt-8 flex justify-between items-center border-t border-gray-100 py-2 ${step===4 ? "mt-8" : "mt-6"}`}>
             {step > 1 && (
               <button
+                key={`back-button-${step}`}
                 onClick={handlePrevious}
                 className="px-4 sm:px-6 py-2 text-xs sm:text-sm sm:py-2.5 rounded-lg text-sm font-medium bg-gray-100 text-charcoal hover:bg-gray-200 transition-all focus:outline-none focus:ring-2 focus:ring-gray-200 active:bg-gray-300"
               >
@@ -177,6 +178,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
               </button>
             )}
             <button
+              key={step}
               onClick={handleNext}
               className="ml-auto text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
             >

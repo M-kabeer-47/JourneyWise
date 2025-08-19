@@ -49,15 +49,14 @@ export const ImageUpload = ({
   };
 
   useEffect(() => {
-    if (value) {
+    if (value && value instanceof File) {
       const url = URL.createObjectURL(value);
       setPreviewUrl(url);
 
       // Cleanup function
-      
     } else {
       setPreviewUrl(null);
-    }
+    } //@ts-ignore
     return () => URL.revokeObjectURL(previewUrl);
   }, [value]);
 

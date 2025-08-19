@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline";
 import { WaypointForm } from "@/components/plan-trip/WaypointForm";
-import { GuideModal } from "@/components/plan-trip/guide-modal/GuideModal";
+import { GuideModal } from "@/components/plan-trip/guide-modal/components/GuideModal";
 import { toast } from "@/components/ui/Toast";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -16,19 +16,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import axios from "axios";
 import ConfirmModal from "@/components/ui/ConfirmModal";
-
+import { useRouter } from "next/navigation";
+import { useIsDesktop } from "@/hooks/useIsDesktop";
 // Add a small hook
-function useIsDesktop() {
-  const [isDesktop, setIsDesktop] = useState(false);
-  useEffect(() => {
-    const mq = window.matchMedia("(min-width: 1024px)"); // lg breakpoint
-    const onChange = (e: MediaQueryListEvent) => setIsDesktop(e.matches);
-    setIsDesktop(mq.matches);
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-  return isDesktop;
-}
 
 export default function Home() {
   const [showGuide, setShowGuide] = useState(true);
@@ -36,11 +26,9 @@ export default function Home() {
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionData, setSubmissionData] = useState<TripData | null>(null);
-  // Guide data state - properly typed
-
+  const [isGuideOpen, setIsGuideOpen] = useState(true);
   const [guideDetails, setGuideDetails] = useState<GuideData | null>(null);
-
+  const router = useRouter();
   const {
     register,
     control,
@@ -66,15 +54,12 @@ export default function Home() {
     control,
   });
   const watchWaypoints = watch("waypoints");
-  const isDesktop = useIsDesktop();
+  const { isDesktop } = useIsDesktop();
 
   const handleConfirm = async () => {
     if (!guideDetails) return;
     let waypointsData = watch("waypoints");
-    if(waypointsData.length <= 2) {
-      toast.error("Please add at least 3 waypoints");
-      return;
-    }
+
     setIsSubmitting(true);
     try {
       // Upload images
@@ -93,13 +78,18 @@ export default function Home() {
       // Prepare final data with guide details
       const finalTripData = {
         userID: "AoZUjvFu9ojeltXIiEbvdUh0hjW6P5cE",
-        
+
         ...guideDetails,
         waypoints: waypoints,
       };
 
       await axios.post("/api/create-trip", { data: finalTripData });
       toast.success("Trip planned successfully");
+      setTimeout(() => {
+        // Reset form and state
+        setGuideDetails(null);
+        router.push("/success/trip");
+      }, 2000);
     } catch (err) {
       console.error("Error creating trip:", err);
       toast.error("Trip planning failed");
@@ -172,8 +162,11 @@ export default function Home() {
   };
 
   const handleFinishPlanning = (data: TripData) => {
+    if (data.waypoints.length < 3) {
+      toast.error("Please add at least 3 waypoints");
+      return;
+    }
     setIsConfirmationModalOpen(true);
-    setSubmissionData(data);
   };
 
   const handleImageUpload = (file: File) => {
@@ -185,9 +178,7 @@ export default function Home() {
   }, [activeIndex, waypoints.length]);
 
   return (
-    <div
-      className={`min-h-screen relative`}
-    >
+    <div className={`min-h-screen relative`}>
       <GuideModal isOpen={showGuide} onComplete={handleGuideComplete} />
 
       {isDesktop ? (
@@ -208,20 +199,27 @@ export default function Home() {
           <div className="relative min-h-[800px] p-8 border-l border-gray-200 rounded-lg">
             {waypoints.length > 0 && (
               <WaypointForm
+                key={
+                  watchWaypoints[activeIndex].id +
+                  watchWaypoints[activeIndex].type
+                }
                 isGuideModalOpen={showGuide}
                 inValid={focusOnFirstError}
                 activeIndex={activeIndex}
                 type={watchWaypoints[activeIndex].type}
-                errors={errors}
-                control={control}
-                register={register}
-                setValue={setValue}
+                form={{
+                  errors,
+                  control,
+                  register,
+                  setValue,
+                  handleSubmit,
+                }}
                 onAdd={handleAddWaypoint}
                 onFinish={handleFinishPlanning}
-                handleSubmit={handleSubmit}
-                isLastWaypoint={activeIndex === waypoints.length - 2}
                 onImageUpload={handleImageUpload}
                 onRemove={() => handleRemoveWaypoint(activeIndex)}
+                isGuideOpen={isGuideOpen}
+                setIsGuideOpen={setIsGuideOpen}
               />
             )}
           </div>
@@ -238,20 +236,27 @@ export default function Home() {
           {waypoints.length > 0 && (
             <div className="mt-4 bg-white shadow-md p-4 rounded-lg min-h-[820px]">
               <WaypointForm
+                key={
+                  watchWaypoints[activeIndex].id +
+                  watchWaypoints[activeIndex].type
+                }
                 inValid={focusOnFirstError}
                 isGuideModalOpen={showGuide}
                 activeIndex={activeIndex}
                 type={watchWaypoints[activeIndex].type}
-                errors={errors}
-                control={control}
-                register={register}
-                setValue={setValue}
+                form={{
+                  errors,
+                  control,
+                  register,
+                  setValue,
+                  handleSubmit,
+                }}
                 onAdd={handleAddWaypoint}
                 onFinish={handleFinishPlanning}
-                handleSubmit={handleSubmit}
-                isLastWaypoint={activeIndex === waypoints.length - 2}
                 onImageUpload={handleImageUpload}
                 onRemove={() => handleRemoveWaypoint(activeIndex)}
+                isGuideOpen={isGuideOpen}
+                setIsGuideOpen={setIsGuideOpen}
               />
             </div>
           )}

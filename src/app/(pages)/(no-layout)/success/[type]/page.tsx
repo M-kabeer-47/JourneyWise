@@ -35,7 +35,13 @@ const successConfig = {
     buttonText: "View Blog",
     buttonHref: "/blog",
   },
-  
+  trip: {
+    title: "Trip Planned!",
+    description: "Your trip has been successfully planned.",
+    buttonText: "View Trip",
+    buttonHref: "/trips",
+  },
+
   default: {
     title: "Success!",
     description: "Your action was successful.",

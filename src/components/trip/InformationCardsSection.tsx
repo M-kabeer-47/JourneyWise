@@ -1,6 +1,20 @@
-import { BanknoteIcon, Clock, DollarSign, MapPin, Train } from "lucide-react";
+import { BanknoteIcon, Clock, DollarSign, MapPin, Train, Users } from "lucide-react";
 
-export default function InformationCardsSection({mockTrip,numberOfWaypoints}: {mockTrip: {routeDistance: string; estimatedDuration: string; estimatedBudget: number;},numberOfWaypoints: number}) {
+interface TripData {
+  estimatedBudget: number;
+  estimatedDistance: number;
+  numOfPeople: number;
+}
+
+interface InformationCardsSectionProps {
+  tripData: TripData;
+  numberOfWaypoints: number;
+}
+
+export default function InformationCardsSection({
+  tripData,
+  numberOfWaypoints
+}: InformationCardsSectionProps) {
   return (
     <section className="py-20 bg-gray-100">
       <div className="max-w-[1400px] mx-auto px-6">
@@ -21,7 +35,7 @@ export default function InformationCardsSection({mockTrip,numberOfWaypoints}: {m
               <div>
                 <h3 className="font-semibold text-gray-900">Distance</h3>
                 <p className="text-lg font-bold text-midnight-blue">
-                  {mockTrip.routeDistance}
+                  {tripData.estimatedDistance} km
                 </p>
               </div>
             </div>
@@ -30,21 +44,21 @@ export default function InformationCardsSection({mockTrip,numberOfWaypoints}: {m
             </p>
           </div>
 
-          {/* Duration Card */}
+          {/* People Card */}
           <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100 p-6">
             <div className="flex items-center gap-3 mb-3">
               <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
-                <Clock className="w-5 h-5 text-ocean-blue" />
+                <Users className="w-5 h-5 text-ocean-blue" />
               </div>
               <div>
-                <h3 className="font-semibold text-gray-900">Duration</h3>
+                <h3 className="font-semibold text-gray-900">Travelers</h3>
                 <p className="text-lg font-bold text-midnight-blue">
-                  {mockTrip.estimatedDuration}
+                  {tripData.numOfPeople} {tripData.numOfPeople === 1 ? 'Person' : 'People'}
                 </p>
               </div>
             </div>
             <p className="text-sm text-charcoal">
-              Travel time between destinations, add time for sightseeing.
+              Number of travelers for this journey.
             </p>
           </div>
 
@@ -75,12 +89,12 @@ export default function InformationCardsSection({mockTrip,numberOfWaypoints}: {m
               <div>
                 <h3 className="font-semibold text-gray-900">Budget</h3>
                 <p className="text-lg font-bold text-midnight-blue">
-                  ${mockTrip.estimatedBudget}
+                  ${tripData.estimatedBudget}
                 </p>
               </div>
             </div>
             <p className="text-sm text-charcoal">
-              Estimated cost for 2 people including fuel and attractions.
+              Estimated cost for {tripData.numOfPeople} {tripData.numOfPeople === 1 ? 'person' : 'people'} including fuel and attractions.
             </p>
           </div>
         </div>

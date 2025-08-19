@@ -21,6 +21,7 @@ import {
 import { TripData } from "@/lib/schemas/trip";
 import { WaypointType } from "@/lib/types/waypoint";
 import { ImageUpload } from "../ui/ImageUpload";
+import TypeSelector from "./TypeSelector";
 
 interface Hotel {
   id: string;
@@ -32,18 +33,22 @@ interface Hotel {
 interface WaypointFormProps {
   activeIndex: number;
   type: WaypointType;
-  register: UseFormRegister<TripData>;
-  errors: FieldErrors<TripData>;
-  control: Control<TripData>;
-  handleSubmit: UseFormHandleSubmit<TripData>;
+  form: {
+    register: UseFormRegister<TripData>;
+    errors: FieldErrors<TripData>;
+    control: Control<TripData>;
+    handleSubmit: UseFormHandleSubmit<TripData>;
+    setValue: UseFormSetValue<TripData>;
+  };
   onAdd: () => void;
   onFinish: (data: TripData) => void;
-  isLastWaypoint: boolean;
-  setValue: UseFormSetValue<TripData>;
+
   onImageUpload: (file: File) => void;
   onRemove: () => void;
   isGuideModalOpen: boolean;
   inValid: (data: TripData) => void;
+  isGuideOpen: boolean;
+  setIsGuideOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const formVariants = {
@@ -52,94 +57,22 @@ const formVariants = {
   exit: { opacity: 0, y: -20 },
 };
 
-const TypeSelector = ({
-  ActiveIndex,
-  watchedWaypoint,
-  setValue,
-  type,
-}: {
-  ActiveIndex: number;
-  watchedWaypoint: any;
-  setValue: UseFormSetValue<TripData>;
-  type: WaypointType;
-}) => (
-  <div className="flex gap-2">
-    <motion.button
-      layout
-      onClick={() => {
-        if (
-          watchedWaypoint.type === "start" ||
-          watchedWaypoint.type === "end"
-        ) {
-          return;
-        } else {
-          setValue(`waypoints.${ActiveIndex}.type`, "attraction");
-        }
-      }}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
-        type === "attraction"
-          ? "text-white bg-ocean-blue"
-          : "text-charcoal hover:text-ocean-blue"
-      }`}
-      style={{ WebkitTapHighlightColor: "transparent" }}
-    >
-      {type === "attraction" && (
-        <motion.div
-          layoutId="bubble"
-          className="absolute inset-0"
-          style={{ borderRadius: 8 }}
-          transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
-        />
-      )}
-      <span className="relative z-10 font-[Open Sans]">Attraction</span>
-    </motion.button>
-    <motion.button
-      layout
-      onClick={() => {
-        if (
-          watchedWaypoint.type === "start" ||
-          watchedWaypoint.type === "end"
-        ) {
-          return;
-        } else {
-          setValue(`waypoints.${ActiveIndex}.type`, "stop");
-        }
-      }}
-      className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
-        type === "stop"
-          ? "text-white bg-ocean-blue"
-          : "text-charcoal hover:text-ocean-blue"
-      }`}
-      style={{ WebkitTapHighlightColor: "transparent" }}
-    >
-      {type === "stop" && (
-        <motion.div
-          layoutId="bubble"
-          className="absolute inset-0 bg-ocean-blue"
-          style={{ borderRadius: 8 }}
-          transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
-        />
-      )}
-      <span className="relative z-10">Stop</span>
-    </motion.button>
-  </div>
-);
+
 
 export const WaypointForm = ({
   activeIndex,
   type,
-  register,
-  setValue,
-  control,
-  handleSubmit,
-  errors,
+  form,
   onAdd,
   onFinish,
   onImageUpload,
   onRemove,
   isGuideModalOpen,
+  isGuideOpen,
+  setIsGuideOpen,
 }: WaypointFormProps) => {
-  const [isGuideOpen, setIsGuideOpen] = useState(true);
+  const { register, setValue, control, handleSubmit, errors } = form;
+
   const {
     fields: hotels,
     append: appendHotel,
@@ -327,7 +260,8 @@ export const WaypointForm = ({
       <div className="border-t border-gray-200 py-3 flex justify-end">
         <button
           type="submit"
-          className="px-6 py-2 rounded-lg text-sm font-medium bg-midnight-blue text-white hover:bg-midnight-blue/90 transition-all"
+          onClick={() => console.log("data", errors)}
+          className="px-6 py-2 rounded-lg text-sm font-medium bg-midnight-blue text-white hover:bg-midnight-blue/90 transition-all "
         >
           Finish Planning
         </button>
@@ -351,7 +285,7 @@ export const WaypointForm = ({
           </h2>
           <div className="flex items-center justify-between">
             <TypeSelector
-              ActiveIndex={activeIndex}
+              activeIndex={activeIndex}
               watchedWaypoint={watchedWaypoint}
               setValue={setValue}
               type={type}
@@ -413,7 +347,7 @@ export const WaypointForm = ({
               </div>
               {type !== "start" && type !== "end" && (
                 <TooltipProvider delayDuration={0}>
-                  <Tooltip >
+                  <Tooltip>
                     <TooltipTrigger asChild>
                       <button
                         onClick={onRemove}
