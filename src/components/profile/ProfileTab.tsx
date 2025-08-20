@@ -80,8 +80,7 @@ export default function ProfileTab({
               <TripCard
                 key={trip.id}
                 trip={trip}
-                showActions={true}
-                isPersonal={true} // Added this prop
+                isPersonal={true}
                 onView={handleTripView}
                 onEdit={handleTripEdit}
                 onDelete={handleTripDelete}
@@ -115,7 +114,7 @@ export default function ProfileTab({
               <BlogCard
                 key={blog.blog.id}
                 blog={blog}
-                isPersonal={true} // Added this prop
+                isPersonal={true}
                 onView={handleBlogView}
                 onEdit={handleBlogEdit}
                 onDelete={handleBlogDelete}
@@ -145,8 +144,8 @@ export default function ProfileTab({
             </button>
           </div>
           <div className="space-y-4">
-            {recentBookings.slice(0, 2).map((booking) => (
-              <BookingCard key={booking.id} booking={booking} compact={true} />
+            {recentBookings.slice(0, 3).map((booking) => (
+              <BookingCard key={booking.id} booking={booking} compact={false} />
             ))}
           </div>
         </motion.div>

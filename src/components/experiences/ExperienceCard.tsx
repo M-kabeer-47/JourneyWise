@@ -155,13 +155,13 @@ export default function ExperienceCard({
             {experience.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="inline-block px-3 py-1 text-xs font-medium bg-ocean-blue/10 text-midnight-blue rounded-full"
+                className="inline-block px-3 py-1 text-sm font-semibold bg-ocean-blue/10 text-midnight-blue rounded-full"
               >
                 {tag}
               </span>
             ))}
             {experience.tags.length > 3 && (
-              <span className="inline-block px-3 py-1 text-xs font-medium bg-gray-100 text-gray-600 rounded-full">
+              <span className="inline-block px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-600 rounded-full">
                 +{experience.tags.length - 3}
               </span>
             )}
@@ -169,7 +169,7 @@ export default function ExperienceCard({
         )}
 
         {/* Title */}
-        <h3 className="text-xl font-bold text-gray-900 line-clamp-2 mb-3 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
+        <h3 className="text-xl font-[800] text-charcoal line-clamp-2 mb-3 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
           {experience.title}
         </h3>
 

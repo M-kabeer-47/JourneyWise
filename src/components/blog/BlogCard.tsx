@@ -2,9 +2,7 @@
 import {
   MessageCircle,
   Bookmark,
-  BookmarkCheck,
   Calendar,
-  User,
   MoreVertical,
   Eye,
   Edit,
@@ -182,7 +180,7 @@ export function BlogCard({
 
   return (
     <Link href={`/blog/${blogData.blog.id}`}>
-      <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform">
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-[400px]">
         {/* Cover Image with Overlay */}
         <div className="relative h-56 overflow-hidden">
           <Image
@@ -251,7 +249,10 @@ export function BlogCard({
                 className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
               >
                 {isSaved ? (
-                  <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+                  <Bookmark
+                    className="w-4 h-4 text-ocean-blue"
+                    fill="currentColor"
+                  />
                 ) : (
                   <Bookmark className="w-4 h-4 text-gray-600" />
                 )}
@@ -260,36 +261,34 @@ export function BlogCard({
           )}
 
           {/* Author Badge on Image */}
-          <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
-            <div className="relative w-6 h-6 rounded-full overflow-hidden">
-              {blogData.author.image ? (
-                <Image
-                  src={blogData.author.image}
-                  alt={blogData.author.name}
-                  fill
-                  className="object-cover"
-                />
-              ) : (
-                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-xs font-medium">
-                  {blogData.author.name.charAt(0).toUpperCase()}
-                </div>
-              )}
+          {!isPersonal && (
+            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
+              <div className="relative w-6 h-6 rounded-full overflow-hidden">
+                {blogData.author.image ? (
+                  <Image
+                    src={blogData.author.image}
+                    alt={blogData.author.name}
+                    fill
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-xs font-medium">
+                    {blogData.author.name.charAt(0).toUpperCase()}
+                  </div>
+                )}
+              </div>
+              <span className="text-xs font-medium text-gray-700">
+                {blogData.author.name}
+              </span>
             </div>
-            <span className="text-xs font-medium text-gray-700">
-              {blogData.author.name}
-            </span>
-          </div>
+          )}
         </div>
 
         {/* Content */}
         <div className="p-6">
           {/* Title */}
-          <h3 className="text-lg font-bold text-gray-900 line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight">
-            {blogData.blog.title.length > 30 ? (
-              <>{blogData.blog.title.slice(0, 30)}...</>
-            ) : (
-              <>{blogData.blog.title}</>
-            )}
+          <h3 className="text-xl font-[800] font-raleway text-charcoal line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight">
+            {blogData.blog.title}
           </h3>
 
           {/* Meta Info */}
@@ -306,22 +305,24 @@ export function BlogCard({
             </div>
 
             {/* Read More Indicator */}
-            <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-              <span>Read more</span>
-              <svg
-                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 5l7 7-7 7"
-                />
-              </svg>
-            </div>
+            {!isPersonal && (
+              <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                <span>Read more</span>
+                <svg
+                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -12,6 +12,8 @@ import {
   Route,
   Bookmark,
   BookmarkCheck,
+  Banknote,
+  User,
 } from "lucide-react";
 import Link from "next/link";
 
@@ -161,11 +163,6 @@ export default function TripCard({
           )}
 
           {/* Distance Badge */}
-          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-            <span className="text-sm font-semibold text-midnight-blue">
-              {trip.estimatedDistance} km
-            </span>
-          </div>
 
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -242,12 +239,13 @@ export default function TripCard({
         <div className="p-6">
           {/* Route */}
           <div className="flex items-center gap-2 mb-3">
-            <div className="flex items-center gap-2 text-midnight-blue">
-              <MapPin className="w-4 h-4 text-ocean-blue" />
-              <span className="font-bold text-lg">{trip.startPoint}</span>
+            <div className="flex items-center gap-2">
+              <span className="font-[800] text-xl text-charcoal font-raleway">
+                {trip.startPoint}
+              </span>
             </div>
             <div className="flex-1 border-t border-dashed border-gray-300 mx-2" />
-            <div className="text-midnight-blue font-bold text-lg">
+            <div className="text-charcoal font-[800] text-xl font-raleway">
               {trip.endPoint}
             </div>
           </div>
@@ -255,14 +253,8 @@ export default function TripCard({
           {/* Trip Details */}
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center gap-2 text-gray-600">
-              <Calendar className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm">
-                {new Date(trip.createdAt).toLocaleDateString("en-US", {
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                })}
-              </span>
+              <User className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm">{trip.numOfPeople} people</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
               <Clock className="w-4 h-4 text-ocean-blue" />
@@ -273,8 +265,8 @@ export default function TripCard({
               <span className="text-sm">{trip.estimatedDistance} km</span>
             </div>
             <div className="flex items-center gap-2 text-gray-600">
-              <DollarSign className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm font-semibold">
+              <Banknote className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm">
                 ${trip.estimatedBudget.toLocaleString()}{" "}
                 {trip.currency || "USD"}
               </span>
@@ -282,22 +274,24 @@ export default function TripCard({
           </div>
 
           {/* Hover Effect Indicator */}
-          <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-            <span>View trip details</span>
-            <svg
-              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
-          </div>
+          {!isPersonal && (
+            <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <span>View trip details</span>
+              <svg
+                className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </div>
+          )}
         </div>
       </div>
     </Link>

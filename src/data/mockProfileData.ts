@@ -168,7 +168,9 @@ export const mockBookings = [
     tier: {
       name: "Premium Package",
       inclusions: ["Photography gear", "Professional guide"],
+      members: 2,
     },
+
     totalPrice: 540,
     paymentID: "pay1",
     isCustomRequest: false,
@@ -177,8 +179,49 @@ export const mockBookings = [
     experience: {
       id: "exp1",
       title: "Sunset Photography Workshop in Santorini",
-      imageUrl:
+      image:
         "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
+
+      location: "Santorini, Greece",
+    },
+    agent: {
+      id: "agent1",
+      agencyName: "Aegean Adventures",
+      email: "contact@aegeanadventures.com",
+    },
+    payment: {
+      id: "pay1",
+      status: "completed" as const,
+      paymentType: "card" as const,
+      amount: 540,
+    },
+  },
+  {
+    id: "booking2",
+    experienceID: "exp1",
+    agentID: "agent1",
+    customerID: "user123",
+    bookingDate: "2024-01-15T09:00:00Z",
+    status: "confirmed" as const,
+    startDate: "2024-02-20T10:00:00Z",
+    endDate: "2024-02-22T18:00:00Z",
+    tier: {
+      name: "Premium Package",
+      inclusions: ["Photography gear", "Professional guide"],
+      members: 4
+    },
+
+    totalPrice: 540,
+    paymentID: "pay1",
+    isCustomRequest: false,
+    noOfPackages: 1,
+    notes: "Looking forward to this experience!",
+    experience: {
+      id: "exp1",
+      title: "Sunset Photography Workshop in Santorini",
+      image:
+        "https://images.unsplash.com/photo-1570077188670-e3a8d69ac5ff?w=800",
+      location: "Santorini, Greece",
     },
     agent: {
       id: "agent1",

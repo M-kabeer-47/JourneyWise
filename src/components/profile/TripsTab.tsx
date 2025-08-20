@@ -54,7 +54,7 @@ export default function TripsTab({ trips }: TripsTabProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: trips.indexOf(trip) * 0.1 }}
           >
-            <TripCard trip={trip} />
+            <TripCard trip={trip} isPersonal={true} />
           </motion.div>
         ))}
       </div>
