@@ -1,112 +1,291 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { Calendar, MapPin, Settings, Share2 } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import {
+  Calendar,
+  MapPin,
+  Settings,
+  Share2,
+  Camera,
+  Check,
+} from "lucide-react";
 
 interface ProfileHeaderProps {
   user: {
+    id: string;
     name: string;
+    email: string;
     image?: string;
-    country: string;
+    country?: string;
     createdAt: string;
+    bannerImage?: string;
+    isEmailVerified?: boolean;
   };
-  stats: {
-    tripsCount: number;
-    blogsCount: number;
-    savedCount: number;
-    bookingsCount: number;
-  };
+  isOwnProfile?: boolean;
+  userType?: "user" | "agent";
 }
 
-export default function ProfileHeader({ user, stats }: ProfileHeaderProps) {
-  const joinDate = new Date(user.createdAt).toLocaleDateString('en-US', {
-    month: 'long',
-    year: 'numeric'
+export default function ProfileHeader({
+  user,
+  isOwnProfile = true,
+  userType = "user",
+}: ProfileHeaderProps) {
+  const joinDate = new Date(user.createdAt).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
   });
 
   const getUserInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase();
   };
 
-  return (
-    <div className="relative bg-gradient-to-br from-midnight-blue via-midnight-blue to-ocean-blue">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0" style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.1'%3E%3Ccircle cx='30' cy='30' r='2'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
-        }} />
-      </div>
+  // Only agents get banner images
+  if (userType === "agent") {
+    return (
+      <div className="bg-white rounded-2xl border border-gray-200 overflow-hidden">
+        {/* Agent Banner */}
+        <div className="relative h-32 sm:h-40 md:h-48 bg-midnight-blue overflow-hidden">
+          {user.bannerImage ? (
+            <img
+              src={user.bannerImage}
+              alt="Agency banner"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-gradient-to-r from-midnight-blue to-ocean-blue flex items-center justify-center">
+              <div className="text-center text-white px-4">
+                <h3 className="text-lg sm:text-xl md:text-2xl font-bold mb-1 md:mb-2">
+                  Creating Amazing Experiences
+                </h3>
+                <p className="text-sm md:text-base text-blue-100">
+                  Crafting unforgettable journeys
+                </p>
+              </div>
+            </div>
+          )}
 
-      <div className="relative max-w-6xl mx-auto px-6 pt-24 pb-8">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-center"
-        >
-          {/* Avatar */}
-          <div className="relative inline-block mb-6">
-            <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/20 backdrop-blur-sm shadow-2xl">
+          <div className="absolute inset-0 bg-black/20" />
+
+          {isOwnProfile && (
+            <button className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all">
+              <Camera className="w-4 h-4 md:w-5 md:h-5" />
+            </button>
+          )}
+        </div>
+
+        {/* Agent Profile Info */}
+        <div className="relative px-4 sm:px-6 md:px-8 pb-6 md:pb-8">
+          <div className="relative -mt-10 sm:-mt-12 md:-mt-16 mb-4 md:mb-6">
+            <div className="w-20 h-20 sm:w-24 sm:h-24 md:w-32 md:h-32 rounded-full overflow-hidden border-2 md:border-4 border-white shadow-lg bg-white">
               {user.image ? (
-                <img 
-                  src={user.image} 
+                <img
+                  src={user.image}
                   alt={user.name}
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-white/10 flex items-center justify-center text-white text-4xl font-bold">
+                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
                   {getUserInitials(user.name)}
                 </div>
               )}
             </div>
-            <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 border-4 border-white rounded-full" />
+            {isOwnProfile && (
+              <button className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 md:w-8 md:h-8 bg-ocean-blue border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-midnight-blue transition-all">
+                <Camera className="w-3 h-3 md:w-4 md:h-4" />
+              </button>
+            )}
           </div>
 
-          {/* Name & Location */}
-          <h1 className="text-4xl font-bold text-white mb-2">{user.name}</h1>
-          <div className="flex items-center justify-center gap-4 text-blue-100 mb-6">
-            <div className="flex items-center gap-2">
-              <MapPin className="w-5 h-5" />
-              <span>{user.country}</span>
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4">
+              <div className="flex-1">
+                {/* Name with verification badge - Always together */}
+                <div className="flex items-center gap-3 mb-3 md:mb-2">
+                  <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-midnight-blue">
+                    {user.name}
+                  </h1>
+                  {user.isEmailVerified && (
+                    <div className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 bg-green-500 rounded-full">
+                      <Check
+                        className="w-3 h-3 md:w-4 md:h-4 text-white"
+                        strokeWidth={5}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-6 text-charcoal mb-3 md:mb-4 text-sm md:text-base">
+                  {user.country && (
+                    <div className="flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+                      <span>{user.country}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+                    <span>Since {joinDate}</span>
+                  </div>
+                </div>
+                <p className="text-charcoal text-sm md:text-base max-w-2xl">
+                  Professional travel agent creating customized experiences for
+                  adventurous travelers.
+                </p>
+              </div>
+
+              {/* Desktop Action Buttons */}
+              <div className="hidden lg:flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 lg:flex-shrink-0">
+                {isOwnProfile ? (
+                  <>
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+                      <Settings className="w-4 h-4" />
+                      Edit Profile
+                    </button>
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                      <Share2 className="w-4 h-4" />
+                      Share Profile
+                    </button>
+                  </>
+                ) : null}
+              </div>
             </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-5 h-5" />
-              <span>Joined {joinDate}</span>
+
+            {/* Mobile Action Buttons - Always at bottom */}
+            <div className="flex lg:hidden flex-col sm:flex-row items-stretch gap-3 pt-4 border-t border-gray-100">
+              {isOwnProfile ? (
+                <>
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+                    <Settings className="w-4 h-4" />
+                    Edit Profile
+                  </button>
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                    <Share2 className="w-4 h-4" />
+                    Share Profile
+                  </button>
+                </>
+              ) : (
+                <button className="flex items-center justify-center gap-2 px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                  Follow
+                </button>
+              )}
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
 
-          {/* Action Buttons */}
-          <div className="flex items-center justify-center gap-4 mb-8">
-            <button className="flex items-center gap-2 px-6 py-3 bg-white/10 backdrop-blur-sm border border-white/20 rounded-full text-white hover:bg-white/20 transition-all">
-              <Settings className="w-5 h-5" />
-              Edit Profile
-            </button>
-            <button className="flex items-center gap-2 px-6 py-3 bg-accent hover:bg-accent/90 rounded-full text-white transition-all">
-              <Share2 className="w-5 h-5" />
-              Share Profile
-            </button>
+  // Clean User Profile (No Banner)
+  return (
+    <div className="bg-white rounded-2xl border border-gray-200 p-4 sm:p-6 md:p-8">
+      <div className="flex flex-col gap-6">
+        <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 md:gap-8">
+          {/* User Avatar */}
+          <div className="relative flex-shrink-0 self-center sm:self-start">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-2 md:border-4 border-gray-100 shadow-lg bg-white">
+              {user.image ? (
+                <img
+                  src={user.image}
+                  alt={user.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
+                  {getUserInitials(user.name)}
+                </div>
+              )}
+            </div>
+            {isOwnProfile && (
+              <button className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 md:w-8 md:h-8 bg-ocean-blue border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-midnight-blue transition-all">
+                <Camera className="w-3 h-3 md:w-4 md:h-4" />
+              </button>
+            )}
           </div>
 
-          {/* Stats */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
-            {[
-              { label: 'Trips Planned', value: stats.tripsCount },
-              { label: 'Blogs Written', value: stats.blogsCount },
-              { label: 'Items Saved', value: stats.savedCount },
-              { label: 'Bookings', value: stats.bookingsCount }
-            ].map((stat) => (
-              <motion.div
-                key={stat.label}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3 }}
-                className="bg-white/10 backdrop-blur-sm border border-white/20 rounded-2xl p-4"
-              >
-                <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
-                <div className="text-sm text-blue-100">{stat.label}</div>
-              </motion.div>
-            ))}
+          {/* User Info */}
+          <div className="flex-1 text-center sm:text-left">
+            <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-3 md:mb-4">
+              <div>
+                {/* Name with verification badge - Always together */}
+                <div className="flex items-center justify-center sm:justify-start gap-3 mb-2">
+                  <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-midnight-blue">
+                    {user.name}
+                  </h1>
+                  {user.isEmailVerified && (
+                    <div
+                      className="flex items-center justify-center w-5 h-5 md:w-6 md:h-6 bg-green-500 rounded-full"
+                      title="Verified Account"
+                    >
+                      <Check
+                        className="w-3 h-3 md:w-3 md:h-3 text-white"
+                        strokeWidth={5}
+                      />
+                    </div>
+                  )}
+                </div>
+
+                <div className="flex flex-col sm:flex-row sm:items-center justify-center sm:justify-start gap-3 sm:gap-6 text-charcoal text-sm md:text-base">
+                  {user.country && (
+                    <div className="flex items-center justify-center sm:justify-start gap-2">
+                      <MapPin className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+                      <span>{user.country}</span>
+                    </div>
+                  )}
+                  <div className="flex items-center justify-center sm:justify-start gap-2">
+                    <Calendar className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+                    <span>Joined {joinDate}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Desktop Action Buttons */}
+              <div className="hidden lg:flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 lg:flex-shrink-0">
+                {isOwnProfile ? (
+                  <>
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+                      <Settings className="w-4 h-4" />
+                      Edit Profile
+                    </button>
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                      <Share2 className="w-4 h-4" />
+                      Share Profile
+                    </button>
+                  </>
+                ) : (
+                  <button className="flex items-center justify-center gap-2 px-4 md:px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                    Follow
+                  </button>
+                )}
+              </div>
+            </div>
+
+            <p className="text-charcoal text-sm md:text-base leading-relaxed max-w-2xl">
+              Travel enthusiast exploring the world one adventure at a time.
+              Sharing experiences and creating memories.
+            </p>
           </div>
-        </motion.div>
+        </div>
+
+        {/* Mobile Action Buttons - Always at bottom */}
+        <div className="flex lg:hidden flex-col sm:flex-row items-stretch gap-3 pt-4 border-t border-gray-100">
+          {isOwnProfile ? (
+            <>
+              <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+                <Settings className="w-4 h-4" />
+                Edit Profile
+              </button>
+              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                <Share2 className="w-4 h-4" />
+                Share Profile
+              </button>
+            </>
+          ) : (
+            <button className="flex items-center justify-center gap-2 px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+              Follow
+            </button>
+          )}
+        </div>
       </div>
     </div>
   );

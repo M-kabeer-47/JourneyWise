@@ -1,7 +1,19 @@
-import React, { useMemo } from 'react';
-import { useRouter } from 'next/navigation';
-import { motion } from 'framer-motion';
-import { MapPin, Users, BanknoteIcon, Route, Calendar, MoreVertical, Edit, Trash2, Share2 } from 'lucide-react';
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import {
+  MapPin,
+  Calendar,
+  DollarSign,
+  Clock,
+  MoreVertical,
+  Eye,
+  Edit,
+  Trash2,
+  Route,
+  Bookmark,
+  BookmarkCheck,
+} from "lucide-react";
+import Link from "next/link";
 
 interface Trip {
   id: string;
@@ -19,15 +31,18 @@ interface Trip {
 
 interface TripCardProps {
   trip: Trip;
-  showActions?: boolean;
+  isPersonal?: boolean;
+  onView?: (id: string) => void;
   onEdit?: (trip: Trip) => void;
   onDelete?: (tripId: string) => void;
-  onShare?: (trip: Trip) => void;
+  onSave?: (tripId: string) => void;
+  onUnsave?: (tripId: string) => void;
 }
 
 function getFirstImageFromWaypoints(waypoints: any): string | null {
   try {
-    const parsed = typeof waypoints === 'string' ? JSON.parse(waypoints) : waypoints;
+    const parsed =
+      typeof waypoints === "string" ? JSON.parse(waypoints) : waypoints;
     if (Array.isArray(parsed)) {
       for (const waypoint of parsed) {
         if (waypoint?.imageUrl) {
@@ -36,201 +51,255 @@ function getFirstImageFromWaypoints(waypoints: any): string | null {
       }
     }
   } catch (error) {
-    console.error('Error parsing waypoints:', error);
+    console.error("Error parsing waypoints:", error);
   }
   return null;
 }
 
-export default function TripCard({ 
-  trip, 
-  showActions = true,
+export default function TripCard({
+  trip,
+  isPersonal = false,
+  onView,
   onEdit,
   onDelete,
-  onShare 
+  onSave,
+  onUnsave,
 }: TripCardProps) {
-  const router = useRouter();
-  const [showMenu, setShowMenu] = React.useState(false);
-  
-  const coverImage = useMemo(() => 
-    getFirstImageFromWaypoints(trip.waypoints), 
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const coverImage = useMemo(
+    () => getFirstImageFromWaypoints(trip.waypoints),
     [trip.waypoints]
   );
 
-  const handleCardClick = () => {
-    router.push(`/trip/${trip.id}`);
-  };
-
-  const handleMenuAction = (action: string, e: React.MouseEvent) => {
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
-    setShowMenu(false);
-    
-    switch (action) {
-      case 'edit':
-        onEdit?.(trip);
-        break;
-      case 'delete':
-        onDelete?.(trip.id);
-        break;
-      case 'share':
-        onShare?.(trip);
-        break;
+    if (isSaved) {
+      onUnsave?.(trip.id);
+      setIsSaved(false);
+    } else {
+      onSave?.(trip.id);
+      setIsSaved(true);
     }
   };
 
-  return (
-    <motion.div
-      whileHover={{ y: -4, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
-      whileTap={{ scale: 0.98 }}
-      className="group bg-white rounded-2xl border border-gray-200 overflow-hidden cursor-pointer transition-all duration-300 relative"
-      onClick={handleCardClick}
-    >
-      {/* Cover Image */}
-      <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-        {coverImage ? (
-          <img
-            src={coverImage}
-            alt={`${trip.startPoint} to ${trip.endPoint}`}
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-midnight-blue/10 to-ocean-blue/20">
-            <Route className="w-12 h-12 text-ocean-blue/50" />
-          </div>
-        )}
-        
-        {/* Distance Badge */}
-        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
-          <span className="text-sm font-semibold text-midnight-blue">
-            {trip.estimatedDistance} km
-          </span>
-        </div>
+  const getDuration = () => {
+    const start = new Date(trip.createdAt);
+    const end = new Date(trip.updatedAt);
+    const days = Math.ceil(
+      (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return Math.max(1, days);
+  };
 
-        {/* Actions Menu */}
-        {showActions && (
-          <div className="absolute top-3 right-3">
-            <div className="relative">
+  const personalDropdownOptions = [
+    {
+      label: "View",
+      icon: Eye,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onView?.(trip.id);
+        setIsDropdownOpen(false);
+      },
+    },
+    {
+      label: "Edit",
+      icon: Edit,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onEdit?.(trip);
+        setIsDropdownOpen(false);
+      },
+    },
+    {
+      label: "Delete",
+      icon: Trash2,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onDelete?.(trip.id);
+        setIsDropdownOpen(false);
+      },
+      danger: true,
+    },
+  ];
+
+  return (
+    <Link href={`/trip/${trip.id}`}>
+      <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform">
+        {/* Cover Image */}
+        <div className="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+          {coverImage ? (
+            <img
+              src={coverImage}
+              alt={`${trip.startPoint} to ${trip.endPoint}`}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-midnight-blue/10 to-ocean-blue/20">
+              <Route className="w-12 h-12 text-ocean-blue/50" />
+            </div>
+          )}
+
+          {/* Distance Badge */}
+          <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full">
+            <span className="text-sm font-semibold text-midnight-blue">
+              {trip.estimatedDistance} km
+            </span>
+          </div>
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+          {/* Actions - Personal Mode: Dropdown Menu */}
+          {isPersonal && (
+            <div className="absolute top-4 right-4" ref={dropdownRef}>
               <button
                 onClick={(e) => {
+                  e.preventDefault();
                   e.stopPropagation();
-                  setShowMenu(!showMenu);
+                  setIsDropdownOpen(!isDropdownOpen);
                 }}
-                className="w-8 h-8 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center hover:bg-white transition-all"
+                className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
               >
                 <MoreVertical className="w-4 h-4 text-gray-600" />
               </button>
 
-              {showMenu && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 0.95, y: -10 }}
-                  animate={{ opacity: 1, scale: 1, y: 0 }}
-                  className="absolute top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 py-1 min-w-[140px] z-10"
-                >
-                  <button
-                    onClick={(e) => handleMenuAction('edit', e)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-12 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
                   >
-                    <Edit className="w-4 h-4" />
-                    Edit Trip
-                  </button>
-                  <button
-                    onClick={(e) => handleMenuAction('share', e)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"
-                  >
-                    <Share2 className="w-4 h-4" />
-                    Share
-                  </button>
-                  <div className="border-t border-gray-100 my-1" />
-                  <button
-                    onClick={(e) => handleMenuAction('delete', e)}
-                    className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                    Delete
-                  </button>
-                </motion.div>
-              )}
+                    <div className="py-1">
+                      {personalDropdownOptions.map((option, index) => {
+                        const Icon = option.icon;
+                        return (
+                          <button
+                            key={index}
+                            onClick={option.onClick}
+                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
+                              option.danger
+                                ? "text-red-600 hover:bg-red-50"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                            {option.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Actions - Public Mode: Save Button Only */}
+          {!isPersonal && (
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={handleSaveToggle}
+                className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              >
+                {isSaved ? (
+                  <Bookmark
+                    className="w-4 h-4 text-ocean-blue"
+                    fill="currentColor"
+                  />
+                ) : (
+                  <Bookmark className="w-4 h-4 text-gray-600" />
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* Content */}
+        <div className="p-6">
+          {/* Route */}
+          <div className="flex items-center gap-2 mb-3">
+            <div className="flex items-center gap-2 text-midnight-blue">
+              <MapPin className="w-4 h-4 text-ocean-blue" />
+              <span className="font-bold text-lg">{trip.startPoint}</span>
+            </div>
+            <div className="flex-1 border-t border-dashed border-gray-300 mx-2" />
+            <div className="text-midnight-blue font-bold text-lg">
+              {trip.endPoint}
             </div>
           </div>
-        )}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent" />
-      </div>
+          {/* Trip Details */}
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="flex items-center gap-2 text-gray-600">
+              <Calendar className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm">
+                {new Date(trip.createdAt).toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                  year: "numeric",
+                })}
+              </span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <Clock className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm">{getDuration()} days</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <MapPin className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm">{trip.estimatedDistance} km</span>
+            </div>
+            <div className="flex items-center gap-2 text-gray-600">
+              <DollarSign className="w-4 h-4 text-ocean-blue" />
+              <span className="text-sm font-semibold">
+                ${trip.estimatedBudget.toLocaleString()}{" "}
+                {trip.currency || "USD"}
+              </span>
+            </div>
+          </div>
 
-      {/* Content */}
-      <div className="p-5">
-        {/* Route */}
-        <div className="flex items-center gap-2 mb-3">
-          <div className="flex items-center gap-2 text-midnight-blue">
-            <MapPin className="w-4 h-4 text-ocean-blue" />
-            <span className="font-bold text-lg">
-              {trip.startPoint}
-            </span>
-          </div>
-          <div className="flex-1 border-t border-dashed border-gray-300 mx-2" />
-          <div className="text-midnight-blue font-bold text-lg">
-            {trip.endPoint}
-          </div>
-        </div>
-
-        {/* Trip Details */}
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div className="flex items-center gap-2 text-gray-600">
-            <Users className="w-4 h-4 text-ocean-blue" />
-            <span className="text-sm">
-              {trip.numOfPeople} {trip.numOfPeople === 1 ? 'Person' : 'People'}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <BanknoteIcon className="w-4 h-4 text-ocean-blue" />
-            <span className="text-sm font-semibold">
-              ${trip.estimatedBudget.toLocaleString()} {trip.currency || 'USD'}
-            </span>
-          </div>
-        </div>
-
-        {/* Date & Status */}
-        <div className="flex items-center justify-between text-sm">
-          <div className="flex items-center gap-2 text-gray-500">
-            <Calendar className="w-4 h-4" />
-            <span>
-              Created {new Date(trip.createdAt).toLocaleDateString('en-US', {
-                month: 'short',
-                day: 'numeric',
-                year: 'numeric'
-              })}
-            </span>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-green-500 rounded-full" />
-            <span className="text-green-600 font-medium">Active</span>
-          </div>
-        </div>
-
-        {/* Hover Effect Indicator */}
-        <div className="mt-4 pt-4 border-t border-gray-100">
-          <div className="flex items-center justify-between text-ocean-blue opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span className="text-sm font-medium">View Trip Details</span>
-            <motion.div
-              animate={{ x: [0, 4, 0] }}
-              transition={{ repeat: Infinity, duration: 1.5 }}
+          {/* Hover Effect Indicator */}
+          <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+            <span>View trip details</span>
+            <svg
+              className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
             >
-              <Route className="w-4 h-4" />
-            </motion.div>
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
           </div>
         </div>
       </div>
-
-      {/* Click outside to close menu */}
-      {showMenu && (
-        <div
-          className="fixed inset-0 z-5"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowMenu(false);
-          }}
-        />
-      )}
-    </motion.div>
+    </Link>
   );
 }

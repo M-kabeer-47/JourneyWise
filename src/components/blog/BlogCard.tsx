@@ -5,10 +5,15 @@ import {
   BookmarkCheck,
   Calendar,
   User,
+  MoreVertical,
+  Eye,
+  Edit,
+  Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface BlogCardProps {
   blog: {
@@ -28,8 +33,12 @@ interface BlogCardProps {
       image?: string;
     };
   };
+  isPersonal?: boolean;
   onSave?: (blogId: string) => void;
   onUnsave?: (blogId: string) => void;
+  onView?: (id: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (id: string) => void;
 }
 
 const getDefaultCoverImage = (title: string) => {
@@ -87,8 +96,32 @@ const getDefaultCoverImage = (title: string) => {
   return defaults.default;
 };
 
-export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
-  const [isSaved, setIsSaved] = useState(false); // Static false for now
+export function BlogCard({
+  blog: blogData,
+  isPersonal = false,
+  onSave,
+  onUnsave,
+  onView,
+  onEdit,
+  onDelete,
+}: BlogCardProps) {
+  const [isSaved, setIsSaved] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        dropdownRef.current &&
+        !dropdownRef.current.contains(event.target as Node)
+      ) {
+        setIsDropdownOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -113,6 +146,40 @@ export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
 
   const defaultCoverImage = getDefaultCoverImage(blogData.blog.title);
 
+  const personalDropdownOptions = [
+    {
+      label: "View",
+      icon: Eye,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onView?.(blogData.blog.id);
+        setIsDropdownOpen(false);
+      },
+    },
+    {
+      label: "Edit",
+      icon: Edit,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onEdit?.(blogData.blog.id);
+        setIsDropdownOpen(false);
+      },
+    },
+    {
+      label: "Delete",
+      icon: Trash2,
+      onClick: (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onDelete?.(blogData.blog.id);
+        setIsDropdownOpen(false);
+      },
+      danger: true,
+    },
+  ];
+
   return (
     <Link href={`/blog/${blogData.blog.id}`}>
       <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform">
@@ -128,17 +195,69 @@ export function BlogCard({ blog: blogData, onSave, onUnsave }: BlogCardProps) {
           {/* Gradient Overlay */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-          {/* Save Button Overlay */}
-          <button
-            onClick={handleSaveToggle}
-            className="absolute top-4 right-4 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
-          >
-            {isSaved ? (
-              <BookmarkCheck className="w-4 h-4 text-ocean-blue" />
-            ) : (
-              <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
-            )}
-          </button>
+          {/* Actions - Personal Mode: Dropdown Menu */}
+          {isPersonal && (
+            <div className="absolute top-4 right-4" ref={dropdownRef}>
+              <button
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  setIsDropdownOpen(!isDropdownOpen);
+                }}
+                className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              >
+                <MoreVertical className="w-4 h-4 text-gray-600" />
+              </button>
+
+              <AnimatePresence>
+                {isDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: -10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: -10 }}
+                    transition={{ duration: 0.15 }}
+                    className="absolute right-0 top-12 w-36 bg-white border border-gray-200 rounded-lg shadow-lg z-50"
+                  >
+                    <div className="py-1">
+                      {personalDropdownOptions.map((option, index) => {
+                        const Icon = option.icon;
+                        return (
+                          <button
+                            key={index}
+                            onClick={option.onClick}
+                            className={`w-full flex items-center gap-2 px-3 py-2 text-sm transition-colors ${
+                              option.danger
+                                ? "text-red-600 hover:bg-red-50"
+                                : "text-gray-700 hover:bg-gray-50"
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                            {option.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
+
+          {/* Actions - Public Mode: Save Button Only */}
+          {!isPersonal && (
+            <div className="absolute top-4 right-4">
+              <button
+                onClick={handleSaveToggle}
+                className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              >
+                {isSaved ? (
+                  <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+                ) : (
+                  <Bookmark className="w-4 h-4 text-gray-600" />
+                )}
+              </button>
+            </div>
+          )}
 
           {/* Author Badge on Image */}
           <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
