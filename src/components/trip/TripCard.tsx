@@ -178,7 +178,7 @@ export default function TripCard({
                 }}
                 className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
               >
-                <MoreVertical className="w-4 h-4 text-gray-600" />
+                <MoreVertical className="w-4 h-4 text-charcoal" />
               </button>
 
               <AnimatePresence>
@@ -228,7 +228,7 @@ export default function TripCard({
                     fill="currentColor"
                   />
                 ) : (
-                  <Bookmark className="w-4 h-4 text-gray-600" />
+                  <Bookmark className="w-4 h-4 text-charcoal" />
                 )}
               </button>
             </div>
@@ -252,21 +252,21 @@ export default function TripCard({
 
           {/* Trip Details */}
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-charcoal">
               <User className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm">{trip.numOfPeople} people</span>
+              <span className="text-xs sm:text-sm">{trip.numOfPeople} people</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-charcoal">
               <Clock className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm">{getDuration()} days</span>
+              <span className="text-xs sm:text-sm">{getDuration()} days</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-charcoal">
               <MapPin className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm">{trip.estimatedDistance} km</span>
+              <span className="text-xs sm:text-sm">{trip.estimatedDistance} km</span>
             </div>
-            <div className="flex items-center gap-2 text-gray-600">
+            <div className="flex items-center gap-2 text-charcoal">
               <Banknote className="w-4 h-4 text-ocean-blue" />
-              <span className="text-sm">
+              <span className="text-xs sm:text-sm">
                 ${trip.estimatedBudget.toLocaleString()}{" "}
                 {trip.currency || "USD"}
               </span>

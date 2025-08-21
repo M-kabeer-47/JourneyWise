@@ -91,13 +91,7 @@ export default function BookingCard({
   };
 
   return (
-    <motion.div
-      whileHover={{
-        y: -2,
-        boxShadow: "0 8px 25px -5px rgb(0 0 0 / 0.1)",
-      }}
-      className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[250px]"
-    >
+    <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[250px]">
       <div className="flex flex-col sm:flex-row h-full">
         {/* Image */}
         <div className="relative sm:w-[40%] h-auto flex-shrink-0">
@@ -124,12 +118,6 @@ export default function BookingCard({
                 <h3 className="font-[800] text-xl sm:text-2xl font-raleway text-midnight-blue truncate">
                   {booking.experience.title}
                 </h3>
-                <div className="flex items-center gap-1 text-charcoal mt-2">
-                  <MapPin className="w-3 h-3 text-ocean-blue" />
-                  <span className="sm:text-sm text-xs ">
-                    {booking.experience.location}
-                  </span>
-                </div>
               </div>
 
               {/* Status */}
@@ -149,6 +137,12 @@ export default function BookingCard({
               </span>
             </div>
             {/* Details */}
+            <div className="flex items-center gap-1 text-charcoal mt-2">
+              <MapPin className="w-3 h-3 text-ocean-blue" />
+              <span className="sm:text-sm text-xs ">
+                {booking.experience.location}
+              </span>
+            </div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-4 text-gray-600">
                 <div className="flex items-center gap-1">
