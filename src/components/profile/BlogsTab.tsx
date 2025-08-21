@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Plus, Edit3 } from 'lucide-react';
+import Tabs from './Tabs';
 
 interface BlogsTabProps {
   blogs: any[];
@@ -31,31 +32,15 @@ export default function BlogsTab({ blogs }: BlogsTabProps) {
       </div>
 
       {/* Sub-tabs */}
-      <div className="flex items-center gap-1 mb-8 bg-gray-100 p-1 rounded-full w-fit">
-        {[
+      <Tabs
+        options={[
           { key: 'published', label: 'Published', count: publishedBlogs.length },
           { key: 'drafts', label: 'Drafts', count: draftBlogs.length }
-        ].map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveSubTab(tab.key as any)}
-            className={`px-6 py-2 rounded-full font-medium transition-all relative ${
-              activeSubTab === tab.key
-                ? 'bg-white text-midnight-blue shadow-sm'
-                : 'text-gray-600 hover:text-midnight-blue'
-            }`}
-          >
-            {tab.label} ({tab.count})
-            {activeSubTab === tab.key && (
-              <motion.div
-                layoutId="blogSubTab"
-                className="absolute inset-0 bg-white rounded-full shadow-sm"
-                style={{ zIndex: -1 }}
-              />
-            )}
-          </button>
-        ))}
-      </div>
+        ]}
+        activeKey={activeSubTab}
+        onChange={setActiveSubTab}
+        className="max-w-[300px]"
+      />
 
       {currentBlogs.length === 0 ? (
         <div className="text-center py-16">
@@ -80,7 +65,7 @@ export default function BlogsTab({ blogs }: BlogsTabProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {currentBlogs.map((blog) => (
             <motion.div
-              key={blog.id}
+              key={blog.blog.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"

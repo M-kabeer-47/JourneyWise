@@ -16,6 +16,7 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
   const ref = useRef<HTMLDivElement>(null);
 
   const getUserInitials = (name: string) => {
+    if (!name) return "JW";
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
@@ -42,11 +43,11 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
             <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-white/20 flex items-center justify-center text-white text-sm font-medium">
-              {getUserInitials(user.name)}
+              {user ? getUserInitials(user.name) : "JW"}
             </div>
           )}
         </div>
-        <span className="text-white text-sm font-medium hidden md:block">{user.name}</span>
+        <span className="text-white text-sm font-medium hidden md:block">{user ? user.name : "John Doe"}</span>
         <ChevronDown 
           className={`w-4 h-4 text-white/70 transition-transform ${isOpen ? 'rotate-180' : ''}`} 
         />
@@ -71,13 +72,13 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
                     <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-white/20 flex items-center justify-center text-white text-lg font-bold">
-                      {getUserInitials(user.name)}
+                      {user ? getUserInitials(user.name) : "JW"}
                     </div>
                   )}
                 </div>
                 <div>
-                  <div className="font-semibold">{user.name}</div>
-                  <div className="text-sm text-blue-100">{user.email}</div>
+                  <div className="font-semibold">{user ? user.name : "John Doe"}</div>
+                  <div className="text-sm text-blue-100">{user ? user.email : "john.doe@example.com"}</div>
                 </div>
               </div>
             </div>

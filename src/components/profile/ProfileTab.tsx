@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { motion } from "framer-motion";
 import ProfileHeader from "@/components/profile/ProfileHeader";
 import TripCard from "@/components/trip/TripCard";
 import { BlogCard } from "@/components/blog/BlogCard";
-import BookingCard from "@/components/profile/BookingCard";
+import BookingCard from "@/components/booking/BookingCard";
 import { ArrowRight, Plus } from "lucide-react";
+import BookingDetailsModal from "../booking/BookingDetailsModal";
 
 interface ProfileTabProps {
   user: any;
@@ -21,6 +22,8 @@ export default function ProfileTab({
   recentBookings,
   onTabChange,
 }: ProfileTabProps) {
+  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
   const handleTripView = (id: string) => {
     console.log("View trip:", id);
     // Navigate to trip details
@@ -52,20 +55,19 @@ export default function ProfileTab({
   };
 
   return (
-    <div className="space-y-8">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="space-y-8"
+    >
       {/* Profile Header */}
       <ProfileHeader user={user} isOwnProfile={true} userType="user" />
 
       {/* Recent Trips */}
       {recentTrips.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="bg-white rounded-2xl border border-gray-200 p-6"
-        >
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-midnight-blue">
+            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
               Recent Trips
             </h3>
             <button
@@ -87,19 +89,14 @@ export default function ProfileTab({
               />
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Recent Blogs */}
       {recentBlogs.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white rounded-2xl border border-gray-200 p-6"
-        >
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-midnight-blue">
+            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
               Recent Blogs
             </h3>
             <button
@@ -121,19 +118,14 @@ export default function ProfileTab({
               />
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Recent Bookings */}
       {recentBookings.length > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
-          className="bg-white rounded-2xl border border-gray-200 p-6"
-        >
+        <div className="bg-white rounded-2xl border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-bold text-midnight-blue">
+            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
               Recent Bookings
             </h3>
             <button
@@ -145,17 +137,23 @@ export default function ProfileTab({
           </div>
           <div className="space-y-4">
             {recentBookings.slice(0, 3).map((booking) => (
-              <BookingCard key={booking.id} booking={booking} compact={false} />
+              <BookingCard
+                key={booking.id}
+                booking={booking}
+                isPersonal={true}
+                setSelectedBooking={setSelectedBooking}
+                setShowDetails={setShowDetails}
+              />
             ))}
           </div>
-        </motion.div>
+        </div>
       )}
 
       {/* Empty State */}
       {recentTrips.length === 0 &&
         recentBlogs.length === 0 &&
         recentBookings.length === 0 && (
-          <motion.div
+          <div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             className="bg-white rounded-2xl border border-gray-200 p-12 text-center"
@@ -178,8 +176,14 @@ export default function ProfileTab({
                 Write a Blog
               </button>
             </div>
-          </motion.div>
+          </div>
         )}
-    </div>
+      {selectedBooking && showDetails && (
+        <BookingDetailsModal
+          booking={selectedBooking}
+          onClose={() => setShowDetails(false)}
+        />
+      )}
+    </motion.div>
   );
 }

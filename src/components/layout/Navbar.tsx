@@ -167,7 +167,7 @@ export default function Navbar() {
                     onMouseEnter={() => setIsBlogDropdownOpen(true)}
                     onMouseLeave={() => setIsBlogDropdownOpen(false)}
                   >
-                    <button className="text-white font-semibold  transition-colors duration-300 flex items-center">
+                    <button className="text-white font-semibold font-raleway  transition-colors duration-300 flex items-center">
                       {link.name}
                       <ChevronDown size={16} className="ml-1" />
                     </button>
@@ -197,7 +197,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
-                    className="text-white font-semibold transition-colors duration-300"
+                    className="text-white font-raleway font-semibold transition-colors duration-300"
                   >
                     {link.name}
                   </Link>

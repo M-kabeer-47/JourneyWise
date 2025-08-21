@@ -12,6 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import AuthorCard from "../ui/AuthorCard";
 
 interface BlogCardProps {
   blog: {
@@ -262,25 +263,10 @@ export function BlogCard({
 
           {/* Author Badge on Image */}
           {!isPersonal && (
-            <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1.5 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-75">
-              <div className="relative w-6 h-6 rounded-full overflow-hidden">
-                {blogData.author.image ? (
-                  <Image
-                    src={blogData.author.image}
-                    alt={blogData.author.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-xs font-medium">
-                    {blogData.author.name.charAt(0).toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <span className="text-xs font-medium text-gray-700">
-                {blogData.author.name}
-              </span>
-            </div>
+            <AuthorCard
+              name={blogData.author.name}
+              image={blogData.author.image}
+            />
           )}
         </div>
 
@@ -295,7 +281,7 @@ export function BlogCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
               <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
+                <Calendar className="w-4 h-4" />í
                 <span>{formatDate(blogData.blog.updatedAt)}</span>
               </div>
               <div className="flex items-center gap-1.5">

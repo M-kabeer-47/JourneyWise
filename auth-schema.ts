@@ -96,7 +96,7 @@ export const booking = pgTable("booking", {
     .references(() => experience.id),
   bookingDate: date("bookingDate").notNull(),
   status: text({
-    enum: ["pending", "approved", "confirmed", "cancelled", "completed"],
+    enum: ["pending", "approved", "modification_requested", "confirmed", "cancelled", "completed"],
   }).notNull(),
   startDate: date("startDate").notNull(),
   endDate: date("endDate").notNull(),

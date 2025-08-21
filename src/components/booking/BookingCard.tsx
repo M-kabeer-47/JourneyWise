@@ -8,37 +8,69 @@ import {
   XCircle,
   Clock8,
   Banknote,
+  PenOff,
 } from "lucide-react";
+import AuthorCard from "../ui/AuthorCard";
+type Booking = {
+  experience: {
+    title: string;
+    experienceImage: string;
+    location: {
+      city: string;
+      country: string;
+    };
+    description: string;
+    category: any;
+    tags: string[];
+    includedServices: string[];
+    excludedServices: string[];
+    requirements: string[];
+    duration: number;
+    averageRating: number;
+  };
+  agent: {
+    agencyName: string;
+  };
+  status: keyof typeof statusConfig;
+  startDate: string;
+  endDate: string;
+  tier: {
+    name: string;
+    description: string;
+    members: number;
+    price: number;
+    currency: string;
+  };
+  totalPrice: number;
+  isCustomRequest: boolean;
+  notes?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  payment?: {
+    amount: number;
+    transactionDateTime: string;
+  };
+};
 
 interface BookingCardProps {
-  booking: {
-    id: string;
-    status: "pending" | "approved" | "confirmed" | "cancelled" | "completed";
-    startDate: string;
-    tier: {
-      name: string;
-      members: number;
-    };
-    totalPrice: number;
-    isCustomRequest: boolean;
-    experience: {
-      title: string;
-      experienceImage: string;
-      location: any;
-    };
-    agent: {
-      agencyName: string;
-    };
-  };
-  isPersonal?: boolean;
+  booking: Booking;
+  isPersonal: boolean;
+  setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
+  setSelectedBooking: React.Dispatch<React.SetStateAction<Booking>>;
 }
-
 const statusConfig = {
   pending: {
     icon: Clock8,
     color: "text-amber-600",
     bgColor: "bg-amber-50",
     text: "Pending",
+  },
+  modificationRequested: {
+    icon: PenOff,
+    color: "text-amber-600",
+    bgColor: "bg-amber-50",
+    text: "Modification Requested",
   },
   approved: {
     icon: CheckCircle,
@@ -69,6 +101,8 @@ const statusConfig = {
 export default function BookingCard({
   booking,
   isPersonal = false,
+  setShowDetails,
+  setSelectedBooking,
 }: BookingCardProps) {
   const status = statusConfig[booking.status];
   const StatusIcon = status.icon;
@@ -91,12 +125,12 @@ export default function BookingCard({
   };
 
   return (
-    <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[250px]">
+    <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[300px]">
       <div className="flex flex-col sm:flex-row h-full">
         {/* Image */}
         <div className="relative sm:w-[40%] h-auto flex-shrink-0">
           <img
-            src={booking.experience.image}
+            src={booking.experience.experienceImage}
             alt={booking.experience.title}
             className="w-full h-full object-cover"
           />
@@ -118,6 +152,13 @@ export default function BookingCard({
                 <h3 className="font-[800] text-xl sm:text-2xl font-raleway text-midnight-blue truncate">
                   {booking.experience.title}
                 </h3>
+                <AuthorCard
+                  name={booking.agent.agencyName}
+                  image={
+                    "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
+                  }
+                  hoverEffect={false}
+                />
               </div>
 
               {/* Status */}
@@ -140,7 +181,9 @@ export default function BookingCard({
             <div className="flex items-center gap-1 text-charcoal mt-2">
               <MapPin className="w-3 h-3 text-ocean-blue" />
               <span className="sm:text-sm text-xs ">
-                {booking.experience.location}
+                {booking.experience.location.city +
+                  ", " +
+                  booking.experience.location.country}
               </span>
             </div>
             <div className="flex items-center justify-between mb-3">
@@ -159,8 +202,9 @@ export default function BookingCard({
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <span className="font-[800] text-2xl text-charcoal">
-                  ${booking.totalPrice.toLocaleString()}
+                <span className="font-[800] text-3xl text-charcoal">
+                  {booking.tier.currency}{" "}
+                  {booking.totalPrice.toLocaleString()}
                 </span>
               </div>
             </div>
@@ -169,15 +213,19 @@ export default function BookingCard({
 
           {/* Actions */}
           <div className="flex gap-2">
-            <button className="flex-1 px-3 py-2 text-ocean-blue border border-ocean-blue rounded-lg hover:bg-ocean-blue/5 transition-all text-sm">
+            <button
+              className="flex-1 px-3 py-2 text-ocean-blue border border-ocean-blue rounded-lg hover:bg-ocean-blue/5 transition-all text-sm"
+              onClick={() => {
+                setSelectedBooking(booking);
+                setShowDetails(true);
+              }}
+            >
               Details
             </button>
-            {(booking.status === "confirmed" ||
-              booking.status === "approved") && (
-              <button className="flex-1 px-3 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
-                Manage
-              </button>
-            )}
+
+            <button className="flex-1 px-3 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+              Manage
+            </button>
           </div>
         </div>
       </div>
