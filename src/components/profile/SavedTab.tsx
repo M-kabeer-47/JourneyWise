@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Bookmark } from "lucide-react";
 import Tabs from "./Tabs";
+import NoData from "./NoData";
 
 interface SavedTabProps {
   savedItems: any[];
@@ -23,8 +24,10 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h2 className="text-2xl font-bold text-midnight-blue">Saved Items</h2>
-          <p className="text-gray-600">
+          <h2 className="text-2xl font-[800] text-midnight-blue mb-2 font-raleway">
+            Saved Items
+          </h2>
+          <p className="text-charcoal sm:text-sm text-xs">
             Your bookmarked experiences, trips, and blogs
           </p>
         </div>
@@ -44,18 +47,11 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
       />
 
       {filteredItems.length === 0 ? (
-        <div className="text-center py-16">
-          <div className="w-24 h-24 bg-gradient-to-br from-midnight-blue to-ocean-blue rounded-full flex items-center justify-center mx-auto mb-6">
-            <Bookmark className="w-12 h-12 text-white" />
-          </div>
-          <h3 className="text-2xl font-bold text-midnight-blue mb-2">
-            No saved items yet
-          </h3>
-          <p className="text-gray-600 mb-8 max-w-md mx-auto">
-            Start exploring and save your favorite experiences, trips, and
-            blogs.
-          </p>
-        </div>
+        <NoData
+          title="No Saved Items"
+          description="Start exploring and save your favorite experiences, trips, and blogs."
+          icon={<Bookmark className="sm:w-12 sm:h-12 w-10 h-10 text-midnight-blue" />}
+        />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {filteredItems.map((item) => (
@@ -92,7 +88,7 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
                     `${item.trip?.startPoint} → ${item.trip?.endPoint}` ||
                     "Saved Item"}
                 </h3>
-                <p className="text-gray-600 text-sm">
+                <p className="text-charcoal  text-sm">
                   {item.experience?.location ||
                     `${item.trip?.estimatedDistance}km • $${item.trip?.estimatedBudget}` ||
                     "View details"}

@@ -39,27 +39,27 @@ export default function UserProfilePage() {
         return (
           <ProfileTab
             user={mockUser}
-            recentTrips={mockTrips}
-            recentBlogs={mockBlogs}
-            recentBookings={mockBookings}
+            recentTrips={[]}
+            recentBlogs={[]}
+            recentBookings={[]}
             onTabChange={setActiveTab}
           />
         );
       case "trips":
-        return <TripsTab trips={mockTrips} />;
+        return <TripsTab trips={[]} />;
       case "blogs":
         return <BlogsTab blogs={mockBlogs} />;
       case "saved":
-        return <SavedTab savedItems={mockSavedItems} />;
+        return <SavedTab savedItems={[]} />;
       case "bookings":
-        return <BookingsTab bookings={mockBookings} />;
+        return <BookingsTab bookings={[]} />;
       default:
         return (
           <ProfileTab
             user={mockUser}
-            recentTrips={mockTrips}
-            recentBlogs={mockBlogs}
-            recentBookings={mockBookings}
+            recentTrips={[]}
+            recentBlogs={[]}
+            recentBookings={[]}
             onTabChange={setActiveTab}
           />
         );
@@ -67,7 +67,7 @@ export default function UserProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 pb-[200px]">
       {/* Horizontal Tab Navigation */}
       <ProfileTabs
         activeTab={activeTab}
@@ -76,7 +76,7 @@ export default function UserProfilePage() {
       />
 
       {/* Content Area */}
-      <div className="max-w-[1400px] mx-auto p-4 sm:p-8  mt-20" >
+      <div className="max-w-[1400px] mx-auto p-4 sm:p-8 mt-[100px]  sm:mt-[80px]">
         <motion.div
           key={activeTab}
           initial={{ opacity: 0, y: 20 }}

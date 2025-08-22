@@ -24,6 +24,7 @@ export default function ProfileTab({
 }: ProfileTabProps) {
   const [selectedBooking, setSelectedBooking] = useState(null);
   const [showDetails, setShowDetails] = useState(false);
+
   const handleTripView = (id: string) => {
     console.log("View trip:", id);
     // Navigate to trip details
@@ -64,19 +65,23 @@ export default function ProfileTab({
       <ProfileHeader user={user} isOwnProfile={true} userType="user" />
 
       {/* Recent Trips */}
-      {recentTrips.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
-              Recent Trips
-            </h3>
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            Recent Trips
+          </h3>
+          {recentTrips.length > 3 && (
             <button
               onClick={() => onTabChange("trips")}
               className="flex items-center gap-2 text-ocean-blue hover:text-midnight-blue font-medium"
             >
               View all <ArrowRight className="w-4 h-4" />
             </button>
-          </div>
+          )}
+        </div>
+        {recentTrips.length === 0 ? (
+          <p className="text-charcoal sm:text-sm text-xs">No Trips found.</p>
+        ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {recentTrips.slice(0, 3).map((trip) => (
               <TripCard
@@ -89,23 +94,25 @@ export default function ProfileTab({
               />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Recent Blogs */}
-      {recentBlogs.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
-              Recent Blogs
-            </h3>
-            <button
-              onClick={() => onTabChange("blogs")}
-              className="flex items-center gap-2 text-ocean-blue hover:text-midnight-blue font-medium"
-            >
-              View all <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            Recent Blogs
+          </h3>
+          <button
+            onClick={() => onTabChange("blogs")}
+            className="flex items-center gap-2 text-ocean-blue  font-medium sm:text-sm text-xs"
+          >
+            View all <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+        {recentBlogs.length === 0 ? (
+          <p className="text-charcoal sm:text-sm text-xs">No Blogs found.</p>
+        ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {recentBlogs.slice(0, 3).map((blog) => (
               <BlogCard
@@ -118,23 +125,25 @@ export default function ProfileTab({
               />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Recent Bookings */}
-      {recentBookings.length > 0 && (
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
-              Recent Bookings
-            </h3>
-            <button
-              onClick={() => onTabChange("bookings")}
-              className="flex items-center gap-2 text-ocean-blue hover:text-midnight-blue font-medium"
-            >
-              View all <ArrowRight className="w-4 h-4" />
-            </button>
-          </div>
+      <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            Recent Bookings
+          </h3>
+          <button
+            onClick={() => onTabChange("bookings")}
+            className="flex items-center gap-2 text-ocean-blue font-medium sm:text-sm text-xs"
+          >
+            View all <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+        {recentBookings.length === 0 ? (
+          <p className="text-charcoal sm:text-sm text-xs">No Bookings found.</p>
+        ) : (
           <div className="space-y-4">
             {recentBookings.slice(0, 3).map((booking) => (
               <BookingCard
@@ -146,38 +155,11 @@ export default function ProfileTab({
               />
             ))}
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Empty State */}
-      {recentTrips.length === 0 &&
-        recentBlogs.length === 0 &&
-        recentBookings.length === 0 && (
-          <div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-2xl border border-gray-200 p-12 text-center"
-          >
-            <div className="w-20 h-20 bg-ocean-blue/10 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Plus className="w-10 h-10 text-ocean-blue" />
-            </div>
-            <h3 className="text-2xl font-bold text-midnight-blue mb-2">
-              Start Your Journey
-            </h3>
-            <p className="text-charcoal mb-8 max-w-md mx-auto">
-              Create your first trip, write a blog, or explore experiences to
-              get started.
-            </p>
-            <div className="flex items-center justify-center gap-4">
-              <button className="px-6 py-3 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all">
-                Plan a Trip
-              </button>
-              <button className="px-6 py-3 border border-gray-300 text-charcoal rounded-lg hover:border-ocean-blue hover:text-ocean-blue transition-all">
-                Write a Blog
-              </button>
-            </div>
-          </div>
-        )}
+      
       {selectedBooking && showDetails && (
         <BookingDetailsModal
           booking={selectedBooking}

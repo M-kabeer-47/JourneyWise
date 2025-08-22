@@ -69,11 +69,7 @@ export default function ProfileHeader({
 
           <div className="absolute inset-0 bg-black/20" />
 
-          {isOwnProfile && (
-            <button className="absolute top-3 right-3 md:top-4 md:right-4 w-8 h-8 md:w-10 md:h-10 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full flex items-center justify-center text-white hover:bg-white/30 transition-all">
-              <Camera className="w-4 h-4 md:w-5 md:h-5" />
-            </button>
-          )}
+          
         </div>
 
         {/* Agent Profile Info */}
@@ -87,16 +83,12 @@ export default function ProfileHeader({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
+                <div className="w-full h-full bg-midnight-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
                   {getUserInitials(user.name)}
                 </div>
               )}
             </div>
-            {isOwnProfile && (
-              <button className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 md:w-8 md:h-8 bg-ocean-blue border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-midnight-blue transition-all">
-                <Camera className="w-3 h-3 md:w-4 md:h-4" />
-              </button>
-            )}
+           
           </div>
 
           <div className="flex flex-col gap-4">
@@ -142,7 +134,7 @@ export default function ProfileHeader({
                       <Settings className="w-4 h-4" />
                       Edit Profile
                     </button>
-                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                       <Share2 className="w-4 h-4" />
                       Share Profile
                     </button>
@@ -159,13 +151,13 @@ export default function ProfileHeader({
                     <Settings className="w-4 h-4" />
                     Edit Profile
                   </button>
-                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                  <button className="flex items-center justify-center gap-2 px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                     <Share2 className="w-4 h-4" />
                     Share Profile
                   </button>
                 </>
               ) : (
-                <button className="flex items-center justify-center gap-2 px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                <button className="flex items-center justify-center gap-2 px-6 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                   Follow
                 </button>
               )}
@@ -183,7 +175,7 @@ export default function ProfileHeader({
         <div className="flex flex-col sm:flex-row sm:items-start gap-4 sm:gap-6 md:gap-8">
           {/* User Avatar */}
           <div className="relative flex-shrink-0 self-center sm:self-start">
-            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden border-2 md:border-4 border-gray-100 shadow-lg bg-white">
+            <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-full overflow-hidden bg-white">
               {user.image ? (
                 <img
                   src={user.image}
@@ -191,16 +183,12 @@ export default function ProfileHeader({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
+                <div className="w-full h-full bg-ocean-blue/10 flex items-center justify-center text-midnight-blue text-2xl sm:text-3xl md:text-4xl font-bold">
                   {getUserInitials(user.name)}
                 </div>
               )}
             </div>
-            {isOwnProfile && (
-              <button className="absolute bottom-1 right-1 md:bottom-2 md:right-2 w-6 h-6 md:w-8 md:h-8 bg-ocean-blue border-2 border-white rounded-full flex items-center justify-center text-white hover:bg-midnight-blue transition-all">
-                <Camera className="w-3 h-3 md:w-4 md:h-4" />
-              </button>
-            )}
+           
           </div>
 
           {/* User Info */}
@@ -208,7 +196,7 @@ export default function ProfileHeader({
             <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-4 mb-3 md:mb-4">
               <div>
                 {/* Name with verification badge - Always together */}
-                <div className="flex items-center justify-center sm:justify-start gap-3 mb-2">
+                <div className="flex items-center justify-center sm:justify-start gap-3 mb-2  relative left-[10px] sm:left-0">
                   <h1 className="text-2xl sm:text-2xl md:text-3xl font-bold text-midnight-blue">
                     {user.name}
                   </h1>
@@ -243,24 +231,24 @@ export default function ProfileHeader({
               <div className="hidden lg:flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 lg:flex-shrink-0">
                 {isOwnProfile ? (
                   <>
-                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 border  rounded-lg  border-ocean-blue text-ocean-blue transition-all text-sm">
                       <Settings className="w-4 h-4" />
                       Edit Profile
                     </button>
-                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                       <Share2 className="w-4 h-4" />
                       Share Profile
                     </button>
                   </>
                 ) : (
-                  <button className="flex items-center justify-center gap-2 px-4 md:px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                  <button className="flex items-center justify-center gap-2 px-4 md:px-6 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                     Follow
                   </button>
                 )}
               </div>
             </div>
 
-            <p className="text-charcoal text-sm md:text-base leading-relaxed max-w-2xl">
+            <p className="text-charcoal text-xs md:text-sm leading-relaxed max-w-2xl">
               Travel enthusiast exploring the world one adventure at a time.
               Sharing experiences and creating memories.
             </p>
@@ -268,20 +256,20 @@ export default function ProfileHeader({
         </div>
 
         {/* Mobile Action Buttons - Always at bottom */}
-        <div className="flex lg:hidden flex-col sm:flex-row items-stretch gap-3 pt-4 border-t border-gray-100">
+        <div className="flex lg:hidden flex-row sm:flex-row  gap-3 pt-4 border-t border-gray-100">
           {isOwnProfile ? (
             <>
-              <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all text-sm">
+              <button className="flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-charcoal hover:border-ocean-blue hover:text-ocean-blue transition-all sm:text-sm text-xs w-full">
                 <Settings className="w-4 h-4" />
                 Edit Profile
               </button>
-              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+              <button className="flex items-center justify-center gap-2 px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all sm:text-sm text-xs w-full">
                 <Share2 className="w-4 h-4" />
                 Share Profile
               </button>
             </>
           ) : (
-            <button className="flex items-center justify-center gap-2 px-6 py-2 bg-ocean-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+            <button className="flex items-center justify-center gap-2 px-6 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
               Follow
             </button>
           )}

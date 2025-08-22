@@ -118,16 +118,16 @@ export default function ProfileTabs({
                   onMouseEnter={() => handleTabHover(tab.id)}
                   className={`relative group flex items-center gap-1.5 sm:gap-2 px-3 sm:px-4 py-3 font-medium text-xs sm:text-sm whitespace-nowrap transition-all z-10 justify-center ${
                     isActive
-                      ? "text-ocean-blue font-bold"
-                      : "text-gray-600 hover:text-ocean-blue"
+                      ? "text-midnight-blue font-bold"
+                      : "text-charcoal hover:text-midnight-blue"
                   }`}
                   whileTap={{ scale: 0.98 }}
                 >
                   <Icon
                     className={`w-4 h-4 transition-all ${
                       isActive
-                        ? "text-ocean-blue"
-                        : "text-gray-500 group-hover:text-ocean-blue"
+                        ? "text-midnight-blue"
+                        : "text-charcoal group-hover:text-midnight-blue"
                     } flex-shrink-0`}
                     strokeWidth={isActive ? 2.5 : 2}
                   />
@@ -157,8 +157,8 @@ export default function ProfileTabs({
                     <span
                       className={`ml-1 px-1.5 sm:px-2 py-0.5 text-xs rounded-full transition-all hidden xs:inline-block ${
                         isActive
-                          ? "bg-ocean-blue/10 text-ocean-blue font-semibold"
-                          : "bg-gray-100 text-gray-600"
+                          ? "bg-ocean-blue/10 text-midnight-blue font-semibold"
+                          : "bg-gray-100 text-charcoa;"
                       }`}
                     >
                       {statValue}

@@ -184,7 +184,7 @@ export default function Navbar() {
                             <Link
                               key={item.name}
                               href={item.href}
-                              className="block px-4 py-2 text-sm text-white hover:bg-ocean-blue hover:text-white transition-colors duration-300 flex items-center"
+                              className="block px-4 py-2 text-sm text-white hover:bg-white/80 hover:text-white transition-colors duration-300 flex items-center"
                             >
                               {item.icon}
                               <span className="ml-2">{item.name}</span>

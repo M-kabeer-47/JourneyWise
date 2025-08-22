@@ -38,7 +38,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
 
   return (
     <div
-      className={`relative flex bg-white shadow-sm rounded-md  overflow-hidden mb-10 ${className}`}
+      className={`relative flex bg-white shadow-sm rounded-md  overflow-auto mb-10 ${className}`}
       style={{ minHeight: 38 }}
     >
       {/* Sliding Box Indicator */}
@@ -60,8 +60,8 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
             onClick={() => onChange(tab.key)}
             className={`relative flex-1 px-5 py-2 font-medium whitespace-nowrap transition-colors duration-200 z-10
               ${isActive
-                ? "text-ocean-blue"
-                : "text-gray-500 hover:text-ocean-blue"
+                ? "text-midnight-blue"
+                : "text-charcoal hover:text-midnight-blue"
               }
             `}
             style={{
@@ -71,7 +71,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
               cursor: "pointer",
             }}
           >
-            <span className="flex items-center justify-center gap-1">
+            <span className="flex items-center justify-center gap-1 sm:text-sm text-xs font-semibold font-raleway">
               {tab.label}
               {typeof tab.count === "number" && (
                 <span className="ml-1 text-xs font-semibold">{tab.count}</span>
