@@ -97,13 +97,13 @@ export default function SignIn() {
   };
 
   return (
-    <div className="overflow-hidden flex justify-center">
+    <div className="overflow-hidden py-[50px]">
 
     
-    <div className="h-screen flex flex-col md:flex-row w-[100%] rounded-xl shadow-2xl ">
+    <div className="h-screen flex flex-col md:flex-row max-w-[1400px] max-h-[90vh] mx-auto rounded-lg shadow-2xl ">
 
       {/* Left side - Hero Image Section */}
-      <div className="hidden md:flex md:w-1/2 relative bg-midnight-blue">
+      <div className="hidden md:flex md:w-1/2 relative bg-midnight-blue ">
         <div className="absolute inset-0">
           <Image
             src="/hero.avif"

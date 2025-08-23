@@ -10,7 +10,7 @@ interface TabOption {
 interface TabsProps {
   options: TabOption[];
   activeKey: string;
-  onChange: (key: string) => void;
+  onChange: React.Dispatch<React.SetStateAction<string>>;
   className?: string;
 }
 
@@ -73,9 +73,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
           >
             <span className="flex items-center justify-center gap-1 sm:text-sm text-xs font-semibold font-raleway">
               {tab.label}
-              {typeof tab.count === "number" && (
-                <span className="ml-1 text-xs font-semibold">{tab.count}</span>
-              )}
+             
             </span>
           </button>
         );

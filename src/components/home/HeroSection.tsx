@@ -60,9 +60,9 @@ export default function HeroSection() {
         transition={{ duration: 0.8, ease: "easeOut", delay: 0.2 }}
       >
         <motion.h1
-          className="text-5xl md:text-7xl font-bold mb-6"
+          className="text-5xl md:text-7xl font-bold mb-6 font-raleway"
         >
-          Explore the World <span className="text-ocean-blue font-extrabold"
+          Explore the World <span className="text-ocean-blue font-raleway"
          style={{
           textShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
         }}>

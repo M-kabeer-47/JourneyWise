@@ -9,9 +9,7 @@ interface SavedTabProps {
 }
 
 export default function SavedTab({ savedItems }: SavedTabProps) {
-  const [activeType, setActiveType] = useState<
-    "all" | "experiences" | "blogs" | "trips"
-  >("all");
+  const [activeType, setActiveType] = useState<string>("all");
 
   const filteredItems =
     activeType === "all"
@@ -36,7 +34,7 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
       {/* Filter tabs */}
       <Tabs
         options={[
-          { key: "all", label: "All Items" },
+          { key: "all", label: "All" },
           { key: "experiences", label: "Experiences" },
           { key: "trips", label: "Trips" },
           { key: "blogs", label: "Blogs" },

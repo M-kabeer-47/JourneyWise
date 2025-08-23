@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import parse from "html-react-parser";
 import dynamic from "next/dynamic";
 import BlogLoader from "@/components/blog/BlogLoader";
+import formatDate from "@/utils/functions/formatDate";
 
 // Dynamically import BlogViewer with SSR disabled
 const BlogViewer = dynamic(() => import("@/components/blog/BlogViewer"), {
@@ -96,11 +97,7 @@ export default function BlogPage() {
                   </p>
                   <div className="flex items-center text-xs text-gray-500">
                     <span>
-                      {new Date(blog?.createdAt).toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
+                      {formatDate(blog?.createdAt)}
                     </span>
                     {blog?.category && (
                       <>

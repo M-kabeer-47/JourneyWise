@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Settings, LogOut, Map, FileText, Bookmark, Calendar, ChevronDown } from 'lucide-react';
-
+import {User as UserType} from '@/lib/types/User';
 interface UserMenuProps {
-  user: {
-    name: string;
-    image?: string;
-    email: string;
-  };
+  userData: {
+    user: UserType | null;
+    isLoading: boolean;
+    isError: string 
+  }
   onSignOut: () => void;
 }
 
-export default function UserMenu({ user, onSignOut }: UserMenuProps) {
+export default function UserMenu({ userData, onSignOut }: UserMenuProps) {
+  const user = userData.user
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -39,7 +40,7 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
         className="flex items-center gap-3 p-1 pr-3 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 transition-all group"
       >
         <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-white/20">
-          {user.image ? (
+          {user?.image ? (
             <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
           ) : (
             <div className="w-full h-full bg-white/20 flex items-center justify-center text-white text-sm font-medium">
@@ -68,11 +69,11 @@ export default function UserMenu({ user, onSignOut }: UserMenuProps) {
             <div className="p-4 bg-gradient-to-br from-midnight-blue to-ocean-blue text-white">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-white/20">
-                  {user.image ? (
+                  {user?.image ? (
                     <img src={user.image} alt={user.name} className="w-full h-full object-cover" />
                   ) : (
                     <div className="w-full h-full bg-white/20 flex items-center justify-center text-white text-lg font-bold">
-                      {user ? getUserInitials(user.name) : "JW"}
+                      {getUserInitials(user?.name)}
                     </div>
                   )}
                 </div>

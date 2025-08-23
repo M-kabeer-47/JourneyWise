@@ -3,15 +3,15 @@ import { motion } from "framer-motion";
 import { Plus, Edit3 } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
+import SortBy from "@/components/ui/SortBy"; // Import your SortBy component
 
 interface BlogsTabProps {
   blogs: any[];
 }
 
 export default function BlogsTab({ blogs }: BlogsTabProps) {
-  const [activeSubTab, setActiveSubTab] = useState<"published" | "drafts">(
-    "published"
-  );
+  const [activeSubTab, setActiveSubTab] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("updatedAt");
 
   const publishedBlogs = blogs.filter((blog) => blog.isPublished);
   const draftBlogs = blogs.filter((blog) => !blog.isPublished);
@@ -36,23 +36,26 @@ export default function BlogsTab({ blogs }: BlogsTabProps) {
         </button>
       </div>
 
-      {/* Sub-tabs */}
-      <Tabs
-        options={[
-          {
-            key: "published",
-            label: "Published",
-            count: publishedBlogs.length,
-          },
-          { key: "drafts", label: "Drafts", count: draftBlogs.length },
-        ]}
-        activeKey={activeSubTab}
-        onChange={setActiveSubTab}
-        className="max-w-[300px]"
-      />
+      {/* Tabs and SortBy in the same row */}
+      <div className="flex items-center justify-between mb-8">
+        <Tabs
+          options={[
+            { key: "all", label: "All" },
+            { key: "published", label: "Published" },
+            { key: "drafts", label: "Drafts" },
+          ]}
+          activeKey={activeSubTab}
+          onChange={setActiveSubTab}
+          className="max-w-[350px]"
+        />
+        <SortBy
+          activeSort={sortBy}
+          onChange={setSortBy}
+          options={[{ value: "updatedAt", label: "Last Updated" }]}
+        />
+      </div>
 
       {currentBlogs.length === 0 ? (
-        // use here as well
         <NoData
           title={`No ${activeSubTab} blogs yet`}
           description={
@@ -60,7 +63,9 @@ export default function BlogsTab({ blogs }: BlogsTabProps) {
               ? "Start writing and share your travel stories with the community."
               : "Save your ideas as drafts and publish when ready."
           }
-          icon={<Edit3 className="sm:w-12 sm:h-12 w-10 h-10 text-midnight-blue" />}
+          icon={
+            <Edit3 className="sm:w-12 sm:h-12 w-10 h-10 text-midnight-blue" />
+          }
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">

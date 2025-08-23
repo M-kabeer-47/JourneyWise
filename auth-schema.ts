@@ -16,6 +16,7 @@ export const user = pgTable("user", {
   email: text("email").notNull().unique(),
   emailVerified: boolean("emailVerified").notNull(),
   image: text("image"),
+  description: text("description"),
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
   twoFactorEnabled: boolean("twoFactorEnabled"),
@@ -106,6 +107,8 @@ export const booking = pgTable("booking", {
   isCustomRequest: boolean("isCustomRequest").default(false),
   noOfPackages: integer("noOfPackages"),
   notes: text("notes"),
+  createdAt: timestamp("createdAt").default(new Date()),
+  updatedAt: timestamp("updatedAt").default(new Date()),
 
 });
 

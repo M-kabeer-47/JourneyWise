@@ -21,10 +21,13 @@ import {
   ChevronDown,
   Edit,
 } from "lucide-react";
-import { useAppSelector } from "@/hooks/redux";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { usePathname } from "next/navigation";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import UserMenu from "@/components/navbar/UserMenu";
+import { clearUser, fetchUser, setUser } from "@/lib/redux/slices/user";
+import { authClient } from "@/lib/auth/authClient";
+import UserMenuSkeleton from "../skeletons/NavbarUserSkeleton";
 
 const navLinks = [
   { name: "Home", href: "/", icon: <Home size={20} /> },
@@ -66,8 +69,7 @@ const navVariants = {
 };
 
 export default function Navbar() {
-  const [user, setUser] = useState(null);
-  const [isFetchingUser, setIsFetchingUser] = useState(false);
+  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -76,9 +78,10 @@ export default function Navbar() {
     useState(false);
   const searchRef = useRef<HTMLDivElement>(null);
   const blogDropdownRef = useRef<HTMLDivElement>(null);
-
+  const user = useAppSelector((state) => state.user);
   const { scrollY } = useScroll();
   const pathName = usePathname();
+  const dispatch = useAppDispatch();
 
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
@@ -108,26 +111,12 @@ export default function Navbar() {
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [isMenuOpen, isSearchOpen]);
 
+  
   useEffect(() => {
-    const getUserData = async () => {
-      try {
-        setIsFetchingUser(true);
-        const userData = await fetchUserFromClient();
-        console.log("User data fetched:", userData);
-        setUser(userData ? userData : null);
-        setIsFetchingUser(false);
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
+    dispatch(fetchUser())
+  },[])
 
-    getUserData();
-  }, []);
-
-  // Function to get user initials for the avatar
   const getUserInitials = (name: string) => {
-    if (!name) return "JW";
-
     const nameParts = name.trim().split(" ");
     if (nameParts.length >= 2) {
       return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
@@ -135,6 +124,8 @@ export default function Navbar() {
 
     return nameParts[0].substring(0, 2).toUpperCase();
   };
+
+ 
 
   return (
     <AnimatePresence mode="wait">
@@ -233,8 +224,21 @@ export default function Navbar() {
                 </span>
               </motion.button>
             </Link>
-            {user === null ? (
-              <div className="hidden md:flex items-center space-x-2">
+            {user.isLoading === true  ?
+            <UserMenuSkeleton /> : 
+
+            user.user ? (
+              <UserMenu
+                userData={user}
+                onSignOut={() => {
+                  // Your sign out logic
+                  authClient.signOut();
+                  dispatch(clearUser());
+                }}
+              />
+            ) : (
+              
+                <div className="hidden md:flex items-center space-x-2">
                 <Link href="/login">
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -259,14 +263,7 @@ export default function Navbar() {
                   </motion.button>
                 </Link>
               </div>
-            ) : (
-              <UserMenu
-                user={user}
-                onSignOut={() => {
-                  // Your sign out logic
-                  setUser(null);
-                }}
-              />
+              
             )}
 
             <button
