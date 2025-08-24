@@ -10,14 +10,20 @@ interface BlogsTabProps {
 }
 
 export default function BlogsTab({ blogs }: BlogsTabProps) {
-  const [activeSubTab, setActiveSubTab] = useState<string>("all");
-  const [sortBy, setSortBy] = useState<string>("updatedAt");
+  const [activeTab, setActiveTab] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<{
+    value: string;
+    direction: "asc" | "desc";
+  }>({
+    value: "updatedAt",
+    direction: "desc",
+  });
 
   const publishedBlogs = blogs.filter((blog) => blog.isPublished);
   const draftBlogs = blogs.filter((blog) => !blog.isPublished);
 
   const currentBlogs =
-    activeSubTab === "published" ? publishedBlogs : draftBlogs;
+    activeTab === "published" ? publishedBlogs : draftBlogs;
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -37,29 +43,30 @@ export default function BlogsTab({ blogs }: BlogsTabProps) {
       </div>
 
       {/* Tabs and SortBy in the same row */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex justify-between mb-8">
         <Tabs
           options={[
             { key: "all", label: "All" },
             { key: "published", label: "Published" },
             { key: "drafts", label: "Drafts" },
           ]}
-          activeKey={activeSubTab}
-          onChange={setActiveSubTab}
-          className="max-w-[350px]"
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className="w-[450px]"
         />
         <SortBy
           activeSort={sortBy}
-          onChange={setSortBy}
+          onSortChange={(value, direction) => setSortBy({ value, direction })}
           options={[{ value: "updatedAt", label: "Last Updated" }]}
+          size="small"
         />
       </div>
 
       {currentBlogs.length === 0 ? (
         <NoData
-          title={`No ${activeSubTab} blogs yet`}
+          title={`No ${activeTab} blogs yet`}
           description={
-            activeSubTab === "published"
+            activeTab === "published"
               ? "Start writing and share your travel stories with the community."
               : "Save your ideas as drafts and publish when ready."
           }

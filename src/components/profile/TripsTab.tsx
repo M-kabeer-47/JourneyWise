@@ -1,14 +1,31 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { MapIcon, Plus } from "lucide-react";
+import { MapIcon } from "lucide-react";
 import TripCard from "@/components/trip/TripCard";
 import NoData from "./NoData";
-
+import SortBy from "@/components/ui/SortBy";
+import {useState} from "react"
 interface TripsTabProps {
   trips: any[];
 }
 
 export default function TripsTab({ trips }: TripsTabProps) {
+  const [sortBy, setSortBy] = useState<{
+    value: string;
+    direction: "asc" | "desc";
+  }>({
+    value: "updatedAt",
+    direction: "desc",
+  });
+
+  // Example sort options
+  const sortOptions = [
+    { value: "updatedAt", label: "Last Updated" },    
+  ];
+
+  // Sort trips based on sortBy
+
+
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
       <div className="flex items-center justify-between mb-8">
@@ -27,6 +44,16 @@ export default function TripsTab({ trips }: TripsTabProps) {
       </div>
 
       {/* Sub-tabs */}
+      <div className="flex justify-between mb-8">
+        {/* If you have sub-tabs, put them here */}
+        <div />
+        <SortBy
+          options={sortOptions}
+          activeSort={sortBy}
+          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          size="small"
+        />
+      </div>
 
       {trips.length === 0 ? (
         <NoData

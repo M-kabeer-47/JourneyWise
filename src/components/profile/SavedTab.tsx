@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { Bookmark } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
+import SortBy from "@/components/ui/SortBy";
 
 interface SavedTabProps {
   savedItems: any[];
@@ -10,13 +11,21 @@ interface SavedTabProps {
 
 export default function SavedTab({ savedItems }: SavedTabProps) {
   const [activeType, setActiveType] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<{
+    value: string;
+    direction: "asc" | "desc";
+  }>({
+    value: "createdAt",
+    direction: "desc",
+  });
 
-  const filteredItems =
-    activeType === "all"
-      ? savedItems
-      : savedItems.filter(
-          (item) => item.entityType === activeType.slice(0, -1)
-        );
+  const sortOptions = [
+    { value: "createdAt", label: "Date Saved" },
+    { value: "type", label: "Type" },
+    { value: "title", label: "Title" },
+  ];
+
+  
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -32,19 +41,27 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
       </div>
 
       {/* Filter tabs */}
-      <Tabs
-        options={[
-          { key: "all", label: "All" },
-          { key: "experiences", label: "Experiences" },
-          { key: "trips", label: "Trips" },
-          { key: "blogs", label: "Blogs" },
-        ]}
-        activeKey={activeType}
-        onChange={setActiveType}
-        className="max-w-[600px]"
-      />
+      <div className="flex justify-between mb-8">
+        <Tabs
+          options={[
+            { key: "all", label: "All" },
+            { key: "experiences", label: "Experiences" },
+            { key: "trips", label: "Trips" },
+            { key: "blogs", label: "Blogs" },
+          ]}
+          activeKey={activeType}
+          onChange={setActiveType}
+          className="max-w-[600px]"
+        />
+        <SortBy
+          options={sortOptions}
+          activeSort={sortBy}
+          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          size="small"
+        />
+      </div>
 
-      {filteredItems.length === 0 ? (
+      {savedItems.length === 0 ? (
         <NoData
           title="No Saved Items"
           description="Start exploring and save your favorite experiences, trips, and blogs."
@@ -52,7 +69,7 @@ export default function SavedTab({ savedItems }: SavedTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {filteredItems.map((item) => (
+          {savedItems.map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"

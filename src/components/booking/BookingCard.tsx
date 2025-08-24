@@ -11,53 +11,14 @@ import {
   PenOff,
 } from "lucide-react";
 import AuthorCard from "../ui/AuthorCard";
-type Booking = {
-  experience: {
-    title: string;
-    experienceImage: string;
-    location: {
-      city: string;
-      country: string;
-    };
-    description: string;
-    category: any;
-    tags: string[];
-    includedServices: string[];
-    excludedServices: string[];
-    requirements: string[];
-    duration: number;
-    averageRating: number;
-  };
-  agent: {
-    agencyName: string;
-  };
-  status: keyof typeof statusConfig;
-  startDate: string;
-  endDate: string;
-  tier: {
-    name: string;
-    description: string;
-    members: number;
-    price: number;
-    currency: string;
-  };
-  totalPrice: number;
-  isCustomRequest: boolean;
-  notes?: string;
-  customerName?: string;
-  customerEmail?: string;
-  customerPhone?: string;
-  payment?: {
-    amount: number;
-    transactionDateTime: string;
-  };
-};
+import { Booking } from "@/lib/types/booking";
+
 
 interface BookingCardProps {
   booking: Booking;
   isPersonal: boolean;
   setShowDetails: React.Dispatch<React.SetStateAction<boolean>>;
-  setSelectedBooking: React.Dispatch<React.SetStateAction<Booking>>;
+  setSelectedBooking: React.Dispatch<React.SetStateAction<Booking | null>>;
 }
 const statusConfig = {
   pending: {

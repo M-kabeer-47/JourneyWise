@@ -1,15 +1,46 @@
-export interface Booking {
+export type Booking = {
+  experience: {
+    title: string;
+    experienceImage: string;
+    location: {
+      city: string;
+      country: string;
+    };
+    description: string;
+    category: any;
+    tags: string[];
+    includedServices: string[];
+    excludedServices: string[];
+    requirements: string[];
+    duration: number;
+    averageRating: number;
+  };
+  agent: {
+    agencyName: string;
+    image: string;
+  };
   id: string;
-  customerName: string;
-  customerEmail: string;
-  experienceTitle: string;
-  experienceId: string;
-  bookingDate: string;
+  status: 'pending' | 'approved' | 'confirmed' | 'cancelled' | 'completed' | 'modificationRequested';
   startDate: string;
   endDate: string;
-  status: 'pending' | 'approved' | 'confirmed' | 'cancelled' | 'completed';
   tier: {
     name: string;
+    description: string;
+    members: number;
     price: number;
+    currency: string;
   };
-}
+  totalPrice: number;
+  isCustomRequest: boolean;
+  notes?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  modifiedTotalPrice: number;
+  modifiedStartDate: string;
+  noOfPackages: number;
+  payment?: {
+    amount: number;
+    transactionDateTime: string;
+  };
+};

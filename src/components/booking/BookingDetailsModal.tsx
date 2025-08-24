@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import AuthorCard from "../ui/AuthorCard";
 import ServiceItem from "../ui/ServiceItem";
+import { Booking } from "@/lib/types/booking";
 
 const statusConfig = {
   pending: {
@@ -63,47 +64,7 @@ export default function BookingDetailsModal({
   booking,
   onClose,
 }: {
-  booking: {
-    experience: {
-      title: string;
-      experienceImage: string;
-      location: {
-        city: string;
-        country: string;
-      };
-      description: string;
-      category: any;
-      tags: string[];
-      includedServices: string[];
-      excludedServices: string[];
-      requirements: string[];
-      duration: number;
-      averageRating: number;
-    };
-    agent: {
-      agencyName: string;
-    };
-    status: keyof typeof statusConfig;
-    startDate: string;
-    endDate: string;
-    tier: {
-      name: string;
-      description: string;
-      members: number;
-      price: number;
-      currency: string;
-    };
-    totalPrice: number;
-    isCustomRequest: boolean;
-    notes?: string;
-    customerName?: string;
-    customerEmail?: string;
-    customerPhone?: string;
-    payment?: {
-      amount: number;
-      transactionDateTime: string;
-    };
-  };
+  booking: Booking;
   onClose: () => void;
 }) {
   const status = statusConfig[booking.status];
@@ -278,7 +239,7 @@ export default function BookingDetailsModal({
                 <div className="relative left-[-5px]">
                   <AuthorCard
                     name={booking.agent.agencyName}
-                    image={booking.agent.agencyImage}
+                    image={booking.agent.image}
                     hoverEffect={false}
                     size="lg"
                   />
@@ -425,7 +386,7 @@ export default function BookingDetailsModal({
                       </span>
                       <span className="sm:text-xs sm:text-sm  text-xs  text-charcoal">
                         {booking.tier.currency}{" "}
-                        {booking.payment.amount.toLocaleString()}
+                        {booking?.payment?.amount.toLocaleString()}
                       </span>
                     </div>
                     <div className="flex justify-between">
@@ -433,7 +394,7 @@ export default function BookingDetailsModal({
                         Transaction Date:
                       </span>
                       <span className="sm:text-xs sm:text-sm  text-xs  text-charcoal">
-                        {formatDateTime(booking.payment.transactionDateTime)}
+                        {formatDateTime(booking.payment?.transactionDateTime || "")}
                       </span>
                     </div>
                   </div>

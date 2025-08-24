@@ -4,26 +4,48 @@ import ProfileHeader from "@/components/profile/ProfileHeader";
 import TripCard from "@/components/trip/TripCard";
 import { BlogCard } from "@/components/blog/BlogCard";
 import BookingCard from "@/components/booking/BookingCard";
-import { ArrowRight, Plus } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import BookingDetailsModal from "../booking/BookingDetailsModal";
+import { Booking } from "@/lib/types/booking";
+import { useFetchUserTrips } from "@/hooks/trip/useFetchUserTrips";
+import { useFetchUserBookings } from "@/hooks/booking/useFetchUserBookings";
+import { useFetchUserBlogs } from "@/hooks/blog/useFetchUserBlogs";
 
 interface ProfileTabProps {
   user: any;
-  recentTrips: any[];
-  recentBlogs: any[];
-  recentBookings: any[];
+  
   onTabChange: (tab: string) => void;
 }
 
 export default function ProfileTab({
   user,
-  recentTrips,
-  recentBlogs,
-  recentBookings,
+  
   onTabChange,
 }: ProfileTabProps) {
-  const [selectedBooking, setSelectedBooking] = useState(null);
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showDetails, setShowDetails] = useState(false);
+  const { bookings, isFetchingBookings, isBookingsError } = useFetchUserBookings({
+    userID: user.id,
+    sortColumn: "createdAt",
+    sortOrder: "desc",
+    status: "all",
+    page: 1,
+  });
+  
+  const {trips,isFetchingTrips,isTripsError} = useFetchUserTrips({
+    userID: user.id,
+    sortColumn: "createdAt",
+    sortOrder: "desc",
+    page: 1,
+  });
+  const {blogs,isFetchingBlogs,isBlogsError}= useFetchUserBlogs({
+    userID: user.id,
+    sortColumn: "createdAt",
+    sortOrder: "desc",
+    type: "all",
+    page: 1,
+  });
+
 
   const handleTripView = (id: string) => {
     console.log("View trip:", id);
@@ -70,7 +92,7 @@ export default function ProfileTab({
           <h3 className="text-xl font-raleway font-bold text-midnight-blue">
             Recent Trips
           </h3>
-          {recentTrips.length > 3 && (
+          {trips.length > 3 && (
             <button
               onClick={() => onTabChange("trips")}
               className="flex items-center gap-2 text-ocean-blue hover:text-midnight-blue font-medium"
@@ -79,11 +101,11 @@ export default function ProfileTab({
             </button>
           )}
         </div>
-        {recentTrips.length === 0 ? (
+        {trips.length === 0 ? (
           <p className="text-charcoal sm:text-sm text-xs">No Trips found.</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {recentTrips.slice(0, 3).map((trip) => (
+            {trips.slice(0, 3).map((trip) => (
               <TripCard
                 key={trip.id}
                 trip={trip}
@@ -110,11 +132,11 @@ export default function ProfileTab({
             View all <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-        {recentBlogs.length === 0 ? (
+        {blogs.length === 0 ? (
           <p className="text-charcoal sm:text-sm text-xs">No Blogs found.</p>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {recentBlogs.slice(0, 3).map((blog) => (
+            {blogs.slice(0, 3).map((blog) => (
               <BlogCard
                 key={blog.blog.id}
                 blog={blog}
@@ -141,11 +163,11 @@ export default function ProfileTab({
             View all <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-        {recentBookings.length === 0 ? (
+        {bookings.length === 0 ? (
           <p className="text-charcoal sm:text-sm text-xs">No Bookings found.</p>
         ) : (
           <div className="space-y-4">
-            {recentBookings.slice(0, 3).map((booking) => (
+            {bookings.slice(0, 3).map((booking) => (
               <BookingCard
                 key={booking.id}
                 booking={booking}
@@ -161,7 +183,8 @@ export default function ProfileTab({
       {/* Empty State */}
       
       {selectedBooking && showDetails && (
-        <BookingDetailsModal
+        <BookingDetailsModal 
+        
           booking={selectedBooking}
           onClose={() => setShowDetails(false)}
         />
