@@ -19,28 +19,39 @@ export type Booking = {
     agencyName: string;
     image: string;
   };
-  id: string;
-  status: 'pending' | 'approved' | 'confirmed' | 'cancelled' | 'completed' | 'modificationRequested';
-  startDate: string;
-  endDate: string;
-  tier: {
-    name: string;
-    description: string;
-    members: number;
-    price: number;
-    currency: string;
-  };
-  totalPrice: number;
-  isCustomRequest: boolean;
-  notes?: string;
-  customerName?: string;
-  customerEmail?: string;
-  customerPhone?: string;
-  modifiedTotalPrice: number;
-  modifiedStartDate: string;
-  noOfPackages: number;
-  payment?: {
-    amount: number;
-    transactionDateTime: string;
+  booking: {
+    id: string;
+    status:
+      | "pending"
+      | "approved"
+      | "confirmed"
+      | "cancelled"
+      | "completed"
+      | "modificationRequested";
+    startDate: string;
+    endDate: string;
+    tier: {
+      name: string;
+      description: string;
+      members: number;
+      price: number;
+      currency: string;
+    };
+    bookingDate: string;
+    createdAt: string;
+    updatedAt: string;
+    totalPrice: number;
+    isCustomRequest: boolean;
+    notes?: string;
+    customerName?: string;
+    customerEmail?: string;
+    customerPhone?: string;
+    modifiedTotalPrice: number;
+    modifiedStartDate: string;
+    noOfPackages: number;
+    payment?: {
+      amount: number;
+      transactionDateTime: string;
+    };
   };
 };

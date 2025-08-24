@@ -16,5 +16,7 @@ export type User = {
   banned?: boolean | null;
   role?: string | null;
   banReason?: string | null;
-  
+  description?: string | null;
+  country: string;
+  bannerImage?: string | null;
 };

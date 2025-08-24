@@ -1,6 +1,6 @@
 import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
-import { trip } from "../../../../../auth-schema";
+import { trip,user } from "../../../../../auth-schema";
 import { count, eq, desc, asc } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
@@ -18,9 +18,16 @@ export async function GET(request: NextRequest) {
   
   try {
     const trips = await db
-      .select()
+      .select({
+        trip: trip,
+        author: {
+          name: user.name,
+          image: user.image,
+        },
+      })
       .from(trip)
       .where(eq(trip.userID, userID))
+      .innerJoin(user,eq(trip.userID, user.id))
       .orderBy(sortOrder === "desc" ? desc(trip.updatedAt) : asc(trip.updatedAt))
       .limit(parseInt(limit))
       .offset(offset);

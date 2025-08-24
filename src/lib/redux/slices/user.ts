@@ -1,6 +1,6 @@
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {User} from "@/lib/types/User";
+import {User} from "@/lib/types/user";
 import formatDate from "@/utils/functions/formatDate";
 
 const fetchUser = createAsyncThunk("/fetchUser",async()=>{

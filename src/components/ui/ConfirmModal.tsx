@@ -14,6 +14,7 @@ interface ConfirmModalProps {
   loadingText?: string;
   requireCategory?: boolean;
   initialCategory?: string;
+  width?: "large" | "small";
 }
 
 export default function ConfirmModal({
@@ -26,6 +27,7 @@ export default function ConfirmModal({
   loadingText = "Loading...",
   requireCategory = false,
   initialCategory = "",
+  width = "small"
 }: ConfirmModalProps) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [categoryError, setCategoryError] = useState("");
@@ -65,15 +67,15 @@ export default function ConfirmModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="relative bg-white rounded-xl shadow-md w-full max-w-lg"
+            className={`relative bg-white rounded-xl shadow-md w-full ${width === "large" ? "max-w-xl" : "max-w-lg"}`}
           >
             {/* Header with title and close button */}
             <div className="pt-8 px-8 pb-4 flex items-center justify-between">
-              <h2 className="text-2xl font-bold text-gray-900">{title}</h2>
+              <h2 className="text-2xl font-bold text-charcoal">{title}</h2>
               <button
                 onClick={handleClose}
                 disabled={loading}
-                className="text-gray-500 hover:text-gray-700"
+                className="text-charcoal hover:text-charcoal"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -85,7 +87,7 @@ export default function ConfirmModal({
             {/* Content */}
             <div className="px-8 py-8">
               {/* Description */}
-              <p className="text-gray-600 text-sm mb-8">{description}</p>
+              <p className="text-charcoal text-sm mb-8">{description}</p>
 
               {/* Category Selection */}
               {requireCategory && (
@@ -107,7 +109,7 @@ export default function ConfirmModal({
                 <button
                   onClick={handleClose}
                   disabled={loading}
-                  className="flex-1 py-2 px-4 rounded-md border border-ocean-blue text-gray-700 font-medium
+                  className="flex-1 py-2 px-4 rounded-md border border-ocean-blue text-charcoal font-medium
                            transition-all duration-200 hover:bg-gray-50 disabled:opacity-50 text-base"
                 >
                   Cancel
@@ -117,7 +119,7 @@ export default function ConfirmModal({
                   onClick={handleConfirm}
                   disabled={loading}
                   className="flex-1 py-2 px-4 rounded-md text-base font-medium transition-all duration-200
-                           bg-ocean-blue hover:bg-midnight-blue text-white disabled:opacity-50"
+                           bg-midnight-blue text-white disabled:opacity-50"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center gap-2">

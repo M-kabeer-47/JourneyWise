@@ -35,8 +35,8 @@ interface TripCardProps {
   trip: Trip;
   isPersonal?: boolean;
   onView?: (id: string) => void;
-  onEdit?: (trip: Trip) => void;
-  onDelete?: (tripId: string) => void;
+  onEdit?: (id: string) => void;
+  onDelete?: (tripId: string, title: string) => void;
   onSave?: (tripId: string) => void;
   onUnsave?: (tripId: string) => void;
 }
@@ -128,7 +128,7 @@ export default function TripCard({
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        onEdit?.(trip);
+        onEdit?.(trip.id);
         setIsDropdownOpen(false);
       },
     },
@@ -138,7 +138,7 @@ export default function TripCard({
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        onDelete?.(trip.id);
+        onDelete?.(trip.id, "trip");
         setIsDropdownOpen(false);
       },
       danger: true,
@@ -153,7 +153,9 @@ export default function TripCard({
           {coverImage ? (
             <img
               src={coverImage}
-              alt={`${trip.startPoint} to ${trip.endPoint}`}
+              alt={`${trip.waypoints[0].name} to ${
+                trip.waypoints[trip.waypoints.length - 1].name
+              }`}
               className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             />
           ) : (
@@ -241,12 +243,12 @@ export default function TripCard({
           <div className="flex items-center gap-2 mb-3">
             <div className="flex items-center gap-2">
               <span className="font-[800] text-xl text-charcoal font-raleway">
-                {trip.startPoint}
+                {trip.waypoints[0].name}
               </span>
             </div>
             <div className="flex-1 border-t border-dashed border-gray-300 mx-2" />
             <div className="text-charcoal font-[800] text-xl font-raleway">
-              {trip.endPoint}
+              {trip.waypoints[trip.waypoints.length - 1].name}
             </div>
           </div>
 
@@ -254,7 +256,9 @@ export default function TripCard({
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="flex items-center gap-2 text-charcoal">
               <User className="w-4 h-4 text-ocean-blue" />
-              <span className="text-xs sm:text-sm">{trip.numOfPeople} people</span>
+              <span className="text-xs sm:text-sm">
+                {trip.numOfPeople} people
+              </span>
             </div>
             <div className="flex items-center gap-2 text-charcoal">
               <Clock className="w-4 h-4 text-ocean-blue" />
@@ -262,13 +266,14 @@ export default function TripCard({
             </div>
             <div className="flex items-center gap-2 text-charcoal">
               <MapPin className="w-4 h-4 text-ocean-blue" />
-              <span className="text-xs sm:text-sm">{trip.estimatedDistance} km</span>
+              <span className="text-xs sm:text-sm">
+                {trip.estimatedDistance} km
+              </span>
             </div>
             <div className="flex items-center gap-2 text-charcoal">
               <Banknote className="w-4 h-4 text-ocean-blue" />
               <span className="text-xs sm:text-sm">
-                ${trip.estimatedBudget.toLocaleString()}{" "}
-                {trip.currency || "USD"}
+                {trip.currency || "USD"} {" "} {trip.estimatedBudget.toLocaleString()}
               </span>
             </div>
           </div>

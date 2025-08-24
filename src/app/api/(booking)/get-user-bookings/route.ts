@@ -1,7 +1,9 @@
 import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
-import { booking } from "../../../../../auth-schema";
+import { agent, booking,experience,user } from "../../../../../auth-schema";
+import { alias } from "drizzle-orm/pg-core";
 import { count, eq, desc, asc, and } from "drizzle-orm";
+
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
@@ -11,6 +13,10 @@ export async function GET(request: NextRequest) {
   const sortColumn = searchParams.get("sortColumn") || "updatedAt";
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const offset = (parseInt(page) - 1) * parseInt(limit);
+
+  // Create aliases for user table to distinguish customer and agent
+  const customerUser = alias(user, "customerUser");
+  const agentUser = alias(user, "agentUser");
   const status = searchParams.get("status")?.toLowerCase() || "all"; // Default to 'all'
   if (!userID) return new Response("Missing userID", { status: 400 });
   if (sortColumn !== "updatedAt")
@@ -32,13 +38,29 @@ export async function GET(request: NextRequest) {
 
   try {
     const bookings = await db
-      .select()
+      .select({
+        booking: booking,
+        customer: {
+          name: customerUser.name,
+          image: customerUser.image,
+        },
+        agent: {
+          agencyName: agent.agencyName,
+          name: agentUser.name,
+          image: agentUser.image,
+        },
+        experience
+      })
       .from(booking)
       .where(
         conditions.length !== 0
           ? and(...conditions)
           : eq(booking.customerID, userID)
       )
+      .innerJoin(customerUser, eq(booking.customerID, customerUser.id))
+      .innerJoin(agent, eq(booking.agentID, agent.id))
+      .innerJoin(agentUser, eq(agent.userID, agentUser.id))
+      .innerJoin(experience, eq(booking.experienceID, experience.id))
       .orderBy(
         sortOrder === "desc" ? desc(booking.updatedAt) : asc(booking.updatedAt)
       )
@@ -66,7 +88,8 @@ export async function GET(request: NextRequest) {
       },
       { status: 200 }
     );
-  } catch (error) {
+  } catch (error) { //@ts-ignore
     return NextResponse.json({ error: error?.message }, { status: 500 });
   }
 }
+

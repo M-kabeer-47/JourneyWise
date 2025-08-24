@@ -6,10 +6,10 @@ import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
 import {useState} from "react"
 interface TripsTabProps {
-  trips: any[];
+  userID: string;
 }
 
-export default function TripsTab({ trips }: TripsTabProps) {
+export default function TripsTab({ userID }: TripsTabProps) {
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";

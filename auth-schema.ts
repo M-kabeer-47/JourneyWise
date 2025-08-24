@@ -100,16 +100,18 @@ export const booking = pgTable("booking", {
     enum: ["pending", "approved", "modification_requested", "confirmed", "cancelled", "completed"],
   }).notNull(),
   startDate: date("startDate").notNull(),
+  modifiedStartDate: date("modifiedStartDate"),
   endDate: date("endDate").notNull(),
   tier: jsonb("tier").notNull(),
   totalPrice: integer("totalPrice").notNull(),
+  modifiedTotalPrice: integer("modifiedTotalPrice"),
   paymentID: uuid("paymentID").references(() => payment.id),
   isCustomRequest: boolean("isCustomRequest").default(false),
   noOfPackages: integer("noOfPackages"),
   notes: text("notes"),
   createdAt: timestamp("createdAt").default(new Date()),
   updatedAt: timestamp("updatedAt").default(new Date()),
-
+ 
 });
 
 export const faq = pgTable("faq", {

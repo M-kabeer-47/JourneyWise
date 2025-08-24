@@ -35,6 +35,7 @@ export function useFetchUserBookings({
       return data.bookings || [];
     },
     enabled: !!userID,
+    refetchOnWindowFocus: false
   });
   return {bookings:data,isFetchingBookings:isFetching,isBookingsError:isError}
 }

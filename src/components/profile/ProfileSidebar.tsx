@@ -5,12 +5,7 @@ import { User, Map, FileText, Bookmark, Calendar } from "lucide-react";
 interface ProfileTabsProps {
   activeTab: string;
   onTabChange: (tab: string) => void;
-  stats: {
-    tripsCount: number;
-    blogsCount: number;
-    savedCount: number;
-    bookingsCount: number;
-  };
+  
 }
 
 const tabs = [
@@ -24,7 +19,7 @@ const tabs = [
 export default function ProfileTabs({
   activeTab,
   onTabChange,
-  stats,
+
 }: ProfileTabsProps) {
   const [hoveredTab, setHoveredTab] = useState<string | null>(null);
   const [tabDimensions, setTabDimensions] = useState<{
@@ -49,22 +44,9 @@ export default function ProfileTabs({
     });
 
     setTabDimensions(dimensions);
-  }, [stats]);
+  }, []);
 
-  const getStatValue = (tabId: string) => {
-    switch (tabId) {
-      case "trips":
-        return stats.tripsCount;
-      case "blogs":
-        return stats.blogsCount;
-      case "saved":
-        return stats.savedCount;
-      case "bookings":
-        return stats.bookingsCount;
-      default:
-        return 0;
-    }
-  };
+  
 
   const getHoverDimensions = () => {
     // Don't show hover effect for active tab
@@ -108,7 +90,6 @@ export default function ProfileTabs({
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const isActive = activeTab === tab.id;
-              const statValue = getStatValue(tab.id);
 
               return (
                 <motion.button
@@ -153,17 +134,7 @@ export default function ProfileTabs({
                   </span>
 
                   {/* Stats badge */}
-                  {tab.id !== "profile" && statValue > 0 && (
-                    <span
-                      className={`ml-1 px-1.5 sm:px-2 py-0.5 text-xs rounded-full transition-all hidden xs:inline-block ${
-                        isActive
-                          ? "bg-ocean-blue/10 text-midnight-blue font-semibold"
-                          : "bg-gray-100 text-charcoa;"
-                      }`}
-                    >
-                      {statValue}
-                    </span>
-                  )}
+                 
 
                   {/* Active tab underline */}
                   {isActive && (

@@ -9,7 +9,7 @@ import BookingDetailsModal from "../booking/BookingDetailsModal";
 import { Booking } from "@/lib/types/booking";
 
 interface BookingsTabProps {
-  bookings: Booking[];
+  userID: string;
 }
 
 const statusTabs = [

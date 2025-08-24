@@ -6,10 +6,10 @@ import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy"; // Import your SortBy component
 
 interface BlogsTabProps {
-  blogs: any[];
+  userID: string;
 }
 
-export default function BlogsTab({ blogs }: BlogsTabProps) {
+export default function BlogsTab({ userID }: BlogsTabProps) {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [sortBy, setSortBy] = useState<{
     value: string;

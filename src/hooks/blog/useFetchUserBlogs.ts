@@ -35,6 +35,7 @@ export function useFetchUserBlogs({
       return data.blogs || [];
     },
     enabled: !!userID,
+    refetchOnWindowFocus: false
   });
   return {blogs:data,isFetchingBlogs:isFetching,isBlogsError:isError}
 }

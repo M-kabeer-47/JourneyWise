@@ -8,59 +8,42 @@ import TripsTab from "@/components/profile/TripsTab";
 import BlogsTab from "@/components/profile/BlogsTab";
 import SavedTab from "@/components/profile/SavedTab";
 import BookingsTab from "@/components/profile/BookingsTab";
-import {
-  mockUser,
-  mockTrips,
-  mockBlogs,
-  mockSavedItems,
-  mockBookings,
-} from "@/data/mockProfileData";
+import { useAppSelector } from "@/hooks/redux";
+import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
 
 export default function UserProfilePage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const userId = params?.id as string;
+  const user = useAppSelector((state) => state.user); 
 
   const [activeTab, setActiveTab] = useState(
     searchParams?.get("tab") || "profile"
   );
 
   // Mock stats
-  const stats = {
-    tripsCount: mockTrips.length,
-    blogsCount: mockBlogs.filter((b) => b.isPublished).length,
-    savedCount: mockSavedItems.length,
-    bookingsCount: mockBookings.length,
-  };
-
+  
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
         return (
           <ProfileTab
-            user={mockUser}
-            recentTrips={[]}
-            recentBlogs={[]}
-            recentBookings={[]}
+            user={user.user}
             onTabChange={setActiveTab}
           />
         );
       case "trips":
-        return <TripsTab trips={[]} />;
+        return <TripsTab userID={user.user?.id || ""}/>;
       case "blogs":
-        return <BlogsTab blogs={mockBlogs} />;
+        return <BlogsTab userID={user.user?.id || ""}/>;
       case "saved":
-        return <SavedTab savedItems={[]} />;
+        return <SavedTab userID={user.user?.id || ""}/>;
       case "bookings":
-        return <BookingsTab bookings={[]} />;
+        return <BookingsTab userID={user.user?.id || ""}/>;
       default:
         return (
-          <ProfileTab
-            user={mockUser}
-            recentTrips={[]}
-            recentBlogs={[]}
-            recentBookings={[]}
-            onTabChange={setActiveTab}
+            <ProfileTab
+              user={user.user}
+            onTabChange={setActiveTab}  
           />
         );
     }
@@ -72,7 +55,7 @@ export default function UserProfilePage() {
       <ProfileTabs
         activeTab={activeTab}
         onTabChange={setActiveTab}
-        stats={stats}
+        
       />
 
       {/* Content Area */}
@@ -83,7 +66,9 @@ export default function UserProfilePage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
         >
-          {renderTabContent()}
+          {user.isLoading || user.user === null ? (
+            <ProfilePageSkeleton />
+          ) : renderTabContent()}
         </motion.div>
       </div>
     </div>

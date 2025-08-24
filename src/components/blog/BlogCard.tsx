@@ -13,31 +13,16 @@ import Link from "next/link";
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import AuthorCard from "../ui/AuthorCard";
+import { Blog } from "@/lib/types/blog";
 
 interface BlogCardProps {
-  blog: {
-    blog: {
-      id: string;
-      title: string;
-      content: string;
-      coverUrl?: string;
-      isPublished: boolean;
-      authorID: string;
-      createdAt: string;
-      updatedAt: string;
-      commentsCount: number;
-    };
-    author: {
-      name: string;
-      image?: string;
-    };
-  };
+  blog:Blog
   isPersonal?: boolean;
   onSave?: (blogId: string) => void;
   onUnsave?: (blogId: string) => void;
   onView?: (id: string) => void;
   onEdit?: (id: string) => void;
-  onDelete?: (id: string) => void;
+  onDelete?: (id: string,title:string) => void;
 }
 
 const getDefaultCoverImage = (title: string) => {
@@ -172,7 +157,7 @@ export function BlogCard({
       onClick: (e: React.MouseEvent) => {
         e.preventDefault();
         e.stopPropagation();
-        onDelete?.(blogData.blog.id);
+        onDelete?.(blogData.blog.id,"blog");
         setIsDropdownOpen(false);
       },
       danger: true,
@@ -265,7 +250,7 @@ export function BlogCard({
           {!isPersonal && (
             <AuthorCard
               name={blogData.author.name}
-              image={blogData.author.image}
+              image={blogData.author.image || "ss"}
             />
           )}
         </div>
@@ -281,7 +266,7 @@ export function BlogCard({
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
               <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />í
+                <Calendar className="w-4 h-4" />
                 <span>{formatDate(blogData.blog.updatedAt)}</span>
               </div>
               <div className="flex items-center gap-1.5">

@@ -65,7 +65,7 @@ export default function BookingCard({
   setShowDetails,
   setSelectedBooking,
 }: BookingCardProps) {
-  const status = statusConfig[booking.status];
+  const status = statusConfig[booking.booking.status];
   const StatusIcon = status.icon;
 
   const formatDate = (dateString: string) => {
@@ -95,9 +95,9 @@ export default function BookingCard({
             alt={booking.experience.title}
             className="w-full h-full object-cover"
           />
-          {booking.isCustomRequest && (
-            <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-purple-100 rounded-full">
-              <span className="text-purple-700 font-medium text-xs">
+          {booking.booking.isCustomRequest && (
+            <div className="absolute top-1 left-1 px-1.5 py-0.5 bg-accent rounded-full">
+              <span className="text-white font-medium text-xs">
                 Custom
               </span>
             </div>
@@ -135,7 +135,7 @@ export default function BookingCard({
 
             <div className="rounded-lg">
               <span className="font-semibold sm:text-base text-sm text-charcoal">
-                {booking.tier.name}
+                {booking.booking.tier.name.toLowerCase() !== "custom" ? booking.booking.tier.name : "Custom"}
               </span>
             </div>
             {/* Details */}
@@ -152,20 +152,20 @@ export default function BookingCard({
                 <div className="flex items-center gap-1">
                   <Calendar className="w-3 h-3 text-ocean-blue" />
                   <span className=" text-xs sm:text-sm">
-                    {formatDate(booking.startDate)}
+                    {formatDate(booking.booking.startDate)}
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Users className="w-3 h-3 text-ocean-blue" />
                   <span className=" text-xs sm:text-sm">
-                    {booking.tier.members}
+                    {booking.booking.tier.members}
                   </span>
                 </div>
               </div>
               <div className="flex items-center gap-1">
                 <span className="font-[800] text-3xl text-charcoal">
-                  {booking.tier.currency}{" "}
-                  {booking.totalPrice.toLocaleString()}
+                  {booking.booking.tier.currency}{" "}
+                  {booking.booking.totalPrice.toLocaleString()}
                 </span>
               </div>
             </div>

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Settings, LogOut, Map, FileText, Bookmark, Calendar, ChevronDown } from 'lucide-react';
-import {User as UserType} from '@/lib/types/User';
+import {User as UserType} from '@/lib/types/user';
 interface UserMenuProps {
   userData: {
     user: UserType | null;

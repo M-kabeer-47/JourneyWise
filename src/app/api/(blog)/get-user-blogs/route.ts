@@ -1,6 +1,6 @@
 import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
-import { blog } from "../../../../../auth-schema";
+import { blog,user } from "../../../../../auth-schema";
 import { count, eq, desc, asc, and } from "drizzle-orm";
 
 export async function GET(request: NextRequest) {
@@ -28,11 +28,17 @@ export async function GET(request: NextRequest) {
 
   try {
     const blogs = await db
-      .select()
+      .select({
+        blog: blog,
+        author: {
+          name: user.name,
+          image: user.image,
+        },
+      })
       .from(blog)
       .where(
         conditions.length !== 0 ? and(...conditions) : eq(blog.authorID, userID)
-      )
+      ).innerJoin(user,eq(blog.authorID, user.id))
       .orderBy(
         sortOrder === "desc" ? desc(blog.updatedAt) : asc(blog.updatedAt)
       )
@@ -44,8 +50,7 @@ export async function GET(request: NextRequest) {
       .from(blog)
       .where(
         conditions.length !== 0 ? and(...conditions) : eq(blog.authorID, userID)
-      );
-
+      )
     return NextResponse.json(
       {
         blogs,

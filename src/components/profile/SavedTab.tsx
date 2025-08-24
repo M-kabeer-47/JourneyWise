@@ -6,10 +6,10 @@ import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
 
 interface SavedTabProps {
-  savedItems: any[];
+  userID: string;
 }
 
-export default function SavedTab({ savedItems }: SavedTabProps) {
+export default function SavedTab({ userID }: SavedTabProps) {
   const [activeType, setActiveType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<{
     value: string;
