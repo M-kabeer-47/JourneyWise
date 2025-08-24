@@ -242,3 +242,15 @@ export const blog = pgTable("blog", {
   createdAt: timestamp("createdAt").notNull(),
   updatedAt: timestamp("updatedAt").notNull(),
 });
+
+
+export const saved = pgTable("saved",{
+  id:uuid("id").primaryKey().defaultRandom(),
+  userID:text("userID")
+    .notNull()
+    .references(() => user.id),
+  type:text({enum:["trip","blog","experience"]}).notNull(),
+  itemID:uuid("itemID").notNull(),
+  createdAt:timestamp("createdAt").default(new Date()),
+  
+})

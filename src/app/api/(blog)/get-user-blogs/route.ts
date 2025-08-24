@@ -16,11 +16,11 @@ export async function GET(request: NextRequest) {
   if (!userID) return new Response("Missing userID", { status: 400 });
   if (sortColumn !== "updatedAt")
     return new Response("Invalid sortColumn", { status: 400 });
-  if (type !== "all" && type !== "published" && type !== "draft")
+  if (type !== "all" && type !== "published" && type !== "drafts")
     return new Response("Invalid type", { status: 400 });
 
   let isPublished = type === "published";
-  let isDraft = type === "draft";
+  let isDraft = type === "drafts";
 
   const conditions = [eq(blog.authorID, userID)];
   if (isPublished) conditions.push(eq(blog.isPublished, true));

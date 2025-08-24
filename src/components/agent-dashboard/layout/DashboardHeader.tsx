@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
@@ -7,10 +6,9 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '@/components/ui/Logo';
-
+import ProfileDropdown from '@/components/ui/ProfileDropdown';
 
 const DashboardHeader = () => {
-  const [profileOpen, setProfileOpen] = useState(false);
   const [notificationsOpen, setNotificationsOpen] = useState(false);
   
   const notifications = [
@@ -75,10 +73,7 @@ const DashboardHeader = () => {
             {/* Notifications dropdown */}
             <div className="relative">
               <button
-                onClick={() => {
-                  setNotificationsOpen(!notificationsOpen);
-                  if (profileOpen) setProfileOpen(false);
-                }}
+                onClick={() => setNotificationsOpen(!notificationsOpen)}
                 className="p-2 rounded-full text-gray-500 hover:bg-gray-100 focus:outline-none relative"
               >
                 <Bell size={20} />
@@ -149,75 +144,15 @@ const DashboardHeader = () => {
             </div>
 
             {/* Profile dropdown */}
-            <div className="relative ml-3">
-              <button
-                onClick={() => {
-                  setProfileOpen(!profileOpen);
-                  if (notificationsOpen) setNotificationsOpen(false);
-                }}
-                className="flex items-center max-w-xs rounded-full focus:outline-none"
-              >
-                <div className="flex items-center gap-2 px-2 py-1.5 rounded-full hover:bg-gray-100">
-                  <div className="h-8 w-8 rounded-full overflow-hidden border border-gray-200">
-                    <Image 
-                      src="/images/profile-placeholder.png" 
-                      alt="User Profile" 
-                      width={32} 
-                      height={32} 
-                    />
-                  </div>
-                  <div className="hidden md:block text-left">
-                    <div className="text-sm font-medium text-gray-800">Alex Morgan</div>
-                    <div className="text-xs text-gray-500">Travel Agent</div>
-                  </div>
-                  <ChevronDown size={16} className="text-gray-500" />
-                </div>
-              </button>
-
-              <AnimatePresence>
-                {profileOpen && (
-                  <motion.div
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -10 }}
-                    transition={{ duration: 0.2 }}
-                    className="origin-top-right absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden"
-                  >
-                    <div className="py-1">
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        <User size={16} className="mr-3 text-gray-500" />
-                        Your Profile
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        <MessageSquare size={16} className="mr-3 text-gray-500" />
-                        Messages
-                      </a>
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                      >
-                        <Settings size={16} className="mr-3 text-gray-500" />
-                        Settings
-                      </a>
-                      <div className="border-t border-gray-100"></div>
-                      <a
-                        href="#"
-                        className="flex items-center px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
-                      >
-                        <LogOut size={16} className="mr-3 text-red-500" />
-                        Sign out
-                      </a>
-                    </div>
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </div>
+            <ProfileDropdown 
+              userName="Alex Morgan"
+              userRole="Travel Agent"
+              className="ml-3"
+              onSignOut={() => {
+                // Add sign out logic here
+                console.log('Sign out clicked');
+              }}
+            />
           </div>
         </div>
       </div>

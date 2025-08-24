@@ -4,7 +4,9 @@ import { MapIcon } from "lucide-react";
 import TripCard from "@/components/trip/TripCard";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
-import {useState} from "react"
+import { useState } from "react";
+import { useFetchUserTrips } from "@/hooks/trip/useFetchUserTrips";
+import { TripCardSkeleton } from "@/components/skeletons/TripCardSkeleton";
 interface TripsTabProps {
   userID: string;
 }
@@ -23,8 +25,20 @@ export default function TripsTab({ userID }: TripsTabProps) {
     { value: "updatedAt", label: "Last Updated" },    
   ];
 
-  // Sort trips based on sortBy
+  const { trips, isFetchingTrips, isTripsError } = useFetchUserTrips({
+    userID,
+    sortColumn: sortBy.value,
+    sortOrder: sortBy.direction,
+    page: 1
+  });
 
+  if (isTripsError) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading trips. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -55,7 +69,13 @@ export default function TripsTab({ userID }: TripsTabProps) {
         />
       </div>
 
-      {trips.length === 0 ? (
+      {isFetchingTrips ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[...Array(5)].map((_, i) => (
+            <TripCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : trips?.length === 0 ? (
         <NoData
           title="No Trips Yet"
           description="Share your knowledge to guide fellow travelers."
@@ -63,14 +83,14 @@ export default function TripsTab({ userID }: TripsTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {trips.map((trip) => (
+          {trips?.map((trip) => (
             <motion.div
-              key={trip.id}
+              key={trip.trip.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
             >
-              <TripCard trip={trip} isPersonal={true} />
+              <TripCard trip={trip.trip} isPersonal={true} />
             </motion.div>
           ))}
         </div>

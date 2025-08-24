@@ -16,7 +16,7 @@ export function useFetchUserTrips({
   const isDesktop = useIsDesktop();
   const limit = isDesktop ? 5 : 3;
 
-  let {data,isFetching,isError} =  useQuery({
+  let { data, isFetching, isError } = useQuery({
     queryKey: ["user-trips", userID, page, limit, sortColumn, sortOrder],
     queryFn: async () => {
       const { data } = await axios.get("/api/get-user-trips", {
@@ -31,6 +31,7 @@ export function useFetchUserTrips({
       return data.trips || [];
     },
     enabled: !!userID,
+    refetchOnWindowFocus: false,
   });
-  return {trips:data,isFetchingTrips:isFetching,isTripsError:isError}
+  return { trips: data, isFetchingTrips: isFetching, isTripsError: isError };
 }

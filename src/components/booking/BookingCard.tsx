@@ -133,18 +133,23 @@ export default function BookingCard({
               </div>
             </div>
 
-            <div className="rounded-lg">
+            <div className="flex items-center justify-between mb-3">
               <span className="font-semibold sm:text-base text-sm text-charcoal">
                 {booking.booking.tier.name.toLowerCase() !== "custom" ? booking.booking.tier.name : "Custom"}
               </span>
+              <div className="flex items-center gap-1">
+             
+                <span className="text-base font-raleway font-[800] text-midnight-blue">
+                  Booked on {formatDate(booking.booking.bookingDate)}
+                </span>
+              </div>
             </div>
-            {/* Details */}
-            <div className="flex items-center gap-1 text-charcoal mt-2">
-              <MapPin className="w-3 h-3 text-ocean-blue" />
-              <span className="sm:text-sm text-xs ">
-                {booking.experience.location.city +
-                  ", " +
-                  booking.experience.location.country}
+
+            {/* Location */}
+            <div className="flex items-center gap-2 text-charcoal mb-3">
+              <MapPin className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+              <span className="sm:text-sm text-xs font-medium">
+                {booking.experience.location.city + ", " + booking.experience.location.country}
               </span>
             </div>
             <div className="flex items-center justify-between mb-3">

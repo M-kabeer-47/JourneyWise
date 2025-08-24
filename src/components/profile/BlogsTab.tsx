@@ -3,7 +3,11 @@ import { motion } from "framer-motion";
 import { Plus, Edit3 } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
-import SortBy from "@/components/ui/SortBy"; // Import your SortBy component
+import SortBy from "@/components/ui/SortBy";
+import { useFetchUserBlogs } from "@/hooks/blog/useFetchUserBlogs";
+import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
+import { BlogCard } from "../blog/BlogCard";
+import { Blog } from "@/lib/types/blog";
 
 interface BlogsTabProps {
   userID: string;
@@ -19,11 +23,21 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
     direction: "desc",
   });
 
-  const publishedBlogs = blogs.filter((blog) => blog.isPublished);
-  const draftBlogs = blogs.filter((blog) => !blog.isPublished);
+  const { blogs, isFetchingBlogs, isBlogsError } = useFetchUserBlogs({
+    userID,
+    sortColumn: sortBy.value,
+    sortOrder: sortBy.direction,
+    type: activeTab as "all" | "published" | "draft",
+    page: 1
+  });
 
-  const currentBlogs =
-    activeTab === "published" ? publishedBlogs : draftBlogs;
+  if (isBlogsError) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading blogs. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -62,7 +76,13 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
         />
       </div>
 
-      {currentBlogs.length === 0 ? (
+      {isFetchingBlogs ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+          {[...Array(5)].map((_, i) => (
+            <BlogCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : blogs?.length === 0 ? (
         <NoData
           title={`No ${activeTab} blogs yet`}
           description={
@@ -76,47 +96,8 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {currentBlogs.map((blog) => (
-            <motion.div
-              key={blog.blog.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
-            >
-              <div className="aspect-video overflow-hidden">
-                <img
-                  src={blog.coverUrl}
-                  alt={blog.title}
-                  className="w-full h-full object-cover hover:scale-105 transition-transform"
-                />
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-3">
-                  <span className="px-3 py-1 bg-ocean-blue/10 text-ocean-blue rounded-full text-sm font-medium">
-                    {blog.category}
-                  </span>
-                  <span
-                    className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      blog.isPublished
-                        ? "bg-green-100 text-green-700"
-                        : "bg-yellow-100 text-yellow-700"
-                    }`}
-                  >
-                    {blog.isPublished ? "Published" : "Draft"}
-                  </span>
-                </div>
-                <h3 className="font-bold text-midnight-blue mb-2 line-clamp-2">
-                  {blog.title}
-                </h3>
-                <p className="text-charcoal text-sm mb-4 line-clamp-2">
-                  {blog.content}
-                </p>
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>{blog.commentsCount} comments</span>
-                  <span>{new Date(blog.updatedAt).toLocaleDateString()}</span>
-                </div>
-              </div>
-            </motion.div>
+          {blogs?.map((blog:Blog) => (
+            <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} />
           ))}
         </div>
       )}

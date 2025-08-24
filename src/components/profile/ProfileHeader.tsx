@@ -7,6 +7,7 @@ import {
   Share2,
   Camera,
   Check,
+  User as UserIcon,
 } from "lucide-react";
 import { User } from "@/lib/types/user";
 interface ProfileHeaderProps {
@@ -74,8 +75,8 @@ export default function ProfileHeader({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-midnight-blue flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
-                  {getUserInitials(user.name)}
+                <div className="w-full h-full bg-ocean-blue/10 flex items-center justify-center text-white text-2xl sm:text-3xl md:text-4xl font-bold">
+                  <UserIcon width={50} height={50} className="text-midnight-blue" />
                 </div>
               )}
             </div>
@@ -175,7 +176,7 @@ export default function ProfileHeader({
                 />
               ) : (
                 <div className="w-full h-full bg-ocean-blue/10 flex items-center justify-center text-midnight-blue text-2xl sm:text-3xl md:text-4xl font-bold">
-                  {getUserInitials(user.name)}
+                  <UserIcon width={50} height={50} className="text-midnight-blue" />
                 </div>
               )}
             </div>

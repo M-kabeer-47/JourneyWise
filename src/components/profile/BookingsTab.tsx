@@ -7,6 +7,8 @@ import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
 import BookingDetailsModal from "../booking/BookingDetailsModal";
 import { Booking } from "@/lib/types/booking";
+import { useFetchUserBookings } from "@/hooks/booking/useFetchUserBookings";
+import { BookingCardSkeleton } from "@/components/skeletons/BookingCardSkeleton";
 
 interface BookingsTabProps {
   userID: string;
@@ -21,7 +23,7 @@ const statusTabs = [
   { key: "completed", label: "Completed" },
 ];
 
-export default function BookingsTab({ bookings }: BookingsTabProps) {
+export default function BookingsTab({ userID }: BookingsTabProps) {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeStatus, setActiveStatus] = useState("all");
@@ -34,6 +36,22 @@ export default function BookingsTab({ bookings }: BookingsTabProps) {
   });
 
   const sortOptions = [{ value: "updatedAt", label: "Last Updated" }];
+
+  const { bookings, isFetchingBookings, isBookingsError } = useFetchUserBookings({
+    userID,
+    sortColumn: sortBy.value,
+    sortOrder: sortBy.direction,
+    status: activeStatus,
+    page: 1
+  });
+
+  if (isBookingsError) {
+    return (
+      <div className="text-center py-8">
+        <p className="text-red-600">Error loading bookings. Please try again.</p>
+      </div>
+    );
+  }
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -53,7 +71,7 @@ export default function BookingsTab({ bookings }: BookingsTabProps) {
           options={statusTabs}
           activeKey={activeStatus}
           onChange={setActiveStatus}
-          className="max-w-[800px]"
+          className="w-[800px]"
         />
         <SortBy
           options={sortOptions}
@@ -63,7 +81,13 @@ export default function BookingsTab({ bookings }: BookingsTabProps) {
         />
       </div>
 
-      {bookings.length === 0 ? (
+      {isFetchingBookings ? (
+        <div className="space-y-6">
+          {[...Array(5)].map((_, i) => (
+            <BookingCardSkeleton key={i} />
+          ))}
+        </div>
+      ) : bookings?.length === 0 ? (
         // use here
         <NoData
           title="No Bookings found"
@@ -74,10 +98,10 @@ export default function BookingsTab({ bookings }: BookingsTabProps) {
         />
       ) : (
         <div className="space-y-6">
-          {bookings.map((booking) => (
+          {bookings?.map((bookingData:Booking) => (
             <BookingCard
-              key={booking.id}
-              booking={booking}
+              key={bookingData.booking.id}
+              booking={bookingData}
               setSelectedBooking={setSelectedBooking}
               setShowDetails={setShowDetails}
               isPersonal={true}
@@ -87,7 +111,7 @@ export default function BookingsTab({ bookings }: BookingsTabProps) {
       )}
       {selectedBooking && showDetails && (
         <BookingDetailsModal
-          booking={selectedBooking}
+          bookingData={selectedBooking}
           onClose={() => setShowDetails(false)}
         />
       )}

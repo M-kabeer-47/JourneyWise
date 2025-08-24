@@ -24,7 +24,7 @@ import {
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { usePathname } from "next/navigation";
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
-import UserMenu from "@/components/navbar/UserMenu";
+import ProfileDropdown from "@/components/ui/ProfileDropdown";
 import { clearUser, fetchUser, setUser } from "@/lib/redux/slices/user";
 import { authClient } from "@/lib/auth/authClient";
 import UserMenuSkeleton from "../skeletons/NavbarUserSkeleton";
@@ -228,13 +228,15 @@ export default function Navbar() {
             <UserMenuSkeleton /> : 
 
             user.user ? (
-              <UserMenu
-                userData={user}
+              <ProfileDropdown
+                userName={user.user.name || "User"}
+                variant="navbar"
+                showRole={false}
                 onSignOut={() => {
-                  // Your sign out logic
                   authClient.signOut();
                   dispatch(clearUser());
                 }}
+                profileImage={user.user?.image}
               />
             ) : (
               

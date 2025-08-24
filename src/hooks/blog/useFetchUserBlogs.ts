@@ -20,7 +20,7 @@ export function useFetchUserBlogs({
   const limit = isDesktop ? 5 : 3;
 
   let {data,isFetching,isError} = useQuery({
-    queryKey: ["user-blogs", userID, page, limit, sortColumn, sortOrder],
+    queryKey: ["user-blogs", userID, page, limit, sortColumn, sortOrder,type],
     queryFn: async () => {
       const { data } = await axios.get("/api/get-user-blogs", {
         params: {
