@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { 
   Bell, Menu, X, Search, ChevronDown, LogOut, 
-  Settings, User, MessageSquare 
+  Settings, User, MessageSquare, Calendar, BarChart3
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Logo from '@/components/ui/Logo';
@@ -36,6 +36,34 @@ const DashboardHeader = () => {
   ];
 
   const totalUnread = notifications.filter(n => !n.read).length;
+
+  const profileDropdownOptions = [
+    {
+      label: "Your Profile",
+      href: "/agent/profile",
+      icon: <User size={16} />
+    },
+    {
+      label: "Dashboard",
+      href: "/agent/dashboard",
+      icon: <BarChart3 size={16} />
+    },
+    {
+      label: "Bookings",
+      href: "/agent/bookings",
+      icon: <Calendar size={16} />
+    },
+    {
+      label: "Messages",
+      href: "/agent/messages",
+      icon: <MessageSquare size={16} />
+    },
+    {
+      label: "Settings",
+      href: "/agent/settings",
+      icon: <Settings size={16} />
+    }
+  ];
 
   return (
     <header className="bg-white shadow-sm z-10">
@@ -148,6 +176,7 @@ const DashboardHeader = () => {
               userName="Alex Morgan"
               userRole="Travel Agent"
               className="ml-3"
+              options={profileDropdownOptions}
               onSignOut={() => {
                 // Add sign out logic here
                 console.log('Sign out clicked');

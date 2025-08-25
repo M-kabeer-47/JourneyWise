@@ -18,6 +18,7 @@ import {
 import AuthorCard from "../ui/AuthorCard";
 import ServiceItem from "../ui/ServiceItem";
 import { Booking } from "@/lib/types/booking";
+import formatDate from "@/utils/functions/formatDate";
 
 const statusConfig = {
   pending: {
@@ -68,12 +69,6 @@ export default function BookingDetailsModal({
   const status = statusConfig[bookingData.booking.status];
   const StatusIcon = status.icon;
 
-  const formatDate = (dateString: string) =>
-    new Date(dateString).toLocaleDateString("en-US", {
-      day: "2-digit",
-      month: "short",
-      year: "numeric",
-    });
 
   const formatDateTime = (dateString: string) =>
     new Date(dateString).toLocaleString("en-US", {
@@ -99,7 +94,7 @@ export default function BookingDetailsModal({
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
         {/* Header with Close Button */}
         <div className="flex justify-between items-center p-6 pb-4 border-b border-gray-100">
-          <h2 className="sm:text-4xl text-xl font-bold text-charcoal font-raleway">
+          <h2 className="sm:text-3xl text-xl font-semibold text-charcoal font-raleway">
             Booking Details
           </h2>
           <button
@@ -112,9 +107,9 @@ export default function BookingDetailsModal({
         </div>
 
         {/* Two Column Layout */}
-        <div className="flex flex-col-reverse overflow-y-auto md:flex-row">
+        <div className="flex flex-col-reverse lg:flex-row overflow-hidden">
           {/* Left Column - Experience Details */}
-          <div className="w-full md:w-1/2 p-6 border-b md:border-b-0 md:border-r border-gray-100">
+          <div className="w-full lg:w-1/2 p-6 border-b lg:border-b-0 lg:border-r border-gray-100 overflow-y-auto">
             {/* Experience Image */}
             <div className="relative h-64 md:h-80 rounded-xl overflow-hidden bg-gray-100 mb-6">
               <img
@@ -125,7 +120,7 @@ export default function BookingDetailsModal({
               {/* Rating Badge */}
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1">
                 <Star className="w-4 h-4 text-amber-500 fill-current" />
-                <span className="text-xs sm:text-xs sm:text-sm  font-semibold text-charcoal">
+                <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                   {bookingData.experience.averageRating}
                 </span>
               </div>
@@ -138,7 +133,7 @@ export default function BookingDetailsModal({
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2 mb-4 text-charcoal">
                   <MapPin className="w-4 h-4 text-ocean-blue" />
-                  <span className="text-xs sm:text-xs sm:text-sm ">
+                  <span className="text-xs  sm:text-sm font-medium ">
                     {bookingData.experience.location.city +
                       ", " +
                       bookingData.experience.location.country}
@@ -146,8 +141,8 @@ export default function BookingDetailsModal({
                 </div>
                 <div className="flex items-center gap-2 mb-4 text-charcoal">
                   <Calendar className="w-4 h-4 text-ocean-blue" />
-                  <span className="text-xs sm:text-xs sm:text-sm  font-medium">
-                    {bookingData.experience.duration}{" "}
+                  <span className="text-xs sm:text-sm font-medium">
+                    <span className="font-inter">{bookingData.experience.duration}</span>{" "}
                     {bookingData.experience.duration === 1 ? "day" : "days"}
                   </span>
                 </div>
@@ -156,8 +151,8 @@ export default function BookingDetailsModal({
 
             {bookingData.experience.requirements &&
               bookingData.experience.requirements.length > 0 && (
-                <div className="mb-4">
-                  <h4 className="sm text-xs sm:text-xs sm:text-sm :sm:text-base text-xs sm:text-xs sm:text-sm  font-semibold text-charcoal mb-2 flex items-center gap-2">
+                <div className="mb-6">
+                  <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
                     Requirements
                   </h4>
                   <div className="space-y-1">
@@ -166,7 +161,7 @@ export default function BookingDetailsModal({
                         <div key={index} className="flex items-center gap-2">
                           <Asterisk className="w-3 h-3 text-ocean-blue" />
 
-                          <span className="sm:text-xs sm:text-sm  text-xs text-charcoal flex-1">
+                          <span className="text-xs sm:text-sm text-charcoal flex-1 font-medium">
                             {requirement}
                           </span>
                         </div>
@@ -176,11 +171,11 @@ export default function BookingDetailsModal({
                 </div>
               )}
             {/* Included Ser  vices */}
-            <div className="grid  sm:grid-cols-2">
+            <div className="grid  sm:grid-cols-2 mt-4">
               {bookingData.experience.includedServices &&
                 bookingData.experience.includedServices.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="font-semibold sm text-xs sm:text-xs sm:text-sm :sm:text-base text-xs sm:text-xs sm:text-sm  text-charcoal mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
                       Included Services
                     </h4>
                     <div className="space-y-1">
@@ -204,7 +199,7 @@ export default function BookingDetailsModal({
               {bookingData.experience.excludedServices &&
                 bookingData.experience.excludedServices.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="font-semibold sm text-xs sm:text-xs sm:text-sm :sm:text-base text-xs sm:text-xs sm:text-sm  text-charcoal mb-2 flex items-center gap-2">
+                    <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
                       Excluded Services
                     </h4>
                     <div className="space-y-1">
@@ -228,8 +223,7 @@ export default function BookingDetailsModal({
           </div>
 
           {/* Right Column - Booking Details */}
-
-          <div className="w-full md:w-1/2 p-6 flex flex-col justify-between max-h-[90vh] overflow-y-auto">
+          <div className="w-full lg:w-1/2 p-6 flex flex-col overflow-y-auto">
             <div className="s">
               {/* Header Section with Agent and Status */}
               <div className="mb-6 pb-4 border-b border-gray-100">
@@ -248,7 +242,7 @@ export default function BookingDetailsModal({
                       <span className="text-xs sm:text-sm font-medium">
                         Booked on
                       </span>
-                      <span className="text-xs sm:text-sm text-charcoal font-semibold">
+                      <span className="text-xs sm:text-sm text-charcoal font-medium font-inter">
                         {formatDate(bookingData.booking.bookingDate)}
                       </span>
                     </div>
@@ -260,7 +254,7 @@ export default function BookingDetailsModal({
                     >
                       <StatusIcon className={`w-4 h-4 ${status.color}`} />
                       <span
-                        className={`${status.color} font-semibold text-xs sm:text-sm`}
+                        className={`${status.color} font-medium text-xs sm:text-sm`}
                       >
                         {status.text}
                       </span>
@@ -287,24 +281,24 @@ export default function BookingDetailsModal({
                     {bookingData.booking.status === "modificationRequested" &&
                     bookingData.booking.modifiedStartDate ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs sm:text-sm text-gray-400 line-through">
+                        <span className="text-xs sm:text-sm font-medium text-gray-400 line-through font-inter">
                           {formatDate(bookingData.booking.startDate)}
                         </span>
-                        <span className="text-xs sm:text-sm text-ocean-blue font-semibold bg-ocean-blue/10 px-2 py-1 rounded-md">
+                        <span className="text-xs sm:text-sm text-ocean-blue font-medium bg-ocean-blue/10 px-2 py-1 rounded-md font-inter">
                           {formatDate(bookingData.booking.modifiedStartDate)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-xs sm:text-sm font-semibold text-charcoal">
+                      <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                         {formatDate(bookingData.booking.startDate)}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm font-medium text-charcoal">
+                    <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                       End Date
                     </span>
-                    <span className="text-xs sm:text-sm font-semibold text-charcoal">
+                    <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                       {formatDate(bookingData.booking.endDate)}
                     </span>
                   </div>
@@ -323,7 +317,7 @@ export default function BookingDetailsModal({
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
                         Name
                       </span>
-                      <span className="text-xs sm:text-sm font-semibold text-charcoal">
+                      <span className="text-xs sm:text-sm font-medium text-charcoal">
                         {bookingData.booking.customerName}
                       </span>
                     </div>
@@ -332,7 +326,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Email
                         </span>
-                        <span className="text-xs sm:text-sm text-charcoal">
+                        <span className="text-xs sm:text-sm font-medium text-charcoal">
                           {bookingData.booking.customerEmail}
                         </span>
                       </div>
@@ -342,7 +336,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Phone
                         </span>
-                        <span className="text-xs sm:text-sm text-charcoal">
+                        <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                           {bookingData.booking.customerPhone}
                         </span>
                       </div>
@@ -362,16 +356,16 @@ export default function BookingDetailsModal({
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
                         Package
                       </span>
-                      <span className="text-xs sm:text-sm font-bold text-charcoal bg-white px-3 py-1 rounded-full">
-                        {bookingData.booking.tier.name}
+                      <span className="text-xs sm:text-sm font-medium text-charcoal bg-white py-1 rounded-full">
+                        {bookingData.booking.tier.name === "custom" ? "Custom" : bookingData.booking.tier.name}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
                         Members
                       </span>
-                      <span className="text-xs sm:text-sm font-semibold text-charcoal">
-                        {bookingData.booking.tier.members}{" "}
+                      <span className="text-xs sm:text-sm font-medium text-charcoal">
+                        <span className="font-inter">{bookingData.booking.tier.members}</span>{" "}
                         {bookingData.booking.tier.members === 1
                           ? "person"
                           : "people"}
@@ -381,8 +375,8 @@ export default function BookingDetailsModal({
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
                         Base Price
                       </span>
-                      <span className="text-xs sm:text-sm font-semibold text-charcoal">
-                        {bookingData.booking.tier.currency} 540
+                      <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                        {bookingData.booking.tier.currency} {bookingData.booking.tier.price.toLocaleString()}
                       </span>
                     </div>
                     {bookingData.booking.noOfPackages &&
@@ -391,7 +385,7 @@ export default function BookingDetailsModal({
                           <span className="text-xs sm:text-sm font-medium text-charcoal">
                             Packages
                           </span>
-                          <span className="text-xs sm:text-sm font-semibold text-charcoal">
+                          <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                             {bookingData.booking.noOfPackages}
                           </span>
                         </div>
@@ -413,7 +407,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Amount Paid
                         </span>
-                        <span className="text-lg font-bold text-green-600">
+                        <span className="text-lg font-bold text-green-600 font-inter">
                           {bookingData.booking.tier.currency}{" "}
                           {bookingData.booking?.payment?.amount.toLocaleString() ||
                             "1000"}
@@ -423,7 +417,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Transaction Date
                         </span>
-                        <span className="text-xs sm:text-sm text-charcoal">
+                        <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
                           {formatDateTime(
                             bookingData.booking.payment?.transactionDateTime ||
                               ""
@@ -436,29 +430,35 @@ export default function BookingDetailsModal({
               )}
 
               {/* Total Price Section */}
-            </div>
-            <div className="flex flex-col justify-end">
-              <div className="flex justify-end items-end mb-2">
-                {bookingData.booking.status === "modificationRequested" &&
-                bookingData.booking.modifiedTotalPrice ? (
-                  <span className="flex items-center gap-2">
-                    <span className="text-4xl sm:text-6xl text-charcoal line-through font-[700] ">
-                      {bookingData.booking.tier.currency}{" "}
-                      {bookingData.booking.totalPrice.toLocaleString()}
-                    </span>
-                    <span className="text-4xl sm:text-6xl text-midnight-blue font-[700] px-2 py-0.5 rounded ml-1">
-                      {bookingData.booking.tier.currency}{" "}
-                      {bookingData.booking.modifiedTotalPrice.toLocaleString()}
-                    </span>
-                  </span>
-                ) : (
-                  <div className="text-right">
-                    <span className="text-4xl sm:text-6xl text-midnight-blue font-[700] ">
-                      {bookingData.booking.tier.currency}{" "}
-                      {bookingData.booking.totalPrice.toLocaleString()}
-                    </span>
+              <div className="mt-8 pt-6 border-t-2 border-gray-100">
+                <h4 className="text-lg font-semibold text-midnight-blue mb-4 flex items-center gap-2">
+                  <Banknote className="w-5 h-5 text-ocean-blue" />
+                  Total Amount
+                </h4>
+                <div className="rounded-xl p-4">
+                  <div className="flex justify-end items-center">
+                    {bookingData.booking.status === "modificationRequested" &&
+                    bookingData.booking.modifiedTotalPrice ? (
+                      <div className="flex flex-col items-end gap-2">
+                        <span className="text-lg text-charcoal line-through font-medium font-inter">
+                          {bookingData.booking.tier.currency}{" "}
+                          {bookingData.booking.totalPrice.toLocaleString()}
+                        </span>
+                        <span className="text-3xl sm:text-4xl text-midnight-blue font-bold font-inter">
+                          {bookingData.booking.tier.currency}{" "}
+                          {bookingData.booking.modifiedTotalPrice.toLocaleString()}
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="text-3xl sm:text-5xl text-midnight-blue font-bold">
+                        {bookingData.booking.tier.currency}{" "}
+                        <span className="text-3xl sm:text-5xl text-midnight-blue font-bold font-inter"> 
+                          {bookingData.booking.totalPrice.toLocaleString()}
+                        </span>
+                      </span>
+                    )}
                   </div>
-                )}
+                </div>
               </div>
             </div>
           </div>

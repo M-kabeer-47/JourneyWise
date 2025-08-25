@@ -61,13 +61,29 @@ export default {
   		fontFamily: {
   			raleway: [
   				'Raleway',
+  				'system-ui',
+  				'-apple-system',
   				'sans-serif'
   			],
   			sans: [
-  				'Open Sans',
+  				'Raleway',
+  				'system-ui', 
+  				'-apple-system',
   				'sans-serif'
   			],
-  			
+  			inter: [
+  				'Inter',
+  				'system-ui',
+  				'-apple-system',
+  				'sans-serif'
+  			],
+  			mono: [
+  				'ui-monospace',
+  				'SFMono-Regular',
+  				'Monaco',
+  				'Consolas',
+  				'monospace'
+  			]
   		},
   		borderRadius: {
   			lg: 'var(--radius)',

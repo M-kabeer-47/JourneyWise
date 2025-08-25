@@ -71,7 +71,7 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
         <SortBy
           activeSort={sortBy}
           onSortChange={(value, direction) => setSortBy({ value, direction })}
-          options={[{ value: "updatedAt", label: "Last Updated" }]}
+          options={[{ value: "updatedAt", label: "Last Updated" }, { value: "mostDiscussed", label: "Most Discussed" }]}
           size="small"
         />
       </div>
@@ -79,7 +79,7 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
       {isFetchingBlogs ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {[...Array(5)].map((_, i) => (
-            <BlogCardSkeleton key={i} />
+            <BlogCardSkeleton key={i} isPersonal={true}/>
           ))}
         </div>
       ) : blogs?.length === 0 ? (

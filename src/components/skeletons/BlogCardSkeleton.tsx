@@ -1,6 +1,6 @@
 "use client";
 
-export function BlogCardSkeleton() {
+export function BlogCardSkeleton({isPersonal=false}: {isPersonal?: boolean}) {
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 animate-pulse">
       {/* Cover Image Skeleton */}
@@ -9,10 +9,12 @@ export function BlogCardSkeleton() {
         <div className="absolute top-4 right-4 w-10 h-10 bg-white/90 rounded-full"></div>
         
         {/* Author Badge Skeleton */}
-        <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 rounded-full px-3 py-1.5">
-          <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
-          <div className="w-16 h-3 bg-gray-300 rounded"></div>
-        </div>
+        {!isPersonal && (
+          <div className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 rounded-full px-3 py-1.5">
+            <div className="w-6 h-6 bg-gray-300 rounded-full"></div>
+            <div className="w-16 h-3 bg-gray-300 rounded"></div>
+          </div>
+        )}
       </div>
 
       {/* Content Skeleton */}

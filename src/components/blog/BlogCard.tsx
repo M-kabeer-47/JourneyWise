@@ -246,6 +246,7 @@ export function BlogCard({
             </div>
           )}
 
+
           {/* Author Badge on Image */}
           {!isPersonal && (
             <AuthorCard
@@ -264,6 +265,8 @@ export function BlogCard({
 
           {/* Meta Info */}
           <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between w-full">
+
             <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
               <div className="flex items-center gap-1.5">
                 <Calendar className="w-4 h-4" />
@@ -273,7 +276,21 @@ export function BlogCard({
                 <MessageCircle className="w-4 h-4" />
                 <span>{blogData.blog.commentsCount}</span>
               </div>
+              {/* Status Badge for Personal Blogs */}
+              
+              </div>
+              {isPersonal && (
+                <span className={`px-2 py-1 w-[80px] flex items-center justify-center rounded-full text-xs font-raleway font-semibold ${
+                  blogData.blog.isPublished 
+                    ? 'bg-green-100 text-green-700' 
+                    : 'bg-yellow-100 text-yellow-700'
+                }`}>
+                  {blogData.blog.isPublished ? 'Published' : 'Draft'}
+                </span>
+              )}
+              </div>
             </div>
+      
 
             {/* Read More Indicator */}
             {!isPersonal && (
@@ -294,7 +311,7 @@ export function BlogCard({
                 </svg>
               </div>
             )}
-          </div>
+         
         </div>
       </div>
     </Link>

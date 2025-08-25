@@ -11,7 +11,7 @@ export default function useFetchExperience(id: string) {
    const fetchTrip = async () => {
        try {
          let response = await axios.get(
-           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/experience/${id}`
+           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-experience/${id}`
          );
          setIsLoading(false);
          setExperience(response.data);

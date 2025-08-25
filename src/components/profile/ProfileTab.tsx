@@ -186,7 +186,7 @@ export default function ProfileTab({
           </button>
         </div>
         {isFetchingBlogs ? (
-          <BlogsSectionSkeleton count={3} />
+          <BlogsSectionSkeleton count={3} isPersonal={true} />
         ) : isBlogsError ? (
           <p className="text-charcoal sm:text-sm text-xs">Failed to load blogs.</p>
         ) : blogs.length === 0 ? (

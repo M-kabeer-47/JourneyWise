@@ -252,5 +252,4 @@ export const saved = pgTable("saved",{
   type:text({enum:["trip","blog","experience"]}).notNull(),
   itemID:uuid("itemID").notNull(),
   createdAt:timestamp("createdAt").default(new Date()),
-  
 })

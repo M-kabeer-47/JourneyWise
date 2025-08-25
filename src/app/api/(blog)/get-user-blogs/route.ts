@@ -13,15 +13,22 @@ export async function GET(request: NextRequest) {
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const offset = (parseInt(page) - 1) * parseInt(limit);
 
-  if (!userID) return new Response("Missing userID", { status: 400 });
-  if (sortColumn !== "updatedAt")
-    return new Response("Invalid sortColumn", { status: 400 });
-  if (type !== "all" && type !== "published" && type !== "drafts")
-    return new Response("Invalid type", { status: 400 });
-
   let isPublished = type === "published";
   let isDraft = type === "drafts";
 
+  if (!userID) return new Response("Missing userID", { status: 400 });
+
+  if (sortColumn.toString() !== "updatedAt" && sortColumn.toString() !== "mostDiscussed")
+    return new Response("Invalid sortColumn", { status: 400 });
+
+  if (type !== "all" && type !== "published" && type !== "drafts")
+    return new Response("Invalid type", { status: 400 });
+
+ 
+  let sortColumns = {
+    updatedAt: blog.updatedAt,
+    mostDiscussed: blog.commentsCount,
+  }
   const conditions = [eq(blog.authorID, userID)];
   if (isPublished) conditions.push(eq(blog.isPublished, true));
   else if (isDraft) conditions.push(eq(blog.isPublished, false));
@@ -40,7 +47,7 @@ export async function GET(request: NextRequest) {
         conditions.length !== 0 ? and(...conditions) : eq(blog.authorID, userID)
       ).innerJoin(user,eq(blog.authorID, user.id))
       .orderBy(
-        sortOrder === "desc" ? desc(blog.updatedAt) : asc(blog.updatedAt)
+        sortOrder === "desc" ? desc(sortColumns[sortColumn as keyof typeof sortColumns]) : asc(sortColumns[sortColumn as keyof typeof sortColumns])
       )
       .limit(parseInt(limit))
       .offset(offset);

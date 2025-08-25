@@ -26,7 +26,7 @@ export function TripsSectionSkeleton({ count }: { count?: number }) {
   );
 }
 
-export function BlogsSectionSkeleton({ count }: { count?: number }) {
+export function BlogsSectionSkeleton({ count,isPersonal }: { count?: number,isPersonal?: boolean }) {
   const { isDesktop } = useIsDesktop();
   const skeletonCount = count || (isDesktop ? 5 : 3);
   
@@ -38,7 +38,7 @@ export function BlogsSectionSkeleton({ count }: { count?: number }) {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {Array.from({ length: skeletonCount }).map((_, index) => (
-          <BlogCardSkeleton key={index} />
+          <BlogCardSkeleton key={index} isPersonal={isPersonal} />
         ))}
       </div>
     </div>

@@ -20,6 +20,9 @@ import {
   Book,
   ChevronDown,
   Edit,
+  User,
+  MessageSquare,
+  Settings,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { usePathname } from "next/navigation";
@@ -124,6 +127,24 @@ export default function Navbar() {
 
     return nameParts[0].substring(0, 2).toUpperCase();
   };
+
+  const profileDropdownOptions = [
+    {
+      label: "Your Profile",
+      href: "/profile",
+      icon: <User size={16} />
+    },
+    {
+      label: "Messages",
+      href: "/messages",
+      icon: <MessageSquare size={16} />
+    },
+    {
+      label: "Settings",
+      href: "/settings",
+      icon: <Settings size={16} />
+    }
+  ];
 
  
 
@@ -232,6 +253,7 @@ export default function Navbar() {
                 userName={user.user.name || "User"}
                 variant="navbar"
                 showRole={false}
+                options={profileDropdownOptions}
                 onSignOut={() => {
                   authClient.signOut();
                   dispatch(clearUser());

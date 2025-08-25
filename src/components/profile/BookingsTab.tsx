@@ -31,11 +31,11 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
     value: string;
     direction: "asc" | "desc";
   }>({
-    value: "updatedAt",
+    value: "bookingDate",
     direction: "desc",
   });
 
-  const sortOptions = [{ value: "updatedAt", label: "Last Updated" }];
+  const sortOptions = [{ value: "bookingDate", label: "Booking Date" }, { value: "totalPrice", label: "Total Price" }];
 
   const { bookings, isFetchingBookings, isBookingsError } = useFetchUserBookings({
     userID,

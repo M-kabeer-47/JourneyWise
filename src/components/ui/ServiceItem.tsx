@@ -41,7 +41,7 @@ export default function ServiceItem({
           />
         )}
       </div>
-      <span className={(type === "included" && page === "experience")  ? "text-white/90" : "text-charcoal sm:text-sm text-xs "}>
+      <span className={(type === "included" && page === "experience")  ? "text-white/90" : "text-charcoal sm:text-sm text-xs font-medium "}>
         {service}
       </span>
     </div>

@@ -10,18 +10,21 @@ export async function GET(request: NextRequest) {
   const userID = searchParams.get("userID");
   const limit = searchParams.get("limit") || "5";
   const page = searchParams.get("page") || "1";
-  const sortColumn = searchParams.get("sortColumn") || "updatedAt";
+  const sortColumn = searchParams.get("sortColumn");
   const sortOrder = searchParams.get("sortOrder") || "desc";
   const offset = (parseInt(page) - 1) * parseInt(limit);
-
+  
   // Create aliases for user table to distinguish customer and agent
   const customerUser = alias(user, "customerUser");
   const agentUser = alias(user, "agentUser");
   const status = searchParams.get("status")?.toLowerCase() || "all"; // Default to 'all'
   if (!userID) return new Response("Missing userID", { status: 400 });
-  if (sortColumn !== "updatedAt")
+  if (sortColumn?.toString() !== "bookingDate" && sortColumn?.toString() !== "totalPrice")
     return new Response("Invalid sortColumn", { status: 400 });
-
+  let sortColumns = {
+    bookingDate: booking.bookingDate,
+    totalPrice: booking.totalPrice,
+  }
   if (
     status !== "all" &&
     status !== "approved" &&
@@ -62,7 +65,7 @@ export async function GET(request: NextRequest) {
       .innerJoin(agentUser, eq(agent.userID, agentUser.id))
       .innerJoin(experience, eq(booking.experienceID, experience.id))
       .orderBy(
-        sortOrder === "desc" ? desc(booking.updatedAt) : asc(booking.updatedAt)
+        sortOrder === "desc" ? desc(sortColumns[sortColumn as keyof typeof sortColumns]) : asc(sortColumns[sortColumn as keyof typeof sortColumns])
       )
       .limit(parseInt(limit))
       .offset(offset);

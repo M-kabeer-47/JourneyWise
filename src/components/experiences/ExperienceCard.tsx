@@ -155,7 +155,7 @@ export default function ExperienceCard({
             {experience.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="inline-block px-3 py-1 text-sm font-semibold bg-ocean-blue/10 text-midnight-blue rounded-full"
+                className="inline-block px-3 py-1 text-sm font-semibold bg-ocean-blue/10 text-midnight-blue rounded-full sm:text-sm text-xs" 
               >
                 {tag}
               </span>

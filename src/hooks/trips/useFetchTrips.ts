@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Experience } from "@/lib/types/experience";
+import { Trip } from "@/lib/types/trip";
 import { useSearchParams } from "next/navigation";
 
-
-export default function useFetchExperiences() {
+export default function useFetchTrips() {
   const params = useSearchParams();
-  const fetchExperiences = async () => {
-    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-experiences?${params.toString()}`);
+  
+  const fetchTrips = async () => {
+    const res = await axios.get(`/api/trips?${params.toString()}`);
     if (res.status !== 200) {
       throw new Error("Network response was not ok");
     }
@@ -16,16 +16,16 @@ export default function useFetchExperiences() {
   };
 
   const { data, isFetching, isLoading } = useQuery({
-    queryKey: ["home", params.toString()],
-    queryFn: fetchExperiences,
+    queryKey: ["trips", params.toString()],
+    queryFn: fetchTrips,
     refetchOnWindowFocus: false,
   });
 
   return {
-    experiences: data?.experiences as Experience[],
+    trips: data?.trips as Trip[],
     isLoading,
     isFetching,
     totalPages: data?.pagination?.pages || 0,
-    totalExperiences: data?.pagination?.total || 0,
+    totalTrips: data?.totalTrips || 0,
   };
 }

@@ -113,7 +113,7 @@ export default function ProfileTabs({
                     strokeWidth={isActive ? 2.5 : 2}
                   />
                   <span
-                    className={`${
+                    className={`font-raleway ${
                       isActive ? "font-bold" : ""
                     } hidden xs:inline`}
                   >
