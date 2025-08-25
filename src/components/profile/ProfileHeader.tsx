@@ -8,6 +8,7 @@ import {
   Camera,
   Check,
   User as UserIcon,
+  Mail,
 } from "lucide-react";
 import { User } from "@/lib/types/user";
 interface ProfileHeaderProps {
@@ -213,8 +214,8 @@ export default function ProfileHeader({
                     </div>
                   )}
                   <div className="flex items-center justify-center sm:justify-start gap-2">
-                    <Calendar className="w-4 h-4 text-ocean-blue flex-shrink-0" />
-                    <span>Joined {joinDate}</span>
+                    <Mail className="w-4 h-4 text-ocean-blue flex-shrink-0" />
+                    <span>{user.email}</span>
                   </div>
                 </div>
               </div>

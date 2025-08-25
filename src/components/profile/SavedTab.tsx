@@ -4,13 +4,15 @@ import { Bookmark } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
+import SavedItemSkeleton from "./SavedItemSkeleton";
+import useFetchSavedPosts from "@/hooks/savedPosts/useFetchSavedPosts";
 
 interface SavedTabProps {
   userID: string;
 }
 
 export default function SavedTab({ userID }: SavedTabProps) {
-  const [activeType, setActiveType] = useState<string>("all");
+  const [activeType, setActiveType] = useState<"all" | "blog" | "trip" | "experience">("all");
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -21,11 +23,9 @@ export default function SavedTab({ userID }: SavedTabProps) {
 
   const sortOptions = [
     { value: "createdAt", label: "Date Saved" },
-    { value: "type", label: "Type" },
-    { value: "title", label: "Title" },
   ];
 
-  
+  const {savedPosts,isFetchingSavedPosts,isSavedPostsError} = useFetchSavedPosts({userID, type: activeType, sortColumn: sortBy.value, sortOrder: sortBy.direction})
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -45,12 +45,12 @@ export default function SavedTab({ userID }: SavedTabProps) {
         <Tabs
           options={[
             { key: "all", label: "All" },
-            { key: "experiences", label: "Experiences" },
-            { key: "trips", label: "Trips" },
-            { key: "blogs", label: "Blogs" },
+            { key: "experience", label: "Experiences" },
+            { key: "trip", label: "Trips" },
+            { key: "blog", label: "Blogs" },
           ]}
           activeKey={activeType}
-          onChange={setActiveType}
+          onChange={(key) => setActiveType(key as "all" | "blog" | "trip" | "experience")}
           className="max-w-[600px]"
         />
         <SortBy
@@ -61,7 +61,9 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       </div>
 
-      {savedItems.length === 0 ? (
+      {isFetchingSavedPosts ? (
+        <SavedItemSkeleton count={activeType === "all" ? 9 : 6} />
+      ) : savedPosts && savedPosts.length === 0 ? (
         <NoData
           title="No Saved Items"
           description="Start exploring and save your favorite experiences, trips, and blogs."
@@ -69,7 +71,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {savedItems.map((item) => (
+          {savedPosts?.map((item) => (
             <div
               key={item.id}
               className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
@@ -92,7 +94,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
               <div className="p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="px-2 py-1 bg-ocean-blue/10 text-ocean-blue rounded text-xs font-medium uppercase">
-                    {item.entityType}
+                    {item.type}
                   </span>
                   <span className="text-xs text-gray-500">
                     {new Date(item.createdAt).toLocaleDateString()}

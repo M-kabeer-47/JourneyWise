@@ -26,7 +26,6 @@ export async function GET(request: NextRequest) {
     const maxGroupSize = searchParams.get("maxGroupSize");
     const minDistance = searchParams.get("minDistance");
     const maxDistance = searchParams.get("maxDistance");
-    const currencies = searchParams.get("currencies");
     const waypoints = searchParams.get("waypoints"); // Comma-separated list of waypoints
     
     // Search parameter
@@ -68,15 +67,6 @@ export async function GET(request: NextRequest) {
         );
       }
 
-      // Handle currencies filter
-      if (currencies !== null && currencies.length > 0) {
-        const currencyArray = currencies.split(",");
-        const currencyArrayString = currencyArray.map((currency) => `'${currency}'`).join(",");
-
-        conditions.push(
-          sql`${trip.currency} IN (${sql.raw(currencyArrayString)})`
-        );
-      }
 
       // Handle waypoints filter - check if any waypoint cities match in JSONB
       if (waypoints !== null && waypoints.length > 0) {
@@ -113,7 +103,6 @@ export async function GET(request: NextRequest) {
       estimatedBudget: trip.estimatedBudget,
       numOfPeople: trip.numOfPeople,
       estimatedDistance: trip.estimatedDistance,
-      currency: trip.currency,
       createdAt: trip.createdAt,
       updatedAt: trip.updatedAt,
     };
@@ -193,7 +182,6 @@ export async function GET(request: NextRequest) {
           budget: { min: minBudget, max: maxBudget },
           groupSize: { min: minGroupSize, max: maxGroupSize },
           distance: { min: minDistance, max: maxDistance },
-          currencies: currencies ? currencies.split(",") : null,
           waypoints: waypoints ? waypoints.split(",") : null,
           search: searchQuery || null,
         },

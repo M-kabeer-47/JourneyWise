@@ -174,7 +174,7 @@ export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
               <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium">
                 <span>View Details</span>
                 <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                  className="w-4 h-4 transform -translate-x-1 group-hover:translate-x-0 transition-transform duration-200"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"

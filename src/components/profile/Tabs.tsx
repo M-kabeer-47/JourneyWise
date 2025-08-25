@@ -10,7 +10,7 @@ interface TabOption {
 interface TabsProps {
   options: TabOption[];
   activeKey: string;
-  onChange: React.Dispatch<React.SetStateAction<string>>;
+  onChange: (key: string) => void;
   className?: string;
 }
 
@@ -56,7 +56,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
         return (
           <button
             key={tab.key}
-            ref={el => (tabRefs.current[idx] = el)}
+            ref={el => { tabRefs.current[idx] = el; }}
             onClick={() => onChange(tab.key)}
             className={`relative flex-1 px-5 py-2 font-medium whitespace-nowrap transition-colors duration-200 z-10
               ${isActive

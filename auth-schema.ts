@@ -244,7 +244,7 @@ export const blog = pgTable("blog", {
 });
 
 
-export const saved = pgTable("saved",{
+export const savedPosts = pgTable("savedPosts",{
   id:uuid("id").primaryKey().defaultRandom(),
   userID:text("userID")
     .notNull()

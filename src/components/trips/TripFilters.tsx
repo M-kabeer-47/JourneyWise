@@ -6,7 +6,6 @@ import Slider from '@mui/material/Slider';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { FilterSection } from '@/components/experiences/FilterSection';
-import { CustomCheckbox } from '@/components/ui/CheckBox';
 
 // Create a custom theme to match your site's colors
 const theme = createTheme({
@@ -56,20 +55,17 @@ interface FilterValues {
   maxGroupSize: number;
   minDistance: number;
   maxDistance: number;
-  currencies: string[];
   waypoints: string[];
 }
 
 interface TripFiltersProps {
   initialValues: FilterValues;
-  currencyOptions: string[];
   onApplyFilters: (filters: FilterValues) => void;
   onClearFilters: () => void;
 }
 
 export default function TripFilters({ 
   initialValues, 
-  currencyOptions, 
   onApplyFilters, 
   onClearFilters 
 }: TripFiltersProps) {
@@ -91,15 +87,6 @@ export default function TripFilters({
     }));
   };
   
-  // Toggle currencies
-  const handleCurrencyToggle = (currency: string) => {
-    setFilters(prev => {
-      const newCurrencies = prev.currencies.includes(currency)
-        ? prev.currencies.filter(c => c !== currency)
-        : [...prev.currencies, currency];
-      return { ...prev, currencies: newCurrencies };
-    });
-  };
 
   // Handle waypoint input
   const handleWaypointAdd = (waypoint: string) => {
@@ -308,6 +295,7 @@ export default function TripFilters({
                 min={0}
                 max={10000}
                 step={100}
+                className='overflow-visible'
               />
             </div>
             
@@ -347,25 +335,6 @@ export default function TripFilters({
             </div>
           </FilterSection>
           
-          {/* Currencies */}
-          <FilterSection title="Currencies" icon={<DollarSign size={16} />}>
-            <div className="flex flex-wrap gap-2">
-              {currencyOptions.map(currency => (
-                <button
-                  key={currency}
-                  type="button"
-                  onClick={() => handleCurrencyToggle(currency)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    filters.currencies && filters.currencies.includes(currency)
-                      ? 'bg-midnight-blue text-white'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
-                >
-                  {currency}
-                </button>
-              ))}
-            </div>
-          </FilterSection>
 
           {/* Waypoints */}
           <FilterSection title="Waypoints" icon={<Route size={16} />}>
