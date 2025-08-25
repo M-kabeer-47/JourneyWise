@@ -51,7 +51,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
           ]}
           activeKey={activeType}
           onChange={(key) => setActiveType(key as "all" | "blog" | "trip" | "experience")}
-          className="max-w-[600px]"
+          className="w-[500px]"
         />
         <SortBy
           options={sortOptions}
@@ -71,7 +71,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {savedPosts?.map((item) => (
+          {savedPosts?.map((item:SavedPost) => (
             <div
               key={item.id}
               className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"

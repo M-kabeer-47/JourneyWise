@@ -250,6 +250,6 @@ export const savedPosts = pgTable("savedPosts",{
     .notNull()
     .references(() => user.id),
   type:text({enum:["trip","blog","experience"]}).notNull(),
-  itemID:uuid("itemID").notNull(),
+  postID:uuid("postID").notNull(),
   createdAt:timestamp("createdAt").default(new Date()),
 })

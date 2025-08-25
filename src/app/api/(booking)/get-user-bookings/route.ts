@@ -19,11 +19,12 @@ export async function GET(request: NextRequest) {
   const agentUser = alias(user, "agentUser");
   const status = searchParams.get("status")?.toLowerCase() || "all"; // Default to 'all'
   if (!userID) return new Response("Missing userID", { status: 400 });
-  if (sortColumn?.toString() !== "bookingDate" && sortColumn?.toString() !== "totalPrice")
+  if (sortColumn !== "bookingDate" && sortColumn !== "totalPrice" && sortColumn !== "updatedAt")
     return new Response("Invalid sortColumn", { status: 400 });
   let sortColumns = {
     bookingDate: booking.bookingDate,
     totalPrice: booking.totalPrice,
+    updatedAt: booking.updatedAt
   }
   if (
     status !== "all" &&
