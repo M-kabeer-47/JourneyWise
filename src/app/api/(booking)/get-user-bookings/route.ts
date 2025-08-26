@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
     updatedAt: booking.updatedAt
   }
   if (
-    status !== "all" &&
+    status !== "all" &&     
     status !== "approved" &&
     status !== "pending" &&
     status !== "confirmed" &&

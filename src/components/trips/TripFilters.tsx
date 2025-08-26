@@ -337,42 +337,7 @@ export default function TripFilters({
           
 
           {/* Waypoints */}
-          <FilterSection title="Waypoints" icon={<Route size={16} />}>
-            <div className="space-y-3">
-              <input
-                type="text"
-                placeholder="Add waypoint (e.g., Paris, Tokyo)"
-                onKeyPress={(e) => {
-                  if (e.key === "Enter") {
-                    e.preventDefault();
-                    handleWaypointAdd(e.currentTarget.value);
-                    e.currentTarget.value = "";
-                  }
-                }}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
-              />
-              
-              {filters.waypoints && filters.waypoints.length > 0 && (
-                <div className="flex flex-wrap gap-2">
-                  {filters.waypoints.map((waypoint) => (
-                    <div
-                      key={waypoint}
-                      className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
-                    >
-                      <span>{waypoint}</span>
-                      <button
-                        type="button"
-                        onClick={() => handleWaypointRemove(waypoint)}
-                        className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
-                      >
-                        ×
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </FilterSection>
+         
           
           <button
             type="submit"

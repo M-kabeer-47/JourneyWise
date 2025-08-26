@@ -40,6 +40,7 @@ export interface Experience {
     country: string;
     code?: string;
   };
+  isSaved: boolean;
   category: string;
   minPrice: number;
   itineraryDetails: ItineraryDay[];

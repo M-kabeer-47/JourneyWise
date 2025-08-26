@@ -6,11 +6,12 @@ export async function GET(request:NextRequest) {
     let searchParams = request.nextUrl.searchParams 
     let email = searchParams.get("email")
     email=email?.toLowerCase() || " "
-
+    console.log("Email",email)
     if(!email){
         return NextResponse.json({message: "Email is required"},{status: 400})
     }
     let User = await db.select().from(user).where(eq(user.email,email))
+    console.log("User",User)
     if(User.length === 0){
         return NextResponse.json({message: "Email doesn't exist"},{status: 400})
     }

@@ -7,7 +7,7 @@ export default function useFetchTrips() {
   const params = useSearchParams();
   
   const fetchTrips = async () => {
-    const res = await axios.get(`/api/trips?${params.toString()}`);
+    const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-trips?${params.toString()}`);
     if (res.status !== 200) {
       throw new Error("Network response was not ok");
     }

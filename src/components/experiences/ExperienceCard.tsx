@@ -15,7 +15,8 @@ import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
 import { formatPrice } from "@/utils/functions/formatPrice";
 import Image from "next/image";
-
+import { useAppSelector } from "@/hooks/redux";
+import useSavePost from "@/hooks/savedPosts/useSavePost";
 interface ExperienceCardProps {
   experience: Experience;
   isAgent?: boolean;
@@ -29,17 +30,20 @@ export default function ExperienceCard({
   onSave,
   onUnsave,
 }: ExperienceCardProps) {
-  const [isSaved, setIsSaved] = useState(false);
-
+  
+  const user = useAppSelector((state) => state.user.user);
+  const {savePost,unsavePost} = useSavePost();
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isSaved) {
-      onUnsave?.(experience.id);
-      setIsSaved(false);
+    if (experience.isSaved) {
+      unsavePost.mutateAsync({savedPostID:experience.id});
     } else {
-      onSave?.(experience.id);
-      setIsSaved(true);
+      if(!user){
+       
+        return;
+      }
+      savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience"});
     }
   };
 
@@ -85,13 +89,13 @@ export default function ExperienceCard({
           </div>
 
           {/* Save Button (only for non-agent) */}
-          {!isAgent && (
+          {!isAgent && user && (
             <button
               onClick={handleSaveToggle}
               className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
             >
-              {isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-ocean-blue" />
+              {experience.isSaved ? (
+                <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
               ) : (
                 <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
               )}

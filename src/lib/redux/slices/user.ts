@@ -1,18 +1,19 @@
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import {User} from "@/lib/types/user";
-import formatDate from "@/utils/functions/formatDate";
 
 const fetchUser = createAsyncThunk("/fetchUser",async()=>{
 const userData = await fetchUserFromClient();
 console.log("Fetching...")
-return {
-    ...userData,
-    createdAt: userData?.createdAt ? formatDate(userData?.createdAt) : null,
-    updatedAt: userData?.updatedAt ? formatDate(userData?.updatedAt) : null,
+if(userData){
+    return {
+        ...userData,
+        createdAt: userData.createdAt.toISOString(),
+        updatedAt: userData.updatedAt.toISOString(),
+    }
 }
+return null;
 })
-
 
 type UserState = {
   user: User | null;
