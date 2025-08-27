@@ -13,6 +13,7 @@ export default function useFetchSavedPosts({userID,type,sortColumn,sortOrder}: {
                     sortOrder
                 }
             });
+            console.log("Response "+JSON.stringify(response.data));
             return response.data;   
         },
         refetchOnWindowFocus: false,
