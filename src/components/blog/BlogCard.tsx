@@ -251,7 +251,7 @@ export function BlogCard({
         {!isPersonal && (
           <AuthorCard
             name={blogData.author.name}
-            image={blogData.author.image || "ss"}
+            image={blogData.author.image}
           />
         )}
       </div>

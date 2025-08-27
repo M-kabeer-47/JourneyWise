@@ -17,6 +17,7 @@ import { formatPrice } from "@/utils/functions/formatPrice";
 import Image from "next/image";
 import { useAppSelector } from "@/hooks/redux";
 import useSavePost from "@/hooks/savedPosts/useSavePost";
+import AuthorCard from "../ui/AuthorCard";
 interface ExperienceCardProps {
   experience: Experience;
   isAgent?: boolean;
@@ -104,27 +105,7 @@ export default function ExperienceCard({
         </div>
 
         {/* Bottom Left: Agent Info */}
-        <div className="absolute bottom-4 left-4 flex items-center gap-3 bg-white/95 backdrop-blur-sm rounded-full px-3 py-1 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300 delay-100">
-          <div className="relative w-6 h-6 rounded-full overflow-hidden">
-            {experience.agent?.avatar ? (
-              <Image
-                src={experience.agent.avatar}
-                alt={experience.agent.name || "Agent"}
-                fill
-                className="object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-sm font-medium">
-                {experience.agent?.name?.charAt(0).toUpperCase() || "A"}
-              </div>
-            )}
-          </div>
-          <div>
-            <div className="text-xs font-medium text-gray-800">
-              {experience.agent?.name || "Agent"}
-            </div>
-          </div>
-        </div>
+        {experience.agent && <AuthorCard name={experience.agent.name} image={experience.agent.image} />}
 
         {/* Agent Action Buttons (overlay on image) */}
         {isAgent && (

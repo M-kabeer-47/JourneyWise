@@ -55,13 +55,10 @@ export default function SortBy({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between gap-2   rounded-lg hover:border-ocean-blue transition-colors text-gray-700 bg-white w-full ${className} ${size === "small" ? "text-sm px-3 py-2 border border-gray-300" : size === "medium" ? "text-base px-3 py-2" : "text-base px-4 py-2.5 border border-gray-300"}`}
+        className={`flex items-center justify-between gap-2 font-semibold  rounded-lg hover:border-ocean-blue transition-colors text-gray-700 bg-white w-full ${className} ${size === "small" ? "text-xs sm:text-sm px-3 py-2 border border-gray-300" : size === "medium" ? "text-base px-3 py-2" : "text-base px-4 py-2.5 border border-gray-300"}`}
       >
-        <p className="flex gap-2 w-full text-sm sm:text-base items-center text-charcoal">
-          Sort by: {activeLabel}
-          <span className="text-ocean-blue">
-            {activeSort.direction === "asc" ? "↑" : "↓"}
-          </span>
+        <p className="flex gap-2 w-full text-xs sm:text-sm font-semibold items-center text-charcoal">
+          Sort by: {activeLabel} <span className="text-ocean-blue text-xs sm:text-sm">{activeSort.direction === "asc" ? "↑" : "↓"}</span>
         </p>
         <ChevronDown
           size={16}
@@ -85,7 +82,7 @@ export default function SortBy({
               <div key={index} className="px-1">
                 <button
                   type="button"
-                  className="flex items-center justify-between w-full px-2 py-2 text-sm sm:text-base text-left hover:bg-gray-50 rounded-md"
+                  className="flex items-center justify-between w-full px-2 py-2 text-xs sm:text-sm font-semibold text-left hover:bg-gray-50 rounded-md"
                   onClick={() => {
                     const newDirection =
                       activeSort.value === option.value &&
@@ -102,9 +99,9 @@ export default function SortBy({
                     setIsOpen(false);
                   }}
                 >
-                  <span className="text-charcoal text-sm">{option.label}</span>
+                  <span className="text-charcoal text-xs sm:text-sm font-semibold">{option.label}</span>
                   {activeSort.value === option.value && (
-                    <span className="text-ocean-blue">
+                    <span className="text-ocean-blue text-xs sm:text-sm">
                       {activeSort.direction === "asc" ? "↑" : "↓"}
                     </span>
                   )}

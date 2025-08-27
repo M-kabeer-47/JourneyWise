@@ -15,8 +15,8 @@ interface SavedTabProps {
 
 export default function SavedTab({ userID }: SavedTabProps) {
   const [activeType, setActiveType] = useState<
-    "all" | "blog" | "trip" | "experience"
-  >("all");
+    "blog" | "trip" | "experience"
+  >("experience");
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -52,14 +52,14 @@ export default function SavedTab({ userID }: SavedTabProps) {
       <div className="flex flex-col sm:flex-row justify-between mb-8">
         <Tabs
           options={[
-            { key: "all", label: "All" },
+           
             { key: "experience", label: "Experiences" },
             { key: "trip", label: "Trips" },
             { key: "blog", label: "Blogs" },
           ]}
           activeKey={activeType}
           onChange={(key) =>
-            setActiveType(key as "all" | "blog" | "trip" | "experience")
+            setActiveType(key as  "blog" | "trip" | "experience")
           }
           className="sm:w-[500px] overflow-auto"
         />
@@ -83,25 +83,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {activeType === "all" ? savedPosts?.map((savedPost) =>
-            savedPost.savedPost.type === "experience" ? (
-              <ExperienceCard
-                key={savedPost.savedPost.id}
-                experience={savedPost.experience}
-              />
-            ) : savedPost.savedPost.type === "trip" ? (
-              <TripCard
-                key={savedPost.savedPost.id}
-                trip={savedPost.trip}
-                isPersonal={true}  
-              />
-            ) : savedPost.savedPost.type === "blog" ? (
-              <BlogCard
-                key={savedPost.savedPost.id}
-                blog={savedPost.blog}  
-              />
-            ) : null
-          ) : activeType === "blog" ? savedPosts.map((savedPost) => (
+          {activeType === "blog" ? savedPosts.map((savedPost) => (
             <BlogCard
               key={savedPost.savedPost.id}
               blog={savedPost.blog}

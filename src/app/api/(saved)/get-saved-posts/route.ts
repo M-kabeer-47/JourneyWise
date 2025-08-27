@@ -64,9 +64,20 @@ export async function GET(request: NextRequest) {
         .select()
         .from(savedPosts)
         .innerJoin(trip, eq(trip.id, savedPosts.postID))
+        .innerJoin(user, eq(user.id, trip.userID))
         .where(and(...conditions))
         .orderBy(sortDirection(sortField));
-      return NextResponse.json(savedTrips, { status: 200 });
+      let results = savedTrips.map(({ savedPosts, trip, user }) => {
+        return {
+          savedPost: savedPosts,
+          trip: {
+            ...trip,
+            isSaved: true,
+            user: { name: user.name, image: user.image },
+          },
+        };
+      });
+      return NextResponse.json(results, { status: 200 });
     } else if (type === "blog") {
       let savedBlogs = await db
         .select()
@@ -80,7 +91,7 @@ export async function GET(request: NextRequest) {
           savedPost: savedPosts,
           blog: {
             blog: { ...blog, isSaved: true },
-            author: { name: user.name, avatar: user.image },
+            author: { name: user.name, image: user.image },
           },
         };
       });
@@ -101,7 +112,7 @@ export async function GET(request: NextRequest) {
             experience: {
               ...experience,
               isSaved: true,
-              agent: { ...agent, name: user?.name, avatar: user?.image },
+              agent: { ...agent, name: user?.name, image: user?.image },
             },
           };
         }
@@ -110,10 +121,12 @@ export async function GET(request: NextRequest) {
     } else {
       let blogUser = alias(user, "blogUser");
       let experienceUser = alias(user, "experienceUser");
+      let tripUser = alias(user, "tripUser");
       let allSavedPosts = await db
         .select()
         .from(savedPosts)
         .leftJoin(trip, eq(trip.id, savedPosts.postID))
+        .leftJoin(tripUser, eq(tripUser.id, trip.userID))
         .leftJoin(blog, eq(blog.id, savedPosts.postID))
         .leftJoin(blogUser, eq(blogUser.id, blog.authorID))
         .leftJoin(experience, eq(experience.id, savedPosts.postID))
@@ -132,10 +145,18 @@ export async function GET(request: NextRequest) {
             agent,
             experienceUser,
             blogUser,
+            tripUser,
           },
           index
         ) => {
           return {
+            trip: trip
+              ? {
+                  ...trip,
+                  isSaved: true,
+                  author: { name: tripUser?.name, image: tripUser?.image },
+                }
+              : null,
             experience: experience
               ? {
                   ...experience,
@@ -143,15 +164,15 @@ export async function GET(request: NextRequest) {
                   agent: {
                     ...agent,
                     name: experienceUser?.name,
-                    avatar: experienceUser?.image,
+                    image: experienceUser?.image,
                   },
                 }
               : null,
-            trip: trip,
+
             blog: blog
               ? {
                   blog: blog,
-                  author: { name: blogUser?.name, avatar: blogUser?.image },
+                  author: { name: blogUser?.name, image: blogUser?.image },
                 }
               : null,
             savedPost: savedPosts,

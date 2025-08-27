@@ -70,15 +70,7 @@ export default function BookingCard({
 
 
 
-  const getLocationString = (location: any) => {
-    try {
-      const loc =
-        typeof location === "string" ? JSON.parse(location) : location;
-      return loc?.city || loc?.name || "Location";
-    } catch {
-      return "Location";
-    }
-  };
+  
 
   return (
     <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[300px]">
@@ -110,9 +102,7 @@ export default function BookingCard({
                 </h3>
                 <AuthorCard
                   name={booking.agent.agencyName}
-                  image={
-                    "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0"
-                  }
+                  image={booking.agent.image}
                   hoverEffect={false}
                 />
               </div>

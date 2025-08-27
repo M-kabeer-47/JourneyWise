@@ -48,10 +48,10 @@ export interface Experience {
   requirements: string[];
   tiers:  tier[];
   
-  agent?: {
+  agent: {
     id: string;
     name: string;
-    avatar: string;
+    image: string;
   };
   includedServices: string[];
   excludedServices: string[];

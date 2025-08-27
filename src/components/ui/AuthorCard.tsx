@@ -24,7 +24,7 @@ export default function AuthorCard({
           size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-8 h-8"
         }`}
       >
-        {!image.trim() ? (
+        {image!=="" ? (
           <Image src={image} alt={name} fill className="object-cover" />
         ) : (
           <div className="w-full h-full  flex items-center bg-gray-200 justify-center rounded-full text-white text-xs font-medium">
