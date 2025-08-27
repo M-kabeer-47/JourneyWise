@@ -3,6 +3,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { BookOpen, Compass, Map, Sparkles } from "lucide-react";
+import HeroSection from "@/components/ui/HeroSection";
 import { BlogCard } from "@/components/blog/BlogCard";
 import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
 import SearchBar from "@/components/ui/SearchBar";
@@ -92,77 +93,11 @@ export default function BlogsPage() {
   return (
     <div className="min-h-screen bg-gray-50 pb-[200px]">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-midnight-blue to-ocean-blue text-white overflow-hidden">
-        <div className="absolute inset-0">
-          <div className="absolute inset-0 bg-pattern opacity-10"></div>
-          <div className="absolute top-10 left-10 w-32 h-32 bg-white/10 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-10 right-10 w-48 h-48 bg-ocean-blue/20 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-          <div className="max-w-4xl mx-auto text-center">
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              className="mb-6"
-            >
-              <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2 mb-6">
-                <Sparkles className="w-4 h-4 text-accent" />
-                <span className="text-sm font-medium">
-                  Travel Stories & Adventures
-                </span>
-              </div>
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.1 }}
-              className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 leading-tight"
-            >
-              Discover Amazing
-              <span className="block text-transparent text-accent">
-                Travel Stories
-              </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="text-xl text-blue-100 mb-8 max-w-2xl mx-auto leading-relaxed"
-            >
-              Explore inspiring travel tales, hidden gems, and expert tips from
-              adventurers around the globe
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex items-center justify-center gap-8 text-sm"
-            >
-              <div className="flex items-center gap-2">
-                <BookOpen className="w-5 h-5 text-accent" />
-                <span>
-                  {isLoading
-                    ? "Loading..."
-                    : `${data.blogs?.length || 0}+ Stories`}
-                </span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Compass className="w-5 h-5 text-accent" />
-                <span>Expert Tips</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <Map className="w-5 h-5 text-accent" />
-                <span>Hidden Gems</span>
-              </div>
-            </motion.div>
-          </div>
-        </div>
-      </div>
+      <HeroSection
+        title="Discover Amazing"
+        highlightedWord="Stories"
+        description="Explore inspiring travel tales, hidden gems, and expert tips from adventurers around the globe"
+      />
 
       {/* Search and Sort Controls */}
       <div className="bg-white border-b border-gray-200 sticky top-0 z-30 shadow-sm">
@@ -246,8 +181,7 @@ export default function BlogsPage() {
               >
                 <BlogCard
                   blog={blog}
-                  onSave={handleSaveBlog}
-                  onUnsave={handleUnsaveBlog}
+                  isPersonal={false}
                 />
               </motion.div>
             ))}

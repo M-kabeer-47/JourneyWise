@@ -1,7 +1,8 @@
 import { eq, ilike, and, asc, desc, sql } from "drizzle-orm";
 import { NextRequest, NextResponse } from "next/server";
-import { blog, user } from "../../../../../auth-schema";
+import { blog, user, savedPosts } from "../../../../../auth-schema";
 import db from "@/lib/server/db";
+import { auth } from "@/lib/auth/auth";
 
 const validSortColumns = {
   updatedAt: blog.updatedAt,
@@ -12,6 +13,9 @@ type SortColumnKey = keyof typeof validSortColumns;
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams;
+  
+  const User = await auth.api.getSession({headers: request.headers});
+
   const limit = parseInt(searchParams.get("limit") || "10");
   const page = parseInt(searchParams.get("page") || "1");
   const search = searchParams.get("search") || "";
@@ -69,10 +73,27 @@ export async function GET(request: NextRequest) {
       return count[0]?.count || 0;
     };
 
-    const [blogs, total] = await Promise.all([fetchBlogs(), fetchBlogsCount()]);
+    const savedBlogs = async () => {
+      if (!User) return [];
+      const savedBlogs = await db
+        .select({ savedPostID: savedPosts.postID })
+        .from(savedPosts)
+        .where(and(eq(savedPosts.userID, User.user.id), eq(savedPosts.type, "blog")))
+       
+      return savedBlogs;
+    };
+
+    const [blogs, total, saved] = await Promise.all([fetchBlogs(), fetchBlogsCount(), savedBlogs()]);
+    // Format blogs with isSaved field
+    const formattedBlogs = blogs.map(({ blog: blogData, author }) => ({
+      blog: {...blogData, isSaved: saved.some((savedBlog) => savedBlog.savedPostID === blogData.id)},
+      author,
+      
+    }));
+
     return NextResponse.json(
       {
-        blogs,
+        blogs: formattedBlogs,
         pagination: {
           total,
           pages: Math.ceil(Number(total) / limit),

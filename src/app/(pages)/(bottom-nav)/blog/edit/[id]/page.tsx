@@ -1,7 +1,7 @@
 "use client";
 import { useParams } from "next/navigation";
 
-import useSaveBlog from "@/hooks/blog/useSaveBlog";
+import useSaveBlog from "@/hooks/blog/useEditBlog";
 import useFetchBlog from "@/hooks/blog/useFetchBlog";
 import { useRouter } from "next/navigation";
 import Spinner from "@/components/ui/Spinner";

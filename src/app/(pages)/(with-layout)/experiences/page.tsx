@@ -438,8 +438,12 @@ export default function ExperiencesPage() {
                     </span>{" "}
                     experiences
                   </>
-                ) : (
+                ) : isLoading || isFetching ? (
+                  <>Loading experiences...</>
+                ) : (experiences.length === 0 && totalExperiences === 0) ? (
                   <>No experiences found with your current filters</>
+                ) : (
+                  <>No experiences available</>
                 )}
               </div>
 

@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { MapPin, X, SlidersHorizontal, Route } from "lucide-react";
+import { X, SlidersHorizontal, Route } from "lucide-react";
 
 // Custom Components
 import { LocationSelector } from "@/components/experiences/LocationSelector";
@@ -42,9 +42,6 @@ const popularLocations = [
 ];
 
 // Currency options for filter
-const currencyOptions = [
-  "USD", "EUR", "GBP", "JPY", "CAD", "AUD", "CHF", "CNY", "INR", "BRL"
-];
 
 // Budget ranges for filter
 const budgetRanges = [
@@ -92,7 +89,8 @@ export default function TripsPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Use the actual hook
-  const { trips, isLoading, isFetching, totalPages, totalTrips } = useFetchTrips();
+  const { trips, isLoading, isFetching, totalPages, totalTrips } =
+    useFetchTrips();
 
   const handleSearch = (value: string) => {
     setSearchValue(value);
@@ -127,24 +125,39 @@ export default function TripsPage() {
     []
   );
 
-  const handleApplyFilters = useCallback(
-    (newFilters: TripFiltersType) => {
-      setFilters(newFilters);
+  const handleApplyFilters = useCallback((newFilters: TripFiltersType) => {
+    setFilters(newFilters);
 
-      updateQueryParams({
-        minBudget: newFilters.minBudget === 0 ? "0" : newFilters.minBudget.toString(),
-        maxBudget: newFilters.maxBudget === 100000 ? "100000" : newFilters.maxBudget.toString(),
-        minGroupSize: newFilters.minGroupSize === 1 ? "1" : newFilters.minGroupSize.toString(),
-        maxGroupSize: newFilters.maxGroupSize === 20 ? "20" : newFilters.maxGroupSize.toString(),
-        minDistance: newFilters.minDistance === 0 ? "0" : newFilters.minDistance.toString(),
-        maxDistance: newFilters.maxDistance === 10000 ? "10000" : newFilters.maxDistance.toString(),
-        currencies: newFilters.currencies.length > 0 ? newFilters.currencies.join(",") : null,
-        waypoints: newFilters.waypoints.length > 0 ? newFilters.waypoints.join(",") : null,
-        page: "1",
-      });
-    },
-    []
-  );
+    updateQueryParams({
+      minBudget:
+        newFilters.minBudget === 0 ? "0" : newFilters.minBudget.toString(),
+      maxBudget:
+        newFilters.maxBudget === 100000
+          ? "100000"
+          : newFilters.maxBudget.toString(),
+      minGroupSize:
+        newFilters.minGroupSize === 1
+          ? "1"
+          : newFilters.minGroupSize.toString(),
+      maxGroupSize:
+        newFilters.maxGroupSize === 20
+          ? "20"
+          : newFilters.maxGroupSize.toString(),
+      minDistance:
+        newFilters.minDistance === 0 ? "0" : newFilters.minDistance.toString(),
+      maxDistance:
+        newFilters.maxDistance === 10000
+          ? "10000"
+          : newFilters.maxDistance.toString(),
+      currencies:
+        newFilters.currencies.length > 0
+          ? newFilters.currencies.join(",")
+          : null,
+      waypoints:
+        newFilters.waypoints.length > 0 ? newFilters.waypoints.join(",") : null,
+      page: "1",
+    });
+  }, []);
 
   const handlePageChange = useCallback((page: number) => {
     updateQueryParams({ page: page.toString() });
@@ -196,16 +209,25 @@ export default function TripsPage() {
     return () => clearTimeout(timer);
   }, [searchValue]);
 
+  useEffect(() => {
+    if(sidebarOpen) document.body.classList.add("overflow-hidden");
+    else document.body.classList.remove("overflow-hidden");
+
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }, [sidebarOpen]);
+
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
       {/* Hero Section */}
-      <div className="relative bg-gradient-to-r from-midnight-blue to-ocean-blue text-white">
+      <div className="relative flex flex-col items-center justify-center bg-gradient-to-r from-midnight-blue to-ocean-blue text-white h-[300px] sm:h-auto top-[70px] sm:top-[70px] mb-16">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute inset-0 bg-pattern opacity-10"></div>
         </div>
 
         <div className="px-4 sm:px-6 lg:px-8 relative z-10 py-16 md:py-24">
-          <div className="max-w-3xl mx-auto text-center relative top-[40px]">
+          <div className="max-w-3xl mx-auto text-center relative ">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4 font-raleway">
               Explore Amazing
               <span className="text-accent"> Trips</span>
@@ -259,73 +281,6 @@ export default function TripsPage() {
           </div>
 
           {/* Active Filters Tags */}
-          {(filters.currencies.length > 0 || filters.waypoints.length > 0) && (
-            <div className="px-5 py-3 border-b border-gray-100">
-              <div className="flex items-center gap-2 flex-wrap">
-                <span className="text-sm text-midnight-blue font-medium">
-                  Active filters:
-                </span>
-
-                {/* Currency tags */}
-                {filters.currencies.map((currency) => (
-                  <div
-                    key={currency}
-                    className="inline-flex items-center gap-1 bg-green-100 text-green-800 text-xs px-3 py-1 rounded-full"
-                  >
-                    <span>{currency}</span>
-                    <button
-                      onClick={() => {
-                        const newCurrencies = filters.currencies.filter(
-                          (c) => c !== currency
-                        );
-                        setFilters((prev) => ({ ...prev, currencies: newCurrencies }));
-                        updateQueryParams({
-                          currencies: newCurrencies.length > 0 ? newCurrencies.join(",") : null,
-                        });
-                      }}
-                      className="ml-1 hover:bg-green-200 rounded-full p-0.5 transition-colors"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-
-                {/* Waypoint tags */}
-                {filters.waypoints.map((waypoint) => (
-                  <div
-                    key={waypoint}
-                    className="inline-flex items-center gap-1 bg-blue-100 text-blue-800 text-xs px-3 py-1 rounded-full"
-                  >
-                    <Route size={12} />
-                    <span>{waypoint}</span>
-                    <button
-                      onClick={() => {
-                        const newWaypoints = filters.waypoints.filter(
-                          (w) => w !== waypoint
-                        );
-                        setFilters((prev) => ({ ...prev, waypoints: newWaypoints }));
-                        updateQueryParams({
-                          waypoints: newWaypoints.length > 0 ? newWaypoints.join(",") : null,
-                        });
-                      }}
-                      className="ml-1 hover:bg-blue-200 rounded-full p-0.5 transition-colors"
-                    >
-                      <X size={12} />
-                    </button>
-                  </div>
-                ))}
-
-                {/* Clear all filters button */}
-                <button
-                  onClick={clearAllFilters}
-                  className="inline-flex items-center gap-1 bg-gray-100 text-gray-700 text-xs px-3 py-1 rounded-full hover:bg-gray-200 transition-colors"
-                >
-                  <span>Clear all</span>
-                  <X size={12} />
-                </button>
-              </div>
-            </div>
-          )}
         </div>
 
         {/* Toggle button for filters - mobile */}
@@ -346,13 +301,13 @@ export default function TripsPage() {
           )}
         </button>
 
-        <div className="relative flex gap-6">
+        <div className="relative flex gap-6  w-full">
           {/* Filters Sidebar */}
           <div
             className={`
               md:w-72 flex-shrink-0 
-              fixed lg:static left-0 top-0 h-full lg:h-auto z-20 
-              transform transition-transform duration-300 ease-in-out
+              fixed lg:static lg:w-[15%] left-0 top-0 h-full overflow-y-auto lg:h-auto z-20 
+              transform transition-transform duration-300 ease-in-out 
               ${
                 sidebarOpen
                   ? "translate-x-0"
@@ -362,18 +317,9 @@ export default function TripsPage() {
               border-r border-gray-200 lg:border-0
             `}
           >
-            <div className="p-4 md:p-0 h-full overflow-y-auto overflow-x-hidden">
-              <div className="flex justify-between items-center mb-4 md:hidden">
-                <h2 className="text-lg font-bold font-raleway">Filters</h2>
-                <button onClick={toggleSidebar} className="p-1">
-                  <X size={20} />
-                </button>
-              </div>
-
+            <div className="md:p-0 h-full overflow-y-auto overflow-x-hidden relative top-[80px] lg:top-0">
               <TripFilters
                 initialValues={filters}
-                currencyOptions={currencyOptions}
-                budgetRanges={budgetRanges}
                 onApplyFilters={(newFilters) => {
                   handleApplyFilters(newFilters);
                   if (window.innerWidth < 1100) setSidebarOpen(false);
@@ -392,7 +338,7 @@ export default function TripsPage() {
           )}
 
           {/* Main Content Area */}
-          <div className="flex-1">
+          <div className="lg:w-[85%] w-full">
             {/* Results Count */}
             <div className="bg-white rounded-xl p-4 mb-6 shadow-sm border border-gray-100 flex items-center justify-between">
               <div className="text-sm text-gray-600">

@@ -24,11 +24,11 @@ export default function AuthorCard({
           size === "sm" ? "w-6 h-6" : size === "md" ? "w-8 h-8" : "w-8 h-8"
         }`}
       >
-        {image ? (
+        {!image.trim() ? (
           <Image src={image} alt={name} fill className="object-cover" />
         ) : (
-          <div className="w-full h-full  flex items-center bg-charcoal/5 justify-center border-[1px] border-charcoal rounded-full text-white text-xs font-medium">
-            <User className="w-4 h-4 text-ocean-blue" />
+          <div className="w-full h-full  flex items-center bg-gray-200 justify-center rounded-full text-white text-xs font-medium">
+            <User className="w-4 h-4 text-gray-500" />
           </div>
         )}
       </div>

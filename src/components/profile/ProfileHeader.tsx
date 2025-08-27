@@ -224,11 +224,11 @@ export default function ProfileHeader({
               <div className="hidden lg:flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 lg:flex-shrink-0">
                 {isOwnProfile ? (
                   <>
-                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 border  rounded-lg  border-ocean-blue text-ocean-blue transition-all text-sm">
+                    <button className="flex items-center justify-center font-medium gap-2 px-3 md:px-4 py-2 border  rounded-lg  border-ocean-blue text-ocean-blue transition-all text-sm">
                       <Settings className="w-4 h-4" />
                       Edit Profile
                     </button>
-                    <button className="flex items-center justify-center gap-2 px-3 md:px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
+                    <button className="flex items-center justify-center gap-2 px-3 font-medium md:px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue transition-all text-sm">
                       <Share2 className="w-4 h-4" />
                       Share Profile
                     </button>

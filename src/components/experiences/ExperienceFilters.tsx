@@ -4,7 +4,7 @@ import Slider from '@mui/material/Slider';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
 import { FilterSection } from '@/components/experiences/FilterSection';
-import { CustomCheckbox } from '@/components/ui/CheckBox';
+import { CustomCheckbox } from '@/components/ui/Checkbox';
 
 // Create a custom theme to match your site's colors
 const theme = createTheme({

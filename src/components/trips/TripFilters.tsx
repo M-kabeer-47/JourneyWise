@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from 'react';
-import { DollarSign, Users, MapPin, Route } from 'lucide-react';
+import { DollarSign, Users, MapPin, Banknote } from 'lucide-react';
 import Slider from '@mui/material/Slider';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -37,7 +37,8 @@ const theme = createTheme({
         },
         rail: {
           height: 4,
-          borderRadius: 2,
+          borderRadius: 2, 
+          // midnight-blue color
           backgroundColor: '#0077B6',
         },
         valueLabel: {
@@ -55,6 +56,7 @@ interface FilterValues {
   maxGroupSize: number;
   minDistance: number;
   maxDistance: number;
+
   waypoints: string[];
 }
 
@@ -89,21 +91,7 @@ export default function TripFilters({
   
 
   // Handle waypoint input
-  const handleWaypointAdd = (waypoint: string) => {
-    if (waypoint.trim() && !filters.waypoints.includes(waypoint.trim())) {
-      setFilters(prev => ({
-        ...prev,
-        waypoints: [...prev.waypoints, waypoint.trim()]
-      }));
-    }
-  };
-
-  const handleWaypointRemove = (waypoint: string) => {
-    setFilters(prev => ({
-      ...prev,
-      waypoints: prev.waypoints.filter(w => w !== waypoint)
-    }));
-  };
+ 
   
   // Handle form submission
   const handleSubmit = (e: React.FormEvent) => {
@@ -148,7 +136,7 @@ export default function TripFilters({
   
   return (
     <ThemeProvider theme={theme}>
-      <div className="bg-white rounded-xl shadow-md p-5 sticky">
+      <div className="bg-gray-50 sm:bg-white rounded-xl shadow-md p-5 sticky h-full ">
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-lg font-bold text-gray-900">Filters</h2>
           <button 
@@ -164,10 +152,10 @@ export default function TripFilters({
         <form onSubmit={handleSubmit} className="space-y-6">
           
           {/* Budget Range with Material UI Slider */}
-          <FilterSection title="Budget Range" icon={<DollarSign size={16} />}>
-            <div className="py-6">
+          <FilterSection title="Budget Range" icon={<Banknote size={16} />}>
+            <div className="py-6 overflow-visible" style={{ paddingTop: '2rem' }}>
               <div className="mb-2 flex justify-between">
-                <span className="text-xs font-medium text-gray-500">{formatBudgetLabel(filters.minBudget)}</span>
+                <span className="text-xs font-medium text-charcoal">{formatBudgetLabel(filters.minBudget)}</span>
                 <span className="text-xs font-medium text-ocean-blue">{formatBudgetLabel(filters.maxBudget)}</span>
               </div>
               
@@ -181,21 +169,22 @@ export default function TripFilters({
                 min={0}
                 max={100000}
                 step={500}
+                className='z-[20]'
               />
             </div>
             
             <div className="grid grid-cols-2 gap-4 mt-2">
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Min Budget</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Min Budget</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <DollarSign size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <DollarSign size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.minBudget}
                     onChange={(e) => handleFilterChange('minBudget',(e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min="0"
                     max={filters.maxBudget}
                   />
@@ -203,16 +192,16 @@ export default function TripFilters({
               </div>
               
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Max Budget</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Max Budget</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <DollarSign size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <DollarSign size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.maxBudget}
                     onChange={(e) => handleFilterChange('maxBudget', (e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min={filters.minBudget}
                   />
                 </div>
@@ -222,9 +211,9 @@ export default function TripFilters({
           
           {/* Group Size with Material UI Slider */}
           <FilterSection title="Group Size" icon={<Users size={16} />}>
-            <div className="py-6">
+            <div className="py-6 overflow-visible" style={{ paddingTop: '2rem' }}>
               <div className="mb-2 flex justify-between">
-                <span className="text-xs font-medium text-gray-500">{formatGroupSizeLabel(filters.minGroupSize)}</span>
+                <span className="text-xs font-medium text-charcoal">{formatGroupSizeLabel(filters.minGroupSize)}</span>
                 <span className="text-xs font-medium text-ocean-blue">{formatGroupSizeLabel(filters.maxGroupSize)}</span>
               </div>
               
@@ -243,16 +232,16 @@ export default function TripFilters({
             
             <div className="grid grid-cols-2 gap-4 mt-2">
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Min People</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Min People</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Users size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <Users size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.minGroupSize}
                     onChange={(e) => handleFilterChange('minGroupSize', (e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min="1"
                     max={filters.maxGroupSize}
                   />
@@ -260,16 +249,16 @@ export default function TripFilters({
               </div>
               
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Max People</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Max People</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Users size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <Users size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.maxGroupSize}
                     onChange={(e) => handleFilterChange('maxGroupSize',(e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min={filters.minGroupSize}
                   />
                 </div>
@@ -279,9 +268,9 @@ export default function TripFilters({
 
           {/* Distance Range with Material UI Slider */}
           <FilterSection title="Distance" icon={<MapPin size={16} />}>
-            <div className="py-6">
+            <div className="py-6 overflow-visible" style={{ paddingTop: '2rem' }}>
               <div className="mb-2 flex justify-between">
-                <span className="text-xs font-medium text-gray-500">{formatDistanceLabel(filters.minDistance)}</span>
+                <span className="text-xs font-medium text-charcoal">{formatDistanceLabel(filters.minDistance)}</span>
                 <span className="text-xs font-medium text-ocean-blue">{formatDistanceLabel(filters.maxDistance)}</span>
               </div>
               
@@ -295,22 +284,24 @@ export default function TripFilters({
                 min={0}
                 max={10000}
                 step={100}
-                className='overflow-visible'
+                className="overflow-visible"
+                style={{ overflow: 'visible' }}
+                
               />
             </div>
             
             <div className="grid grid-cols-2 gap-4 mt-2">
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Min Distance (km)</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Min Distance (km)</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <MapPin size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.minDistance}
                     onChange={(e) => handleFilterChange('minDistance', (e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min="0"
                     max={filters.maxDistance}
                   />
@@ -318,16 +309,16 @@ export default function TripFilters({
               </div>
               
               <div className="relative">
-                <label className="block text-xs text-gray-500 mb-1 font-medium">Max Distance (km)</label>
+                <label className="block text-xs text-charcoal mb-1 font-medium">Max Distance (km)</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <MapPin size={14} className="text-gray-500" />
+                  <div className="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none">
+                    <MapPin size={14} className="text-charcoal" />
                   </div>
                   <input
                     type="number"
                     value={filters.maxDistance}
                     onChange={(e) => handleFilterChange('maxDistance',(e.target.value))}
-                    className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
+                    className="block w-full pl-7 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-1 focus:ring-ocean-blue focus:border-ocean-blue text-gray-700 text-sm"
                     min={filters.minDistance}
                   />
                 </div>
@@ -341,7 +332,7 @@ export default function TripFilters({
           
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors shadow-sm"
+            className="w-full px-4 py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-sm"
           >
             Apply Filters
           </button>

@@ -1,7 +1,15 @@
 import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
-import { agent, blog, experience, savedPosts, trip, user } from "@/../auth-schema";
+import {
+  agent,
+  blog,
+  experience,
+  savedPosts,
+  trip,
+  user,
+} from "@/../auth-schema";
 import { eq, and, asc, desc } from "drizzle-orm";
+import { alias } from "drizzle-orm/pg-core";
 
 export async function GET(request: NextRequest) {
   let searchParams = request.nextUrl.searchParams;
@@ -64,42 +72,92 @@ export async function GET(request: NextRequest) {
         .select()
         .from(savedPosts)
         .innerJoin(blog, eq(blog.id, savedPosts.postID))
+        .innerJoin(user, eq(user.id, blog.authorID))
         .where(and(...conditions))
         .orderBy(sortDirection(sortField));
-      return NextResponse.json(savedBlogs, { status: 200 });
+      let results = savedBlogs.map(({ savedPosts, blog, user }) => {
+        return {
+          savedPost: savedPosts,
+          blog: {
+            blog: { ...blog, isSaved: true },
+            author: { name: user.name, avatar: user.image },
+          },
+        };
+      });
+      return NextResponse.json(results, { status: 200 });
     } else if (type === "experience") {
       let savedExperiences = await db
         .select()
         .from(savedPosts)
-        .innerJoin(experience, eq(experience.id, savedPosts.postID)).innerJoin(agent,eq(agent.id,experience.agentID)).innerJoin(user,eq(user.id,agent.userID))
+        .innerJoin(experience, eq(experience.id, savedPosts.postID))
+        .innerJoin(agent, eq(agent.id, experience.agentID))
+        .innerJoin(user, eq(user.id, agent.userID))
         .where(and(...conditions))
         .orderBy(sortDirection(sortField));
-        let results = savedExperiences.map(({savedPosts,experience,agent,user})=>{
-            return {
-                savedPosts: savedPosts,
-                experience: {...experience,isSaved:true,agent:{...agent,name: user?.name,avatar: user?.image}},
-            }
-        })
+      let results = savedExperiences.map(
+        ({ savedPosts, experience, agent, user }) => {
+          return {
+            savedPost: savedPosts,
+            experience: {
+              ...experience,
+              isSaved: true,
+              agent: { ...agent, name: user?.name, avatar: user?.image },
+            },
+          };
+        }
+      );
       return NextResponse.json(results, { status: 200 });
     } else {
+      let blogUser = alias(user, "blogUser");
+      let experienceUser = alias(user, "experienceUser");
       let allSavedPosts = await db
         .select()
         .from(savedPosts)
         .leftJoin(trip, eq(trip.id, savedPosts.postID))
         .leftJoin(blog, eq(blog.id, savedPosts.postID))
-        .leftJoin(experience, eq(experience.id, savedPosts.postID)).leftJoin(agent,eq(agent.id,experience.agentID)).leftJoin(user,eq(user.id,agent.userID))
+        .leftJoin(blogUser, eq(blogUser.id, blog.authorID))
+        .leftJoin(experience, eq(experience.id, savedPosts.postID))
+        .leftJoin(agent, eq(agent.id, experience.agentID))
+        .leftJoin(experienceUser, eq(experienceUser.id, agent.userID))
         .where(and(...conditions))
         .orderBy(sortDirection(sortField));
 
-     let results = allSavedPosts.map(({savedPosts,trip,experience,blog,agent,user},index)=>{
-        return {
-            experience: {...experience, isSaved:true,agent:{...agent,name: user?.name,avatar: user?.image}},
+      let results = allSavedPosts.map(
+        (
+          {
+            savedPosts,
+            trip,
+            experience,
+            blog,
+            agent,
+            experienceUser,
+            blogUser,
+          },
+          index
+        ) => {
+          return {
+            experience: experience
+              ? {
+                  ...experience,
+                  isSaved: true,
+                  agent: {
+                    ...agent,
+                    name: experienceUser?.name,
+                    avatar: experienceUser?.image,
+                  },
+                }
+              : null,
             trip: trip,
-            blog: blog,
-            savedPosts: savedPosts
+            blog: blog
+              ? {
+                  blog: blog,
+                  author: { name: blogUser?.name, avatar: blogUser?.image },
+                }
+              : null,
+            savedPost: savedPosts,
+          };
         }
-     })
-     console.log(results);
+      );
 
       return NextResponse.json(results, { status: 200 });
     }

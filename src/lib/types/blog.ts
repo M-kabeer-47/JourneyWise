@@ -9,6 +9,8 @@ export type Blog = {
       createdAt: string;
       updatedAt: string;
       commentsCount: number;
+      isSaved: boolean;
+      description: string;
     };
     author: {
       name: string;

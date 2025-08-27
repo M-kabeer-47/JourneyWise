@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Globe, ChevronDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { CustomCheckbox } from '@/components/ui/CheckBox';
+import { CustomCheckbox } from '@/components/ui/Checkbox';
 
 interface Location {
   name: string;
@@ -77,7 +77,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
       >
         <div className="flex items-center gap-2 truncate">
           <Globe size={18} className="text-ocean-blue flex-shrink-0" />
-          <span className="truncate">
+          <span className="truncate text-sm sm:text-base">
             {selectedLocations && selectedLocations.length > 0 
               ? `${selectedLocations.length} location${selectedLocations.length > 1 ? 's' : ''}` 
               : 'All Locations'}
@@ -113,9 +113,8 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
                 damping: 30,
                 mass: 1
               }}
-              className="absolute left-12 right-0 mt-1 z-50 bg-white border border-gray-200 shadow-lg"
+              className="absolute left-12 right-0 mt-1 z-50 bg-white border border-gray-200 shadow-lg sm:w-full w-[83%]"
               style={{ 
-                width: 'calc(96%)', 
                 marginLeft: '-1rem', 
                 marginRight: '-1rem',
                 borderRadius: '0.375rem',

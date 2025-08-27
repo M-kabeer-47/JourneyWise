@@ -57,7 +57,7 @@ export default function SortBy({
         onClick={() => setIsOpen(!isOpen)}
         className={`flex items-center justify-between gap-2   rounded-lg hover:border-ocean-blue transition-colors text-gray-700 bg-white w-full ${className} ${size === "small" ? "text-sm px-3 py-2 border border-gray-300" : size === "medium" ? "text-base px-3 py-2" : "text-base px-4 py-2.5 border border-gray-300"}`}
       >
-        <p className="flex gap-2 w-full items-center text-charcoal">
+        <p className="flex gap-2 w-full text-sm sm:text-base items-center text-charcoal">
           Sort by: {activeLabel}
           <span className="text-ocean-blue">
             {activeSort.direction === "asc" ? "↑" : "↓"}
@@ -85,7 +85,7 @@ export default function SortBy({
               <div key={index} className="px-1">
                 <button
                   type="button"
-                  className="flex items-center justify-between w-full px-2 py-2 text-sm text-left hover:bg-gray-50 rounded-md"
+                  className="flex items-center justify-between w-full px-2 py-2 text-sm sm:text-base text-left hover:bg-gray-50 rounded-md"
                   onClick={() => {
                     const newDirection =
                       activeSort.value === option.value &&

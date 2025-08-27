@@ -83,25 +83,41 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {savedPosts?.map((savedPost) =>
-            savedPost.savedPosts.type === "experience" ? (
+          {activeType === "all" ? savedPosts?.map((savedPost) =>
+            savedPost.savedPost.type === "experience" ? (
               <ExperienceCard
-                key={savedPost.savedPosts.id}
+                key={savedPost.savedPost.id}
                 experience={savedPost.experience}
               />
-            ) : savedPost.savedPosts.type === "trip" ? (
+            ) : savedPost.savedPost.type === "trip" ? (
               <TripCard
-                key={savedPost.savedPosts.id}
+                key={savedPost.savedPost.id}
                 trip={savedPost.trip}
                 isPersonal={true}  
               />
-            ) : savedPost.savedPosts.type === "blog" ? (
+            ) : savedPost.savedPost.type === "blog" ? (
               <BlogCard
-                key={savedPost.savedPosts.id}
+                key={savedPost.savedPost.id}
                 blog={savedPost.blog}  
               />
             ) : null
-          )}
+          ) : activeType === "blog" ? savedPosts.map((savedPost) => (
+            <BlogCard
+              key={savedPost.savedPost.id}
+              blog={savedPost.blog}
+            />
+          )) : activeType === "trip" ? savedPosts.map((savedPost) => (
+            <TripCard
+              key={savedPost.savedPost.id}
+              trip={savedPost.trip}
+              isPersonal={true}
+            />
+          )) : activeType === "experience" ? savedPosts.map((savedPost) => (
+            <ExperienceCard
+              key={savedPost.savedPost.id}
+              experience={savedPost.experience}
+            />
+          )) : null}
         </div>
       )}
     </motion.div>

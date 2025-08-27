@@ -1,12 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import db from "@/lib/server/db";
-import { trip, user } from "@/../auth-schema";
+import { trip, user, savedPosts } from "@/../auth-schema";
 import { and, asc, desc, eq, ilike, or, sql } from "drizzle-orm";
+import { auth } from "@/lib/auth/auth";
 
 export async function GET(request: NextRequest) {
   try {
     // Get query parameters
     const searchParams = request.nextUrl.searchParams;
+    
+    const User = await auth.api.getSession({headers: request.headers})
 
     // Pagination parameters
     const limit = parseInt(searchParams.get("limit") || "10");
@@ -143,10 +146,21 @@ export async function GET(request: NextRequest) {
       return Number(countQuery[0].count);
     };
 
+    const savedTrips = async () => {
+      if (!User) return [];
+      const savedTrips = await db
+        .select({ savedPostID: savedPosts.postID })
+        .from(savedPosts)
+        .where(and(eq(savedPosts.userID, User.user.id), eq(savedPosts.type, "trip")))
+       
+      return savedTrips;
+    };
+
     // Run both queries concurrently
-    const [results, total] = await Promise.all([
+    const [results, total, saved] = await Promise.all([
       executeQuery(),
       executeCountQuery(),
+      savedTrips(),
     ]);
 
     // Format results
@@ -165,6 +179,7 @@ export async function GET(request: NextRequest) {
           name: userData.name,
           image: userData.image,
         },
+        isSaved: saved.some((savedTrip) => savedTrip.savedPostID === tripData.id),
       })
     );
 

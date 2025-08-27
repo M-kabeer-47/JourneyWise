@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
 import db from "@/lib/server/db";
 import { blog, experience, savedPosts, trip } from "@/../auth-schema";
-import { eq } from "drizzle-orm";
+import { eq, and } from "drizzle-orm";
 
 export async function POST(request: Request) {
   try {
     const { userID, type, postID } = await request.json();
+    console.log(userID, type, postID); 
     if (!userID || !type || !postID) {
       return NextResponse.json(
         { message: "Missing required fields" },
@@ -49,7 +50,7 @@ export async function POST(request: Request) {
     let savedPost = await db
       .select()
       .from(savedPosts)
-      .where(eq(savedPosts.userID, userID));
+      .where(and(eq(savedPosts.userID, userID), eq(savedPosts.type, type), eq(savedPosts.postID, postID)));
     if (savedPost.length) {
       return NextResponse.json(
         { message: "Post already saved" },

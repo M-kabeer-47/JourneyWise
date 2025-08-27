@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/Toast";
-export default function usePublishBlog() {
+import { useQueryClient } from "@tanstack/react-query";
+export default function useEditBlog() {
+  const queryClient = useQueryClient();
   const { mutateAsync, isPending, isSuccess } = useMutation({
     mutationFn: async (data: {
       title: string;
@@ -21,6 +23,8 @@ export default function usePublishBlog() {
           }
         );
         toast.success("Blog saved successfully");
+
+        queryClient.invalidateQueries({ queryKey: ["user-blogs","blogs","saved-posts"] });
         return response.data;
       } catch (error) {
         toast.error("Error saving blog");

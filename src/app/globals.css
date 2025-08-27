@@ -312,3 +312,9 @@ div[contenteditable][data-placeholder]:empty:before {
 .bn-editor {
   padding-inline: 0 !important;
 }
+.MuiSlider-valueLabelCircle{
+  z-index: 20 !important;
+}
+.MuiSlider-valueLabelLabel{
+  z-index: 20 !important;
+}
