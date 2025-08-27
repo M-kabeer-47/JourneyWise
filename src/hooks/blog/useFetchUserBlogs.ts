@@ -32,10 +32,10 @@ export function useFetchUserBlogs({
           type: type.toLowerCase()
         },
       });
-      return data.blogs || [];
+      return data;
     },
     enabled: !!userID,
     refetchOnWindowFocus: false
   });
-  return {blogs:data,isFetchingBlogs:isFetching,isBlogsError:isError}
+  return {blogs:data?.blogs,isFetchingBlogs:isFetching,isBlogsError:isError, pagination: data?.pagination}
 }

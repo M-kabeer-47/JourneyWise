@@ -32,11 +32,11 @@ export function useFetchUserBookings({
           
         },
       });
-      return data.bookings || [];
+      return data;
     },
     enabled: !!userID,
     refetchOnWindowFocus: false
   });
-  return {bookings:data,isFetchingBookings:isFetching,isBookingsError:isError}
+  return {bookings:data?.bookings,isFetchingBookings:isFetching,isBookingsError:isError, pagination: data?.pagination}
 }
 

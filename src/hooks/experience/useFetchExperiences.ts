@@ -16,7 +16,7 @@ export default function useFetchExperiences() {
   };
 
   const { data, isFetching, isLoading } = useQuery({
-    queryKey: ["home", params.toString()],
+    queryKey: ["experiences", params.toString()],
     queryFn: fetchExperiences,
     refetchOnWindowFocus: false,
   });

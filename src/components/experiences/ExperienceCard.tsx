@@ -9,6 +9,7 @@ import {
   BookmarkCheck,
   Clock,
   MapPin,
+  Loader2,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { Experience } from "@/lib/types/experience";
@@ -41,7 +42,6 @@ export default function ExperienceCard({
       unsavePost.mutateAsync({savedPostID:experience.id});
     } else {
       if(!user){
-       
         return;
       }
       savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience"});
@@ -95,8 +95,16 @@ export default function ExperienceCard({
               onClick={handleSaveToggle}
               className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
             >
-              {experience.isSaved ? (
+              {
+              (savePost.isLoading || unsavePost.isLoading) ? (
+                <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />
+              ) : 
+              unsavePost.isError ? (
                 <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+              ) : savePost.isError ? (
+                <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
+              ) : experience.isSaved ? (
+                <BookmarkCheck className="w-4 h-4 text-ocean-blue" fill="currentColor" />
               ) : (
                 <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
               )}

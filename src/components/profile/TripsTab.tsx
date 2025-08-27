@@ -4,6 +4,7 @@ import { MapIcon } from "lucide-react";
 import TripCard from "@/components/trip/TripCard";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
+import Pagination from "@/components/ui/Pagination";
 import { useState } from "react";
 import { useFetchUserTrips } from "@/hooks/trip/useFetchUserTrips";
 import { TripCardSkeleton } from "@/components/skeletons/TripCardSkeleton";
@@ -12,6 +13,7 @@ interface TripsTabProps {
 }
 
 export default function TripsTab({ userID }: TripsTabProps) {
+  const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -25,12 +27,17 @@ export default function TripsTab({ userID }: TripsTabProps) {
     { value: "updatedAt", label: "Last Updated" },    
   ];
 
-  const { trips, isFetchingTrips, isTripsError } = useFetchUserTrips({
+  const { trips, isFetchingTrips, isTripsError, pagination } = useFetchUserTrips({
     userID,
     sortColumn: sortBy.value,
     sortOrder: sortBy.direction,
-    page: 1
+    page: currentPage
   });
+
+  const handleSortChange = (value: string, direction: "asc" | "desc") => {
+    setSortBy({ value, direction });
+    setCurrentPage(1);
+  };
 
   if (isTripsError) {
     return (
@@ -64,7 +71,7 @@ export default function TripsTab({ userID }: TripsTabProps) {
         <SortBy
           options={sortOptions}
           activeSort={sortBy}
-          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          onSortChange={handleSortChange}
           size="small"
         />
       </div>
@@ -82,18 +89,31 @@ export default function TripsTab({ userID }: TripsTabProps) {
           icon={<MapIcon className="sm:w-12 sm:h-12 w-10 h-10 text-midnight-blue" />}
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {trips?.map((trip) => (
-            <motion.div
-              key={trip.trip.id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
-            >
-              <TripCard trip={trip.trip} isPersonal={true} />
-            </motion.div>
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {trips?.map((trip) => (
+              <motion.div
+                key={trip.trip.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
+              >
+                <TripCard trip={trip.trip} isPersonal={true} />
+              </motion.div>
+            ))}
+          </div>
+          
+          {pagination && pagination.pages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination.pages}
+                onPageChange={setCurrentPage}
+                className="justify-center"
+              />
+            </div>
+          )}
+        </>
       )}
     </motion.div>
   );

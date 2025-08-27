@@ -129,7 +129,7 @@ export async function GET(request: NextRequest) {
         .select({
           experience: experience,
           agent: { agentId: agent.id },
-          user: { name: user.name, avatar: user.image },
+          user: { name: user.name, image: user.image },
         })
         .from(experience)
         .innerJoin(agent, eq(agent.id, experience.agentID))
@@ -203,7 +203,7 @@ export async function GET(request: NextRequest) {
         agent: {
           id: agentData.agentId,
           name: userData.name,
-          avatar: userData.avatar,
+          image: userData.image,
         },
         isSaved: saved.some((savedExperience) => savedExperience.savedPostID === experience.id),
       })

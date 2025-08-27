@@ -4,6 +4,7 @@ import { Bookmark } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
+import Pagination from "@/components/ui/Pagination";
 import SavedItemSkeleton from "./SavedItemSkeleton";
 import useFetchSavedPosts from "@/hooks/savedPosts/useFetchSavedPosts";
 import ExperienceCard from "../experiences/ExperienceCard";
@@ -17,6 +18,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
   const [activeType, setActiveType] = useState<
     "blog" | "trip" | "experience"
   >("experience");
+  const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -27,13 +29,24 @@ export default function SavedTab({ userID }: SavedTabProps) {
 
   const sortOptions = [{ value: "createdAt", label: "Date Saved" }];
 
-  const { savedPosts, isFetchingSavedPosts, isSavedPostsError } =
+  const { savedPosts, isFetchingSavedPosts, isSavedPostsError, pagination } =
     useFetchSavedPosts({
       userID,
       type: activeType,
       sortColumn: sortBy.value,
       sortOrder: sortBy.direction,
+      page: currentPage,
     });
+
+  const handleTypeChange = (newType: "blog" | "trip" | "experience") => {
+    setActiveType(newType);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value: string, direction: "asc" | "desc") => {
+    setSortBy({ value, direction });
+    setCurrentPage(1);
+  };
 
   return (
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
@@ -59,20 +72,21 @@ export default function SavedTab({ userID }: SavedTabProps) {
           ]}
           activeKey={activeType}
           onChange={(key) =>
-            setActiveType(key as  "blog" | "trip" | "experience")
+            handleTypeChange(key as "blog" | "trip" | "experience")
           }
           className="sm:w-[500px] overflow-auto"
         />
         <SortBy
           options={sortOptions}
           activeSort={sortBy}
-          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          onSortChange={handleSortChange}
           size="small"
+          isBold={true}
         />
       </div>
 
       {isFetchingSavedPosts ? (
-        <SavedItemSkeleton count={activeType === "all" ? 9 : 6} />
+        <SavedItemSkeleton count={9} />
       ) : savedPosts && savedPosts.length === 0 ? (
         <NoData
           title="No Saved Items"
@@ -82,25 +96,38 @@ export default function SavedTab({ userID }: SavedTabProps) {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {activeType === "blog" ? savedPosts.map((savedPost) => (
-            <BlogCard
-              key={savedPost.savedPost.id}
-              blog={savedPost.blog}
-            />
-          )) : activeType === "trip" ? savedPosts.map((savedPost) => (
-            <TripCard
-              key={savedPost.savedPost.id}
-              trip={savedPost.trip}
-              isPersonal={true}
-            />
-          )) : activeType === "experience" ? savedPosts.map((savedPost) => (
-            <ExperienceCard
-              key={savedPost.savedPost.id}
-              experience={savedPost.experience}
-            />
-          )) : null}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {activeType === "blog" ? savedPosts.map((savedPost) => (
+              <BlogCard
+                key={savedPost.savedPost.id}
+                blog={savedPost.blog}
+              />
+            )) : activeType === "trip" ? savedPosts.map((savedPost) => (
+              <TripCard
+                key={savedPost.savedPost.id}
+                trip={savedPost.trip}
+                isPersonal={true}
+              />
+            )) : activeType === "experience" ? savedPosts.map((savedPost) => (
+              <ExperienceCard
+                key={savedPost.savedPost.id}
+                experience={savedPost.experience}
+              />
+            )) : null}
+          </div>
+          
+          {pagination && pagination.pages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination.pages}
+                onPageChange={setCurrentPage}
+                className="justify-center"
+              />
+            </div>
+          )}
+        </>
       )}
     </motion.div>
   );

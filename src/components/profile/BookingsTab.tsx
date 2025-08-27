@@ -5,6 +5,7 @@ import BookingCard from "../booking/BookingCard";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
+import Pagination from "@/components/ui/Pagination";
 import BookingDetailsModal from "../booking/BookingDetailsModal";
 import { Booking } from "@/lib/types/booking";
 import { useFetchUserBookings } from "@/hooks/booking/useFetchUserBookings";
@@ -27,6 +28,7 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeStatus, setActiveStatus] = useState("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -37,13 +39,23 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
 
   const sortOptions = [{ value: "bookingDate", label: "Booking Date" }, { value: "totalPrice", label: "Total Price" }];
 
-  const { bookings, isFetchingBookings, isBookingsError } = useFetchUserBookings({
+  const { bookings, isFetchingBookings, isBookingsError, pagination } = useFetchUserBookings({
     userID,
     sortColumn: sortBy.value,
     sortOrder: sortBy.direction,
     status: activeStatus,
-    page: 1
+    page: currentPage
   });
+
+  const handleStatusChange = (newStatus: string) => {
+    setActiveStatus(newStatus);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value: string, direction: "asc" | "desc") => {
+    setSortBy({ value, direction });
+    setCurrentPage(1);
+  };
 
   if (isBookingsError) {
     return (
@@ -70,13 +82,13 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
         <Tabs
           options={statusTabs}
           activeKey={activeStatus}
-          onChange={setActiveStatus}
+          onChange={handleStatusChange}
           className="w-[800px]"
         />
         <SortBy
           options={sortOptions}
           activeSort={sortBy}
-          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          onSortChange={handleSortChange}
           size="small"
         />
       </div>
@@ -97,17 +109,30 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
           }
         />
       ) : (
-        <div className="space-y-6">
-          {bookings?.map((bookingData:Booking) => (
-            <BookingCard
-              key={bookingData.booking.id}
-              booking={bookingData}
-              setSelectedBooking={setSelectedBooking}
-              setShowDetails={setShowDetails}
-              isPersonal={true}
-            />
-          ))}
-        </div>
+        <>
+          <div className="space-y-6">
+            {bookings?.map((bookingData:Booking) => (
+              <BookingCard
+                key={bookingData.booking.id}
+                booking={bookingData}
+                setSelectedBooking={setSelectedBooking}
+                setShowDetails={setShowDetails}
+                isPersonal={true}
+              />
+            ))}
+          </div>
+          
+          {pagination && pagination.pages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination.pages}
+                onPageChange={setCurrentPage}
+                className="justify-center"
+              />
+            </div>
+          )}
+        </>
       )}
       {selectedBooking && showDetails && (
         <BookingDetailsModal

@@ -57,10 +57,13 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    await db.insert(savedPosts).values({ userID, type, postID });
+    let insertedSavedPost = await db.insert(savedPosts).values({ userID, type, postID }).returning({
+      type: savedPosts.type,
+    });
+    console.log("Inserted Saved Post: ", insertedSavedPost[0]);
 
     return NextResponse.json(
-      { message: "Post saved successfully" },
+      { message: "Post saved successfully", postType: insertedSavedPost[0]?.type as "experience" | "trip" | "blog" },
       { status: 200 }
     );
   } catch (error) {

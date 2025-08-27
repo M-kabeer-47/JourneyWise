@@ -8,7 +8,7 @@ import {
   trip,
   user,
 } from "@/../auth-schema";
-import { eq, and, asc, desc } from "drizzle-orm";
+import { eq, and, asc, desc, count } from "drizzle-orm";
 import { alias } from "drizzle-orm/pg-core";
 
 export async function GET(request: NextRequest) {
@@ -17,6 +17,9 @@ export async function GET(request: NextRequest) {
   let userID = searchParams.get("userID");
   let sortColumn = searchParams.get("sortColumn") || "createdAt";
   let sortOrder = searchParams.get("sortOrder") || "desc";
+  let limit = parseInt(searchParams.get("limit") || "6");
+  let page = parseInt(searchParams.get("page") || "1");
+  let offset = (page - 1) * limit;
 
   if (!userID) {
     return NextResponse.json(
@@ -66,7 +69,16 @@ export async function GET(request: NextRequest) {
         .innerJoin(trip, eq(trip.id, savedPosts.postID))
         .innerJoin(user, eq(user.id, trip.userID))
         .where(and(...conditions))
-        .orderBy(sortDirection(sortField));
+        .orderBy(sortDirection(sortField))
+        .limit(limit)
+        .offset(offset);
+      
+      let totalCount = await db
+        .select({ count: count() })
+        .from(savedPosts)
+        .innerJoin(trip, eq(trip.id, savedPosts.postID))
+        .where(and(...conditions));
+        
       let results = savedTrips.map(({ savedPosts, trip, user }) => {
         return {
           savedPost: savedPosts,
@@ -77,7 +89,16 @@ export async function GET(request: NextRequest) {
           },
         };
       });
-      return NextResponse.json(results, { status: 200 });
+      
+      return NextResponse.json({
+        savedPosts: results,
+        pagination: {
+          total: totalCount[0]?.count || 0,
+          limit,
+          page,
+          pages: Math.ceil((totalCount[0]?.count || 0) / limit),
+        },
+      }, { status: 200 });
     } else if (type === "blog") {
       let savedBlogs = await db
         .select()
@@ -85,7 +106,16 @@ export async function GET(request: NextRequest) {
         .innerJoin(blog, eq(blog.id, savedPosts.postID))
         .innerJoin(user, eq(user.id, blog.authorID))
         .where(and(...conditions))
-        .orderBy(sortDirection(sortField));
+        .orderBy(sortDirection(sortField))
+        .limit(limit)
+        .offset(offset);
+        
+      let totalCount = await db
+        .select({ count: count() })
+        .from(savedPosts)
+        .innerJoin(blog, eq(blog.id, savedPosts.postID))
+        .where(and(...conditions));
+        
       let results = savedBlogs.map(({ savedPosts, blog, user }) => {
         return {
           savedPost: savedPosts,
@@ -95,7 +125,16 @@ export async function GET(request: NextRequest) {
           },
         };
       });
-      return NextResponse.json(results, { status: 200 });
+      
+      return NextResponse.json({
+        savedPosts: results,
+        pagination: {
+          total: totalCount[0]?.count || 0,
+          limit,
+          page,
+          pages: Math.ceil((totalCount[0]?.count || 0) / limit),
+        },
+      }, { status: 200 });
     } else if (type === "experience") {
       let savedExperiences = await db
         .select()
@@ -104,7 +143,16 @@ export async function GET(request: NextRequest) {
         .innerJoin(agent, eq(agent.id, experience.agentID))
         .innerJoin(user, eq(user.id, agent.userID))
         .where(and(...conditions))
-        .orderBy(sortDirection(sortField));
+        .orderBy(sortDirection(sortField))
+        .limit(limit)
+        .offset(offset);
+        
+      let totalCount = await db
+        .select({ count: count() })
+        .from(savedPosts)
+        .innerJoin(experience, eq(experience.id, savedPosts.postID))
+        .where(and(...conditions));
+        
       let results = savedExperiences.map(
         ({ savedPosts, experience, agent, user }) => {
           return {
@@ -117,7 +165,16 @@ export async function GET(request: NextRequest) {
           };
         }
       );
-      return NextResponse.json(results, { status: 200 });
+      
+      return NextResponse.json({
+        savedPosts: results,
+        pagination: {
+          total: totalCount[0]?.count || 0,
+          limit,
+          page,
+          pages: Math.ceil((totalCount[0]?.count || 0) / limit),
+        },
+      }, { status: 200 });
     } else {
       let blogUser = alias(user, "blogUser");
       let experienceUser = alias(user, "experienceUser");
@@ -133,7 +190,14 @@ export async function GET(request: NextRequest) {
         .leftJoin(agent, eq(agent.id, experience.agentID))
         .leftJoin(experienceUser, eq(experienceUser.id, agent.userID))
         .where(and(...conditions))
-        .orderBy(sortDirection(sortField));
+        .orderBy(sortDirection(sortField))
+        .limit(limit)
+        .offset(offset);
+        
+      let totalCount = await db
+        .select({ count: count() })
+        .from(savedPosts)
+        .where(and(...conditions));
 
       let results = allSavedPosts.map(
         (
@@ -180,7 +244,15 @@ export async function GET(request: NextRequest) {
         }
       );
 
-      return NextResponse.json(results, { status: 200 });
+      return NextResponse.json({
+        savedPosts: results,
+        pagination: {
+          total: totalCount[0]?.count || 0,
+          limit,
+          page,
+          pages: Math.ceil((totalCount[0]?.count || 0) / limit),
+        },
+      }, { status: 200 });
     }
   } catch (error) {
     console.log(error);

@@ -32,11 +32,16 @@ export default function useSavePost(){
                 userID,
                 type
             })       
-            return { ...response.data, type }; // Return type for onSuccess
+            return { ...response.data, type: response.data.postType }; // Return postType for onSuccess
         },
         onSuccess: (data) => {
-            const queryKeys = getQueryKeys(data.type);
+            console.log("Data: ", data);
+            const queryKeys = getQueryKeys(data.postType as "experience" | "trip" | "blog");
             // Invalidate each query key separately
+            console.log(
+            "Type: ", data.postType,
+            "Query Keys: ", queryKeys
+            );
             queryKeys.forEach(key => {
                 queryClient.invalidateQueries({ queryKey: [key] });
             });

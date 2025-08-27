@@ -35,7 +35,6 @@ export const useFetchBlogs = () => {
   const { data, isLoading, isFetching } = useQuery({
     queryKey: ["blogs", params.toString()],
     queryFn: () => fetchBlogs(params),
-    staleTime: 1000 * 60 * 5, // 5 minutes
     refetchOnWindowFocus: false,
   });
 

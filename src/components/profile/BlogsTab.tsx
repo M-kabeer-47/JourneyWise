@@ -4,6 +4,7 @@ import { Plus, Edit3 } from "lucide-react";
 import Tabs from "./Tabs";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
+import Pagination from "@/components/ui/Pagination";
 import { useFetchUserBlogs } from "@/hooks/blog/useFetchUserBlogs";
 import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
 import { BlogCard } from "../blog/BlogCard";
@@ -15,6 +16,7 @@ interface BlogsTabProps {
 
 export default function BlogsTab({ userID }: BlogsTabProps) {
   const [activeTab, setActiveTab] = useState<string>("all");
+  const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
     direction: "asc" | "desc";
@@ -23,13 +25,24 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
     direction: "desc",
   });
 
-  const { blogs, isFetchingBlogs, isBlogsError } = useFetchUserBlogs({
+  const { blogs, isFetchingBlogs, isBlogsError, pagination } = useFetchUserBlogs({
     userID,
     sortColumn: sortBy.value,
     sortOrder: sortBy.direction,
     type: activeTab as "all" | "published" | "draft",
-    page: 1
+    page: currentPage
   });
+
+  // Reset to page 1 when filters change
+  const handleTabChange = (newTab: string) => {
+    setActiveTab(newTab);
+    setCurrentPage(1);
+  };
+
+  const handleSortChange = (value: string, direction: "asc" | "desc") => {
+    setSortBy({ value, direction });
+    setCurrentPage(1);
+  };
 
   if (isBlogsError) {
     return (
@@ -65,12 +78,12 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
             { key: "drafts", label: "Drafts" },
           ]}
           activeKey={activeTab}
-          onChange={setActiveTab}
+          onChange={handleTabChange}
           className="w-[450px]"
         />
         <SortBy
           activeSort={sortBy}
-          onSortChange={(value, direction) => setSortBy({ value, direction })}
+          onSortChange={handleSortChange}
           options={[{ value: "updatedAt", label: "Last Updated" }, { value: "mostDiscussed", label: "Most Discussed" }]}
           size="small"
         />
@@ -95,11 +108,24 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
           }
         />
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-          {blogs?.map((blog:Blog) => (
-            <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+            {blogs?.map((blog:Blog) => (
+              <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} />
+            ))}
+          </div>
+          
+          {pagination && pagination.pages > 1 && (
+            <div className="mt-8">
+              <Pagination
+                currentPage={currentPage}
+                totalPages={pagination.pages}
+                onPageChange={setCurrentPage}
+                className="justify-center"
+              />
+            </div>
+          )}
+        </>
       )}
     </motion.div>
   );

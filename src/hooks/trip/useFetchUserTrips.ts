@@ -28,10 +28,10 @@ export function useFetchUserTrips({
           sortOrder,
         },
       });
-      return data.trips || [];
+      return data;
     },
     enabled: !!userID,
     refetchOnWindowFocus: false,
   });
-  return { trips: data, isFetchingTrips: isFetching, isTripsError: isError };
+  return { trips: data?.trips, isFetchingTrips: isFetching, isTripsError: isError, pagination: data?.pagination };
 }

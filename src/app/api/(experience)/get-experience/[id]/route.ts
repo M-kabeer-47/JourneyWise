@@ -23,7 +23,7 @@ export async function GET(
         },
         user: {
           name: user.name,
-          avatar: user.image,
+          image: user.image,
         },
       })
       .from(experience)
