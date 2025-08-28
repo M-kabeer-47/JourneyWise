@@ -57,7 +57,7 @@ export async function POST(request: Request) {
         { status: 400 }
       );
     }
-    let insertedSavedPost = await db.insert(savedPosts).values({ userID, type, postID }).returning({
+    let insertedSavedPost = await db.insert(savedPosts).values({ userID, type, postID,createdAt: new Date() }).returning({
       type: savedPosts.type,
     });
     console.log("Inserted Saved Post: ", insertedSavedPost[0]);

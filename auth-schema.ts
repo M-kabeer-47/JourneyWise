@@ -63,7 +63,7 @@ export const experience = pgTable("experience", {
   tags: jsonb("tags"),
   averageRating: doublePrecision("averageRating").notNull(),
   isAvailable: boolean("isAvailable").notNull(),
-  createdAt: timestamp("createdAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
   currency: text("currency").default("USD")
 });
 
@@ -134,7 +134,7 @@ export const review = pgTable("review", {
   comment: text("comment").notNull(),
   images: jsonb("images"),
   rating: doublePrecision("rating").notNull(),
-  createdAt: timestamp("createdAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
 });
 
 export const payment = pgTable("payment", {
@@ -155,7 +155,7 @@ export const messages = pgTable("messages", {
   recipientID: text("recipientID")
     .notNull()
     .references(() => user.id),
-  createdAt: timestamp("createdAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
   status: text({ enum: ["sent", "delivered", "seen", "deleted"] }).notNull(),
   message: text("message").notNull(),
 });
@@ -168,7 +168,7 @@ export const notifications = pgTable("notifications", {
   message: text("message").notNull(),
   type: text({ enum: ["booking", "message", "reminder", "alert"] }).notNull(),
   isRead: boolean("isRead").notNull(),
-  createdAt: timestamp("createdAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
 });
 
 export const searchHistory = pgTable("searchHistory", {
@@ -225,8 +225,8 @@ export const trip = pgTable("trip", {
   numOfPeople: integer("numOfPeople").notNull(),
   estimatedDistance: integer("estimatedDistance").notNull(),
   currency: text("currency").notNull(),
-  createdAt: timestamp("createdAt").notNull(),
-  updatedAt: timestamp("updatedAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
+  updatedAt: timestamp("updatedAt").notNull().default(new Date()),
 });
 export const blog = pgTable("blog", {
   id: uuid("id").primaryKey().defaultRandom(),
@@ -239,8 +239,8 @@ export const blog = pgTable("blog", {
   category: text("category"),
   coverUrl: text("coverUrl"),
   commentsCount: integer("commentsCount").default(0),
-  createdAt: timestamp("createdAt").notNull(),
-  updatedAt: timestamp("updatedAt").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
+  updatedAt: timestamp("updatedAt").notNull().default(new Date()),
 });
 
 
@@ -251,5 +251,5 @@ export const savedPosts = pgTable("savedPosts",{
     .references(() => user.id),
   type:text({enum:["trip","blog","experience"]}).notNull(),
   postID:uuid("postID").notNull(),
-  createdAt:timestamp("createdAt").default(new Date()),
+  createdAt:timestamp("createdAt").notNull().default(new Date()),
 })

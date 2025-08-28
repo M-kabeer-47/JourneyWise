@@ -78,11 +78,13 @@ const getDefaultCoverImage = (title: string) => {
 interface BlogCardProps {
   blog: Blog;
   isPersonal?: boolean;
+  queryKey?: string;
 }
 
 export function BlogCard({
   blog: blogData,
   isPersonal = false,
+  queryKey = "blogs",
 }: BlogCardProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -109,12 +111,13 @@ export function BlogCard({
     e.preventDefault();
     e.stopPropagation();
     if (blogData.blog.isSaved && user?.id) {
-      unsavePost.mutateAsync({ savedPostID: blogData.blog.id });
+      unsavePost.mutateAsync({ savedPostID: blogData.blog.id, queryKey });
     } else if (user?.id) {
       savePost.mutateAsync({
         postID: blogData.blog.id,
         userID: user.id,
         type: "blog",
+        queryKey,
       });
     }
   };

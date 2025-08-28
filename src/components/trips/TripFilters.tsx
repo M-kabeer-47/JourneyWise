@@ -332,7 +332,7 @@ export default function TripFilters({
           
           <button
             type="submit"
-            className="w-full px-4 py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-sm"
+            className="w-full px-4 py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-sm sm:text-sm text-xs"  
           >
             Apply Filters
           </button>

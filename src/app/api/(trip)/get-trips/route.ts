@@ -115,9 +115,18 @@ export async function GET(request: NextRequest) {
         .select({
           trip: trip,
           user: { name: user.name, image: user.image },
+          isSaved: sql`CASE WHEN ${savedPosts.postID} IS NOT NULL THEN true ELSE false END`.as('isSaved'),
         })
         .from(trip)
         .innerJoin(user, eq(user.id, trip.userID))
+        .leftJoin(
+          savedPosts,
+          and(
+            eq(savedPosts.postID, trip.id),
+            eq(savedPosts.type, "trip"),
+            User ? eq(savedPosts.userID, User.user.id) : sql`false`
+          )
+        )
         .where(
           filterConditions.length > 0 ? and(...filterConditions) : undefined
         )
@@ -146,26 +155,16 @@ export async function GET(request: NextRequest) {
       return Number(countQuery[0].count);
     };
 
-    const savedTrips = async () => {
-      if (!User) return [];
-      const savedTrips = await db
-        .select({ savedPostID: savedPosts.postID })
-        .from(savedPosts)
-        .where(and(eq(savedPosts.userID, User.user.id), eq(savedPosts.type, "trip")))
-       
-      return savedTrips;
-    };
 
     // Run both queries concurrently
-    const [results, total, saved] = await Promise.all([
+    const [results, total] = await Promise.all([
       executeQuery(),
       executeCountQuery(),
-      savedTrips(),
     ]);
 
     // Format results
     const trips = results.map(
-      ({ trip: tripData, user: userData }) => ({
+      ({ trip: tripData, user: userData, isSaved }) => ({
         id: tripData.id,
         estimatedBudget: tripData.estimatedBudget,
         numOfPeople: tripData.numOfPeople,
@@ -179,7 +178,7 @@ export async function GET(request: NextRequest) {
           name: userData.name,
           image: userData.image,
         },
-        isSaved: saved.some((savedTrip) => savedTrip.savedPostID === tripData.id),
+        isSaved: Boolean(isSaved),
       })
     );
 

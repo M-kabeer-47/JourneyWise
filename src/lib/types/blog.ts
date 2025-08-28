@@ -14,7 +14,7 @@ export type Blog = {
     };
     author: {
       name: string;
-      image?: string;
+      image: string;
     };
 
 }

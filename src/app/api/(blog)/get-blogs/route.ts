@@ -52,10 +52,18 @@ export async function GET(request: NextRequest) {
             name: user.name,
             image: user.image,
           },
+          isSaved: sql`CASE WHEN ${savedPosts.postID} IS NOT NULL THEN true ELSE false END`.as('isSaved'),
         })
         .from(blog)
         .innerJoin(user, eq(blog.authorID, user.id))
-
+        .leftJoin(
+          savedPosts,
+          and(
+            eq(savedPosts.postID, blog.id),
+            eq(savedPosts.type, "blog"),
+            User ? eq(savedPosts.userID, User.user.id) : sql`false`
+          )
+        )
         .where(conditions.length > 0 ? and(...conditions) : undefined)
         .orderBy(sortDirection(sortColumn))
         .limit(limit)
@@ -73,20 +81,11 @@ export async function GET(request: NextRequest) {
       return count[0]?.count || 0;
     };
 
-    const savedBlogs = async () => {
-      if (!User) return [];
-      const savedBlogs = await db
-        .select({ savedPostID: savedPosts.postID })
-        .from(savedPosts)
-        .where(and(eq(savedPosts.userID, User.user.id), eq(savedPosts.type, "blog")))
-       
-      return savedBlogs;
-    };
 
-    const [blogs, total, saved] = await Promise.all([fetchBlogs(), fetchBlogsCount(), savedBlogs()]);
+    const [blogs, total] = await Promise.all([fetchBlogs(), fetchBlogsCount()]);
     // Format blogs with isSaved field
-    const formattedBlogs = blogs.map(({ blog: blogData, author }) => ({
-      blog: {...blogData, isSaved: saved.some((savedBlog) => savedBlog.savedPostID === blogData.id)},
+    const formattedBlogs = blogs.map(({ blog: blogData, author, isSaved }) => ({
+      blog: {...blogData, isSaved: Boolean(isSaved)},
       author,
       
     }));

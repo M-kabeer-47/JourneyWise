@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { MapIcon } from "lucide-react";
-import TripCard from "@/components/trip/TripCard";
+import TripCard from "@/components/trips/TripCard";
 import NoData from "./NoData";
 import SortBy from "@/components/ui/SortBy";
 import Pagination from "@/components/ui/Pagination";
@@ -94,11 +94,10 @@ export default function TripsTab({ userID }: TripsTabProps) {
             {trips?.map((trip) => (
               <motion.div
                 key={trip.trip.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+             
                 className="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:shadow-lg transition-all"
               >
-                <TripCard trip={trip.trip} isPersonal={true} />
+                <TripCard trip={trip.trip} isPersonal={true} queryKey={"user-trips"} />
               </motion.div>
             ))}
           </div>

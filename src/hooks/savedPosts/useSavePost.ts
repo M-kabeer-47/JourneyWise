@@ -1,77 +1,217 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import {toast} from "@/components/ui/Toast";
+
+interface SavePostParams {
+    postID: string;
+    userID: string;
+    type: "experience" | "trip" | "blog";
+    queryKey?: string;
+}
+
+interface UnsavePostParams {
+    savedPostID: string;
+    queryKey?: string;
+}
+
+// Data structure handlers
+const dataStructureHandlers = {
+    // Handle regular pages (trips, experiences, blogs)
+    regular: {
+        save: (data: any, postID: string) => {
+            if (data.trips) {
+                return {
+                    ...data,
+                    trips: data.trips.map((item: any) =>
+                        item.id === postID ? { ...item, isSaved: true } : item
+                    )
+                };
+            }
+            if (data.experiences) {
+                return {
+                    ...data,
+                    experiences: data.experiences.map((item: any) =>
+                        item.id === postID ? { ...item, isSaved: true } : item
+                    )
+                };
+            }
+            if (data.blogs) {
+                return {
+                    ...data,
+                    blogs: data.blogs.map((item: any) =>
+                        item.blog.id === postID ? { 
+                            ...item, 
+                            blog: { ...item.blog, isSaved: true } 
+                        } : item
+                    )
+                };
+            }
+            return data;
+        },
+        unsave: (data: any, postID: string) => {
+            if (data.trips) {
+                return {
+                    ...data,
+                    trips: data.trips.map((item: any) =>
+                        item.id === postID ? { ...item, isSaved: false } : item
+                    )
+                };
+            }
+            if (data.experiences) {
+                return {
+                    ...data,
+                    experiences: data.experiences.map((item: any) =>
+                        item.id === postID ? { ...item, isSaved: false } : item
+                    )
+                };
+            }
+            if (data.blogs) {
+                return {
+                    ...data,
+                    blogs: data.blogs.map((item: any) =>
+                        item.blog.id === postID ? { 
+                            ...item, 
+                            blog: { ...item.blog, isSaved: false } 
+                        } : item
+                    )
+                };
+            }
+            return data;
+        }
+    },
+    // Handle saved posts page
+    savedPosts: {
+        save: (data: any, postID: string) => {
+            // For saved posts, we don't add items, just update existing ones
+            if (data.savedPosts) {
+                return {
+                    ...data,
+                    savedPosts: data.savedPosts.map((item: any) => {
+                        // Check if this saved post contains the item we're looking for
+                        const hasTrip = item.trip && item.trip.id === postID;
+                        const hasExperience = item.experience && item.experience.id === postID;
+                        const hasBlog = item.blog && item.blog.blog.id === postID;
+                        
+                        if (hasTrip) {
+                            return { ...item, trip: { ...item.trip, isSaved: true } };
+                        }
+                        if (hasExperience) {
+                            return { ...item, experience: { ...item.experience, isSaved: true } };
+                        }
+                        if (hasBlog) {
+                            return { 
+                                ...item, 
+                                blog: { 
+                                    ...item.blog, 
+                                    blog: { ...item.blog.blog, isSaved: true } 
+                                } 
+                            };
+                        }
+                        return item;
+                    })
+                };
+            }
+            return data;
+        },
+        unsave: (data: any, postID: string) => {
+            // For saved posts, remove the item from the array
+            if (data.savedPosts) {
+                return {
+                    ...data,
+                    savedPosts: data.savedPosts.filter((item: any) => {
+                        // Remove if this saved post matches the postID
+                        const isTrip = item.trip && item.trip.id === postID;
+                        const isExperience = item.experience && item.experience.id === postID;
+                        const isBlog = item.blog && item.blog.blog.id === postID;
+                        
+                        return !(isTrip || isExperience || isBlog);
+                    })
+                };
+            }
+            return data;
+        }
+    }
+};
+
+const updateQueryData = (queryKey: string, postID: string, action: 'save' | 'unsave', queryClient: any) => {
+    let updatedCount = 0;
+    
+    queryClient.setQueriesData(
+        { queryKey: [queryKey] },
+        (old: any) => {
+            if (!old) return old;
+            
+            updatedCount++;
+            
+            // Determine which handler to use based on data structure
+            const isSavedPostsStructure = old.savedPosts !== undefined;
+            console.log("isSavedPostsStructure",isSavedPostsStructure);
+            const handler = isSavedPostsStructure ? dataStructureHandlers.savedPosts : dataStructureHandlers.regular;
+            
+            return handler[action](old, postID);
+        }
+    );
+    
+    return updatedCount;
+};
+
 export default function useSavePost(){
 
-    const getQueryKeys = (type:"experience"|"trip"|"blog")=>{
-        let queryKeys = ["saved-posts"];
-        switch(type){
-            case "blog":
-                queryKeys.push("user-blogs");
-                queryKeys.push("blogs");
-                break;
-            case "experience":
-                queryKeys.push("user-experiences");
-                queryKeys.push("experiences");
-                break;
-            case "trip":
-                queryKeys.push("user-trips");
-                queryKeys.push("trips");
-                break;
-        }
-        return queryKeys;
-    };
+   
 
 
     const queryClient = useQueryClient();
     const savePost = useMutation(
     {
-        mutationFn: async({postID,userID,type}:{postID:string,userID:string,type:"experience"|"trip"|"blog"})=>{
+        mutationFn: async({postID,userID,type, queryKey}: SavePostParams)=>{
             const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/save-post`,{
                 postID,
                 userID,
                 type
             })       
-            return { ...response.data, type: response.data.postType }; // Return postType for onSuccess
+            return { ...response.data, type: response.data.postType, queryKey, postID }; // Return postType and queryKey for onSuccess
         },
-        onSuccess: (data) => {
-            console.log("Data: ", data);
-            const queryKeys = getQueryKeys(data.postType as "experience" | "trip" | "blog");
-            // Invalidate each query key separately
-            console.log(
-            "Type: ", data.postType,
-            "Query Keys: ", queryKeys
-            );
-            queryKeys.forEach(key => {
-                queryClient.invalidateQueries({ queryKey: [key] });
-            });
-            toast.success("Post saved successfully");
-        },
-        onError: (error) => {
-            console.log(error);
-            toast.error("Failed to save post");
-        }
+        onSuccess: async (variables) => {
+            const { postID, queryKey } = variables;
+            
+            if (queryKey) {
+                await queryClient.cancelQueries({ queryKey: [queryKey] });
+                
+                const updatedCount = updateQueryData(queryKey, postID, 'save', queryClient);
+                
+                // Fallback: If no queries were updated, try invalidating
+                if (updatedCount === 0) {
+                    queryClient.invalidateQueries({ queryKey: [queryKey] });
+                }
+                
+                toast.success("Post saved successfully");
+            }
+        },   
     }
     )
     
     const unsavePost = useMutation(
     {
-        mutationFn: async({savedPostID}:{savedPostID:string})=>{
+        mutationFn: async({savedPostID, queryKey}: UnsavePostParams)=>{
             const response = await axios.delete(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/unsave-post/${savedPostID}`)
-            return response.data;
+            return { ...response.data, queryKey, savedPostID };
         },
-        onSuccess: (data) => {
-            const queryKeys = getQueryKeys(data.postType);
-            // Invalidate each query key separately
-            queryKeys.forEach(key => {
-                queryClient.invalidateQueries({ queryKey: [key] });
-            });
-            toast.success("Post unsaved successfully");
-        },
-        onError: (error) => {
-            console.log(error);
-            toast.error("Failed to unsave post");
-        }
+        onSuccess: async (variables) => {
+            const { savedPostID, queryKey } = variables;
+            
+            if (queryKey) {
+                await queryClient.cancelQueries({ queryKey: [queryKey] });
+                
+                const updatedCount = updateQueryData(queryKey, savedPostID, 'unsave', queryClient);
+                
+                // Fallback: If no queries were updated, try invalidating
+                if (updatedCount === 0) {
+                    queryClient.invalidateQueries({ queryKey: [queryKey] });
+                }
+                
+                toast.success("Post unsaved successfully");
+            }
+        },   
     }
     )
     return {

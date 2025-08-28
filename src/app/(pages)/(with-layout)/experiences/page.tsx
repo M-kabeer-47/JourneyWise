@@ -220,7 +220,7 @@ export default function ExperiencesPage() {
       const currentQuery = current.toString();
       const query = currentQuery ? `?${currentQuery}` : "";
       router.push(`/experiences${query}`);
-    }, 800);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [searchValue]);

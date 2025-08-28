@@ -24,13 +24,14 @@ interface ExperienceCardProps {
   isAgent?: boolean;
   onSave?: (experienceId: string) => void;
   onUnsave?: (experienceId: string) => void;
+  queryKey?: string;
 }
 
 export default function ExperienceCard({
   experience,
   isAgent = false,
-  onSave,
-  onUnsave,
+
+  queryKey = "experiences",
 }: ExperienceCardProps) {
   
   const user = useAppSelector((state) => state.user.user);
@@ -39,12 +40,16 @@ export default function ExperienceCard({
     e.preventDefault();
     e.stopPropagation();
     if (experience.isSaved) {
-      unsavePost.mutateAsync({savedPostID:experience.id});
+      unsavePost.mutateAsync({savedPostID:experience.id, queryKey});
     } else {
       if(!user){
         return;
       }
-      savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience"});
+      console.log("Experience ID",experience.id);
+      console.log("User ID",user?.id);
+      console.log("Query Key",queryKey);
+      savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience", queryKey});
+      
     }
   };
 

@@ -7,14 +7,18 @@ import { MapPin, Users, Route, Bookmark, Loader2, MoveRight } from "lucide-react
 import { Trip } from "@/lib/types/trip";
 import formatDate from "@/utils/functions/formatDate";
 import useSavePost from "@/hooks/savedPosts/useSavePost";
+import { useAppSelector } from "@/hooks/redux";
+import { toast } from "../ui/Toast";
 
 interface TripCardProps {
   trip: Trip;
   isPersonal?: boolean;
+  queryKey?: string;
 }
 
-export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
+export default function TripCard({ trip, isPersonal = false, queryKey = "trips" }: TripCardProps) {
   const {savePost, unsavePost} = useSavePost();
+  const user = useAppSelector((state) => state.user.user);
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -40,19 +44,21 @@ export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
       e.preventDefault();
       e.stopPropagation();
       if (trip.isSaved) {
-        unsavePost.mutateAsync({savedPostID: trip.id});
+        unsavePost.mutateAsync({savedPostID: trip.id, queryKey});
         
       } else {
-        savePost.mutateAsync({postID: trip.id, userID: trip.userID, type: "trip"});
+        if(!user){
+          toast.error("Please login to save trip");
+          return;
+        }
+        savePost.mutateAsync({postID: trip.id, userID: user.id, type: "trip", queryKey});
         
       }
     };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
+    
       className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-full flex flex-col"
     >
       {/* Header with Route Visualization - Fixed Height */}
@@ -102,7 +108,7 @@ export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
               className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
             >
               {savePost.isLoading || unsavePost.isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />
               ) : savePost.isError ? (
                 <Bookmark className="w-4 h-4 text-charcoal" />
               ) : unsavePost.isError ? (

@@ -111,7 +111,7 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {blogs?.map((blog:Blog) => (
-              <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} />
+              <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} queryKey={"user-blogs"} />
             ))}
           </div>
           

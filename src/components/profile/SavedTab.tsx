@@ -8,7 +8,7 @@ import Pagination from "@/components/ui/Pagination";
 import SavedItemSkeleton from "./SavedItemSkeleton";
 import useFetchSavedPosts from "@/hooks/savedPosts/useFetchSavedPosts";
 import ExperienceCard from "../experiences/ExperienceCard";
-import TripCard from "../trip/TripCard";
+import TripCard from "../trips/TripCard";
 import { BlogCard } from "../blog/BlogCard";
 interface SavedTabProps {
   userID: string;
@@ -102,17 +102,20 @@ export default function SavedTab({ userID }: SavedTabProps) {
               <BlogCard
                 key={savedPost.savedPost.id}
                 blog={savedPost.blog}
+                queryKey="saved-posts"
               />
             )) : activeType === "trip" ? savedPosts.map((savedPost) => (
               <TripCard
                 key={savedPost.savedPost.id}
                 trip={savedPost.trip}
-                isPersonal={true}
+                queryKey="saved-posts"
+               
               />
             )) : activeType === "experience" ? savedPosts.map((savedPost) => (
               <ExperienceCard
                 key={savedPost.savedPost.id}
                 experience={savedPost.experience}
+                queryKey="saved-posts"
               />
             )) : null}
           </div>

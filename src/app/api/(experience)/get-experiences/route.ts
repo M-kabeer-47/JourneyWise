@@ -130,10 +130,19 @@ export async function GET(request: NextRequest) {
           experience: experience,
           agent: { agentId: agent.id },
           user: { name: user.name, image: user.image },
+          isSaved: sql`CASE WHEN ${savedPosts.postID} IS NOT NULL THEN true ELSE false END`.as('isSaved'),
         })
         .from(experience)
         .innerJoin(agent, eq(agent.id, experience.agentID))
         .innerJoin(user, eq(user.id, agent.userID))
+        .leftJoin(
+          savedPosts,
+          and(
+            eq(savedPosts.postID, experience.id),
+            eq(savedPosts.type, "experience"),
+            User ? eq(savedPosts.userID, User.user.id) : sql`false`
+          )
+        )
         .where(
           filterConditions.length > 0 ? and(...filterConditions) : undefined
         )
@@ -163,23 +172,13 @@ export async function GET(request: NextRequest) {
       return Number(countQuery[0].count);
     };
 
-    const savedExperiences = async () => {
-      if (!User) return [];
-      const savedExperiences = await db
-        .select({ savedPostID: savedPosts.postID })
-        .from(savedPosts)
-        .where(and(eq(savedPosts.userID, User.user.id), eq(savedPosts.type, "experience")))
-       
-      return savedExperiences;
-    };
     
 
     // Run both queries concurrently
    
-    const [results, total, saved] = await Promise.all([
+    const [results, total] = await Promise.all([
       executeQuery(),
       executeCountQuery(),
-      savedExperiences(),
     ]);
  
   
@@ -187,7 +186,7 @@ export async function GET(request: NextRequest) {
     
     // Format results
     const experiences = results.map(
-      ({ experience, user: userData, agent: agentData }) => ({
+      ({ experience, user: userData, agent: agentData, isSaved }) => ({
         id: experience.id,
         title: experience.title,
         description: experience.description,
@@ -205,7 +204,7 @@ export async function GET(request: NextRequest) {
           name: userData.name,
           image: userData.image,
         },
-        isSaved: saved.some((savedExperience) => savedExperience.savedPostID === experience.id),
+        isSaved: Boolean(isSaved),
       })
     );
 
