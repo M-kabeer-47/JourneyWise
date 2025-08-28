@@ -1,5 +1,5 @@
 "use client";
-import { useState, useCallback, useEffect } from "react";
+import { useState,  useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { BookOpen, Compass, Map, Sparkles } from "lucide-react";
@@ -44,7 +44,7 @@ export default function BlogsPage() {
     setSearchValue(value);
   };
 
-  const handleSortChange = useCallback(
+  const handleSortChange = 
     (key: string, direction: "asc" | "desc") => {
       setSortBy(key as "updatedAt" | "commentsCount");
       setSortOrder(direction);
@@ -54,9 +54,7 @@ export default function BlogsPage() {
         order: direction,
         page: "1",
       });
-    },
-    []
-  );
+    }
 
   const updateQueryParams = (params: Record<string, string | null>) => {
     Object.entries(params).forEach(([key, value]) => {

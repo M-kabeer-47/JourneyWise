@@ -73,8 +73,9 @@ const sortOptions = [
 export default function ExperiencesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
+  console.log("SearchParams: ", searchParams.toString());
   const current = new URLSearchParams(searchParams);
-
+  console.log("Current: ", current.toString());
   const [currentPage, setCurrentPage] = useState<number>(
     parseInt(current.get("page") || "1")
   );
@@ -103,7 +104,7 @@ export default function ExperiencesPage() {
   };
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const handleLocationChange = useCallback(
+  const handleLocationChange = 
     (selectedLocations: string[]) => {
       setFilters((prev) => ({
         ...prev,
@@ -113,11 +114,10 @@ export default function ExperiencesPage() {
         locations:
           selectedLocations.length > 0 ? selectedLocations.join(",") : null,
       });
-    },
-    [filters.locations]
-  );
+    }
 
-  const handleSortChange = useCallback(
+
+  const handleSortChange = 
     (key: string, direction: "asc" | "desc") => {
       setSortBy(key);
       setSortOrder(direction === "asc" ? "asc" : "desc");
@@ -126,11 +126,10 @@ export default function ExperiencesPage() {
         sortBy: key,
         sortOrder: direction === "asc" ? "asc" : "desc",
       });
-    },
-    []
-  );
+    }
+    
 
-  const handleApplyFilters = useCallback(
+  const handleApplyFilters = 
     (newFilters: {
       isAvailable: boolean;
       minPrice: number;
@@ -165,17 +164,18 @@ export default function ExperiencesPage() {
         tags: newFilters.tags.length > 0 ? newFilters.tags.join(",") : null,
         page: "1",
       });
-    },
-    []
-  );
+    }
 
-  const handlePageChange = useCallback((page: number) => {
+
+  const handlePageChange = 
+    (page: number) => {
     updateQueryParams({ page: page.toString() });
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+    }
 
-  const clearAllFilters = useCallback(() => {
+  const clearAllFilters = 
+    () => {
     const defaultFilters = {
       isAvailable: true,
       minPrice: 1,
@@ -195,11 +195,14 @@ export default function ExperiencesPage() {
     Array.from(current.keys()).forEach((key) => current.delete(key));
     let query = current.toString();
     router.push(`/experiences${query}`);
-  }, [router]);
+  }
 
   // Update query parameters helper
 
   function updateQueryParams(params: Record<string, string | null>) {
+    // Create fresh URLSearchParams from current browser URL to preserve all existing params
+    
+    
     // Update or add new parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value === "" || value === null || value === undefined) {
@@ -209,17 +212,14 @@ export default function ExperiencesPage() {
       }
     });
     // Build the new URL
-    const search = current.toString();
-    const query = search ? `?${search}` : "";
+    const newParams = current.toString();
+    const query = newParams ? `?${newParams}` : "";
     router.push(`/experiences${query}`);
   }
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      current.set("search", searchValue);
-      const currentQuery = current.toString();
-      const query = currentQuery ? `?${currentQuery}` : "";
-      router.push(`/experiences${query}`);
+      updateQueryParams({ search: searchValue });
     }, 500);
 
     return () => clearTimeout(timer);

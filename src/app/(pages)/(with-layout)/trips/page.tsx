@@ -1,11 +1,9 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { X, SlidersHorizontal, Route } from "lucide-react";
-
-// Custom Components
 import { LocationSelector } from "@/components/experiences/LocationSelector";
 import TripFilters from "@/components/trips/TripFilters";
 import TripCard from "@/components/trips/TripCard";
@@ -98,7 +96,7 @@ export default function TripsPage() {
 
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const handleLocationChange = useCallback(
+  const handleLocationChange = 
     (selectedLocations: string[]) => {
       setFilters((prev) => ({
         ...prev,
@@ -108,11 +106,9 @@ export default function TripsPage() {
         waypoints:
           selectedLocations.length > 0 ? selectedLocations.join(",") : null,
       });
-    },
-    [filters.waypoints]
-  );
+    }
 
-  const handleSortChange = useCallback(
+  const handleSortChange = 
     (key: string, direction: "asc" | "desc") => {
       setSortBy(key);
       setSortOrder(direction === "asc" ? "asc" : "desc");
@@ -121,11 +117,9 @@ export default function TripsPage() {
         sortBy: key,
         sortOrder: direction === "asc" ? "asc" : "desc",
       });
-    },
-    []
-  );
+    }
 
-  const handleApplyFilters = useCallback((newFilters: TripFiltersType) => {
+  const handleApplyFilters = (newFilters: TripFiltersType) => {
     setFilters(newFilters);
 
     updateQueryParams({
@@ -157,15 +151,15 @@ export default function TripsPage() {
         newFilters.waypoints.length > 0 ? newFilters.waypoints.join(",") : null,
       page: "1",
     });
-  }, []);
+  } 
 
-  const handlePageChange = useCallback((page: number) => {
+  const handlePageChange = (page: number) => {
     updateQueryParams({ page: page.toString() });
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  }
 
-  const clearAllFilters = useCallback(() => {
+  const clearAllFilters = () => {
     const defaultFilters = {
       minBudget: 0,
       maxBudget: 100000,
@@ -183,7 +177,7 @@ export default function TripsPage() {
     Array.from(current.keys()).forEach((key) => current.delete(key));
     let query = current.toString();
     router.push(`/trips${query}`);
-  }, [router]);
+  }
 
   function updateQueryParams(params: Record<string, string | null>) {
     Object.entries(params).forEach(([key, value]) => {
