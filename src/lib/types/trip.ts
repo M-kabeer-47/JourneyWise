@@ -13,6 +13,7 @@ export interface Trip {
     name: string;
     image?: string;
   };
+  isSaved: boolean;
 }
 
 export interface Waypoint {

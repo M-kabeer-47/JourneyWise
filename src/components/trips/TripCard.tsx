@@ -3,20 +3,10 @@
 import React from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
-import {
-  MapPin,
-  Users,
-  DollarSign,
-  Route,
-  Calendar,
-  Eye,
-  Bookmark,
-  Heart,
-  ArrowRight,
-  MoveRight,
-} from "lucide-react";
+import { MapPin, Users, Route, Bookmark, Loader2, MoveRight } from "lucide-react";
 import { Trip } from "@/lib/types/trip";
 import formatDate from "@/utils/functions/formatDate";
+import useSavePost from "@/hooks/savedPosts/useSavePost";
 
 interface TripCardProps {
   trip: Trip;
@@ -24,6 +14,7 @@ interface TripCardProps {
 }
 
 export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
+  const {savePost, unsavePost} = useSavePost();
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
       style: "currency",
@@ -45,6 +36,17 @@ export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
       end: sortedWaypoints[sortedWaypoints.length - 1].name,
     };
   };
+    const handleSaveToggle = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (trip.isSaved) {
+        unsavePost.mutateAsync({savedPostID: trip.id});
+        
+      } else {
+        savePost.mutateAsync({postID: trip.id, userID: trip.userID, type: "trip"});
+        
+      }
+    };
 
   return (
     <motion.div
@@ -94,9 +96,28 @@ export default function TripCard({ trip, isPersonal = false }: TripCardProps) {
 
         {/* Top Row: Save Button */}
         {!isPersonal && (
-          <div className="absolute top-4 right-4 z-10">
-            <button className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0">
-              <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
+          <div className="absolute top-4 right-4">
+            <button
+              onClick={handleSaveToggle}
+              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+            >
+              {savePost.isLoading || unsavePost.isLoading ? (
+                <Loader2 className="w-4 h-4 animate-spin" />
+              ) : savePost.isError ? (
+                <Bookmark className="w-4 h-4 text-charcoal" />
+              ) : unsavePost.isError ? (
+                <Bookmark
+                  className="w-4 h-4 text-ocean-blue"
+                  fill="currentColor"
+                />
+              ) : trip.isSaved ? (
+                <Bookmark
+                  className="w-4 h-4 text-ocean-blue"
+                  fill="currentColor"
+                />
+              ) : (
+                <Bookmark className="w-4 h-4 text-charcoal" />
+              )}
             </button>
           </div>
         )}

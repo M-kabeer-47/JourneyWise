@@ -128,7 +128,7 @@ export default function BlogsPage() {
           {/* Results Count */}
           <div className="mt-4 flex items-center justify-between text-sm text-gray-600">
             <span>
-              {isLoading ? (
+              {isFetching ? (
                 "Loading stories..."
               ) : (
                 <>
@@ -136,11 +136,11 @@ export default function BlogsPage() {
                   {data.blogs.length === 1 ? "story" : "stories"} found
                 </>
               )}
-              {isFetching && !isLoading && (
+              {isFetching && (
                 <span className="ml-2 text-ocean-blue">(Updating...)</span>
               )}
             </span>
-            {searchValue && !isLoading && (
+            {searchValue && !isFetching && (
               <span>
                 Searching for:{" "}
                 <span className="font-medium text-midnight-blue">
@@ -154,7 +154,7 @@ export default function BlogsPage() {
 
       {/* Blog Grid */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        {isLoading ? (
+        {isFetching ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

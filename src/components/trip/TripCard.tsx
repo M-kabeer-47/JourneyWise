@@ -2,8 +2,7 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   MapPin,
-  Calendar,
-  DollarSign,
+  
   Clock,
   MoreVertical,
   Eye,
@@ -11,11 +10,13 @@ import {
   Trash2,
   Route,
   Bookmark,
-  BookmarkCheck,
+  
   Banknote,
   User,
+  Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import useSavePost from "@/hooks/savedPosts/useSavePost";
 
 interface Trip {
   id: string;
@@ -29,6 +30,7 @@ interface Trip {
   waypoints: any; // JSON
   createdAt: string;
   updatedAt: string;
+  isSaved: boolean;
 }
 
 interface TripCardProps {
@@ -64,13 +66,10 @@ export default function TripCard({
   onView,
   onEdit,
   onDelete,
-  onSave,
-  onUnsave,
 }: TripCardProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
-
+  const {savePost,unsavePost} = useSavePost();
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -93,12 +92,12 @@ export default function TripCard({
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (isSaved) {
-      onUnsave?.(trip.id);
-      setIsSaved(false);
+    if (trip.isSaved) {
+      unsavePost.mutateAsync({savedPostID: trip.id});
+      
     } else {
-      onSave?.(trip.id);
-      setIsSaved(true);
+      savePost.mutateAsync({postID: trip.id, userID: trip.userID, type: "trip"});
+      
     }
   };
 
@@ -224,7 +223,15 @@ export default function TripCard({
                 onClick={handleSaveToggle}
                 className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
               >
-                {isSaved ? (
+                {
+                savePost.isLoading || unsavePost.isLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                ) :
+                savePost.isError ? (
+                  <Bookmark className="w-4 h-4 text-charcoal" />
+                ) : unsavePost.isError ? (
+                  <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+                ) : trip.isSaved ? (
                   <Bookmark
                     className="w-4 h-4 text-ocean-blue"
                     fill="currentColor"

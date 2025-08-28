@@ -24,7 +24,7 @@ export async function DELETE(
       );
 
     let postDeleted = await db.delete(savedPosts).where(and(eq(savedPosts.postID, id), eq(savedPosts.userID, userID))).returning({
-      type: savedPosts.type
+      postType: savedPosts.type
     });
     if(!postDeleted.length){
       return NextResponse.json(
@@ -33,7 +33,7 @@ export async function DELETE(
       );
     }
     return NextResponse.json(
-      { message: "Post Unsaved successfully", postType: postDeleted[0]?.type as "experience" | "trip" | "blog" },
+      { message: "Post Unsaved successfully", postType: postDeleted[0]?.postType as "experience" | "trip" | "blog" },
       { status: 200 }
     );
   } catch (error) {
