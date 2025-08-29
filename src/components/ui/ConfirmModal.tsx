@@ -1,19 +1,14 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Loader2, X } from "lucide-react";
-import CategoryDropdown from "@/components/create_experience/form/components/step-one/Category";
-import { BLOG_CATEGORIES } from "@/lib/constants/blog-categories";
 
 interface ConfirmModalProps {
   isOpen: boolean;
-  onConfirm: (category?: string) => void;
+  onConfirm: () => void;
   onClose: () => void;
   title: string;
   description: string;
   loading?: boolean;
   loadingText?: string;
-  requireCategory?: boolean;
-  initialCategory?: string;
   width?: "large" | "small";
 }
 
@@ -25,27 +20,15 @@ export default function ConfirmModal({
   description,
   loading = false,
   loadingText = "Loading...",
-  requireCategory = false,
-  initialCategory = "",
   width = "small"
 }: ConfirmModalProps) {
-  const [selectedCategory, setSelectedCategory] = useState(initialCategory);
-  const [categoryError, setCategoryError] = useState("");
-
   if (!isOpen) return null;
 
   const handleConfirm = () => {
-    if (requireCategory && !selectedCategory) {
-      setCategoryError("Please select a category");
-      return;
-    }
-    setCategoryError("");
-    onConfirm(selectedCategory);
+    onConfirm();
   };
 
   const handleClose = () => {
-    setCategoryError("");
-    setSelectedCategory(initialCategory);
     onClose();
   };
 
@@ -88,21 +71,6 @@ export default function ConfirmModal({
             <div className="px-8 py-8">
               {/* Description */}
               <p className="text-charcoal text-sm mb-8">{description}</p>
-
-              {/* Category Selection */}
-              {requireCategory && (
-                <div className="mb-6">
-                  <CategoryDropdown
-                    label="Blog Category"
-                    value={selectedCategory}
-                    onChange={setSelectedCategory}
-                    options={BLOG_CATEGORIES}
-                    placeholder="Select a category"
-                    error={categoryError}
-                    disabled={loading}
-                  />
-                </div>
-              )}
 
               {/* Actions */}
               <div className="min-[420px]:flex-row flex flex-col gap-4">

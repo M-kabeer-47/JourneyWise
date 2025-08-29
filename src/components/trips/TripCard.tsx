@@ -14,9 +14,10 @@ interface TripCardProps {
   trip: Trip;
   isPersonal?: boolean;
   queryKey?: string;
+  hoverEffectOnSave?: boolean;
 }
 
-export default function TripCard({ trip, isPersonal = false, queryKey = "trips" }: TripCardProps) {
+export default function TripCard({ trip, isPersonal = false, queryKey = "trips", hoverEffectOnSave = true }: TripCardProps) {
   const {savePost, unsavePost} = useSavePost();
   const user = useAppSelector((state) => state.user.user);
   const formatCurrency = (amount: number, currency: string) => {
@@ -105,7 +106,7 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips" 
           <div className="absolute top-4 right-4">
             <button
               onClick={handleSaveToggle}
-              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              className={`${hoverEffectOnSave ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0" : ""} p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
             >
               {savePost.isLoading || unsavePost.isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />

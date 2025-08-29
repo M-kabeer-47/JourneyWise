@@ -9,8 +9,10 @@ export default function useEditBlog() {
       title: string;
       html: string;
       coverUrl: string | null;
+      thumbnailUrl: string | null;
       id: string;
       category: string | null;
+      description: string;
     }) => {
       try {
         let response = await axios.put(
@@ -19,7 +21,9 @@ export default function useEditBlog() {
             title: data.title,
             content: data.html,
             coverUrl: data.coverUrl,
+            thumbnailUrl: data.thumbnailUrl,
             category: data.category,
+            description: data.description,
           }
         );
         toast.success("Blog saved successfully");

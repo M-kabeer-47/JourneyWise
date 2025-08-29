@@ -10,8 +10,9 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Toast } from "../ui/Toast";
+import { Toast, toast } from "../ui/Toast";
 import ConfirmModal from "../ui/ConfirmModal";
+import ThumbnailModal from "./ThumbnailModal";
 import { BlogNav } from "./BlogNavbar";
 import { BlogCover } from "./BlogCover";
 import { useQueryClient } from "@tanstack/react-query";
@@ -52,13 +53,18 @@ export default function Editor({
   );
   const [changesCount, setChangesCount] = useState(0);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
+  const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string>("");
+  const [description, setDescription] = useState("");
   const [isSavedDraftClicked, setIsSavedDraftClicked] = useState(false);
   const [hasChanges, setHasChanges] = useState(false);
   const prevCoverUrlRef = useRef<string | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  const uploadFile = useCallback(async (file: File) => {
+  const uploadFile = async (file: File) => {
     try {
       const response = await uploadToCloudinary(file);
       return response;
@@ -66,22 +72,47 @@ export default function Editor({
       console.error("File upload failed:", error);
       throw new Error("File upload failed");
     }
-  }, []);
-
-  const editorOptions = useMemo(
-    () => ({
-      uploadFile,
-    }),
-    [uploadFile]
-  );
+  };
 
   // Editor initialization
-  const editor = useCreateBlockNote(editorOptions);
+  const editor = useCreateBlockNote({ uploadFile: uploadFile });
 
   const getDocJson = () => {
     try {
       return JSON.stringify(editor.document);
     } catch {
+      return null;
+    }
+  };
+
+  const extractDescriptionFromBlocks = () => {
+    try {
+      const blocks = editor.document;
+      // Find the first paragraph block
+      const firstParagraphBlock = blocks.find(
+        (block) => block.type === "paragraph"
+      );
+
+      if (!firstParagraphBlock || firstParagraphBlock.content.length === 0) {
+        toast.error("Please add at least one paragraph");
+        return null;
+      }
+
+      // Extract text content from the paragraph block
+      let textContent = "";
+      firstParagraphBlock.content.forEach((content) => {
+        textContent += content.text;
+      });
+      alert("Text Content: " + JSON.stringify(textContent));
+      console.log("Text" + JSON.stringify(firstParagraphBlock.content));
+
+      // Limit description to 200 characters
+      return textContent.length > 200
+        ? textContent.substring(0, 200) + "..."
+        : textContent;
+    } catch (error) {
+      console.error("Error extracting description:", error);
+      toast.error("Please add at least one paragraph");
       return null;
     }
   };
@@ -123,8 +154,17 @@ export default function Editor({
     setCoverImage(file);
     const url = URL.createObjectURL(file);
     setCoverUrl(url);
+    
     if (type === "create") {
-      localStorage.setItem("blog-cover", url);
+      // Convert file to base64 for persistent storage
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const base64 = e.target?.result as string;
+        localStorage.setItem("blog-cover", base64);
+        localStorage.setItem("blog-cover-name", file.name);
+        localStorage.setItem("blog-cover-type", file.type);
+      };
+      reader.readAsDataURL(file);
     } else {
       setHasChanges(true);
     }
@@ -136,24 +176,57 @@ export default function Editor({
       prevCoverUrlRef.current = null;
     }
     setCoverUrl(null);
+    setCoverImage(null);
     localStorage.removeItem("blog-cover");
+    localStorage.removeItem("blog-cover-name");
+    localStorage.removeItem("blog-cover-type");
     if (type === "update") {
       setHasChanges(true);
     }
   };
 
-  const handlePublish = async (category?: string) => {
+  const handleNavPublishButton = () => {
+    if (title === "") {
+      toast.error("Please add a title");
+      return;
+    }
+    const descriptionExtracted = extractDescriptionFromBlocks();
+    
+    if (!descriptionExtracted) {
+      return; // Function already shows toast error
+    }
+    setDescription(descriptionExtracted);
+    setIsThumbnailModalOpen(true);
+  };
+
+  const handleThumbnailModalConfirm = async (data: { category: string; thumbnailUrl: string | null; thumbnailFile: File | null }) => {
+    setSelectedCategory(data.category);
+    setThumbnailImage(data.thumbnailFile);
+    setThumbnailUrl(data.thumbnailUrl);
+    setIsThumbnailModalOpen(false);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handlePublish = async () => {
     try {
       let finalCoverUrl = coverUrl;
       if (coverImage !== null) {
         finalCoverUrl = await uploadToCloudinary(coverImage);
       }
+
+      let finalThumbnailUrl = thumbnailUrl;
+      if (thumbnailImage !== null) {
+        finalThumbnailUrl = await uploadToCloudinary(thumbnailImage);
+      }
+
       const html = await editor.blocksToFullHTML(editor.document);
       const blogData = {
         title,
         content: html,
+        description: description,
         coverUrl: coverImage === null ? null : finalCoverUrl,
-        category: category || null,
+        thumbnailUrl: finalThumbnailUrl,
+        category: selectedCategory || null,
         isPublished: true,
       };
       if (type === "create" && publishBlog) {
@@ -161,6 +234,8 @@ export default function Editor({
         localStorage.removeItem("blog-draft");
         localStorage.removeItem("blog-title");
         localStorage.removeItem("blog-cover");
+        localStorage.removeItem("blog-cover-name");
+        localStorage.removeItem("blog-cover-type");
       } else if (type === "update" && updateBlog) {
         await updateBlog(blogData);
         setHasChanges(false);
@@ -177,6 +252,13 @@ export default function Editor({
     if (!saveAsDraftBlog) return;
     setIsSavedDraftClicked(true);
     try {
+      // Extract description from first paragraph
+      const descriptionExtracted = extractDescriptionFromBlocks();
+      if (!descriptionExtracted) {
+        setIsSavedDraftClicked(false);
+        return;
+      }
+
       let finalCoverUrl = coverUrl;
       if (coverImage) {
         finalCoverUrl = await uploadToCloudinary(coverImage);
@@ -186,6 +268,7 @@ export default function Editor({
       await saveAsDraftBlog({
         title,
         content: html,
+        description: descriptionExtracted,
         blocks,
         coverUrl: finalCoverUrl,
         category: null, // Drafts don't require category
@@ -211,13 +294,28 @@ export default function Editor({
     if (type === "create") {
       const savedTitle = localStorage.getItem("blog-title");
       const savedCover = localStorage.getItem("blog-cover");
+      const savedCoverName = localStorage.getItem("blog-cover-name");
+      const savedCoverType = localStorage.getItem("blog-cover-type");
       const savedDraft = localStorage.getItem("blog-draft");
+      
       if (savedDraft) {
         alert("Found saved draft");
         editor.replaceBlocks(editor.document, JSON.parse(savedDraft));
       }
+      
       if (savedTitle && savedTitle.trim()) setTitle(savedTitle);
-      if (savedCover) setCoverUrl(savedCover);
+      
+      if (savedCover && savedCoverName && savedCoverType) {
+        // Convert base64 back to File object
+        fetch(savedCover)
+          .then(res => res.blob())
+          .then(blob => {
+            const file = new File([blob], savedCoverName, { type: savedCoverType });
+            setCoverImage(file);
+            setCoverUrl(savedCover); // Use base64 directly as URL
+          })
+          .catch(console.error);
+      }
     }
     if (type === "update" && initialContent) {
       const convertHTMLToBlocks = async () => {
@@ -235,7 +333,7 @@ export default function Editor({
         isPublishing={isPublishing}
         isSavedDraftClicked={isSavedDraftClicked}
         onSaveDraft={handleSaveDraft}
-        onPublish={() => setIsConfirmModalOpen(true)}
+        onPublish={handleNavPublishButton}
         hasChanges={hasChanges}
       />
       <BlogCover
@@ -243,7 +341,7 @@ export default function Editor({
         onCoverPicked={onCoverPicked}
         onRemoveCover={removeCover}
       />
-      <div className="lg:max-w-[1400px] mx-auto px-[30px] ">
+      <div className="lg:max-w-[1400px] mx-auto ">
         <div className="relative group top-[20px]">
           <TextareaAutosize
             value={title}
@@ -252,31 +350,44 @@ export default function Editor({
             className="w-full text-4xl sm:text-6xl font-bold placeholder:text-gray-400 bg-transparent border-0 outline-none focus:ring-0 mb-[70px]"
           />
         </div>
-        <div className="relative top-[-20px]">
+        <div className="relative top-[-30px]">
           <BlockNoteView
             editor={editor}
             theme="light"
             onChange={handleEditorChange}
             onScroll={handleScroll}
             onPaste={handlePaste}
+            
           />
         </div>
       </div>
       <Toast />
-      <ConfirmModal
+      <ThumbnailModal
         title={type === "create" ? "Publish Blog" : "Update Blog"}
         description={
           type === "create"
-            ? "Select a category and publish your travel story to share with the community."
-            : "Update your blog post and optionally change its category."
+            ? "Choose a thumbnail and category for your travel story before publishing."
+            : "Update your blog thumbnail and category."
+        }
+        isOpen={isThumbnailModalOpen}
+        onConfirm={handleThumbnailModalConfirm}
+        onClose={() => setIsThumbnailModalOpen(false)}
+        loading={isPublishing}
+        loadingText={type === "create" ? "Publishing..." : "Updating..."}
+        initialCategory={initialCategory || ""}
+      />
+      <ConfirmModal
+        title={type === "create" ? "Confirm Publication" : "Confirm Update"}
+        description={
+          type === "create"
+            ? "Are you ready to publish your blog post?"
+            : "Are you ready to update your blog post?"
         }
         isOpen={isConfirmModalOpen}
         onConfirm={handlePublish}
         onClose={() => setIsConfirmModalOpen(false)}
         loading={isPublishing}
         loadingText={type === "create" ? "Publishing..." : "Updating..."}
-        requireCategory={true}
-        initialCategory={initialCategory || ""}
       />
     </div>
   );

@@ -8,6 +8,7 @@ import {
   Edit,
   Trash2,
   Loader2,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -79,12 +80,14 @@ interface BlogCardProps {
   blog: Blog;
   isPersonal?: boolean;
   queryKey?: string;
+  hoverEffectOnSave?: boolean;
 }
 
 export function BlogCard({
   blog: blogData,
   isPersonal = false,
   queryKey = "blogs",
+  hoverEffectOnSave = true,
 }: BlogCardProps) {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -170,20 +173,21 @@ export function BlogCard({
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-[400px]">
       {/* Cover Image with Overlay */}
-      <div className="relative h-56 overflow-hidden">
-        <Image
-          src={blogData.blog.coverUrl || defaultCoverImage}
-          alt={blogData.blog.title}
-          fill
-          className="object-cover group-hover:scale-110 transition-transform duration-700"
-        />
-
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+      <div className="relative h-56 p-3.5">
+        <div className="relative w-full h-full overflow-hidden rounded-lg">
+          <Image
+            src={blogData.blog.thumbnailUrl || defaultCoverImage}
+            alt={blogData.blog.title}
+            fill
+            className="object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
+        </div>
 
         {/* Actions - Personal Mode: Dropdown Menu */}
         {isPersonal && (
-          <div className="absolute top-4 right-4" ref={dropdownRef}>
+          <div className="absolute top-6 right-6" ref={dropdownRef}>
             <button
               onClick={(e) => {
                 e.preventDefault();
@@ -231,10 +235,10 @@ export function BlogCard({
 
         {/* Actions - Public Mode: Save Button Only */}
         {!isPersonal && (
-          <div className="absolute top-4 right-4">
+          <div className="absolute top-6 right-6">
             <button
               onClick={handleSaveToggle}
-              className="p-2.5 bg-white/90 backdrop-blur-sm group rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              className={`${hoverEffectOnSave ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0" : ""} p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
             >
               {savePost.isLoading || unsavePost.isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />
@@ -251,34 +255,54 @@ export function BlogCard({
         )}
 
         {/* Author Badge on Image */}
-        {!isPersonal && (
-          <AuthorCard
-            name={blogData.author.name}
-            image={blogData.author.image}
-          />
-        )}
+   
       </div>
 
       {/* Content */}
-      <div className="p-6">
+      <div className="px-5 pb-3">
         {/* Title */}
-        <h3 className="text-xl font-[800] font-raleway text-charcoal line-clamp-2 mb-4 group-hover:text-midnight-blue transition-colors duration-200 leading-tight">
+        <h3 className="text-xl font-[800] font-raleway text-charcoal line-clamp-2 group-hover:text-midnight-blue transition-colors duration-200 leading-tight mb-2">
           {blogData.blog.title.length > 30
             ? `${blogData.blog.title.substring(0, 30)}...`
             : blogData.blog.title}
         </h3>
+        <div
+              className={` flex items-center gap-2 mb-3 `}
+            >
+              <div
+                className={`relative  rounded-full overflow-hidden w-8 h-8`}
+              >
+                {blogData.author.image!=="" ? (
+                  <Image src={blogData.author.image} alt={blogData.author.name} fill className="object-cover" />
+                ) : (
+                  <div className="w-full h-full  flex items-center bg-gray-200 justify-center rounded-full text-white text-xs font-medium">
+                    <User className="w-4 h-4 text-gray-500" />
+                  </div>
+                )}
+              </div>
+              <span
+                className={`font-raleway  text-charcoal sm:text-sm text-xs font-semibold`}
+              >
+                {blogData.author.name}
+              </span>
+            </div>
 
         {/* Excerpt */}
         {blogData.blog.description && (
           <p className="text-sm text-charcoal line-clamp-2 mb-4">
-            {blogData.blog.description.length > 50
-              ? `${blogData.blog.description.substring(0, 50)}...`
+            {blogData.blog.description.length > 100
+              ? `${blogData.blog.description.substring(0, 100)}...`
               : blogData.blog.description}
           </p>
         )}
 
         {/* Meta Info */}
-        <div className="flex items-center justify-between">
+        
+
+        {/* Read More Indicator */}
+        {!isPersonal && (
+          <div className="flex justify-between items-center">
+            <div className="flex items-center justify-between">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
               <div className="flex items-center gap-1.5">
@@ -304,10 +328,9 @@ export function BlogCard({
             ) : null}
           </div>
         </div>
-
-        {/* Read More Indicator */}
-        {!isPersonal && (
           <Link href={`/blog/${blogData.blog.id}`}>
+
+
             <div className="flex items-center justify-end gap-1 text-ocean-blue text-sm font-medium mt-2">
               <span>Read more</span>
               <svg
@@ -325,6 +348,7 @@ export function BlogCard({
               </svg>
             </div>
           </Link>
+          </div>
         )}
       </div>
     </div>

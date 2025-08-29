@@ -198,7 +198,7 @@ export default function TripsPage() {
       const currentQuery = current.toString();
       const query = currentQuery ? `?${currentQuery}` : "";
       router.push(`/trips${query}`);
-    }, 800);
+    }, 500);
 
     return () => clearTimeout(timer);
   }, [searchValue]);

@@ -25,12 +25,13 @@ interface ExperienceCardProps {
   onSave?: (experienceId: string) => void;
   onUnsave?: (experienceId: string) => void;
   queryKey?: string;
+  hoverEffectOnSave?: boolean;
 }
 
-export default function ExperienceCard({
+export default function ExperienceCard({  
   experience,
   isAgent = false,
-
+  hoverEffectOnSave = true,
   queryKey = "experiences",
 }: ExperienceCardProps) {
   
@@ -45,9 +46,7 @@ export default function ExperienceCard({
       if(!user){
         return;
       }
-      console.log("Experience ID",experience.id);
-      console.log("User ID",user?.id);
-      console.log("Query Key",queryKey);
+  
       savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience", queryKey});
       
     }
@@ -98,7 +97,7 @@ export default function ExperienceCard({
           {!isAgent && user && (
             <button
               onClick={handleSaveToggle}
-              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+              className={`${hoverEffectOnSave ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0" : ""} p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
             >
               {
               (savePost.isLoading || unsavePost.isLoading) ? (

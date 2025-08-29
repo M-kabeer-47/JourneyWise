@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { blog } from "@/../auth-schema";
 import db from "@/lib/server/db";
 export async function POST(request: NextRequest) {
-  const { content, title, coverUrl, category, isPublished } =
+  const { content, title, coverUrl, thumbnailUrl, category, isPublished, description } =
     await request.json();
 
   try {
@@ -15,7 +15,9 @@ export async function POST(request: NextRequest) {
         authorID: "4Tlkb3LOqayKnRDTGayGXHWC6qsePSW7",
         createdAt: new Date(),
         updatedAt: new Date(),
+        description,
         coverUrl: coverUrl || null,
+        thumbnailUrl: thumbnailUrl || null,
         category: category || null,
       })
       .returning({

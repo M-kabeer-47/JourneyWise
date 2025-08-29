@@ -11,6 +11,8 @@ export type Blog = {
       commentsCount: number;
       isSaved: boolean;
       description: string;
+      category: string | null;
+      thumbnailUrl: string;
     };
     author: {
       name: string;

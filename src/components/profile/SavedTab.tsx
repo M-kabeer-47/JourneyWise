@@ -103,19 +103,21 @@ export default function SavedTab({ userID }: SavedTabProps) {
                 key={savedPost.savedPost.id}
                 blog={savedPost.blog}
                 queryKey="saved-posts"
+                hoverEffectOnSave={false}
               />
             )) : activeType === "trip" ? savedPosts.map((savedPost) => (
               <TripCard
                 key={savedPost.savedPost.id}
                 trip={savedPost.trip}
                 queryKey="saved-posts"
-               
+                hoverEffectOnSave={false}
               />
             )) : activeType === "experience" ? savedPosts.map((savedPost) => (
               <ExperienceCard
                 key={savedPost.savedPost.id}
                 experience={savedPost.experience}
                 queryKey="saved-posts"
+                hoverEffectOnSave={false}
               />
             )) : null}
           </div>

@@ -7,8 +7,10 @@ export default function usePublishBlog() {
       title: string;
       html: string;
       coverUrl: string | null;
+      thumbnailUrl: string | null;
       isPublished: boolean;
       category?: string | null;
+      description: string
     }) => {
       try {
         await axios.post(
@@ -17,8 +19,10 @@ export default function usePublishBlog() {
             title: data.title,
             content: data.html,
             coverUrl: data.coverUrl || null,
+            thumbnailUrl: data.thumbnailUrl || null,
             isPublished: data.isPublished,
             category: data.category || null,
+            description: data.description
           }
         );
         if (data.isPublished) {

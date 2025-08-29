@@ -67,7 +67,7 @@ export default function CategoryDropdown({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block text-base font-medium text-midnight-blue">
+        <label className="block sm:text-base text-sm font-semibold text-charcoal">
           {label}
         </label>
       )}

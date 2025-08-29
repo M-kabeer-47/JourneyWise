@@ -18,8 +18,10 @@ export default function CreateBlogPage() {
       title: data.title,
       html: data.content,
       coverUrl: data.coverUrl,
+      thumbnailUrl: data.thumbnailUrl,
       isPublished: true,
       category: data.category,
+      description: data.description
     });
   };
 
@@ -28,7 +30,9 @@ export default function CreateBlogPage() {
       title: data.title,
       html: data.content,
       coverUrl: data.coverUrl,
+      thumbnailUrl: data.thumbnailUrl,
       isPublished: false,
+      description: data.description
     });
     localStorage.removeItem("blog-draft");
     localStorage.removeItem("blog-title");

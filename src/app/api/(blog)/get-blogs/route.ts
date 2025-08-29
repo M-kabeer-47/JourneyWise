@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       : blog.createdAt;
 
   const buildFilterConditions = () => {
-    const conditions = [];
+    const conditions = [eq(blog.isPublished, true)];
     if (search) {
       // Add search condition
       conditions.push(ilike(blog.title, `%${search}%`));

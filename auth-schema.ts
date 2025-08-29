@@ -237,7 +237,9 @@ export const blog = pgTable("blog", {
     .notNull()
     .references(() => user.id),
   category: text("category"),
+  description: text("description"),
   coverUrl: text("coverUrl"),
+  thumbnailUrl:text("thumbnailUrl"),
   commentsCount: integer("commentsCount").default(0),
   createdAt: timestamp("createdAt").notNull().default(new Date()),
   updatedAt: timestamp("updatedAt").notNull().default(new Date()),

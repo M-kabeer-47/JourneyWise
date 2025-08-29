@@ -30,7 +30,9 @@ export default function UpdateBlogPage() {
       title: data.title,
       html: data.content,
       coverUrl: data.coverUrl,
+      thumbnailUrl: data.thumbnailUrl,
       category: data.category,
+      description: data.description,
     });
   };
 

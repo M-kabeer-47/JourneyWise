@@ -7,7 +7,7 @@ export async function PUT(
   { params }: { params: { id: string } }
 ) {
   const { id } = await params;
-  const { title, content, coverUrl, isPublished } = await request.json();
+  const { title, content, coverUrl, thumbnailUrl, isPublished, description } = await request.json();
   try {
     await db
       .update(blog)
@@ -15,6 +15,8 @@ export async function PUT(
         title,
         content,
         coverUrl,
+        thumbnailUrl,
+        description,
         updatedAt: new Date()
       })
 

@@ -148,6 +148,20 @@
       "when": 1756140413492,
       "tag": "0020_elite_zombie",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1756433082674,
+      "tag": "0021_plain_umar",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1756440384153,
+      "tag": "0022_bizarre_wallop",
+      "breakpoints": true
     }
   ]
 }
