@@ -4,7 +4,7 @@ import { toast } from "@/components/ui/Toast";
 import { useQueryClient } from "@tanstack/react-query";
 export default function useEditBlog() {
   const queryClient = useQueryClient();
-  const { mutateAsync, isPending, isSuccess } = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: async (data: {
       title: string;
       html: string;
@@ -12,7 +12,8 @@ export default function useEditBlog() {
       thumbnailUrl: string | null;
       id: string;
       category: string | null;
-      description: string;
+      description: string;  
+      isPublished: boolean;
     }) => {
       try {
         let response = await axios.put(
@@ -24,6 +25,7 @@ export default function useEditBlog() {
             thumbnailUrl: data.thumbnailUrl,
             category: data.category,
             description: data.description,
+            isPublished: data.isPublished || true,
           }
         );
         toast.success("Blog saved successfully");

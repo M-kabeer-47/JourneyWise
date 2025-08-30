@@ -46,9 +46,13 @@ export const waypointSchema = z.object({
 });
 
 // Only waypoints array for the main form
-export const tripSchema = z.object({
+export const waypointsSchema = z.object({
   waypoints: z.array(waypointSchema),
 });
+
+export const tripSchema = waypointsSchema.merge(detailsStepSchema);
+
+export const partialTripSchema = tripSchema.partial();
 
 // Types
 export type LocationStepData = z.infer<typeof locationStepSchema>;
