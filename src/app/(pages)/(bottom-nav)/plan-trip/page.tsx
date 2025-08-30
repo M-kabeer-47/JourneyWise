@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline";
 import { WaypointForm } from "@/components/plan-trip/WaypointForm";
 import { GuideModal } from "@/components/plan-trip/guide-modal/components/GuideModal";
+import ThumbnailModal from "@/components/blog/ThumbnailModal";
 import { toast } from "@/components/ui/Toast";
 import { useFieldArray, useForm } from "react-hook-form";
 import {
@@ -13,22 +14,26 @@ import {
   WaypointData,
 } from "@/lib/schemas/trip";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-import axios from "axios";
 import ConfirmModal from "@/components/ui/ConfirmModal";
 import { useRouter } from "next/navigation";
 import { useIsDesktop } from "@/hooks/useIsDesktop";
+import useCreateTrip from "@/hooks/trip/useCreateTrip";
 // Add a small hook
 
-export default function Home() {
+export default function PlanTrip() {
   const [showGuide, setShowGuide] = useState(true);
   const [isConfirmationModalOpen, setIsConfirmationModalOpen] = useState(false);
+  const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(true);
   const [guideDetails, setGuideDetails] = useState<GuideData | null>(null);
+  const [tripThumbnail, setTripThumbnail] = useState<{
+    thumbnailUrl: string | null;
+    thumbnailFile: File | null;
+  } | null>(null);
   const router = useRouter();
+  const { createTrip, isCreating } = useCreateTrip();
   const {
     register,
     control,
@@ -58,43 +63,25 @@ export default function Home() {
 
   const handleConfirm = async () => {
     if (!guideDetails) return;
-    let waypointsData = watch("waypoints");
-
-    setIsSubmitting(true);
+    
     try {
-      // Upload images
-      await Promise.all(
-        waypointsData.map(async (waypoint, index) => {
-          if (waypoint.imageUrl && waypoint.imageUrl !== "") {
-            let uploadedUrl = await uploadToCloudinary(
-              waypoint.imageUrl as File
-            );
-            URL.revokeObjectURL(waypoint.imageUrl as string); // Clean up URL
-            setValue(`waypoints.${index}.imageUrl`, uploadedUrl);
-          }
-        })
-      );
-      let waypoints = watch("waypoints");
-      // Prepare final data with guide details
-      const finalTripData = {
-        userID: "AoZUjvFu9ojeltXIiEbvdUh0hjW6P5cE",
-
-        ...guideDetails,
-        waypoints: waypoints,
-      };
-
-      await axios.post("/api/create-trip", { data: finalTripData });
-      toast.success("Trip planned successfully");
+      const waypointsData = watch("waypoints");
+      
+      await createTrip({
+        guideDetails,
+        waypoints: waypointsData,
+        thumbnailData: tripThumbnail
+      });
+      
       setTimeout(() => {
         // Reset form and state
         setGuideDetails(null);
+        setTripThumbnail(null);
+        setIsConfirmationModalOpen(false);
         router.push("/success/trip");
       }, 2000);
     } catch (err) {
-      console.error("Error creating trip:", err);
-      toast.error("Trip planning failed");
-    } finally {
-      setIsSubmitting(false);
+      // Error handling is done in the hook
       setIsConfirmationModalOpen(false);
     }
   };
@@ -166,6 +153,19 @@ export default function Home() {
       toast.error("Please add at least 3 waypoints");
       return;
     }
+    setIsThumbnailModalOpen(true);
+  };
+
+  const handleThumbnailConfirm = (thumbnailData: {
+    category?: string;
+    thumbnailUrl: string | null;
+    thumbnailFile: File | null;
+  }) => {
+    setTripThumbnail({
+      thumbnailUrl: thumbnailData.thumbnailUrl,
+      thumbnailFile: thumbnailData.thumbnailFile
+    });
+    setIsThumbnailModalOpen(false);
     setIsConfirmationModalOpen(true);
   };
 
@@ -263,14 +263,23 @@ export default function Home() {
         </div>
       )}
 
+      <ThumbnailModal
+        isOpen={isThumbnailModalOpen}
+        onConfirm={handleThumbnailConfirm}
+        onClose={() => setIsThumbnailModalOpen(false)}
+        title="Add Trip Thumbnail"
+        description="Choose a thumbnail image for your trip. This will help you identify your trip later."
+        showCategory={false}
+      />
+
       <ConfirmModal
         isOpen={isConfirmationModalOpen}
         onClose={() => setIsConfirmationModalOpen(false)}
         onConfirm={handleConfirm}
         title="Confirmation"
-        description="Are you sure you want to proceed with this action?"
-        loading={isSubmitting}
-        loadingText="Please wait..."
+        description="Are you sure you want to proceed with creating this trip?"
+        loading={isCreating}
+        loadingText="Creating Trip..."
       />
     </div>
   );

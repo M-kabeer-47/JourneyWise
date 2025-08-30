@@ -8,13 +8,14 @@ import Image from "next/image";
 
 interface ThumbnailModalProps {
   isOpen: boolean;
-  onConfirm: (data: { category: string; thumbnailUrl: string | null; thumbnailFile: File | null }) => void;
+  onConfirm: (data: { category?: string; thumbnailUrl: string | null; thumbnailFile: File | null }) => void;
   onClose: () => void;
   title: string;
   description: string;
   loading?: boolean;
   loadingText?: string;
   initialCategory?: string;
+  showCategory?: boolean;
 }
 
 const DEFAULT_THUMBNAILS = [
@@ -34,7 +35,8 @@ export default function ThumbnailModal({
   description,
   loading = false,
   loadingText = "Loading...",
-  initialCategory = ""
+  initialCategory = "",
+  showCategory = true
 }: ThumbnailModalProps) {
   const [selectedCategory, setSelectedCategory] = useState(initialCategory);
   const [categoryError, setCategoryError] = useState("");
@@ -42,23 +44,23 @@ export default function ThumbnailModal({
   const [uploadedThumbnail, setUploadedThumbnail] = useState<File | null>(null);
   const [uploadedThumbnailUrl, setUploadedThumbnailUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const [dragging, setDragging] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   if (!isOpen) return null;
 
   const handleDragOver = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragging(true);
+    setIsDragging(true);
   };
 
   const handleDragLeave = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragging(false);
+    setIsDragging(false);
   };
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
-    setDragging(false);
+    setIsDragging(false);
     const file = e.dataTransfer.files[0];
     if (file) {
       handleFileUpload({ target: { files: [file] } } as unknown as React.ChangeEvent<HTMLInputElement>);
@@ -103,14 +105,14 @@ export default function ThumbnailModal({
 
 
   const handleConfirm = () => {
-    if (!selectedCategory) {
+    if (showCategory && !selectedCategory) {
       setCategoryError("Please select a category");
       return;
     }
     setCategoryError("");
     
     const thumbnailData = {
-      category: selectedCategory,
+      ...(showCategory && { category: selectedCategory }),
       thumbnailUrl: selectedThumbnail,
       thumbnailFile: uploadedThumbnail
     };
@@ -172,21 +174,20 @@ export default function ThumbnailModal({
               {/* Description */}
               <p className="text-charcoal text-sm mb-6">{description}</p>
 
-              {/* Thumbnail Selection */}
-              
-
-              {/* Category Selection */}
-              <div className="mb-6">
-                <CategoryDropdown
-                  label="Blog Category"
-                  value={selectedCategory}
-                  onChange={setSelectedCategory}
-                  options={BLOG_CATEGORIES}
-                  placeholder="Select a category"
-                  error={categoryError}
-                  disabled={loading}
-                />
-              </div>
+              {/* Category Selection - Only show for blog */}
+              {showCategory && (
+                <div className="mb-6">
+                  <CategoryDropdown
+                    label="Blog Category"
+                    value={selectedCategory}
+                    onChange={setSelectedCategory}
+                    options={BLOG_CATEGORIES}
+                    placeholder="Select a category"
+                    error={categoryError}
+                    disabled={loading}
+                  />
+                </div>
+              )}
 
               <div className="mb-8">
                 <h3 className="text-sm sm:text-base font-semibold text-charcoal mb-4">Choose Thumbnail</h3>
@@ -204,8 +205,7 @@ export default function ThumbnailModal({
                   <button
                     onClick={handleThumbnailClick}
                     disabled={loading}
-                    className="w-full relative rounded-lg overflow-hidden border-2 border-dashed border-gray-300 
-                             hover:border-midnight-blue transition-colors duration-200 disabled:opacity-50 group"
+                    className={`w-full relative rounded-lg overflow-hidden border-2 border-dashed border-gray-300 hover:border-midnight-blue transition-colors duration-200 disabled:opacity-50 group ${isDragging ? "border-midnight-blue" : ""}`}
                   >
                     {currentThumbnail ? (
                       <div className="relative w-full h-48">

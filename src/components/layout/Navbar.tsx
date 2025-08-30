@@ -71,6 +71,25 @@ const navVariants = {
   },
 };
 
+
+const profileDropdownOptions = [
+  {
+    label: "Your Profile",
+    href: "/profile",
+    icon: <User size={16} />
+  },
+  {
+    label: "Messages",
+    href: "/messages",
+    icon: <MessageSquare size={16} />
+  },
+  {
+    label: "Settings",
+    href: "/settings",
+    icon: <Settings size={16} />
+  }
+];
+
 export default function Navbar() {
   
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -119,32 +138,8 @@ export default function Navbar() {
     dispatch(fetchUser())
   },[])
 
-  const getUserInitials = (name: string) => {
-    const nameParts = name.trim().split(" ");
-    if (nameParts.length >= 2) {
-      return `${nameParts[0][0]}${nameParts[1][0]}`.toUpperCase();
-    }
 
-    return nameParts[0].substring(0, 2).toUpperCase();
-  };
 
-  const profileDropdownOptions = [
-    {
-      label: "Your Profile",
-      href: "/profile",
-      icon: <User size={16} />
-    },
-    {
-      label: "Messages",
-      href: "/messages",
-      icon: <MessageSquare size={16} />
-    },
-    {
-      label: "Settings",
-      href: "/settings",
-      icon: <Settings size={16} />
-    }
-  ];
 
  
 

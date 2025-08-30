@@ -171,7 +171,7 @@ export function BlogCard({
   ];
 
   return (
-    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-[400px]">
+    <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-[410px] pb-[10px]">
       {/* Cover Image with Overlay */}
       <div className="relative h-56 p-3.5">
         <div className="relative w-full h-full overflow-hidden rounded-lg">

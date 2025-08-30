@@ -24,7 +24,7 @@ export const ProgressSteps = ({ steps, currentStep }: ProgressStepsProps) => {
               className={`w-9 h-9 sm:w-10 sm:h-10 rounded-full flex items-center justify-center mb-2 transition-colors relative
                 ${
                   i + 1 === currentStep
-                    ? "bg-ocean-blue text-white"
+                    ? "bg-midnight-blue text-white"
                     : i + 1 < currentStep
                     ? "bg-midnight-blue text-white"
                     : "bg-white text-gray-400 border border-gray-200"

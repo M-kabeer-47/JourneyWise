@@ -1,7 +1,9 @@
 import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 import { toast } from "@/components/ui/Toast";
+import {useAppSelector} from "@/hooks/redux";
 export default function usePublishBlog() {
+  const user = useAppSelector(state => state.user.user);
   const { mutateAsync, isPending } = useMutation({
     mutationFn: async (data: {
       title: string;
@@ -13,6 +15,10 @@ export default function usePublishBlog() {
       description: string
     }) => {
       try {
+        if (!user) {
+          toast.error("Please login to publish blog");
+          return;
+        }
         await axios.post(
           `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/publish-blog`,
           {
@@ -22,7 +28,8 @@ export default function usePublishBlog() {
             thumbnailUrl: data.thumbnailUrl || null,
             isPublished: data.isPublished,
             category: data.category || null,
-            description: data.description
+            description: data.description,
+            authorID: user.id
           }
         );
         if (data.isPublished) {

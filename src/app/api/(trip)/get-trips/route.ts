@@ -172,6 +172,7 @@ export async function GET(request: NextRequest) {
         currency: tripData.currency,
         createdAt: tripData.createdAt,
         updatedAt: tripData.updatedAt,
+        thumbnailUrl: tripData.thumbnailUrl,
         waypoints: tripData.waypoints || [],
         user: {
           id: tripData.userID,

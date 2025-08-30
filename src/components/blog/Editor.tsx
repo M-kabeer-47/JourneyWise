@@ -196,6 +196,7 @@ export default function Editor({
       return; // Function already shows toast error
     }
     setDescription(descriptionExtracted);
+    
     setIsThumbnailModalOpen(true);
   };
 
@@ -357,6 +358,7 @@ export default function Editor({
             onChange={handleEditorChange}
             onScroll={handleScroll}
             onPaste={handlePaste}
+            editable={isThumbnailModalOpen ? false : true}
             
           />
         </div>

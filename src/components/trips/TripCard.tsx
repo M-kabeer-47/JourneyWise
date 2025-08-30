@@ -62,44 +62,59 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
     
       className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-full flex flex-col"
     >
-      {/* Header with Route Visualization - Fixed Height */}
-      <div className="relative h-64 bg-gradient-to-br from-ocean-blue/10 to-midnight-blue/10 p-4 flex-shrink-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-ocean-blue/5 to-midnight-blue/5"></div>
+      {/* Header with Route Visualization or Thumbnail - Fixed Height */}
+      <div className="relative h-64 bg-gradient-to-br from-ocean-blue/10 to-midnight-blue/10 p-4 flex-shrink-0 overflow-hidden">
+        {trip.thumbnailUrl ? (
+          <>
+            <img
+              src={trip.thumbnailUrl}
+              alt={`Trip from ${trip.waypoints[0]?.name} to ${trip.waypoints[trip.waypoints.length - 1]?.name}`}
+              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent"></div>
+          </>
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-ocean-blue/5 to-midnight-blue/5"></div>
+        )}
 
-        {/* Route Path Visualization */}
-        <div className="relative h-full flex items-center justify-center">
-          <div className="flex items-center gap-2 max-w-full overflow-hidden">
-            {trip.waypoints && trip.waypoints.length > 0 ? (
-              trip.waypoints
-                .sort((a, b) => a.order - b.order)
-                .slice(0, 4)
-                .map((waypoint, index, array) => (
-                  <React.Fragment key={waypoint.id}>
-                    <div className="flex flex-col items-center">
-                      <div className="w-3 h-3 bg-ocean-blue rounded-full mb-1"></div>
-                      <span className="text-xs font-medium text-midnight-blue text-center max-w-16 truncate">
-                        {waypoint.city}
-                      </span>
-                    </div>
-                    {index < array.length - 1 && index < 3 && (
-                      <div className="flex-1 h-0.5 bg-ocean-blue/30 min-w-4 max-w-8"></div>
-                    )}
-                  </React.Fragment>
-                ))
-            ) : (
-              <div className="text-gray-400 text-sm">No route defined</div>
-            )}
+        {/* Route Path Visualization - Only show if no thumbnail */}
+        {!trip.thumbnailUrl && (
+          <div className="relative h-full flex items-center justify-center">
+            <div className="flex items-center gap-2 max-w-full overflow-hidden">
+              {trip.waypoints && trip.waypoints.length > 0 ? (
+                trip.waypoints
+                  .sort((a, b) => a.order - b.order)
+                  .slice(0, 4)
+                  .map((waypoint, index, array) => (
+                    <React.Fragment key={waypoint.id}>
+                      <div className="flex flex-col items-center">
+                        <div className="w-3 h-3 bg-ocean-blue rounded-full mb-1"></div>
+                        <span className="text-xs font-medium text-midnight-blue text-center max-w-16 truncate">
+                          {waypoint.city}
+                        </span>
+                      </div>
+                      {index < array.length - 1 && index < 3 && (
+                        <div className="flex-1 h-0.5 bg-ocean-blue/30 min-w-4 max-w-8"></div>
+                      )}
+                    </React.Fragment>
+                  ))
+              ) : (
+                <div className="text-gray-400 text-sm">No route defined</div>
+              )}
 
-            {trip.waypoints && trip.waypoints.length > 4 && (
-              <div className="text-xs text-ocean-blue font-medium">
-                +{trip.waypoints.length - 4} more
-              </div>
-            )}
+              {trip.waypoints && trip.waypoints.length > 4 && (
+                <div className="text-xs text-ocean-blue font-medium">
+                  +{trip.waypoints.length - 4} more
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+        {/* Gradient Overlay - Only for non-thumbnail cards */}
+        {!trip.thumbnailUrl && (
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300" />
+        )}
 
         {/* Top Row: Save Button */}
         {!isPersonal && (

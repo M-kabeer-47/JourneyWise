@@ -1,7 +1,7 @@
 import "./globals.css";
 import {  Raleway } from "next/font/google";
 import Providers from "../providers/Providers";
-
+import FetchUserFromClient from "@/providers/FetchUserFromClient";
 
 const raleway = Raleway({ subsets: ["latin"], variable: "--font-raleway" });
 
@@ -18,7 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${raleway.variable}`}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <FetchUserFromClient children={children} />
+        </Providers>
       </body>
     </html>
   );

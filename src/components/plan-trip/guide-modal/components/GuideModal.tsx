@@ -180,7 +180,7 @@ export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
             <button
               key={step}
               onClick={handleNext}
-              className="ml-auto text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-ocean-blue/50 active:bg-ocean-blue/80"
+              className="ml-auto text-xs sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5 rounded-lg text-sm font-medium bg-midnight-blue text-white hover:bg-midnight-blue/90 transition-all focus:outline-none focus:ring-2 focus:ring-midnight-blue/50 active:bg-midnight-blue/80"
             >
               {step === 4 ? "Start Planning" : "Continue"}
             </button>

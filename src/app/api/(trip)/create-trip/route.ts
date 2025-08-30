@@ -11,6 +11,7 @@ export async function POST(req:NextRequest){
         estimatedBudget: data.estimatedBudget,
         numOfPeople: data.numOfPeople,
         estimatedDistance: data.estimatedDistance,
+        thumbnailUrl: data.thumbnailUrl,
         currency: data.currency,
         createdAt: new Date(),
         updatedAt: new Date()

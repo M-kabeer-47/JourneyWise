@@ -14,6 +14,7 @@ export interface Trip {
     image?: string;
   };
   isSaved: boolean;
+  thumbnailUrl?: string;
 }
 
 export interface Waypoint {

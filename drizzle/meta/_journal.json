@@ -162,6 +162,20 @@
       "when": 1756440384153,
       "tag": "0022_bizarre_wallop",
       "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1756468997521,
+      "tag": "0023_long_leopardon",
+      "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1756469691086,
+      "tag": "0024_curved_goliath",
+      "breakpoints": true
     }
   ]
 }

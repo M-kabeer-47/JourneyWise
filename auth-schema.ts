@@ -225,6 +225,7 @@ export const trip = pgTable("trip", {
   numOfPeople: integer("numOfPeople").notNull(),
   estimatedDistance: integer("estimatedDistance").notNull(),
   currency: text("currency").notNull(),
+  thumbnailUrl:text("thumbnailUrl"),
   createdAt: timestamp("createdAt").notNull().default(new Date()),
   updatedAt: timestamp("updatedAt").notNull().default(new Date()),
 });

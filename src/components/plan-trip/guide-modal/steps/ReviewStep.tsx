@@ -33,8 +33,8 @@ export const ReviewStep = ({
           Confirm your trip details before we create your personalized plan.
         </p>
       </div>
-      <div className="">
-        <h3 className="font-medium text-charcoal mb-4">Trip Summary</h3>
+      <div className="relative top-[-10px]">
+        <h3 className="font-medium text-charcoal mb-4 ">Trip Summary</h3>
         <div className="grid grid-cols-2 gap-6">
           <div className="space-y-1">
             <p className="text-sm text-gray-500">Start Location</p>

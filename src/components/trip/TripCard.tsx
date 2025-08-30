@@ -31,6 +31,7 @@ interface Trip {
   createdAt: string;
   updatedAt: string;
   isSaved: boolean;
+  thumbnailUrl?: string;
 }
 
 interface TripCardProps {
@@ -85,8 +86,8 @@ export default function TripCard({
   }, []);
 
   const coverImage = useMemo(
-    () => getFirstImageFromWaypoints(trip.waypoints),
-    [trip.waypoints]
+    () => trip.thumbnailUrl || getFirstImageFromWaypoints(trip.waypoints),
+    [trip.thumbnailUrl, trip.waypoints]
   );
 
   const handleSaveToggle = (e: React.MouseEvent) => {
