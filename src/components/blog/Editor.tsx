@@ -55,8 +55,8 @@ export default function Editor({
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isThumbnailModalOpen, setIsThumbnailModalOpen] = useState(false);
   const [coverImage, setCoverImage] = useState<File | null>(null);
-  const [thumbnailImage, setThumbnailImage] = useState<File | null>(null);
-  const [thumbnailUrl, setThumbnailUrl] = useState<string | null>(null);
+
+  const [thumbnailUrl, setThumbnailUrl] = useState<File | string | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string>("");
   const [description, setDescription] = useState("");
   const [isSavedDraftClicked, setIsSavedDraftClicked] = useState(false);
@@ -101,6 +101,7 @@ export default function Editor({
       // Extract text content from the paragraph block
       let textContent = "";
       firstParagraphBlock.content.forEach((content) => {
+        //@ts-ignore
         textContent += content.text;
       });
       alert("Text Content: " + JSON.stringify(textContent));
@@ -154,7 +155,7 @@ export default function Editor({
     setCoverImage(file);
     const url = URL.createObjectURL(file);
     setCoverUrl(url);
-    
+
     if (type === "create") {
       // Convert file to base64 for persistent storage
       const reader = new FileReader();
@@ -191,18 +192,21 @@ export default function Editor({
       return;
     }
     const descriptionExtracted = extractDescriptionFromBlocks();
-    
+
     if (!descriptionExtracted) {
       return; // Function already shows toast error
     }
     setDescription(descriptionExtracted);
-    
+
     setIsThumbnailModalOpen(true);
   };
 
-  const handleThumbnailModalConfirm = async (data: { category: string; thumbnailUrl: string | null; thumbnailFile: File | null }) => {
-    setSelectedCategory(data.category);
-    setThumbnailImage(data.thumbnailFile);
+  const handleThumbnailModalConfirm = async (data: {
+    category?: string;
+    thumbnailUrl: File | string | null;
+  }) => {
+    setSelectedCategory(data.category || "");
+
     setThumbnailUrl(data.thumbnailUrl);
     setIsThumbnailModalOpen(false);
     setIsConfirmModalOpen(true);
@@ -215,9 +219,9 @@ export default function Editor({
         finalCoverUrl = await uploadToCloudinary(coverImage);
       }
 
-      let finalThumbnailUrl = thumbnailUrl;
-      if (thumbnailImage !== null) {
-        finalThumbnailUrl = await uploadToCloudinary(thumbnailImage);
+      let finalThumbnailUrl = "";
+      if (thumbnailUrl !== null) {
+        finalThumbnailUrl = await uploadToCloudinary(thumbnailUrl);
       }
 
       const html = await editor.blocksToFullHTML(editor.document);
@@ -298,20 +302,22 @@ export default function Editor({
       const savedCoverName = localStorage.getItem("blog-cover-name");
       const savedCoverType = localStorage.getItem("blog-cover-type");
       const savedDraft = localStorage.getItem("blog-draft");
-      
+
       if (savedDraft) {
         alert("Found saved draft");
         editor.replaceBlocks(editor.document, JSON.parse(savedDraft));
       }
-      
+
       if (savedTitle && savedTitle.trim()) setTitle(savedTitle);
-      
+
       if (savedCover && savedCoverName && savedCoverType) {
         // Convert base64 back to File object
         fetch(savedCover)
-          .then(res => res.blob())
-          .then(blob => {
-            const file = new File([blob], savedCoverName, { type: savedCoverType });
+          .then((res) => res.blob())
+          .then((blob) => {
+            const file = new File([blob], savedCoverName, {
+              type: savedCoverType,
+            });
             setCoverImage(file);
             setCoverUrl(savedCover); // Use base64 directly as URL
           })
@@ -359,7 +365,6 @@ export default function Editor({
             onScroll={handleScroll}
             onPaste={handlePaste}
             editable={isThumbnailModalOpen ? false : true}
-            
           />
         </div>
       </div>

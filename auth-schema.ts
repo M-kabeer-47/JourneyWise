@@ -233,7 +233,7 @@ export const blog = pgTable("blog", {
   id: uuid("id").primaryKey().defaultRandom(),
   title: text("title").notNull(),
   content: text("content").notNull(),
-  isPublished: boolean("isPublished").default(false),
+  isPublished: boolean("isPublished").default(true),
   authorID: text("authorID")
     .notNull()
     .references(() => user.id),

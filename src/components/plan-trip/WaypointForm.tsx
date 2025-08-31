@@ -42,13 +42,13 @@ interface WaypointFormProps {
   };
   onAdd: () => void;
   onFinish: (data: TripData) => void;
-
   onImageUpload: (file: File) => void;
   onRemove: () => void;
   isGuideModalOpen: boolean;
   inValid: (data: TripData) => void;
   isGuideOpen: boolean;
   setIsGuideOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  isEditMode?: boolean;
 }
 
 const formVariants = {
@@ -70,6 +70,7 @@ export const WaypointForm = ({
   isGuideModalOpen,
   isGuideOpen,
   setIsGuideOpen,
+  isEditMode = false,
 }: WaypointFormProps) => {
   const { register, setValue, control, handleSubmit, errors } = form;
 
@@ -263,7 +264,7 @@ export const WaypointForm = ({
           onClick={() => console.log("data", errors)}
           className="px-6 py-2 rounded-lg text-sm font-medium bg-midnight-blue text-white hover:bg-midnight-blue/90 transition-all "
         >
-          Finish Planning
+          {isEditMode ? "Update Trip" : "Finish Planning"}
         </button>
       </div>
     </motion.div>

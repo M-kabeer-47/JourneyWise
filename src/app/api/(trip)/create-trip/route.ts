@@ -1,18 +1,27 @@
 import { NextRequest,NextResponse } from "next/server"
 import {trip} from "@/../auth-schema"
 import db from "@/lib/server/db"
+import { tripSchema } from "@/lib/schemas/trip"
 
 export async function POST(req:NextRequest){
-    let {data} = await req.json()
+    let tripData = await req.json()
+    console.log("Trip data received:", tripData);
+    const isValidTripData = tripSchema.safeParse(tripData);
+    if (!isValidTripData.success) {
+      return NextResponse.json(
+        { message: "Invalid trip data",errors:isValidTripData.error.errors },
+        { status: 400 }
+      );
+    }
+    else if(isValidTripData.success){
+      return NextResponse.json(
+        { message: "Trip created successfully" },
+        { status: 200 }
+      );
+    }
     try{
     await db.insert(trip).values({
-        userID: data.userID,
-        waypoints: data.waypoints,
-        estimatedBudget: data.estimatedBudget,
-        numOfPeople: data.numOfPeople,
-        estimatedDistance: data.estimatedDistance,
-        thumbnailUrl: data.thumbnailUrl,
-        currency: data.currency,
+      ...isValidTripData.data,
         createdAt: new Date(),
         updatedAt: new Date()
     })

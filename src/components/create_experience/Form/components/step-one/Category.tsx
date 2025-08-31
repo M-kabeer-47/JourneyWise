@@ -12,6 +12,7 @@ interface CategoryDropdownProps {
   options: string[];
   label?: string;
   name?: string; // For form field identification
+  setCategoryError?: (error: string) => void;
 }
 
 export default function CategoryDropdown({
@@ -25,6 +26,7 @@ export default function CategoryDropdown({
   options,
   label,
   name,
+  setCategoryError,
 }: CategoryDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -48,7 +50,8 @@ export default function CategoryDropdown({
   }, [onBlur]);
 
   const handleSelect = (option: string) => {
-    onChange(option); // This will now call field.onChange from Controller
+    onChange(option);
+    setCategoryError("") 
     setIsOpen(false);
     setFocused(false);
     onBlur?.();

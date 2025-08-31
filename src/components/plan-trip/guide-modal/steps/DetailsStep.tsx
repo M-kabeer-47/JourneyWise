@@ -2,14 +2,14 @@ import { motion } from "framer-motion";
 import { Users, Wallet, Clock, Route } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { DetailsStepData, detailsStepSchema } from "@/lib/schemas/trip";
+import { GuideData,guideDataSchema } from "@/lib/schemas/trip";
 import CurrencySelector from "@/components/ui/CurrencySelector";
 import { Currency } from "@/lib/constants/currencies";
 import { currencies } from "@/lib/constants/currencies";
 interface DetailsStepProps {
-  initialData?: Partial<DetailsStepData>;
+  initialData?: Partial<GuideData>;
   currencies: Currency[];
-  onNext: (data: DetailsStepData) => void;
+  onNext: (data: GuideData) => void;
 }
 
 export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
@@ -19,12 +19,11 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
     control,
     watch,
     formState: { errors },
-  } = useForm<DetailsStepData>({
-    resolver: zodResolver(detailsStepSchema),
+  } = useForm<GuideData>({
+    resolver: zodResolver(guideDataSchema),
     defaultValues: {
       numOfPeople: initialData?.numOfPeople || undefined,
       estimatedBudget: initialData?.estimatedBudget || undefined,
-
       estimatedDistance: initialData?.estimatedDistance || undefined,
       currency: initialData?.currency || "USD",
     },
@@ -33,7 +32,7 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
   const selectedCurrency =
     currencies.find((c) => c.code === watch("currency")) || currencies[0];
 
-  const onSubmit = (data: DetailsStepData) => {
+  const onSubmit = (data: GuideData) => {
     onNext(data);
   };
 

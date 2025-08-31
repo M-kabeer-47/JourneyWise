@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { blog } from "@/../auth-schema";
 import { eq } from "drizzle-orm";
 import db from "@/lib/server/db";
-import { Blog } from "@/lib/types/blog";
+import { partialBlogSchema } from "@/lib/schemas/blog";
 
 export async function PUT(
   request: NextRequest,
@@ -10,13 +10,19 @@ export async function PUT(
 ) {
   const { id } = await params;
   const blogData = await request.json();
-  if(!blogData){
+  const isValidBlogData = partialBlogSchema.safeParse(blogData);
+  if (!isValidBlogData.success) {
     return NextResponse.json(
-      { message: "Invalid trip data" },
+      { message: "Invalid blog data" },
       { status: 400 }
     );
   }
-  
+  else if(isValidBlogData.success){
+    return NextResponse.json(
+      { message: "Blog updated successfully" },
+      { status: 200 }
+    );
+  }
   try {
     await db
       .update(blog)

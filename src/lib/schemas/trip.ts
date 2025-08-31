@@ -6,7 +6,7 @@ export const locationStepSchema = z.object({
   endLocation: z.string().min(1, "End location is required"),
 });
 
-export const detailsStepSchema = z.object({
+export const guideDataSchema = z.object({
   numOfPeople: z
     .number({ invalid_type_error: "Number of people is required" })
     .min(1, "Number of people is required"),
@@ -18,45 +18,58 @@ export const detailsStepSchema = z.object({
     .number({ invalid_type_error: "Distance is required" })
     .min(1, "Distance is required"),
   currency: z.string().min(1, "Currency is required"),
+  startLocation: z.string().optional(),
+  endLocation: z.string().optional(),
 });
 
 // Combined guide data schema
-export const guideDataSchema = locationStepSchema.merge(detailsStepSchema);
 
 // Waypoint schema (simplified)
-export const waypointSchema = z.object({
-  id: z.string(),
-  name: z.string().min(1, "Name is required"),
-  description: z
-    .string()
-    .min(1, "Description is required")
-    .min(10, "Description must be at least 10 characters"),
-  type: z.enum(["start", "end", "stop", "attraction"]),
-  hotels: z
-    .array(
-      z.object({
-        id: z.string(),
-        name: z.string().min(1, "Name is required"),
-        detailsLink: z.string().optional(),
-        locationLink: z.string().optional(),
-      })
-    )
-    .optional(),
-  imageUrl: z.union([z.string(), z.instanceof(File)]).optional(),
-});
+export const waypointSchema = z
+  .object({
+    id: z.string(),
+    name: z.string().min(1, "Name is required"),
+    description: z
+      .string()
+      .min(1, "Description is required")
+      .min(10, "Description must be at least 10 characters"),
+    type: z.enum(["start", "end", "stop", "attraction"]),
+    hotels: z
+      .array(
+        z
+          .object({
+            id: z.string(),
+            name: z.string().min(1, "Name is required"),
+            detailsLink: z.string().optional(),
+            locationLink: z.string().optional(),
+          })
+          .strict()
+      )
+      .optional(),
+    imageUrl: z.union([z.string(), z.instanceof(File)]).optional(),
+  })
+  .strict();
 
 // Only waypoints array for the main form
-export const waypointsSchema = z.object({
-  waypoints: z.array(waypointSchema),
-});
+export const waypointsSchema = z
+  .object({
+    waypoints: z.array(waypointSchema),
+  })
+  
 
-export const tripSchema = waypointsSchema.merge(detailsStepSchema);
-
+let tempTripSchema = z
+  .object({
+    userID: z.string(),
+    thumbnailUrl: z.string(),
+  })
+  .strict();
+export const tripSchema = tempTripSchema
+  .merge(waypointsSchema).merge(guideDataSchema)
+  .strict();
 export const partialTripSchema = tripSchema.partial();
 
 // Types
 export type LocationStepData = z.infer<typeof locationStepSchema>;
-export type DetailsStepData = z.infer<typeof detailsStepSchema>;
 export type GuideData = z.infer<typeof guideDataSchema>;
 export type WaypointData = z.infer<typeof waypointSchema>;
 export type TripData = z.infer<typeof tripSchema>;

@@ -6,26 +6,8 @@ export default async function middleware(req: NextRequest) {
     const { pathname } = req.nextUrl
     console.log("Pathname",pathname)
     // Define public paths that don't need authentication
-    const publicPaths = [
-        '/api/(auth)',
-        '/api/get-blogs',
-        '/api/get-blog',
-        '/api/get-experiences',
-        '/api/get-experience',
-        '/api/get-trip',
-        '/api/get-trips',
-    ]
-
-    // Check if current path is public
-    const isPublicPath = publicPaths.some(path => 
-        pathname.startsWith(path.replace('(auth)', '')) || 
-        pathname.includes('/(auth)/')
-    )
-
-    if (isPublicPath) {
-        return NextResponse.next()
-    }
-
+   
+    console.log("Pathname",pathname)
     // For protected paths, check authentication
     let session = await getSessionCookie(req)
     if (!session) {
@@ -38,7 +20,13 @@ export default async function middleware(req: NextRequest) {
 // Configure which paths this middleware runs on
 export const config = {
     matcher: [
-        '/api/publish-blog/:path',
+        '/api/get-blogs',
+        '/api/get-blog',
+        '/api/get-experiences',
+        '/api/get-experience',
+        '/api/get-trip',
+        '/api/get-trips',
+        '/api/publish-blog',
         '/api/update-blog/:path',
         '/api/delete-blog/:path',
         '/api/get-user-blogs/:path',
@@ -54,6 +42,8 @@ export const config = {
         '/api/get-user-trips/:path',
         '/dashboard/:path',
         '/create-experience/:path',
+        '/blog',
+        '/blog/:edit/:id',
         '/plan-trip/:path',
         '/profile/:path'
     ]

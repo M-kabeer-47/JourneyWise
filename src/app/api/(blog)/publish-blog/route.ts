@@ -1,24 +1,28 @@
 import { NextRequest, NextResponse } from "next/server";
 import { blog } from "@/../auth-schema";
 import db from "@/lib/server/db";
-export async function POST(request: NextRequest) {
-  const { content, title, coverUrl, thumbnailUrl, category, isPublished, description, authorID } =
-    await request.json();
+import { blogSchema } from "@/lib/schemas/blog";
 
+
+export async function POST(request: NextRequest) {
+  const blogData = await request.json();
+  const isValidBlogData = blogSchema.safeParse(blogData);
+  if (!isValidBlogData.success) {
+    return NextResponse.json(
+      { message: "Invalid blog data" , error: isValidBlogData.error.errors},
+      { status: 400 }
+    );
+
+  }
+
+ 
   try {
     let result = await db
       .insert(blog)
       .values({
-        title,
-        content,
-        isPublished,
-        authorID,
+        ...isValidBlogData.data,
         createdAt: new Date(),
         updatedAt: new Date(),
-        description,
-        coverUrl: coverUrl || null,
-        thumbnailUrl: thumbnailUrl || null,
-        category: category || null,
       })
       .returning({
         id: blog.id,

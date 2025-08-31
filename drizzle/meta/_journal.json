@@ -176,6 +176,13 @@
       "when": 1756469691086,
       "tag": "0024_curved_goliath",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1756606612179,
+      "tag": "0025_petite_ghost_rider",
+      "breakpoints": true
     }
   ]
 }

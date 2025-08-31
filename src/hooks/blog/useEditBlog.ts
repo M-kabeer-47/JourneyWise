@@ -17,7 +17,7 @@ export default function useEditBlog() {
     }) => {
       try {
         let response = await axios.put(
-          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/update-blog/${data.id}`,
+          `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/edit-blog/${data.id}`,
           {
             title: data.title,
             content: data.html,

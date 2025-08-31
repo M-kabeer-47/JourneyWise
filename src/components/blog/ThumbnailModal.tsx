@@ -8,7 +8,7 @@ import Image from "next/image";
 
 interface ThumbnailModalProps {
   isOpen: boolean;
-  onConfirm: (data: { category?: string; thumbnailUrl: string | null; thumbnailFile: File | null }) => void;
+  onConfirm: (data: { category?: string; thumbnailUrl: File | string | null; }) => void;
   onClose: () => void;
   title: string;
   description: string;
@@ -94,29 +94,43 @@ export default function ThumbnailModal({
   };
 
   const handleDefaultThumbnailSelect = (thumbnailUrl: string) => {
+    console.log("ThumbnailModal - handleDefaultThumbnailSelect called with:", thumbnailUrl);
     setSelectedThumbnail(thumbnailUrl);
     setUploadedThumbnail(null);
     if (uploadedThumbnailUrl) {
       URL.revokeObjectURL(uploadedThumbnailUrl);
       setUploadedThumbnailUrl(null);
     }
+    console.log("ThumbnailModal - selectedThumbnail set to:", thumbnailUrl);
   };
 
 
 
   const handleConfirm = () => {
+    // Only validate category if showCategory is true
     if (showCategory && !selectedCategory) {
       setCategoryError("Please select a category");
       return;
     }
+    
+    // Validate that user has selected either uploaded or default thumbnail
+    if (!uploadedThumbnail && !selectedThumbnail) {
+      // For trip planning, we might want to allow no thumbnail
+      // But let's add a console log to see if this is the issue
+      console.log("ThumbnailModal - No thumbnail selected");
+    }
+    
     setCategoryError("");
+    
+    console.log("ThumbnailModal - uploadedThumbnail:", uploadedThumbnail);
+    console.log("ThumbnailModal - selectedThumbnail:", selectedThumbnail);
     
     const thumbnailData = {
       ...(showCategory && { category: selectedCategory }),
-      thumbnailUrl: selectedThumbnail,
-      thumbnailFile: uploadedThumbnail
+      thumbnailUrl: uploadedThumbnail || selectedThumbnail,
     };
     
+    console.log("ThumbnailModal - final thumbnailData:", thumbnailData);
     onConfirm(thumbnailData);
   };
 
@@ -184,6 +198,7 @@ export default function ThumbnailModal({
                     options={BLOG_CATEGORIES}
                     placeholder="Select a category"
                     error={categoryError}
+                    setCategoryError={setCategoryError}
                     disabled={loading}
                   />
                 </div>

@@ -10,7 +10,7 @@ import { LocationStep } from "../steps/LocationStep";
 import { DetailsStep } from "../steps/DetailsStep";
 import { NextStepsStep } from "../steps/WhatsNextStep";
 import { ReviewStep } from "../steps/ReviewStep";
-import { GuideData, LocationStepData, DetailsStepData } from "@/lib/schemas/trip";
+import { GuideData, LocationStepData } from "@/lib/schemas/trip";
 
 interface Step {
   title: string;
@@ -21,18 +21,19 @@ interface Step {
 interface GuideModalProps {
   isOpen: boolean;
   onComplete: (tripDetails: GuideData) => void;
+  initialData?: Partial<GuideData>;
 }
 
-export const GuideModal = ({ isOpen, onComplete }: GuideModalProps) => {
+export const GuideModal = ({ isOpen, onComplete,initialData }: GuideModalProps) => {
   const [step, setStep] = useState(1);
-  const [guideData, setGuideData] = useState<Partial<GuideData>>({});
+  const [guideData, setGuideData] = useState<Partial<GuideData>>(initialData || {});
 
   const handleLocationNext = (data: LocationStepData) => {
     setGuideData((prev) => ({ ...prev, ...data }));
     setStep(2);
   };
 
-  const handleDetailsNext = (data: DetailsStepData) => {
+  const handleDetailsNext = (data: GuideData) => {
     const completedData = { ...guideData, ...data } as GuideData;
     setGuideData(completedData);
     setStep(3);
