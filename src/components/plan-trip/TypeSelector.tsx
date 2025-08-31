@@ -32,8 +32,8 @@ const TypeSelector = ({
       }}
       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
         type === "attraction"
-          ? "text-white bg-ocean-blue"
-          : "text-charcoal hover:text-ocean-blue"
+          ? "text-white bg-midnight-blue"
+          : "text-charcoal hover:text-midnight-blue"
       }`}
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
@@ -42,7 +42,7 @@ const TypeSelector = ({
           layoutId="bubble"
           className="absolute inset-0"
           style={{ borderRadius: 8 }}
-          transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
+          transition={{ type: "slide", duration: 0.1 }}
         />
       )}
       <span className="relative z-10 font-[Open Sans]">Attraction</span>
@@ -61,17 +61,17 @@ const TypeSelector = ({
       }}
       className={`px-4 py-2 rounded-lg text-sm font-medium transition-all relative ${
         type === "stop"
-          ? "text-white bg-ocean-blue"
-          : "text-charcoal hover:text-ocean-blue"
+          ? "text-white bg-midnight-blue"
+          : "text-charcoal hover:text-midnight-blue"
       }`}
       style={{ WebkitTapHighlightColor: "transparent" }}
     >
       {type === "stop" && (
         <motion.div
           layoutId="bubble"
-          className="absolute inset-0 bg-ocean-blue"
+          className="absolute inset-0 bg-midnight-blue"
           style={{ borderRadius: 8 }}
-          transition={{ type: "spring", bounce: 0.2, duration: 0.3 }}
+          transition={{ type: "slide", duration: 0.1 }}
         />
       )}
       <span className="relative z-10">Stop</span>

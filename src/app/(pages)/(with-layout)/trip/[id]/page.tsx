@@ -10,6 +10,7 @@ import {
   Train,
   ArrowRight,
   BanknoteIcon,
+  Edit3,
 } from "lucide-react";
 import { WaypointTimeline } from "@/components/plan-trip/WaypointTimeline";
 import InformationCardsSection from "@/components/trip/InformationCardsSection";
@@ -138,7 +139,7 @@ export default function TripDisplayPage() {
               </div>
             </div>
 
-            {/* Trip author info */}
+            {/* Trip author info and Edit button */}
             <div className="mt-6 flex items-center justify-center gap-3">
               <div className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
                 {user.avatar ? (
@@ -156,6 +157,17 @@ export default function TripDisplayPage() {
               <span className="text-sm text-blue-100">
                 Created by {user.name}
               </span>
+            </div>
+
+            {/* Edit Trip Button */}
+            <div className="mt-6 flex justify-center">
+              <button
+                onClick={() => router.push(`/trip/${tripId}/edit`)}
+                className="inline-flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm border border-white/20 text-white px-6 py-3 rounded-full font-medium transition-all duration-200 hover:scale-105"
+              >
+                <Edit3 className="w-4 h-4" />
+                Edit Trip
+              </button>
             </div>
           </motion.div>
         </div>

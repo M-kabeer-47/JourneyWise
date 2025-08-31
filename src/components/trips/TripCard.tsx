@@ -213,7 +213,7 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
         {/* Action Link for non-personal mode */}
         {!isPersonal && (
           <div className="flex justify-end mb-4">
-            <Link href={`/trips/${trip.id}`}>
+            <Link href={`/trip/${trip.id}`}>
               <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium">
                 <span>View Details</span>
                 <svg

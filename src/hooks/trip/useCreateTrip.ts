@@ -54,16 +54,19 @@ export default function useCreateTrip() {
             return waypoint;
           })
         );
-
+        
         // Prepare final data
         const finalTripData = {
           userID: user.id,
-          ...data.guideDetails,
+          numOfPeople:data.guideDetails.numOfPeople,
+          estimatedBudget:data.guideDetails.estimatedBudget,
+          estimatedDistance:data.guideDetails.estimatedDistance,
+          currency:data.guideDetails.currency,
           waypoints: waypointsWithUploadedImages,
           thumbnailUrl: uploadedThumbnailUrl,
         };
 
-        await axios.post("/api/create-trip",  finalTripData );
+        await axios.post("/api/create-trip",  finalTripData);
         toast.success("Trip planned successfully");
 
         return finalTripData;

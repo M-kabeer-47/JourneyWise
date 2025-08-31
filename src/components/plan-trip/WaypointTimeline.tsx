@@ -382,6 +382,9 @@ export function WaypointTimeline({
         URL.createObjectURL(waypoints[activeIndex].imageUrl as File)
       );
     }
+    else{
+      setPreviewUrl(waypoints[activeIndex]?.imageUrl as string);
+    }
     return () => {
       URL.revokeObjectURL(previewUrl);
     };

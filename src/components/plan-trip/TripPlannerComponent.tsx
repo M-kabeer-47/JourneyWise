@@ -245,7 +245,7 @@ export default function TripPlannerComponent({
       {/* Guide Settings Button - Always visible */}
       <Button
         onClick={handleOpenGuideModal}
-        className="fixed top-4 right-4 z-50 bg-blue-600 hover:bg-blue-700"
+        className="fixed top-4 right-4 z-50  border-[1px] border-ocean-blue bg-white text-ocean-blue hover:bg-white "
         size="sm"
       >
         <Settings className="w-4 h-4 mr-2" />

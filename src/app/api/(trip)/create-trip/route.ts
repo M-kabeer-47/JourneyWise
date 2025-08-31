@@ -13,12 +13,7 @@ export async function POST(req:NextRequest){
         { status: 400 }
       );
     }
-    else if(isValidTripData.success){
-      return NextResponse.json(
-        { message: "Trip created successfully" },
-        { status: 200 }
-      );
-    }
+   
     try{
     await db.insert(trip).values({
       ...isValidTripData.data,

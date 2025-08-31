@@ -166,7 +166,7 @@ export const WaypointForm = ({
                 <button
                   onClick={handleAddHotel}
                   type="button"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium bg-ocean-blue text-white hover:bg-ocean-blue/90 transition-all"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-mediumborder bg-midnight-blue text-white hover:bg-midnight-blue/90 transition-all"
                 >
                   <Plus className="w-4 h-4" />
                   Add Hotel
