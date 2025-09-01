@@ -15,7 +15,7 @@ export default {
   		colors: {
   			background: 'hsl(var(--background))',
   			foreground: 'hsl(var(--foreground))',
-  			'midnight-blue': '#003366',
+  			'midnight-blue': '#003C7D',
   			'ocean-blue': '#0077B6',
   			'light-gray': '#F5F5F5',
 			  Accent: {

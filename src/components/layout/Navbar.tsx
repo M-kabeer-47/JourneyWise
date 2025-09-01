@@ -48,28 +48,7 @@ const navLinks = [
   { name: "Help", href: "/help", icon: <MapPin size={20} /> },
 ];
 
-const navVariants = {
-  hidden: {
-    y: -100,
-    opacity: 0,
-  },
-  visible: {
-    y: 0,
-    opacity: 1,
-    transition: {
-      type: "spring",
-      stiffness: 260,
-      damping: 20,
-    },
-  },
-  exit: {
-    y: -100,
-    opacity: 0,
-    transition: {
-      duration: 0.3,
-    },
-  },
-};
+
 
 
 const profileDropdownOptions = [
@@ -134,9 +113,7 @@ export default function Navbar() {
   }, [isMenuOpen, isSearchOpen]);
 
   
-  useEffect(() => {
-    dispatch(fetchUser())
-  },[])
+  
 
 
 
@@ -147,13 +124,13 @@ export default function Navbar() {
     <AnimatePresence mode="wait">
       <motion.nav
         key="navbar"
-        variants={navVariants}
+        
         initial="hidden"
         animate="visible"
         exit="exit"
         className={`fixed w-full z-50 transition-all duration-300 ${
           !isScrolled && pathName === "/"
-            ? "bg-transparent"
+            ? "bg-midnight-blue"
             : "bg-midnight-blue"
         }`}
       >

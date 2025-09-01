@@ -4,7 +4,6 @@ import { motion } from "framer-motion";
 import { 
   User, 
   Mail, 
-  Shield, 
   CheckCircle, 
   AlertCircle, 
   Save,
@@ -36,40 +35,29 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     bio: user?.bio || "",
   });
   
-  const [passwordData, setPasswordData] = useState({
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  });
-
-  const [showPasswords, setShowPasswords] = useState({
-    current: false,
-    new: false,
-    confirm: false,
-  });
-
+  const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
   const [isLoading, setIsLoading] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
   const handleProfileUpdate = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    // TODO: Implement profile update API call
+    alert("Form Data: " + JSON.stringify(formData));
+    // TODO: Implement profile update API call including image upload
     setTimeout(() => setIsLoading(false), 1000);
   };
 
-  const handlePasswordChange = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (passwordData.newPassword !== passwordData.confirmPassword) {
-      alert("New passwords don't match");
-      return;
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setProfileImage(file);
+      const reader = new FileReader();
+      reader.onload = () => {
+        setImagePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
     }
-    setIsLoading(true);
-    // TODO: Implement password change API call
-    setTimeout(() => {
-      setIsLoading(false);
-      setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" });
-    }, 1000);
   };
 
   const handleEmailVerification = async () => {
@@ -96,9 +84,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
-            <User className="w-5 h-5 text-ocean-blue" />
-          </div>
           <div>
             <h2 className="text-xl font-bold text-midnight-blue font-raleway">
               Profile Information
@@ -110,54 +95,101 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         </div>
 
         <form onSubmit={handleProfileUpdate} className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-2">
-                Full Name
+          {/* Profile Picture Section */}
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
+            <div className="relative">
+              <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow-lg">
+                {imagePreview ? (
+                  <Image
+                    src={imagePreview}
+                    alt="Profile"
+                    width={96}
+                    height={96}
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center bg-ocean-blue/10">
+                    <User className="w-8 h-8 text-midnight-blue" />
+                  </div>
+                )}
+              </div>
+              <label
+                htmlFor="profile-image"
+                className="absolute -bottom-2 -right-2 w-8 h-8 bg-ocean-blue rounded-full flex items-center justify-center cursor-pointer hover:bg-ocean-blue/90 transition-colors shadow-lg"
+              >
+                <Camera className="w-4 h-4 text-white" />
+                <input
+                  id="profile-image"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </label>
-              <input
-                type="text"
-                value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors"
-                placeholder="Enter your full name"
-              />
             </div>
             
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-2">
-                Email Address
+            <div className="flex-1">
+              <h3 className="font-medium text-charcoal mb-2">Profile Picture</h3>
+              <p className="text-sm text-gray-600 mb-3">
+                Upload a new profile picture. JPG, PNG or GIF (max 5MB).
+              </p>
+              <label
+                htmlFor="profile-image-2"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors cursor-pointer"
+              >
+                <Upload className="w-4 h-4" />
+                Choose File
+                <input
+                  id="profile-image-2"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageChange}
+                  className="hidden"
+                />
               </label>
-              <input
-                type="email"
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors"
-                placeholder="Enter your email"
-              />
             </div>
           </div>
 
-          <div>
-            <label className="block text-sm font-medium text-charcoal mb-2">
-              Bio
-            </label>
-            <textarea
-              value={formData.bio}
-              onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-              rows={4}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors resize-none"
-              placeholder="Tell us about yourself..."
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <FormInput
+              id="name"
+              label="Full Name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter your full name"
+              
+              required
+            />
+            
+            <FormInput
+              id="email"
+              label="Email Address"
+              type="email"
+              value={formData.email}
+              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+              placeholder="Enter your email"
+              required
             />
           </div>
+
+          <FormInput
+            id="bio"
+            label="Bio"
+            value={formData.bio}
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
+            placeholder="Tell us about yourself..."
+            isTextArea={true}
+            rows={4}
+          />
 
           <div className="flex justify-end">
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-3 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50"
+              className="flex items-center justify-center gap-2 px-2 w-[170px] py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
             >
-              <Save className="w-4 h-4" />
+             
               {isLoading ? "Saving..." : "Save Changes"}
             </button>
           </div>
@@ -172,8 +204,8 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-            <Mail className="w-5 h-5 text-green-600" />
+          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+            <Mail className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-midnight-blue font-raleway">
@@ -206,7 +238,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             <button
               onClick={handleEmailVerification}
               disabled={isLoading}
-              className="px-4 py-2 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 text-sm"
+              className="px-2 py-2 bg-midnight-blue w-[170px] text-center  text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50"
             >
               {isLoading ? "Sending..." : "Verify Email"}
             </button>
@@ -214,7 +246,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         </div>
       </motion.div>
 
-      {/* Password Change */}
+      {/* Account Status */}
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -222,111 +254,8 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
-            <Shield className="w-5 h-5 text-orange-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
-              Change Password
-            </h2>
-            <p className="text-sm text-gray-600">
-              Update your password to keep your account secure
-            </p>
-          </div>
-        </div>
-
-        <form onSubmit={handlePasswordChange} className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-charcoal mb-2">
-              Current Password
-            </label>
-            <div className="relative">
-              <input
-                type={showPasswords.current ? "text" : "password"}
-                value={passwordData.currentPassword}
-                onChange={(e) => setPasswordData({ ...passwordData, currentPassword: e.target.value })}
-                className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors"
-                placeholder="Enter current password"
-              />
-              <button
-                type="button"
-                onClick={() => setShowPasswords({ ...showPasswords, current: !showPasswords.current })}
-                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-              >
-                {showPasswords.current ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-              </button>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-2">
-                New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.new ? "text" : "password"}
-                  value={passwordData.newPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, newPassword: e.target.value })}
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors"
-                  placeholder="Enter new password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords({ ...showPasswords, new: !showPasswords.new })}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPasswords.new ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-charcoal mb-2">
-                Confirm New Password
-              </label>
-              <div className="relative">
-                <input
-                  type={showPasswords.confirm ? "text" : "password"}
-                  value={passwordData.confirmPassword}
-                  onChange={(e) => setPasswordData({ ...passwordData, confirmPassword: e.target.value })}
-                  className="w-full px-4 py-3 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:border-ocean-blue transition-colors"
-                  placeholder="Confirm new password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPasswords({ ...showPasswords, confirm: !showPasswords.confirm })}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
-                >
-                  {showPasswords.confirm ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex justify-end">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-3 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50"
-            >
-              <Shield className="w-4 h-4" />
-              {isLoading ? "Updating..." : "Update Password"}
-            </button>
-          </div>
-        </form>
-      </motion.div>
-
-      {/* Account Status */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-            <Trash2 className="w-5 h-5 text-red-600" />
+          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+            <Trash2 className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
             <h2 className="text-xl font-bold text-midnight-blue font-raleway">
@@ -370,7 +299,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                 </p>
                 <button
                   onClick={() => setShowDeactivateModal(true)}
-                  className="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors text-sm"
+                  className="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Deactivate Account
                 </button>
@@ -403,14 +332,14 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeactivateModal(false)}
-                className="flex-1 px-4 py-2 border border-gray-300 text-charcoal font-medium rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex-1 px-6 py-3 border border-gray-300 text-charcoal font-medium rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Cancel
               </button>
               <button
                 onClick={handleAccountDeactivation}
                 disabled={isLoading}
-                className="flex-1 px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                className="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
               >
                 {isLoading ? "Deactivating..." : "Deactivate"}
               </button>

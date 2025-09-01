@@ -38,7 +38,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
 
   return (
     <div
-      className={`relative flex bg-white shadow-sm rounded-md sm:min-h-[38px] min-h-[35px]  overflow-x-auto mb-10 ${className}`}
+      className={`relative flex bg-white shadow-sm rounded-md sm:h-[38px] h-[35px]  overflow-x-auto  ${className}`}
       
     >
       {/* Sliding Box Indicator */}

@@ -8,6 +8,7 @@ import SecurityTab from "@/components/settings/SecurityTab";
 import PreferencesTab from "@/components/settings/PreferencesTab";
 import PaymentBillingTab from "@/components/settings/PaymentBillingTab";
 import { useAppSelector } from "@/hooks/redux";
+import Tabs from "@/components/profile/Tabs";
 
 const settingsTabs = [
   { key: "account", label: "Account" },
@@ -40,9 +41,9 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-[200px]">
+    <div className="min-h-screen bg-gray-50  relative top-[100px] pb-[200px]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200">
+      <div className="">
         <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
           <div className="mb-6">
             <h1 className="text-3xl font-[800] text-midnight-blue mb-2 font-raleway">
@@ -54,7 +55,7 @@ export default function SettingsPage() {
           </div>
           
           {/* Tabs Navigation */}
-          <SettingsTabs
+          <Tabs
             options={settingsTabs}
             activeKey={activeTab}
             onChange={setActiveTab}
@@ -64,7 +65,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Content Area */}
-      <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <motion.div
           key={activeTab}
           initial={{ opacity: 0, y: 20 }}

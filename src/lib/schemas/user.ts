@@ -14,13 +14,14 @@ export const stepOneSchema = stepOneSchemaBase.refine((data) => data.password ==
 });
 
 export const stepTwoSchema = z.object({
-  dateOfBirth: z.string().min(1, 'Date of birth is required'),
+  dob: z.string().min(1, 'Date of birth is required'),
   country: z.string().min(1, 'Country is required'),
   phoneNumber: z.string().min(1, 'Phone number is required')
 })
 
 export const stepThreeSchema = z.object({
-  profilePicture: z.instanceof(File).nullable()
+  image: z.instanceof(File).nullable(),
+  bio: z.string().max(160, 'Bio must be at most 160 characters').optional(),
 });
 
 export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema).refine((data) => data.password === data.confirmPassword, {
@@ -28,6 +29,6 @@ export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThr
   path: ["confirmPassword"],
 });
 
-// export const signupSchema = stepOneSchema.merge(stepTwoSchema).merge(stepThreeSchema)
+export const userSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
 
 export type SignupData = z.infer<typeof signupSchema>

@@ -13,14 +13,16 @@ type InputProps = {
   type?: string;
   placeholder?: string;
   error?: string;
-  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
   value?: string;
   name?: string;
   disabled?: boolean;
   icon?: string;
   required?: boolean;
-  ref?: React.Ref<HTMLInputElement>;
+  ref?: React.Ref<HTMLInputElement | HTMLTextAreaElement>;
+  isTextArea?: boolean;
+  rows?: number;
 };
 
 export default function FormInput({
@@ -37,6 +39,8 @@ export default function FormInput({
   icon,
   required = false,
   ref,
+  isTextArea = false,
+  rows = 4,
   ...props
 }: InputProps) {
   const [showPassword, setShowPassword] = useState(false);
@@ -75,39 +79,67 @@ export default function FormInput({
           error && "text-red-500"
         )}
       >
-        {label}{required && <span className="text-red-500">*</span>}
+        {label}
       </Label>
       
       <div className="relative">
         {getIcon()}
         
-        <input
-          id={id || name}
-          ref={ref}
-          type={type === "password" ? (showPassword ? "text" : "password") : type}
-          className={cn(
-            "pl-10 w-full h-10 rounded-lg text-charcoal text-sm",
-            "transition-all duration-200 outline-none border",
-            error 
-              ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200" 
-              : "border-gray-200 bg-white focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20",
-            isFocused ? "border-ocean-blue ring-2 ring-ocean-blue/20" : "",
-            disabled && "opacity-60 cursor-not-allowed"
-          )}
-          placeholder={placeholder}
-          onChange={onChange}
-          onBlur={(e) => {
-            setIsFocused(false);
-            if (onBlur) onBlur(e);
-          }}
-          onFocus={() => setIsFocused(true)}
-          value={value}
-          name={name}
-          disabled={disabled}
-          {...props}
-        />
+        {isTextArea ? (
+          <textarea
+            id={id || name}
+            ref={ref as React.Ref<HTMLTextAreaElement>}
+            className={cn(
+              "pl-10 py-2.5 w-full rounded-lg text-charcoal text-sm resize-vertical",
+              "transition-all duration-200 outline-none border",
+              error 
+                ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200" 
+                : "border-gray-200 bg-white focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20",
+              isFocused ? "border-ocean-blue ring-2 ring-ocean-blue/20" : "",
+              disabled && "opacity-60 cursor-not-allowed"
+            )}
+            placeholder={placeholder}
+            onChange={onChange}
+            onBlur={(e) => {
+              setIsFocused(false);
+              if (onBlur) onBlur(e);
+            }}
+            onFocus={() => setIsFocused(true)}
+            value={value}
+            name={name}
+            disabled={disabled}
+            rows={rows}
+            {...props}
+          />
+        ) : (
+          <input
+            id={id || name}
+            ref={ref as React.Ref<HTMLInputElement>}
+            type={type === "password" ? (showPassword ? "text" : "password") : type}
+            className={cn(
+              "pl-10 w-full h-10 rounded-lg text-charcoal text-sm",
+              "transition-all duration-200 outline-none border",
+              error 
+                ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200" 
+                : "border-gray-200 bg-white focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20",
+              isFocused ? "border-ocean-blue ring-2 ring-ocean-blue/20" : "",
+              disabled && "opacity-60 cursor-not-allowed"
+            )}
+            placeholder={placeholder}
+            onChange={onChange}
+            onBlur={(e) => {
+              setIsFocused(false);
+              if (onBlur) onBlur(e);
+            }}
+            onFocus={() => setIsFocused(true)}
+            value={value}
+            name={name}
+            disabled={disabled}
+            {...props}
+          />
+        )}
         
-        {type === "password" && (
+        {type === "password" && !isTextArea && (
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
