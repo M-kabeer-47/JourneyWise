@@ -109,8 +109,8 @@ export default function StepFour({
         onConfirm={handleConfirmSubmission}
         title={`${type === "create" ? "Create" : "Update"} Experience`}
         description={`Are you sure you want to ${type === "create" ? "create" : "update"} this experience? Once ${type === "create" ? "created" : "updated"}, you can manage it later from your dashboard.`}
-        confirmText={`${type === "create" ? "Create" : "Update"} Experience`}
-        cancelText="Review Again"
+        
+      
         loading={isSubmitting}
         loadingText={`${type === "create" ? "Creating" : "Updating"}...`}
       />

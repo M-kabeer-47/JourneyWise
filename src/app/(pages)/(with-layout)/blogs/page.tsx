@@ -10,6 +10,7 @@ import SearchBar from "@/components/ui/SearchBar";
 import SortBy from "@/components/ui/SortBy";
 import Pagination from "@/components/ui/Pagination";
 import { useFetchBlogs } from "@/hooks/blog/useFetchBlogs";
+import { Blog } from "@/lib/types/blog";
 
 const sortOptions = [
   { value: "updatedAt", label: "Latest" },
@@ -31,6 +32,7 @@ export default function BlogsPage() {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">(
     (current.get("order") as "asc" | "desc") || "desc"
   );
+  const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch blogs using your hook
   const { data, isLoading, isFetching } = useFetchBlogs();
@@ -71,11 +73,20 @@ export default function BlogsPage() {
 
 
   useEffect(() => {
-    let timeout = setTimeout(() => {
-      setCurrentPage(1); // Reset to first page when searching
-      updateQueryParams({ search: searchValue || null, page: "1" });
-    }, 300);
-    return () => clearTimeout(timeout);
+    setIsInitialized(true);
+  }, []);
+
+  // Sync state with URL params when navigating back
+
+  // Only reset to page 1 when user actively searches (not on initialization)
+  useEffect(() => {
+    if (isInitialized) {
+      let timeout = setTimeout(() => {
+        setCurrentPage(1);
+        updateQueryParams({ search: searchValue || null, page: "1" });
+      }, 300);
+      return () => clearTimeout(timeout);
+    }
   }, [searchValue]);
   // Client-side filtering and sorting (since your API doesn't handle these yet)
 
@@ -161,7 +172,7 @@ export default function BlogsPage() {
          
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
           >
-            {data.blogs.map((blog, index) => (
+            {data.blogs.map((blog:Blog) => (
               <motion.div
                 key={blog.blog.id}
                 initial={{ opacity: 0, y: 20 }}

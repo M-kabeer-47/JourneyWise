@@ -171,7 +171,7 @@ export default function ExperiencesPage() {
     (page: number) => {
     updateQueryParams({ page: page.toString() });
     setCurrentPage(page);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    // window.scrollTo({ top: 0, behavior: "smooth" });
     }
 
   const clearAllFilters = 

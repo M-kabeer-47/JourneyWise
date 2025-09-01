@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Experience } from "@/lib/types/experience";
 import { useSearchParams } from "next/navigation";
@@ -19,6 +19,7 @@ export default function useFetchExperiences() {
     queryKey: ["experiences", params.toString()],
     queryFn: fetchExperiences,
     refetchOnWindowFocus: false,
+ 
   });
 
   return {

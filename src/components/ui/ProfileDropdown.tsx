@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChevronDown, LogOut, Settings, User, MessageSquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import Avatar from './Avatar';
 
 interface DropdownOption {
   label: string;
@@ -63,20 +64,7 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             ? 'bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20' 
             : 'hover:bg-gray-100'
         }`}>
-          <div className={`h-8 w-8 rounded-full overflow-hidden ${
-            variant === 'navbar' ? 'border-2 border-white/20' : 'border border-gray-200'
-          } ${!profileImage && 'bg-gray-200 flex items-center justify-center' }`}>
-            {profileImage ? (
-            <Image 
-              src={profileImage} 
-              alt="User Profile" 
-              width={32} 
-              height={32} 
-            />
-            ) : (
-              <User size={20} className="text-gray-500" />
-            )}
-          </div>
+         <Avatar profileImage={profileImage} variant={variant} />
           <div className="hidden md:block text-left">
             <div className={`text-sm font-medium ${
               variant === 'navbar' ? 'text-white' : 'text-gray-800'

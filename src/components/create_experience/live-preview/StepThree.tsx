@@ -17,12 +17,7 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
   const [activeImageIndex, setActiveImageIndex] = useState(0);
   
 
-  console.log("StepThree render:", {
-    imagesLength: data.experienceImages.length,
-    imageUrlsLength: imageUrls.length,
-    activeImageIndex,
-    imageUrls: imageUrls.slice(0, 3), // Log first 3 URLs
-  });
+ 
 
   // Reset active index when data.images change significantly
   useEffect(() => {
@@ -48,7 +43,6 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
   // Memoize the current image URL to prevent flicker
   const currentImageUrl = useMemo(() => {
     const url = imageUrls[activeImageIndex];
-    console.log("Current image URL:", url, "at index:", activeImageIndex);
     return url || "/placeholder.svg";
   }, [imageUrls, activeImageIndex]);
 
@@ -66,9 +60,7 @@ export default function StepThree({ data, itemVariants,imageUrls }: StepThreePro
                   src={currentImageUrl}
                   alt={`Gallery image ${activeImageIndex + 1}`}
                   className="w-full h-full object-cover transition-opacity duration-300"
-                  onLoad={() =>
-                    console.log("Image loaded successfully:", currentImageUrl)
-                  }
+                 
                   
                 />
               </div>
