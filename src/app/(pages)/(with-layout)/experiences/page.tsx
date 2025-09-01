@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MapPin, X, SlidersHorizontal } from "lucide-react";
@@ -18,6 +18,7 @@ import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import { Filters } from "@/lib/types/experience";
 import { Experience } from "@/lib/types/experience";
 import SearchBar from "@/components/ui/SearchBar";
+import useDebounceSearch from "@/hooks/search/useDebounceSearch";
 // Data
 
 const popularLocations = [
@@ -73,9 +74,8 @@ const sortOptions = [
 export default function ExperiencesPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  console.log("SearchParams: ", searchParams.toString());
   const current = new URLSearchParams(searchParams);
-  console.log("Current: ", current.toString());
+  const [isInitialized,setIsInitialized] = useState(false);
   const [currentPage, setCurrentPage] = useState<number>(
     parseInt(current.get("page") || "1")
   );
@@ -99,83 +99,77 @@ export default function ExperiencesPage() {
   const { experiences, isLoading, isFetching, totalPages, totalExperiences } =
     useFetchExperiences();
 
+  const { debouncedSearchTerm } = useDebounceSearch({
+    searchTerm: searchValue,
+  });
+
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
   const toggleSidebar = () => setSidebarOpen((prev) => !prev);
 
-  const handleLocationChange = 
-    (selectedLocations: string[]) => {
-      setFilters((prev) => ({
-        ...prev,
-        locations: selectedLocations,
-      }));
-      updateQueryParams({
-        locations:
-          selectedLocations.length > 0 ? selectedLocations.join(",") : null,
-      });
-    }
+  const handleLocationChange = (selectedLocations: string[]) => {
+    setFilters((prev) => ({
+      ...prev,
+      locations: selectedLocations,
+    }));
+    updateQueryParams({
+      locations:
+        selectedLocations.length > 0 ? selectedLocations.join(",") : null,
+    });
+  };
 
+  const handleSortChange = (key: string, direction: "asc" | "desc") => {
+    setSortBy(key);
+    setSortOrder(direction === "asc" ? "asc" : "desc");
 
-  const handleSortChange = 
-    (key: string, direction: "asc" | "desc") => {
-      setSortBy(key);
-      setSortOrder(direction === "asc" ? "asc" : "desc");
+    updateQueryParams({
+      sortBy: key,
+      sortOrder: direction === "asc" ? "asc" : "desc",
+    });
+  };
 
-      updateQueryParams({
-        sortBy: key,
-        sortOrder: direction === "asc" ? "asc" : "desc",
-      });
-    }
-    
+  const handleApplyFilters = (newFilters: {
+    isAvailable: boolean;
+    minPrice: number;
+    maxPrice: number;
+    minDuration: number;
+    maxDuration: number;
+    tags: string[];
+  }) => {
+    // Update filters state
+    setFilters((prev) => ({
+      ...prev,
+      ...newFilters,
+    }));
 
-  const handleApplyFilters = 
-    (newFilters: {
-      isAvailable: boolean;
-      minPrice: number;
-      maxPrice: number;
-      minDuration: number;
-      maxDuration: number;
-      tags: string[];
-    }) => {
-      // Update filters state
-      setFilters((prev) => ({
-        ...prev,
-        ...newFilters,
-      }));
+    // Update URL params
+    updateQueryParams({
+      isAvailable: newFilters.isAvailable ? "true" : "false",
+      minPrice:
+        newFilters.minPrice === 1 ? "1" : newFilters.minPrice.toString(),
+      maxPrice:
+        newFilters.maxPrice === 10000
+          ? "10000"
+          : newFilters.maxPrice.toString(),
+      minDuration:
+        newFilters.minDuration === 1 ? "1" : newFilters.minDuration.toString(),
+      maxDuration:
+        newFilters.maxDuration === 30
+          ? "30"
+          : newFilters.maxDuration.toString(),
+      tags: newFilters.tags.length > 0 ? newFilters.tags.join(",") : null,
+      page: "1",
+    });
+  };
 
-      // Update URL params
-      updateQueryParams({
-        isAvailable: newFilters.isAvailable ? "true" : "false",
-        minPrice:
-          newFilters.minPrice === 1 ? "1" : newFilters.minPrice.toString(),
-        maxPrice:
-          newFilters.maxPrice === 10000
-            ? "10000"
-            : newFilters.maxPrice.toString(),
-        minDuration:
-          newFilters.minDuration === 1
-            ? "1"
-            : newFilters.minDuration.toString(),
-        maxDuration:
-          newFilters.maxDuration === 30
-            ? "30"
-            : newFilters.maxDuration.toString(),
-        tags: newFilters.tags.length > 0 ? newFilters.tags.join(",") : null,
-        page: "1",
-      });
-    }
-
-
-  const handlePageChange = 
-    (page: number) => {
+  const handlePageChange = (page: number) => {
     updateQueryParams({ page: page.toString() });
     setCurrentPage(page);
     // window.scrollTo({ top: 0, behavior: "smooth" });
-    }
+  };
 
-  const clearAllFilters = 
-    () => {
+  const clearAllFilters = () => {
     const defaultFilters = {
       isAvailable: true,
       minPrice: 1,
@@ -188,22 +182,12 @@ export default function ExperiencesPage() {
 
     setFilters(defaultFilters);
     setSearchValue("");
-
-    // Clear URL parameters except for page, limit, sort
-
-    // Remove all search params
     Array.from(current.keys()).forEach((key) => current.delete(key));
     let query = current.toString();
     router.push(`/experiences${query}`);
-  }
-
-  // Update query parameters helper
+  };
 
   function updateQueryParams(params: Record<string, string | null>) {
-    // Create fresh URLSearchParams from current browser URL to preserve all existing params
-    
-    
-    // Update or add new parameters
     Object.entries(params).forEach(([key, value]) => {
       if (value === "" || value === null || value === undefined) {
         current.delete(key);
@@ -216,14 +200,25 @@ export default function ExperiencesPage() {
     const query = newParams ? `?${newParams}` : "";
     router.push(`/experiences${query}`);
   }
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      updateQueryParams({ search: searchValue });
-    }, 500);
+    if (isInitialized) {
+      updateQueryParams({ search: debouncedSearchTerm, page: "1" });
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm]);
 
-    return () => clearTimeout(timer);
-  }, [searchValue]);
+   useEffect(() => {
+      if(sidebarOpen) document.body.classList.add("overflow-hidden");
+      else document.body.classList.remove("overflow-hidden");
+  
+      return () => {
+        document.body.classList.remove("overflow-hidden");
+      };
+    }, [sidebarOpen]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
@@ -440,7 +435,7 @@ export default function ExperiencesPage() {
                   </>
                 ) : isLoading || isFetching ? (
                   <>Loading experiences...</>
-                ) : (experiences.length === 0 && totalExperiences === 0) ? (
+                ) : experiences.length === 0 && totalExperiences === 0 ? (
                   <>No experiences found with your current filters</>
                 ) : (
                   <>No experiences available</>

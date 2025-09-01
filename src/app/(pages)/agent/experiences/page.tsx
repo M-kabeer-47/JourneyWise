@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
@@ -10,6 +10,7 @@ import SortBy from "@/components/ui/SortBy";
 import ExperienceGrid from "@/components/experiences/ExperienceGrid";
 import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import { Skeleton } from "@/components/ui/skeleton";
+import useDebounceSearch from "@/hooks/search/useDebounceSearch";
 
 export default function AgentExperiences() {
   const router = useRouter();
@@ -25,6 +26,8 @@ export default function AgentExperiences() {
   const [sortOrder, setSortOrder] = useState(
     current.get("sortOrder") || "desc"
   );
+  const [isInitialized, setIsInitialized] = useState(false);
+  const { debouncedSearchTerm } = useDebounceSearch({ searchTerm });
 
   // Use the same fetch hook as experiences page
   const { experiences, isLoading, isFetching, totalPages, totalExperiences } =
@@ -39,31 +42,27 @@ export default function AgentExperiences() {
   ];
 
   // Handle sort change
-  const handleSortChange = useCallback(
-    (key: string, direction: "asc" | "desc") => {
-      setSortBy(key);
-      setSortOrder(direction);
+  const handleSortChange = (key: string, direction: "asc" | "desc") => {
+    setSortBy(key);
+    setSortOrder(direction);
 
-      updateQueryParams({
-        sortBy: key,
-        sortOrder: direction,
-      });
-    },
-    []
-  );
+    updateQueryParams({
+      sortBy: key,
+      sortOrder: direction,
+    });
+  };
 
   // Handle page change
-  const handlePageChange = useCallback((page: number) => {
+  const handlePageChange = (page: number) => {
     updateQueryParams({ page: page.toString() });
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
-  }, []);
+  };
 
   // Handle search
-  const handleSearch = useCallback((value: string) => {
+  const handleSearch = (value: string) => {
     setSearchTerm(value);
-    updateQueryParams({ search: value || null, page: "1" });
-  }, []);
+  };
 
   // Clear search
   const clearSearch = () => {
@@ -87,6 +86,17 @@ export default function AgentExperiences() {
     const query = search ? `?${search}` : "";
     router.push(`/agent/experiences${query}`);
   }
+
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
+
+  useEffect(() => {
+    if (isInitialized) {
+      updateQueryParams({ search: debouncedSearchTerm, page: "1" });
+      setCurrentPage(1);
+    }
+  }, [debouncedSearchTerm]);
 
   return (
     <div className="min-h-screen bg-light-gray flex flex-col font-sans">

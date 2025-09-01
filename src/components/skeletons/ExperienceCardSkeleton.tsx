@@ -1,49 +1,91 @@
 "use client";
 import { motion } from 'framer-motion';
 
-export default function ExperienceCardSkeleton() {
+interface ExperienceCardSkeletonProps {
+  isAgent?: boolean;
+}
+
+export default function ExperienceCardSkeleton({ isAgent = false }: ExperienceCardSkeletonProps) {
   return (
-    <div className="relative w-full h-[400px] rounded-2xl overflow-hidden shadow-lg bg-gray-200 animate-pulse">
-      {/* Shimmer effect overlay */}
-      <div className="absolute inset-0 w-full h-full">
-        <div className="animate-pulse w-full h-full bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200" />
+    <div className="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 h-full flex flex-col animate-pulse">
+      {/* Cover Image Section - Fixed Height */}
+      <div className="relative h-64 bg-gray-200 flex-shrink-0">
+        {/* Shimmer effect */}
+        <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-300 to-gray-200 animate-pulse" />
+        
+        {/* Top Row: Availability Badge & Save Button */}
+        <div className="absolute top-4 left-4 right-4 flex items-center justify-between z-10">
+          {/* Availability Badge Skeleton */}
+          <div className="h-7 bg-gray-300/80 rounded-full w-24 animate-pulse" />
+          
+          {/* Save Button Skeleton (only for non-agent) */}
+          {!isAgent && (
+            <div className="w-10 h-10 bg-gray-300/80 rounded-full animate-pulse" />
+          )}
+        </div>
+
+        {/* Bottom Left: Author Card Skeleton */}
+        <div className="absolute bottom-4 left-4">
+          <div className="flex items-center gap-2 bg-gray-300/80 rounded-full px-3 py-2 w-32 h-10 animate-pulse" />
+        </div>
+
+        {/* Agent Action Buttons Skeleton (only for agent mode) */}
+        {isAgent && (
+          <div className="absolute bottom-4 right-4 flex gap-2">
+            <div className="h-9 bg-gray-300/80 rounded-full w-16 animate-pulse" />
+            <div className="h-9 bg-gray-300/80 rounded-full w-16 animate-pulse" />
+          </div>
+        )}
       </div>
-      
-      {/* Content skeleton */}
-      <div className="relative h-full flex flex-col justify-end p-5">
-        {/* Title & Price */}
-        <div className="flex items-start justify-between mb-3 gap-2">
-          <div className="h-7 bg-gray-300 rounded-md w-3/4 animate-pulse" />
-          <div className="flex flex-col items-end">
-            <div className="h-4 bg-gray-300 rounded w-16 mb-1 animate-pulse" />
-            <div className="h-7 bg-gray-300 rounded w-20 animate-pulse" />
-          </div>
+
+      {/* Content Section - Flexible Height */}
+      <div className="p-6 flex flex-col flex-grow">
+        {/* Tags Skeleton */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <div className="h-6 bg-gray-200 rounded-full w-16 animate-pulse" />
+          <div className="h-6 bg-gray-200 rounded-full w-20 animate-pulse" />
+          <div className="h-6 bg-gray-200 rounded-full w-14 animate-pulse" />
         </div>
 
-        {/* Description */}
-        <div className="h-4 bg-gray-300 rounded mb-1 animate-pulse w-full" />
-        <div className="h-4 bg-gray-300 rounded mb-3 animate-pulse w-4/5" />
-
-        {/* Tags */}
-        <div className="flex flex-wrap gap-2 mb-3">
-          <div className="h-6 bg-gray-300 rounded-full w-16 animate-pulse" />
-          <div className="h-6 bg-gray-300 rounded-full w-20 animate-pulse" />
-          <div className="h-6 bg-gray-300 rounded-full w-14 animate-pulse" />
+        {/* Title Skeleton */}
+        <div className="mb-3">
+          <div className="h-6 bg-gray-200 rounded w-full mb-2 animate-pulse" />
+          <div className="h-6 bg-gray-200 rounded w-3/4 animate-pulse" />
         </div>
 
-        {/* User Info & Rating */}
-        <div className="flex items-center justify-between pt-3 border-t border-gray-300">
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 rounded-full bg-gray-300 animate-pulse" />
-            <div>
-              <div className="h-4 bg-gray-300 rounded w-24 mb-1 animate-pulse" />
-              <div className="flex items-center">
-                <div className="h-3 bg-gray-300 rounded w-12 animate-pulse" />
-              </div>
-            </div>
+        {/* Description Skeleton */}
+        <div className="mb-4">
+          <div className="h-4 bg-gray-200 rounded w-full mb-1 animate-pulse" />
+          <div className="h-4 bg-gray-200 rounded w-full mb-1 animate-pulse" />
+          <div className="h-4 bg-gray-200 rounded w-2/3 animate-pulse" />
+        </div>
+
+        {/* Spacer */}
+        <div className="flex-grow"></div>
+
+        {/* Meta Info Skeleton */}
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-4">
+            {/* Duration */}
+            <div className="h-4 bg-gray-200 rounded w-16 animate-pulse" />
+            {/* Rating */}
+            <div className="h-4 bg-gray-200 rounded w-12 animate-pulse" />
           </div>
 
-          <div className="h-8 bg-gray-300 rounded-full w-24 animate-pulse" />
+          {/* Action Button Skeleton */}
+          {!isAgent ? (
+            <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
+          ) : (
+            <div className="h-4 bg-gray-200 rounded w-24 animate-pulse" />
+          )}
+        </div>
+
+        {/* Price Row Skeleton - Always at bottom */}
+        <div className="pt-4 border-t border-gray-100">
+          <div className="flex items-center justify-between">
+            <div className="h-4 bg-gray-200 rounded w-20 animate-pulse" />
+            <div className="h-8 bg-gray-200 rounded w-16 animate-pulse" />
+          </div>
         </div>
       </div>
     </div>

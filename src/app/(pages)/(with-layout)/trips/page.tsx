@@ -14,6 +14,7 @@ import SearchBar from "@/components/ui/SearchBar";
 import { TripFilters as TripFiltersType } from "@/lib/types/trip";
 import { Trip } from "@/lib/types/trip";
 import useFetchTrips from "@/hooks/trips/useFetchTrips";
+import useDebounceSearch from "@/hooks/search/useDebounceSearch";
 
 // Popular locations for country selector
 const popularLocations = [
@@ -77,19 +78,14 @@ export default function TripsPage() {
     maxGroupSize: parseInt(current.get("maxGroupSize") || "20"),
     minDistance: parseInt(current.get("minDistance") || "0"),
     maxDistance: parseInt(current.get("maxDistance") || "10000"),
-    currencies: current.get("currencies")
-      ? current.get("currencies")!.split(",").filter(Boolean)
-      : [],
-    waypoints: current.get("waypoints")
-      ? current.get("waypoints")!.split(",").filter(Boolean)
-      : [],
+    countries: current.get("countries")?.split(",") || [],
   });
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   // Use the actual hook
   const { trips, isLoading, isFetching, totalPages, totalTrips } =
     useFetchTrips();
-
+  const {debouncedSearchTerm} = useDebounceSearch({searchTerm:searchValue});
   const handleSearch = (value: string) => {
     setSearchValue(value);
   };
@@ -100,10 +96,10 @@ export default function TripsPage() {
     (selectedLocations: string[]) => {
       setFilters((prev) => ({
         ...prev,
-        waypoints: selectedLocations,
+        countries: selectedLocations,
       }));
       updateQueryParams({
-        waypoints:
+        countries:
           selectedLocations.length > 0 ? selectedLocations.join(",") : null,
       });
     }
@@ -143,12 +139,8 @@ export default function TripsPage() {
         newFilters.maxDistance === 10000
           ? "10000"
           : newFilters.maxDistance.toString(),
-      currencies:
-        newFilters.currencies.length > 0
-          ? newFilters.currencies.join(",")
-          : null,
-      waypoints:
-        newFilters.waypoints.length > 0 ? newFilters.waypoints.join(",") : null,
+      countries:
+        newFilters.countries.length > 0 ? newFilters.countries.join(",") : null,
       page: "1",
     });
   } 
@@ -167,8 +159,7 @@ export default function TripsPage() {
       maxGroupSize: 20,
       minDistance: 0,
       maxDistance: 10000,
-      currencies: [],
-      waypoints: [],
+      countries: [],
     };
 
     setFilters(defaultFilters);
@@ -193,15 +184,9 @@ export default function TripsPage() {
   }
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      current.set("search", searchValue);
-      const currentQuery = current.toString();
-      const query = currentQuery ? `?${currentQuery}` : "";
-      router.push(`/trips${query}`);
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [searchValue]);
+    updateQueryParams({ search: debouncedSearchTerm, page: "1" });
+    setCurrentPage(1);
+  }, [debouncedSearchTerm]);
 
   useEffect(() => {
     if(sidebarOpen) document.body.classList.add("overflow-hidden");
@@ -252,7 +237,7 @@ export default function TripsPage() {
               <div className="md:col-span-4">
                 <LocationSelector
                   locations={popularLocations}
-                  selectedLocations={filters.waypoints}
+                  selectedLocations={filters.countries}
                   onChange={handleLocationChange}
                 />
               </div>
@@ -364,20 +349,20 @@ export default function TripsPage() {
                   ))}
               </div>
             ) : trips.length === 0 ? (
-              <div className="bg-white rounded-xl p-10 text-center border border-gray-200 shadow-sm">
-                <div className="mx-auto w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mb-4">
-                  <Route className="h-8 w-8 text-gray-400" />
+              <div className="bg-white rounded-xl p-10 sm:py-[100px] text-center border border-gray-200 shadow-sm h-[500px]">
+                <div className="mx-auto w-16 h-16 bg-ocean-blue/10 rounded-full flex items-center justify-center mb-4">
+                  <Route className="h-8 w-8 text-midnight-blue" />
                 </div>
-                <h3 className="text-lg font-medium text-gray-900 mb-2 font-raleway">
+                <h3 className="text-lg font-bold text-gray-900 mb-2 font-raleway">
                   No trips found
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="text-gray-500 mb-6 sm:text-base text-sm">
                   Try adjusting your search or filters to find what you're
                   looking for.
                 </p>
                 <button
                   onClick={clearAllFilters}
-                  className="px-6 py-3 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-sm"
+                  className="px-6 py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors shadow-sm sm:text-base text-sm"
                 >
                   Clear All Filters
                 </button>

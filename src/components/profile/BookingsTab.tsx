@@ -78,18 +78,21 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
         </div>
       </div>
 
-      <div className="flex justify-between mb-8">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-8 ">
         <Tabs
           options={statusTabs}
           activeKey={activeStatus}
           onChange={handleStatusChange}
-          className="w-[800px]"
+          className="sm:w-[800px]"
         />
         <SortBy
           options={sortOptions}
           activeSort={sortBy}
           onSortChange={handleSortChange}
           size="small"
+          isSmall={ true}
+          className="w-full"
+         
         />
       </div>
 

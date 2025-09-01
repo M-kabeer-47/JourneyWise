@@ -4,22 +4,20 @@ import { motion } from "framer-motion";
 interface TabOption {
   key: string;
   label: string;
-  count?: number;
 }
 
-interface TabsProps {
+interface SettingsTabsProps {
   options: TabOption[];
   activeKey: string;
   onChange: (key: string) => void;
   className?: string;
 }
 
-export default function Tabs({ options, activeKey, onChange, className = "" }: TabsProps) {
+export default function SettingsTabs({ options, activeKey, onChange, className = "" }: SettingsTabsProps) {
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const activeIdx = options.findIndex(tab => tab.key === activeKey);
   const [indicator, setIndicator] = useState({ left: 0, width: 0 });
 
-  // Recalculate indicator position after mount and whenever activeKey/options change
   useLayoutEffect(() => {
     const activeTab = tabRefs.current[activeIdx];
     if (activeTab && activeTab.offsetWidth > 0) {
@@ -28,7 +26,6 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
         width: activeTab.offsetWidth,
       });
     } else if (tabRefs.current[0] && tabRefs.current[0].offsetWidth > 0) {
-      // Fallback to first tab if active tab not ready
       setIndicator({
         left: tabRefs.current[0].offsetLeft,
         width: tabRefs.current[0].offsetWidth,
@@ -38,8 +35,8 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
 
   return (
     <div
-      className={`relative flex bg-white shadow-sm rounded-md sm:min-h-[38px] min-h-[35px]  overflow-x-auto mb-10 ${className}`}
-      
+      className={`relative flex bg-white shadow-sm rounded-md overflow-x-auto ${className}`}
+      style={{ minHeight: 42 }}
     >
       {/* Sliding Box Indicator */}
       <motion.div
@@ -58,7 +55,7 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
             key={tab.key}
             ref={el => { tabRefs.current[idx] = el; }}
             onClick={() => onChange(tab.key)}
-            className={`relative sm:flex-1 sm:px-5 sm:py-2 px-5 py-1 font-medium whitespace-nowrap transition-colors duration-200 z-10
+            className={`relative flex-shrink-0 px-6 py-3 font-medium whitespace-nowrap transition-colors duration-200 z-10
               ${isActive
                 ? "text-midnight-blue"
                 : "text-charcoal hover:text-midnight-blue"
@@ -71,9 +68,8 @@ export default function Tabs({ options, activeKey, onChange, className = "" }: T
               cursor: "pointer",
             }}
           >
-            <span className="flex items-center justify-center gap-1 sm:text-sm text-xs font-semibold font-raleway">
+            <span className="flex items-center justify-center gap-1 sm:text-base text-sm font-semibold font-raleway">
               {tab.label}
-             
             </span>
           </button>
         );

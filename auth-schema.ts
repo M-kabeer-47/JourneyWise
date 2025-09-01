@@ -220,6 +220,7 @@ export const trip = pgTable("trip", {
   userID: text("userID")
     .notNull()
     .references(() => user.id),
+  country:text("country").notNull(),
   waypoints: jsonb("waypoints").notNull(),
   estimatedBudget: integer("estimatedBudget").notNull(),
   numOfPeople: integer("numOfPeople").notNull(),

@@ -73,7 +73,7 @@ export default function BookingCard({
   
 
   return (
-    <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300 h-auto sm:h-[300px]">
+    <motion.div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-300  sm:h-[300px] h-auto pb-[20px]">
       <div className="flex flex-col sm:flex-row h-full">
         {/* Image */}
         <div className="relative sm:w-[40%] h-auto flex-shrink-0">
@@ -154,7 +154,7 @@ export default function BookingCard({
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <span className="font-extrabold text-2xl sm:text-3xl text-midnight-blue tabular-nums">
+                <span className="font-extrabold text-xl sm:text-3xl text-midnight-blue tabular-nums">
                   {booking.booking.tier.currency}{" "}
                     <span className="font-inter">{booking.booking.totalPrice.toLocaleString()}</span>
                 </span>
@@ -164,7 +164,7 @@ export default function BookingCard({
           {/* Package */}
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 mt-[20px]">
             <button
               className="flex-1 px-3 py-2 text-charcoal border border-ocean-blue rounded-lg hover:bg-ocean-blue/5 transition-all text-sm font-medium"
               onClick={() => {

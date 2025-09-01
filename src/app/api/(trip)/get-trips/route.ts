@@ -29,8 +29,8 @@ export async function GET(request: NextRequest) {
     const maxGroupSize = searchParams.get("maxGroupSize");
     const minDistance = searchParams.get("minDistance");
     const maxDistance = searchParams.get("maxDistance");
-    const waypoints = searchParams.get("waypoints"); // Comma-separated list of waypoints
-    
+    const countries = searchParams.get("countries"); // Comma-separated list of waypoints
+    console.log("countries", countries);
     // Search parameter
     const searchQuery = searchParams.get("search");
 
@@ -71,23 +71,22 @@ export async function GET(request: NextRequest) {
       }
 
 
-      // Handle waypoints filter - check if any waypoint cities match in JSONB
-      if (waypoints !== null && waypoints.length > 0) {
-        const waypointArray = waypoints.split(",");
-        const waypointConditions = waypointArray.map(waypoint => 
-          sql`${trip.waypoints}::text ILIKE '%${waypoint.trim()}%'`
+      // Handle countries filter
+      if (countries !== null && countries.length > 0) {
+        const countryArray = countries.split(",");
+        const countryConditions = countryArray.map(country => 
+          ilike(trip.country, `%${country.trim()}%`)
         );
         
-        if (waypointConditions.length > 0) {
-          conditions.push(or(...waypointConditions));
+        if (countryConditions.length > 0) {
+          conditions.push(or(...countryConditions));
         }
       }
 
       // Handle search query
       if (searchQuery !== null && searchQuery.length > 0) {
         conditions.push(
-          // Search in waypoint cities stored in JSONB
-          sql`${trip.waypoints}::text ILIKE '%${searchQuery}%'`
+          ilike(trip.country, `%${searchQuery}%`)
         );
       }
 
@@ -192,17 +191,6 @@ export async function GET(request: NextRequest) {
           limit,
           offset,
           pages: Math.ceil(total / limit),
-        },
-        filters: {
-          budget: { min: minBudget, max: maxBudget },
-          groupSize: { min: minGroupSize, max: maxGroupSize },
-          distance: { min: minDistance, max: maxDistance },
-          waypoints: waypoints ? waypoints.split(",") : null,
-          search: searchQuery || null,
-        },
-        sort: {
-          field: sortBy,
-          order: sortOrder,
         },
       },
       { status: 200 }

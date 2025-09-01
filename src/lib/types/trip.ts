@@ -1,3 +1,10 @@
+
+export interface Hotel {
+  id: string;
+  name: string;
+  detailsLink: string;
+  locationLink: string;
+}
 export interface Trip {
   id: string;
   userID: string;
@@ -8,6 +15,7 @@ export interface Trip {
   currency: string;
   createdAt: string;
   updatedAt: string;
+  country: string;
   user?: {
     id: string;
     name: string;
@@ -20,14 +28,9 @@ export interface Trip {
 export interface Waypoint {
   id: string;
   name: string;
-  city: string;
-  country: string;
-  coordinates?: {
-    lat: number;
-    lng: number;
-  };
-  order: number;
   description?: string;
+  imageUrl?: string;
+  hotels?: Hotel[];
 }
 
 export interface TripFilters {
@@ -37,8 +40,8 @@ export interface TripFilters {
   maxGroupSize: number;
   minDistance: number;
   maxDistance: number;
-  currencies: string[];
-  waypoints: string[];
+  countries: string[];
+ 
 }
 
 export interface BudgetRange {

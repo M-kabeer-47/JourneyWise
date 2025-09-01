@@ -73,11 +73,11 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
       <button 
         ref={buttonRef}
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:border-ocean-blue transition-colors text-gray-700 bg-white hover:bg-white"
+        className="w-full flex items-center justify-between gap-2 px-4 py-2.5 border border-gray-300 rounded-lg hover:border-ocean-blue transition-colors text-charcoal bg-white hover:bg-white"
       >
         <div className="flex items-center gap-2 truncate">
           <Globe size={18} className="text-ocean-blue flex-shrink-0" />
-          <span className="truncate text-sm sm:text-base">
+          <span className="truncate text-sm sm:text-base font-medium">
             {selectedLocations && selectedLocations.length > 0 
               ? `${selectedLocations.length} location${selectedLocations.length > 1 ? 's' : ''}` 
               : 'All Locations'}
@@ -113,7 +113,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
                 damping: 30,
                 mass: 1
               }}
-              className="absolute left-12 right-0 mt-1 z-50 bg-white border border-gray-200 shadow-lg sm:w-full w-[83%]"
+              className="absolute left-12 right-0 mt-1 z-50 bg-white border border-gray-200 shadow-lg sm:w-[95.5%] w-[83%]"
               style={{ 
                 marginLeft: '-1rem', 
                 marginRight: '-1rem',
@@ -140,7 +140,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
               <div className="h-px bg-gray-200" />
               
               {/* Nav header */}
-              <div className="py-1.5 px-4 text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="py-1.5 px-4 text-xs font-medium text-charcoal uppercase tracking-wider">
                 Locations
               </div>
               
@@ -180,7 +180,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
               <div className="py-2 px-4 flex justify-between">
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5"
+                  className="text-sm text-charcoal  px-3 py-1.5"
                   type="button"
                 >
                   Cancel

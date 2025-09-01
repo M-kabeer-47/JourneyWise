@@ -56,8 +56,7 @@ interface FilterValues {
   maxGroupSize: number;
   minDistance: number;
   maxDistance: number;
-
-  waypoints: string[];
+  countries: string[];
 }
 
 interface TripFiltersProps {

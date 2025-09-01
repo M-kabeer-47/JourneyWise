@@ -152,16 +152,12 @@ export default function ExperienceCard({
             {experience.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="inline-block px-3 py-1 text-sm font-semibold bg-ocean-blue/10 text-midnight-blue rounded-full sm:text-sm text-xs" 
+                className="inline-block px-3 py-1  font-semibold bg-ocean-blue/10 text-midnight-blue rounded-full sm:text-[13px] text-xs" 
               >
                 {tag}
               </span>
             ))}
-            {experience.tags.length > 3 && (
-              <span className="inline-block px-3 py-1 text-sm font-semibold bg-gray-100 text-gray-600 rounded-full">
-                +{experience.tags.length - 3}
-              </span>
-            )}
+            
           </div>
         )}
 
@@ -185,24 +181,24 @@ export default function ExperienceCard({
           <div className="flex items-center gap-4 text-sm text-gray-500">
             <div className="flex items-center gap-1.5">
               <Clock className="w-4 h-4" />
-              <span>
+              <span className="font-inter">
                 {experience.duration}{" "}
                 {experience.duration === 1 ? "day" : "days"}
               </span>
             </div>
             <div className="flex items-center gap-1.5">
               <Star className="w-4 h-4 text-yellow-500" fill="currentColor" />
-              <span>{experience.averageRating}</span>
+              <span className="font-inter">{experience.averageRating}</span>
             </div>
           </div>
 
           {/* Action Button for non-agent mode */}
           {!isAgent ? (
             <Link href={`/experience/${experience.id}`}>
-              <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+              <div className="flex items-center gap-1 text-ocean-blue text-sm font-medium">
                 <span>View Details</span>
                 <svg
-                  className="w-4 h-4 transform group-hover:translate-x-1 transition-transform duration-200"
+                  className="w-4 h-4 transform group-hover:translate-x-[1px] -translate-x-[2px] transition-transform duration-200"
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
@@ -225,7 +221,7 @@ export default function ExperienceCard({
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Starting at</span>
-            <span className="text-2xl font-bold text-midnight-blue">
+            <span className="text-2xl font-inter font-bold text-midnight-blue">
               ${formatPrice(experience.minPrice)}
             </span>
           </div>
