@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import Link from "next/link";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Plus, Search } from "lucide-react";
@@ -11,8 +11,9 @@ import ExperienceGrid from "@/components/experiences/ExperienceGrid";
 import useFetchExperiences from "@/hooks/experience/useFetchExperiences";
 import { Skeleton } from "@/components/ui/skeleton";
 import useDebounceSearch from "@/hooks/search/useDebounceSearch";
+import Spinner from "@/components/ui/Spinner";
 
-export default function AgentExperiences() {
+function AgentExperiencesContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
@@ -222,5 +223,13 @@ export default function AgentExperiences() {
         </div>
       </main>
     </div>
+  );
+}
+
+export default function AgentExperiences() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <AgentExperiencesContent />
+    </Suspense>
   );
 }

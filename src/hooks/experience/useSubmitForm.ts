@@ -65,6 +65,8 @@ export const useExperienceSubmission = ({ type }: { type: string }) => {
         }
       }
       delete submissionData.id; // Remove ID for new experience creation
+      console.log("Experience Submission Data:", submissionData);
+      return
       const response = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/create-experience`, {
         data: submissionData,
       });

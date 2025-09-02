@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { MapPin, X, SlidersHorizontal } from "lucide-react";
@@ -19,6 +19,7 @@ import { Filters } from "@/lib/types/experience";
 import { Experience } from "@/lib/types/experience";
 import SearchBar from "@/components/ui/SearchBar";
 import useDebounceSearch from "@/hooks/search/useDebounceSearch";
+import Spinner from "@/components/ui/Spinner";
 // Data
 
 const popularLocations = [
@@ -71,7 +72,7 @@ const sortOptions = [
   { value: "duration", label: "Duration" },
 ];
 
-export default function ExperiencesPage() {
+function ExperiencesPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
@@ -211,14 +212,16 @@ export default function ExperiencesPage() {
     }
   }, [debouncedSearchTerm]);
 
-   useEffect(() => {
-      if(sidebarOpen) document.body.classList.add("overflow-hidden");
-      else document.body.classList.remove("overflow-hidden");
-  
-      return () => {
-        document.body.classList.remove("overflow-hidden");
-      };
-    }, [sidebarOpen]);
+  useEffect(() => {
+  if (typeof document !== 'undefined') {
+    if(sidebarOpen) document.body.classList.add("overflow-hidden");
+    else document.body.classList.remove("overflow-hidden");
+    
+    return () => {
+      document.body.classList.remove("overflow-hidden");
+    };
+  }
+}, [sidebarOpen]);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans pb-16">
@@ -508,5 +511,13 @@ export default function ExperiencesPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function ExperiencesPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <ExperiencesPageContent />
+    </Suspense>
   );
 }

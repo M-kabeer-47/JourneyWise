@@ -9,8 +9,11 @@ import PhotoGallery from "@/components/home/PhotoGallery";
 
 import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
+import { Suspense } from "react";
+import Spinner from "@/components/ui/Spinner";
 export default async function Home() {
   return (
+    <Suspense fallback={<Spinner />}>
     <main className="bg-gray-100 ">
       <Navbar />
       <HeroSection />
@@ -23,5 +26,6 @@ export default async function Home() {
       <UserTestimonials />
       <Footer />
     </main>
+    </Suspense>
   );
 }

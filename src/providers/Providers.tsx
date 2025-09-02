@@ -8,14 +8,13 @@ import { Toast } from "@/components/ui/Toast";
 
 
 
+
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Create QueryClient inside the component to avoid SSR issues
 
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        // With SSR, we usually want to set some default staleTime
-        // above 0 to avoid refetching immediately on the client
         staleTime: 60 * 1000, // 1 minute
       },
     },
@@ -27,7 +26,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
         <ReactQueryDevtools initialIsOpen={false} />
-        {children}
+    
+          {children}
+     
       </StoreProvider>
       <Toast />
      

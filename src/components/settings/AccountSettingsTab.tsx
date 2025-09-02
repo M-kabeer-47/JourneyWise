@@ -1,18 +1,22 @@
 "use client";
 import React, { useState } from "react";
 import { motion } from "framer-motion";
-import { 
-  User, 
-  Mail, 
-  CheckCircle, 
-  AlertCircle, 
+import {
+  User,
+  Mail,
+  CheckCircle,
+  AlertCircle,
   Save,
   Trash2,
   Camera,
-  Upload
+  Upload,
 } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
 import Image from "next/image";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Controller, useForm } from "react-hook-form";
+import { userSchema, userSchemaPartial } from "@/lib/schemas/user";
+import image from "next/image";
 
 interface User {
   id: string;
@@ -29,34 +33,39 @@ interface AccountSettingsTabProps {
 }
 
 export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
-  const [formData, setFormData] = useState({
-    name: user?.name || "",
-    email: user?.email || "",
-    bio: user?.bio || "",
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+  } = useForm<User>({
+    resolver: zodResolver(userSchemaPartial),
+    defaultValues: {
+      name: user?.name || "",
+      email: user?.email || "",
+      bio: user?.bio || "",
+      image: user?.image || "",
+    },
   });
+
   
-  const [profileImage, setProfileImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
   const [isLoading, setIsLoading] = useState(false);
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
-  const handleProfileUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    alert("Form Data: " + JSON.stringify(formData));
-    // TODO: Implement profile update API call including image upload
-    setTimeout(() => setIsLoading(false), 1000);
-  };
+ const handleProfileUpdate = async (data: User) => {
+  alert("Profile updated successfully!");
+  setIsLoading(true);
+  alert("Data: "+JSON.stringify(data)); // Now 'data' contains the form values
+  // TODO: Implement profile update API call including image upload
+  setTimeout(() => setIsLoading(false), 1000);
+};
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      setProfileImage(file);
-      const reader = new FileReader();
-      reader.onload = () => {
-        setImagePreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      let url = URL.createObjectURL(file);
+      setImagePreview(url);
     }
   };
 
@@ -78,7 +87,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   return (
     <div className="space-y-8">
       {/* Profile Information */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
@@ -94,7 +103,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
           </div>
         </div>
 
-        <form onSubmit={handleProfileUpdate} className="space-y-6">
+        <form onSubmit={handleSubmit(handleProfileUpdate)} className="space-y-6">
           {/* Profile Picture Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative">
@@ -113,25 +122,15 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                   </div>
                 )}
               </div>
-              <label
-                htmlFor="profile-image"
-                className="absolute -bottom-2 -right-2 w-8 h-8 bg-ocean-blue rounded-full flex items-center justify-center cursor-pointer hover:bg-ocean-blue/90 transition-colors shadow-lg"
-              >
-                <Camera className="w-4 h-4 text-white" />
-                <input
-                  id="profile-image"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
-                />
-              </label>
+           
             </div>
-            
+
             <div className="flex-1">
-              <h3 className="font-medium text-charcoal mb-2">Profile Picture</h3>
+              <h3 className="font-medium text-charcoal mb-2">
+                Profile Picture
+              </h3>
               <p className="text-sm text-gray-600 mb-3">
-                Upload a new profile picture. JPG, PNG or GIF (max 5MB).
+                Upload a new profile picture.
               </p>
               <label
                 htmlFor="profile-image-2"
@@ -139,57 +138,85 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               >
                 <Upload className="w-4 h-4" />
                 Choose File
-                <input
-                  id="profile-image-2"
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="hidden"
+                <Controller
+                  name="image"
+                  control={control}
+                  render={({ field }) => (
+                    <input
+                      id="profile-image-2"
+                      type="file"
+                      accept="image/*"
+                      hidden
+                      onChange={(e) => {
+                        handleImageChange(e);
+                        field.onChange(e.target.files?.[0]);
+                      }}
+                    />
+                  )}
                 />
               </label>
             </div>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <FormInput
-              id="name"
-              label="Full Name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter your full name"
-              
-              required
+            <Controller
+              name="name"
+              control={control}
+              render={({ field }) => (
+                <FormInput
+                  id="name"
+                  label="Full Name"
+                  type="text"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  error={errors.name && errors.name.message}
+                  placeholder="Enter your full name"
+                  required
+                />
+              )}
             />
-            
-            <FormInput
-              id="email"
-              label="Email Address"
-              type="email"
-              value={formData.email}
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              placeholder="Enter your email"
-              required
+
+            <Controller
+              name="email"
+              control={control}
+              render={({ field }) => (
+                <FormInput
+                  id="email"
+                  label="Email Address"
+                  type="email"
+                  value={field.value}
+                  onChange={(e) => field.onChange(e.target.value)}
+                  placeholder="Enter your email"
+                  error={errors.email && errors.email.message}
+                  required
+                />
+              )}
             />
           </div>
 
-          <FormInput
-            id="bio"
-            label="Bio"
-            value={formData.bio}
-            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
-            placeholder="Tell us about yourself..."
-            isTextArea={true}
-            rows={4}
+          <Controller
+            name="bio"
+            control={control}
+            render={({ field }) => (
+              <FormInput
+                id="bio"
+                label="Bio"
+                value={field.value}
+                onChange={(e) => field.onChange(e.target.value)}
+                placeholder="Tell us about yourself..."
+                isTextArea={true}
+                error={errors.bio && errors.bio.message}
+                rows={4}
+              />
+            )}
           />
 
           <div className="flex justify-end">
             <button
               type="submit"
-              disabled={isLoading}
+              onClick={() => console.log("Errors", errors)}
               className="flex items-center justify-center gap-2 px-2 w-[170px] py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
             >
-             
               {isLoading ? "Saving..." : "Save Changes"}
             </button>
           </div>
@@ -197,7 +224,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       </motion.div>
 
       {/* Email Verification */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
@@ -226,14 +253,14 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             )}
             <div>
               <p className="font-medium text-charcoal">
-                {user?.isEmailVerified ? "Email Verified" : "Email Not Verified"}
+                {user?.isEmailVerified
+                  ? "Email Verified"
+                  : "Email Not Verified"}
               </p>
-              <p className="text-sm text-gray-600">
-                {user?.email}
-              </p>
+              <p className="text-sm text-gray-600">{user?.email}</p>
             </div>
           </div>
-          
+
           {!user?.isEmailVerified && (
             <button
               onClick={handleEmailVerification}
@@ -247,7 +274,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       </motion.div>
 
       {/* Account Status */}
-      <motion.div 
+      <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
@@ -280,10 +307,9 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                   Account Status: {user?.isActive ? "Active" : "Deactivated"}
                 </p>
                 <p className="text-sm text-gray-600">
-                  {user?.isActive 
-                    ? "Your account is active and fully functional" 
-                    : "Your account is currently deactivated"
-                  }
+                  {user?.isActive
+                    ? "Your account is active and fully functional"
+                    : "Your account is currently deactivated"}
                 </p>
               </div>
             </div>
@@ -292,10 +318,12 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
           {user?.isActive && (
             <div className="border-t pt-4">
               <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="font-medium text-red-800 mb-2">Deactivate Account</h3>
+                <h3 className="font-medium text-red-800 mb-2">
+                  Deactivate Account
+                </h3>
                 <p className="text-sm text-red-700 mb-4">
-                  Deactivating your account will hide your profile and disable most features. 
-                  You can reactivate it anytime by logging in.
+                  Deactivating your account will hide your profile and disable
+                  most features. You can reactivate it anytime by logging in.
                 </p>
                 <button
                   onClick={() => setShowDeactivateModal(true)}
@@ -312,7 +340,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       {/* Deactivation Modal */}
       {showDeactivateModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="bg-white rounded-xl p-6 max-w-md w-full"
@@ -325,10 +353,11 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                 Deactivate Account
               </h3>
               <p className="text-sm text-gray-600">
-                Are you sure you want to deactivate your account? This action can be reversed by logging in again.
+                Are you sure you want to deactivate your account? This action
+                can be reversed by logging in again.
               </p>
             </div>
-            
+
             <div className="flex gap-3">
               <button
                 onClick={() => setShowDeactivateModal(false)}

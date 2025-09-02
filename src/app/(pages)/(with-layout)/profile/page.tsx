@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import { useParams, useSearchParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import ProfileTabs from "@/components/profile/ProfileSidebar";
 import ProfileTab from "@/components/profile/ProfileTab";
@@ -12,51 +12,33 @@ import { useAppSelector } from "@/hooks/redux";
 import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
 
 export default function UserProfilePage() {
-  const params = useParams();
-  const searchParams = useSearchParams();
-  const user = useAppSelector((state) => state.user); 
+  const user = useAppSelector((state) => state.user);
 
-  const [activeTab, setActiveTab] = useState(
-    searchParams?.get("tab") || "profile"
-  );
+  const [activeTab, setActiveTab] = useState("profile");
 
   // Mock stats
-  
+
   const renderTabContent = () => {
     switch (activeTab) {
       case "profile":
-        return (
-          <ProfileTab
-            user={user.user}
-            onTabChange={setActiveTab}
-          />
-        );
+        return <ProfileTab user={user.user} onTabChange={setActiveTab} />;
       case "trips":
-        return <TripsTab userID={user.user?.id || ""}/>;
+        return <TripsTab userID={user.user?.id || ""} />;
       case "blogs":
-        return <BlogsTab userID={user.user?.id || ""}/>;
+        return <BlogsTab userID={user.user?.id || ""} />;
       case "saved":
-        return <SavedTab userID={user.user?.id || ""}/>;
+        return <SavedTab userID={user.user?.id || ""} />;
       case "bookings":
-        return <BookingsTab userID={user.user?.id || ""}/>;
+        return <BookingsTab userID={user.user?.id || ""} />;
       default:
-        return (
-            <ProfileTab
-              user={user.user}
-            onTabChange={setActiveTab}  
-          />
-        );
+        return <ProfileTab user={user.user} onTabChange={setActiveTab} />;
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-50 pb-[200px]">
       {/* Horizontal Tab Navigation */}
-      <ProfileTabs
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        
-      />
+      <ProfileTabs activeTab={activeTab} onTabChange={setActiveTab} />
 
       {/* Content Area */}
       <div className="max-w-[1400px] mx-auto p-4 sm:p-8 mt-[100px]  sm:mt-[80px]">
@@ -68,7 +50,9 @@ export default function UserProfilePage() {
         >
           {user.isLoading || user.user === null ? (
             <ProfilePageSkeleton />
-          ) : renderTabContent()}
+          ) : (
+            renderTabContent()
+          )}
         </motion.div>
       </div>
     </div>

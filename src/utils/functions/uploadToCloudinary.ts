@@ -2,7 +2,7 @@
 import dotenv from "dotenv"
 dotenv.config()
 export const uploadToCloudinary = async (file: File | string): Promise<string> => {
-  if (typeof file === "string") {
+  if (typeof file === "string" && file.startsWith("http")) {
     return file;
   }
     const formData = new FormData();

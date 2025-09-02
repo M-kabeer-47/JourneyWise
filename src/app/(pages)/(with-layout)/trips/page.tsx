@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { X, SlidersHorizontal, Route } from "lucide-react";
@@ -15,6 +15,7 @@ import { TripFilters as TripFiltersType } from "@/lib/types/trip";
 import { Trip } from "@/lib/types/trip";
 import useFetchTrips from "@/hooks/trips/useFetchTrips";
 import useDebounceSearch from "@/hooks/search/useDebounceSearch";
+import Spinner from "@/components/ui/Spinner";
 
 // Popular locations for country selector
 const popularLocations = [
@@ -60,7 +61,7 @@ const sortOptions = [
   { value: "estimatedDistance", label: "Distance" },
 ];
 
-export default function TripsPage() {
+function TripsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
@@ -400,5 +401,13 @@ export default function TripsPage() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function TripsPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <TripsPageContent />
+    </Suspense>
   );
 }

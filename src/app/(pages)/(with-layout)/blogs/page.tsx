@@ -1,5 +1,5 @@
 "use client";
-import { useState,  useEffect } from "react";
+import { useState,  useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
 import { BookOpen, Compass, Map, Sparkles } from "lucide-react";
@@ -11,13 +11,14 @@ import SortBy from "@/components/ui/SortBy";
 import Pagination from "@/components/ui/Pagination";
 import { useFetchBlogs } from "@/hooks/blog/useFetchBlogs";
 import { Blog } from "@/lib/types/blog";
+import Spinner from "@/components/ui/Spinner";
 
 const sortOptions = [
   { value: "updatedAt", label: "Latest" },
   { value: "commentsCount", label: "Most Discussed" },
 ];
 
-export default function BlogsPage() {
+export  function BlogsPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
@@ -91,6 +92,7 @@ export default function BlogsPage() {
   // Client-side filtering and sorting (since your API doesn't handle these yet)
 
   return (
+   
     <div className="min-h-screen bg-gray-50 pb-[200px]">
       {/* Hero Section */}
       <HeroSection
@@ -224,5 +226,14 @@ export default function BlogsPage() {
         />
       )}
     </div>
+
+  );
+}
+
+export default function BlogsPageContent() {
+  return (
+   <Suspense fallback={<Spinner />}>
+     <BlogsPage />
+   </Suspense>
   );
 }

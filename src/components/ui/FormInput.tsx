@@ -120,7 +120,7 @@ export default function FormInput({
               "pl-10 w-full h-10 rounded-lg text-charcoal text-sm",
               "transition-all duration-200 outline-none border",
               error 
-                ? "border-red-500 bg-red-50 focus:border-red-500 focus:ring-2 focus:ring-red-200" 
+                ? "border-red-500  focus:border-red-500 focus:ring-2 focus:ring-red-200" 
                 : "border-gray-200 bg-white focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20",
               isFocused ? "border-ocean-blue ring-2 ring-ocean-blue/20" : "",
               disabled && "opacity-60 cursor-not-allowed"
@@ -155,7 +155,7 @@ export default function FormInput({
       
       {error && (
         <div className="flex items-center mt-1 text-sm text-red-500">
-          <AlertCircle className="h-3 w-3 mr-1" />
+ 
           <p>{error}</p>
         </div>
       )}

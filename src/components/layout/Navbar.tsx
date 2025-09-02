@@ -137,7 +137,9 @@ export default function Navbar() {
         <div className={`w-full px-4 py-4 flex items-center justify-between`}>
           <Link
             href="/"
+
             className="text-2xl sm:text-3xl text-white font-raleway font-bold"
+            prefetch={false}
           >
             JourneyWise
           </Link>
@@ -168,6 +170,7 @@ export default function Navbar() {
                             <Link
                               key={item.name}
                               href={item.href}
+                              prefetch={false}
                               className="block px-4 py-2 text-sm text-white hover:bg-white/80 hover:text-white transition-colors duration-300 flex items-center"
                             >
                               {item.icon}
@@ -181,6 +184,7 @@ export default function Navbar() {
                 ) : (
                   <Link
                     href={link.href}
+                    prefetch={false}
                     className="text-white font-raleway font-semibold transition-colors duration-300"
                   >
                     {link.name}
@@ -206,7 +210,7 @@ export default function Navbar() {
               <Bell size={20} />
             </motion.button>
 
-            <Link href="/messages">
+            <Link href="/messages" prefetch={false}>
               <motion.button
                 whileTap={{ scale: 0.9 }}
                 className="text-white  transition-colors relative p-2"
@@ -235,7 +239,7 @@ export default function Navbar() {
             ) : (
               
                 <div className="hidden md:flex items-center space-x-2">
-                <Link href="/login">
+                <Link href="/login" prefetch={false}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     className="text-white transition-colors font-semibold text-sm sm:text-base"
@@ -244,7 +248,7 @@ export default function Navbar() {
                   </motion.button>
                 </Link>
                 <span className="text-white">|</span>
-                <Link href="/become-agent">
+                <Link href="/become-agent" prefetch={false}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     className={`${
@@ -358,6 +362,7 @@ export default function Navbar() {
                                   <Link
                                     key={item.name}
                                     href={item.href}
+                                    prefetch={false}
                                     className="block text-white  transition-colors duration-300 flex items-center p-2"
                                     onClick={() => setIsMenuOpen(false)}
                                   >
@@ -372,6 +377,7 @@ export default function Navbar() {
                       ) : (
                         <Link
                           href={link.href}
+                          prefetch={false}
                           className="block text-white  transition-colors duration-300 flex items-center space-x-2 p-2"
                           onClick={() => setIsMenuOpen(false)}
                         >
@@ -382,12 +388,12 @@ export default function Navbar() {
                     </div>
                   ))}
                   <div className="pt-4 border-t border-gray-700">
-                    <Link href="/signup">
+                    <Link href="/signup" prefetch={false}>
                       <button className="w-full text-left text-white  transition-colors duration-300 py-2 px-2">
                         Sign Up
                       </button>
                     </Link>
-                    <Link href="/become-agent">
+                    <Link href="/become-agent" prefetch={false}>
                       <button className="w-full text-left text-accent hover:text-white transition-colors duration-300 py-2 px-2 flex items-center">
                         <UserPlus className="mr-2" size={18} />
                         Become an Agent

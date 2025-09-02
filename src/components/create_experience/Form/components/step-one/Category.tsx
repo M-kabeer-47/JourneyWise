@@ -51,7 +51,7 @@ export default function CategoryDropdown({
 
   const handleSelect = (option: string) => {
     onChange(option);
-    setCategoryError("") 
+    if (setCategoryError) setCategoryError("");
     setIsOpen(false);
     setFocused(false);
     onBlur?.();

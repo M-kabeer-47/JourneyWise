@@ -13,19 +13,19 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><Link href="/about" className="hover:text-accent">About Us</Link></li>
-              <li><Link href="/contact" className="hover:text-accent">Contact</Link></li>
-              <li><Link href="/faq" className="hover:text-accent">FAQ</Link></li>
-              <li><Link href="/privacy" className="hover:text-accent">Privacy Policy</Link></li>
+              <li><Link href="/about"  prefetch={false}  className="hover:text-accent">About Us</Link></li>
+              <li><Link href="/contact" prefetch={false}  className="hover:text-accent">Contact</Link></li>
+              <li><Link href="/faq"  prefetch={false} className="hover:text-accent">FAQ</Link></li>
+              <li><Link href="/privacy" prefetch={false}  className="hover:text-accent">Privacy Policy</Link></li>
             </ul>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li><Link href="/blog" className="hover:text-accent">Blog</Link></li>
-              <li><Link href="/guides" className="hover:text-accent">Travel Guides</Link></li>
-              <li><Link href="/community" className="hover:text-accent">Community</Link></li>
-              <li><Link href="/support" className="hover:text-accent">Support</Link></li>
+              <li><Link href="/blog" prefetch={false} className="hover:text-accent">Blog</Link></li>
+              <li><Link href="/guides" prefetch={false} className="hover:text-accent">Travel Guides</Link></li>
+              <li><Link href="/community" prefetch={false} className="hover:text-accent">Community</Link></li>
+              <li><Link href="/support" prefetch={false} className="hover:text-accent">Support</Link></li>
             </ul>
           </div>
           <div>

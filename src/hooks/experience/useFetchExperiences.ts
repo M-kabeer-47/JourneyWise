@@ -1,4 +1,4 @@
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {  useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Experience } from "@/lib/types/experience";
 import { useSearchParams } from "next/navigation";

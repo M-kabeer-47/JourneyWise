@@ -1,15 +1,12 @@
 "use client";
 import React, { useState } from "react";
-import { useSearchParams } from "next/navigation";
-import { motion } from "framer-motion";
-import SettingsTabs from "@/components/settings/SettingsTabs";
 import AccountSettingsTab from "@/components/settings/AccountSettingsTab";
 import SecurityTab from "@/components/settings/SecurityTab";
 import PreferencesTab from "@/components/settings/PreferencesTab";
 import PaymentBillingTab from "@/components/settings/PaymentBillingTab";
 import { useAppSelector } from "@/hooks/redux";
 import Tabs from "@/components/profile/Tabs";
-
+import { motion } from "framer-motion";
 const settingsTabs = [
   { key: "account", label: "Account" },
   { key: "security", label: "Security" },
@@ -18,12 +15,10 @@ const settingsTabs = [
 ];
 
 export default function SettingsPage() {
-  const searchParams = useSearchParams();
+  
   const user = useAppSelector((state) => state.user);
   
-  const [activeTab, setActiveTab] = useState(
-    searchParams?.get("tab") || "account"
-  );
+  const [activeTab, setActiveTab] = useState("account");
 
   const renderTabContent = () => {
     switch (activeTab) {

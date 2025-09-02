@@ -127,10 +127,25 @@ export async function GET(request: NextRequest) {
     const executeQuery = async () => {
       const query = db
         .select({
-          experience: experience,
+          experience: {
+              id: experience.id,
+      title: experience.title,
+      description: experience.description,
+      minPrice: experience.minPrice,
+      duration: experience.duration,
+      createdAt: experience.createdAt,
+      averageRating: experience.averageRating,
+      tiers: experience.tiers,
+      tags: experience.tags,
+      location: experience.location,
+      currency: experience.currency,
+      experienceImage: experience.experienceImage,
+      isAvailable: experience.isAvailable,
+          },
           agent: { agentId: agent.id },
           user: { name: user.name, image: user.image },
           isSaved: sql`CASE WHEN ${savedPosts.postID} IS NOT NULL THEN true ELSE false END`.as('isSaved'),
+          totalCount: sql`COUNT(*) OVER()`.as('totalCount')
         })
         .from(experience)
         .innerJoin(agent, eq(agent.id, experience.agentID))
@@ -158,27 +173,27 @@ export async function GET(request: NextRequest) {
     };
 
     // Build and execute the count query with the same filtersF
-    const executeCountQuery = async () => {
-      let countQuery = await db
-        .select({ count: sql`count(*)` })
-        .from(experience)
-        .innerJoin(agent, eq(agent.id, experience.agentID))
-        .innerJoin(user, eq(user.id, agent.userID))
-        .where(
-          filterConditions.length > 0 ? and(...filterConditions) : undefined
-        )
-        .execute();
+    // const executeCountQuery = async () => {
+    //   let countQuery = await db
+    //     .select({ count: sql`count(*)` })
+    //     .from(experience)
+    //     .innerJoin(agent, eq(agent.id, experience.agentID))
+    //     .innerJoin(user, eq(user.id, agent.userID))
+    //     .where(
+    //       filterConditions.length > 0 ? and(...filterConditions) : undefined
+    //     )
+    //     .execute();
 
-      return Number(countQuery[0].count);
-    };
+    //   return Number(countQuery[0].count);
+    // };
 
     
 
     // Run both queries concurrently
    
-    const [results, total] = await Promise.all([
+    const [results] = await Promise.all([
       executeQuery(),
-      executeCountQuery(),
+     
     ]);
  
   
@@ -193,21 +208,19 @@ export async function GET(request: NextRequest) {
         duration: experience.duration,
         isAvailable: experience.isAvailable,
         experienceImage: experience.experienceImage, // Adjust if needed
-        tiers: experience.tiers,
         tags: experience.tags,
         minPrice: experience.minPrice,
         location: experience.location,
         currency: experience.currency,
         averageRating: experience.averageRating || 0,
         agent: {
-          id: agentData.agentId,
           name: userData.name,
           image: userData.image,
         },
         isSaved: Boolean(isSaved),
       })
     );
-
+    const total = results.map(r => Number(r.totalCount))[0] || 0;
     return NextResponse.json(
       {
         experiences,
@@ -217,17 +230,7 @@ export async function GET(request: NextRequest) {
           offset,
           pages: Math.ceil(total / limit),
         },
-        filters: {
-          isAvailable: isAvailable !== null ? isAvailable === "true" : null,
-          price: { min: minPrice, max: maxPrice },
-          duration: { min: minDuration, max: maxDuration },
-          tags: tags ? tags.split(",") : null,
-          search: searchQuery || null,
-        },
-        sort: {
-          field: sortBy,
-          order: sortOrder,
-        },
+
       },
       { status: 200 }
 

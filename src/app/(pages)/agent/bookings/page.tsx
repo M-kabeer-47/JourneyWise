@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import Spinner from "@/components/ui/Spinner";
 import {
   Calendar,
   ListFilter,
@@ -168,7 +169,7 @@ const mockBookings: Booking[] = [
   },
 ];
 
-export default function BookingsPage() {
+function BookingsPageContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const current = new URLSearchParams(searchParams);
@@ -416,5 +417,13 @@ export default function BookingsPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function BookingsPage() {
+  return (
+    <Suspense fallback={<Spinner />}>
+      <BookingsPageContent />
+    </Suspense>
   );
 }
