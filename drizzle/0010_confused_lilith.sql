@@ -1,1 +1,0 @@
-ALTER TABLE "blog" ADD COLUMN "coverUrl" text;

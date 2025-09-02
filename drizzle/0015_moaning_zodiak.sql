@@ -1,1 +1,0 @@
-ALTER TABLE "trip" ALTER COLUMN "estimatedDistance" SET NOT NULL;

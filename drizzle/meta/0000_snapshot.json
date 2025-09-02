@@ -1,5 +1,5 @@
 {
-  "id": "ecb1681c-c46f-467c-bc2e-91d49d771c31",
+  "id": "49ee4236-6035-436a-9c64-ea11246e7022",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -150,6 +150,13 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true
+        },
+        "rating": {
+          "name": "rating",
+          "type": "double precision",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
         }
       },
       "indexes": {},
@@ -187,7 +194,7 @@
         },
         "title": {
           "name": "title",
-          "type": "jsonb",
+          "type": "text",
           "primaryKey": false,
           "notNull": true
         },
@@ -197,11 +204,12 @@
           "primaryKey": false,
           "notNull": true
         },
-        "blocks": {
-          "name": "blocks",
-          "type": "jsonb",
+        "isPublished": {
+          "name": "isPublished",
+          "type": "boolean",
           "primaryKey": false,
-          "notNull": true
+          "notNull": false,
+          "default": true
         },
         "authorID": {
           "name": "authorID",
@@ -209,17 +217,50 @@
           "primaryKey": false,
           "notNull": true
         },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "coverUrl": {
+          "name": "coverUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "thumbnailUrl": {
+          "name": "thumbnailUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "commentsCount": {
+          "name": "commentsCount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.497'"
         },
         "updatedAt": {
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.497'"
         }
       },
       "indexes": {},
@@ -309,6 +350,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "modifiedStartDate": {
+          "name": "modifiedStartDate",
+          "type": "date",
+          "primaryKey": false,
+          "notNull": false
+        },
         "endDate": {
           "name": "endDate",
           "type": "date",
@@ -320,6 +367,18 @@
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
+        },
+        "totalPrice": {
+          "name": "totalPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modifiedTotalPrice": {
+          "name": "modifiedTotalPrice",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
         },
         "paymentID": {
           "name": "paymentID",
@@ -334,11 +393,31 @@
           "notNull": false,
           "default": false
         },
+        "noOfPackages": {
+          "name": "noOfPackages",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
         "notes": {
           "name": "notes",
           "type": "text",
           "primaryKey": false,
           "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'2025-09-02 11:55:53.496'"
+        },
+        "updatedAt": {
+          "name": "updatedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'2025-09-02 11:55:53.496'"
         }
       },
       "indexes": {},
@@ -419,21 +498,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "tier": {
-          "name": "tier",
+        "tiers": {
+          "name": "tiers",
           "type": "jsonb",
           "primaryKey": false,
           "notNull": true
         },
         "minPrice": {
           "name": "minPrice",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "maxPrice": {
-          "name": "maxPrice",
           "type": "integer",
           "primaryKey": false,
           "notNull": false,
@@ -527,7 +599,15 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.495'"
+        },
+        "currency": {
+          "name": "currency",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "default": "'USD'"
         }
       },
       "indexes": {},
@@ -631,7 +711,8 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.496'"
         },
         "status": {
           "name": "status",
@@ -720,7 +801,8 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.496'"
         }
       },
       "indexes": {},
@@ -818,6 +900,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "images": {
+          "name": "images",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
         "rating": {
           "name": "rating",
           "type": "double precision",
@@ -828,7 +916,8 @@
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.496'"
         }
       },
       "indexes": {},
@@ -849,6 +938,65 @@
         "review_userID_user_id_fk": {
           "name": "review_userID_user_id_fk",
           "tableFrom": "review",
+          "tableTo": "user",
+          "columnsFrom": [
+            "userID"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.savedPosts": {
+      "name": "savedPosts",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "uuid",
+          "primaryKey": true,
+          "notNull": true,
+          "default": "gen_random_uuid()"
+        },
+        "userID": {
+          "name": "userID",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "type": {
+          "name": "type",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "postID": {
+          "name": "postID",
+          "type": "uuid",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.497'"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "savedPosts_userID_user_id_fk": {
+          "name": "savedPosts_userID_user_id_fk",
+          "tableFrom": "savedPosts",
           "tableTo": "user",
           "columnsFrom": [
             "userID"
@@ -1031,6 +1179,12 @@
           "primaryKey": false,
           "notNull": true
         },
+        "country": {
+          "name": "country",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
         "waypoints": {
           "name": "waypoints",
           "type": "jsonb",
@@ -1043,8 +1197,14 @@
           "primaryKey": false,
           "notNull": true
         },
-        "numPeople": {
-          "name": "numPeople",
+        "numOfPeople": {
+          "name": "numOfPeople",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "estimatedDistance": {
+          "name": "estimatedDistance",
           "type": "integer",
           "primaryKey": false,
           "notNull": true
@@ -1055,17 +1215,25 @@
           "primaryKey": false,
           "notNull": true
         },
+        "thumbnailUrl": {
+          "name": "thumbnailUrl",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
         "createdAt": {
           "name": "createdAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.497'"
         },
         "updatedAt": {
           "name": "updatedAt",
           "type": "timestamp",
           "primaryKey": false,
-          "notNull": true
+          "notNull": true,
+          "default": "'2025-09-02 11:55:53.497'"
         }
       },
       "indexes": {},
@@ -1171,6 +1339,12 @@
         },
         "image": {
           "name": "image",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bio": {
+          "name": "bio",
           "type": "text",
           "primaryKey": false,
           "notNull": false

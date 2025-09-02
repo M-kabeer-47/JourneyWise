@@ -4,6 +4,7 @@ import {User} from "@/lib/types/user";
 
 const fetchUser = createAsyncThunk("/fetchUser",async()=>{
 const userData = await fetchUserFromClient();
+console.log("Fetched User Data:", userData);
 console.log("Fetching...")
 if(userData){
     return {

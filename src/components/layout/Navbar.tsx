@@ -115,6 +115,10 @@ export default function Navbar() {
   
   
 
+  useEffect(() => {
+    dispatch(fetchUser());
+  }, []);
+
 
 
 

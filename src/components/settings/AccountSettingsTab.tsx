@@ -15,8 +15,10 @@ import FormInput from "@/components/ui/FormInput";
 import Image from "next/image";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
-import { userSchema, userSchemaPartial } from "@/lib/schemas/user";
-import image from "next/image";
+import { userSchemaPartial } from "@/lib/schemas/user";
+import { User as UserType } from "@/lib/types/user";
+import useUpdateUser from "@/hooks/user/useupdateUser";
+import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 
 interface User {
   id: string;
@@ -38,7 +40,8 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     handleSubmit,
     formState: { errors },
     control,
-  } = useForm<User>({
+    watch,
+  } = useForm<UserType>({
     resolver: zodResolver(userSchemaPartial),
     defaultValues: {
       name: user?.name || "",
@@ -50,16 +53,22 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
 
   
   const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
-  const [isLoading, setIsLoading] = useState(false);
+  
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
+  const { isLoading, updateUser } = useUpdateUser();
+ const handleProfileUpdate = async (data: UserType) => {
+  console.log("Form Data:", data);
+  console.log("Current User:", user);
+  if(user?.email === data.email && user?.name === data.name && user?.image === data.image  && user?.bio === data.bio) {
+    return
+  }
 
- const handleProfileUpdate = async (data: User) => {
+  await updateUser.mutateAsync(data);
   alert("Profile updated successfully!");
-  setIsLoading(true);
-  alert("Data: "+JSON.stringify(data)); // Now 'data' contains the form values
-  // TODO: Implement profile update API call including image upload
-  setTimeout(() => setIsLoading(false), 1000);
+  alert("Data: "+JSON.stringify(data));
+ 
 };
+ 
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -70,16 +79,16 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   };
 
   const handleEmailVerification = async () => {
-    setIsLoading(true);
+    
     // TODO: Implement email verification API call
-    setTimeout(() => setIsLoading(false), 1000);
+   
   };
 
   const handleAccountDeactivation = async () => {
-    setIsLoading(true);
+    
     // TODO: Implement account deactivation API call
     setTimeout(() => {
-      setIsLoading(false);
+      ;
       setShowDeactivateModal(false);
     }, 1000);
   };

@@ -19,4 +19,5 @@ export type User = {
   description?: string | null;
   country: string;
   bannerImage?: string | null;
+  bio?: string | null;
 };

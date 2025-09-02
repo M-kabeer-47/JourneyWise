@@ -1,2 +1,0 @@
-ALTER TABLE "booking" ADD COLUMN "createdAt" timestamp DEFAULT '2025-08-23 04:36:55.928';--> statement-breakpoint
-ALTER TABLE "booking" ADD COLUMN "updatedAt" timestamp DEFAULT '2025-08-23 04:36:55.928';

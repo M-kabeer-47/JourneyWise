@@ -1,1 +1,0 @@
-ALTER TABLE "agent" ADD COLUMN "rating" double precision DEFAULT 0;
