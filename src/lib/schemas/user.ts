@@ -5,8 +5,8 @@ const stepOneSchemaBase = z.object({
   email: z.string().min(1,"Email is required").email('Invalid email address'),
   password: z.string().min(1,"Password is required").min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
-  id: z.string().uuid("Invalid ID format")
-});
+  id: z.string().optional()
+}).strict();
 
 export const stepOneSchema = stepOneSchemaBase.refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",
@@ -30,6 +30,7 @@ export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThr
 });
 
 
- export const userSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
+  let tempUserSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
+export const userSchema = tempUserSchema.strict()
 export const userSchemaPartial = userSchema.partial()
 export type SignupData = z.infer<typeof signupSchema>

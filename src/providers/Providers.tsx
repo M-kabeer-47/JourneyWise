@@ -11,7 +11,7 @@ import { Toast } from "@/components/ui/Toast";
 
 export default function Providers({ children }: { children: React.ReactNode }) {
   // Create QueryClient inside the component to avoid SSR issues
-
+  console.log("Main layout re rendered");
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {

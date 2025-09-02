@@ -34,8 +34,8 @@ import UserMenuSkeleton from "../skeletons/NavbarUserSkeleton";
 
 const navLinks = [
   { name: "Home", href: "/", icon: <Home size={20} /> },
-  { name: "Explore Gigs", href: "/explore", icon: <MapPin size={20} /> },
-  { name: "Itinerary Builder", href: "/itinerary", icon: <MapPin size={20} /> },
+  { name: "Explore", href: "/experiences", icon: <MapPin size={20} /> },
+  { name: "Trips", href: "/trips", icon: <MapPin size={20} /> },
   {
     name: "Blog",
     href: "#",
@@ -116,6 +116,7 @@ export default function Navbar() {
   
 
   useEffect(() => {
+    alert("Fetching user data...");
     dispatch(fetchUser());
   }, []);
 
@@ -134,7 +135,7 @@ export default function Navbar() {
         exit="exit"
         className={`fixed w-full z-50 transition-all duration-300 ${
           !isScrolled && pathName === "/"
-            ? "bg-midnight-blue"
+            ? "bg-transparent"
             : "bg-midnight-blue"
         }`}
       >

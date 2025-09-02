@@ -158,11 +158,9 @@ export default function Signup() {
       country: finalData.country || "",
       dob: finalData.dateOfBirth || "",
     });
-    const twoFactorResponse = await authClient.twoFactor.enable({
-      password: finalData.password || "",
-    });
+    
 
-    if (twoFactorResponse.data && Data) {
+    if (Data) {
       setSubmitting(false);
       setToastMessage("Account created successfully");
       setShowToast(true);

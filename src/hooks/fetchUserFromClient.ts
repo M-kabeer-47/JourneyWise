@@ -1,7 +1,7 @@
 import { authClient } from "@/lib/auth/authClient";
 export default async function fetchUserFromClient(){
     const {data:session,error} = await authClient.getSession()
-    console.log("session",session);
+    
     if(error){
         return {message: "Failed to fetch"}
     }

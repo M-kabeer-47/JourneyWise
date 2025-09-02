@@ -19,7 +19,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${raleway.variable}`}>
         <Providers>
-          <FetchUserFromClient children={children} />
+          {children} 
         </Providers>
       </body>
     </html>

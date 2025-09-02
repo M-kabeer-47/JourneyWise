@@ -6,9 +6,7 @@ import {
   Mail,
   CheckCircle,
   AlertCircle,
-  Save,
   Trash2,
-  Camera,
   Upload,
 } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
@@ -18,25 +16,14 @@ import { Controller, useForm } from "react-hook-form";
 import { userSchemaPartial } from "@/lib/schemas/user";
 import { User as UserType } from "@/lib/types/user";
 import useUpdateUser from "@/hooks/user/useupdateUser";
-import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  image?: string;
-  bio?: string;
-  isEmailVerified?: boolean;
-  isActive?: boolean;
-}
 
 interface AccountSettingsTabProps {
-  user: User | null;
+  user: UserType | null;
 }
 
 export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   const {
-    register,
+    setValue,
     handleSubmit,
     formState: { errors },
     control,
@@ -51,24 +38,31 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     },
   });
 
-  
+  const isSaveButtonDisabled =
+    user?.name === watch("name") &&
+    user?.email === watch("email") &&
+    user?.bio === watch("bio") &&
+    user?.image === watch("image");
+
   const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
-  
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
   const { isLoading, updateUser } = useUpdateUser();
- const handleProfileUpdate = async (data: UserType) => {
-  console.log("Form Data:", data);
-  console.log("Current User:", user);
-  if(user?.email === data.email && user?.name === data.name && user?.image === data.image  && user?.bio === data.bio) {
-    return
-  }
 
-  await updateUser.mutateAsync(data);
-  alert("Profile updated successfully!");
-  alert("Data: "+JSON.stringify(data));
- 
-};
- 
+  const handleProfileUpdate = async (data: UserType) => {
+    console.log("Form Data:", data);
+    console.log("Current User:", user);
+    if (isSaveButtonDisabled) {
+      return;
+    }
+
+    let imageUrl = await updateUser.mutateAsync({
+      ...data,
+      id: user?.id as string,
+    });
+    setValue("image", imageUrl);
+    alert("Profile updated successfully!");
+    alert("Data: " + JSON.stringify(data));
+  };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -79,16 +73,12 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   };
 
   const handleEmailVerification = async () => {
-    
     // TODO: Implement email verification API call
-   
   };
 
   const handleAccountDeactivation = async () => {
-    
     // TODO: Implement account deactivation API call
     setTimeout(() => {
-      ;
       setShowDeactivateModal(false);
     }, 1000);
   };
@@ -112,7 +102,10 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit(handleProfileUpdate)} className="space-y-6">
+        <form
+          onSubmit={handleSubmit(handleProfileUpdate)}
+          className="space-y-6"
+        >
           {/* Profile Picture Section */}
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-6">
             <div className="relative">
@@ -131,7 +124,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                   </div>
                 )}
               </div>
-           
             </div>
 
             <div className="flex-1">
@@ -222,6 +214,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
 
           <div className="flex justify-end">
             <button
+              disabled={isSaveButtonDisabled || isLoading}
               type="submit"
               onClick={() => console.log("Errors", errors)}
               className="flex items-center justify-center gap-2 px-2 w-[170px] py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
@@ -255,22 +248,20 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
 
         <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
           <div className="flex items-center gap-3">
-            {user?.isEmailVerified ? (
+            {user?.emailVerified ? (
               <CheckCircle className="w-5 h-5 text-green-500" />
             ) : (
               <AlertCircle className="w-5 h-5 text-orange-500" />
             )}
             <div>
               <p className="font-medium text-charcoal">
-                {user?.isEmailVerified
-                  ? "Email Verified"
-                  : "Email Not Verified"}
+                {user?.emailVerified ? "Email Verified" : "Email Not Verified"}
               </p>
               <p className="text-sm text-gray-600">{user?.email}</p>
             </div>
           </div>
 
-          {!user?.isEmailVerified && (
+          {!user?.emailVerified && (
             <button
               onClick={handleEmailVerification}
               disabled={isLoading}
@@ -301,48 +292,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               Manage your account activation and deactivation
             </p>
           </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-            <div className="flex items-center gap-3">
-              {user?.isActive ? (
-                <CheckCircle className="w-5 h-5 text-green-500" />
-              ) : (
-                <AlertCircle className="w-5 h-5 text-red-500" />
-              )}
-              <div>
-                <p className="font-medium text-charcoal">
-                  Account Status: {user?.isActive ? "Active" : "Deactivated"}
-                </p>
-                <p className="text-sm text-gray-600">
-                  {user?.isActive
-                    ? "Your account is active and fully functional"
-                    : "Your account is currently deactivated"}
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {user?.isActive && (
-            <div className="border-t pt-4">
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h3 className="font-medium text-red-800 mb-2">
-                  Deactivate Account
-                </h3>
-                <p className="text-sm text-red-700 mb-4">
-                  Deactivating your account will hide your profile and disable
-                  most features. You can reactivate it anytime by logging in.
-                </p>
-                <button
-                  onClick={() => setShowDeactivateModal(true)}
-                  className="px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors"
-                >
-                  Deactivate Account
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </motion.div>
 
