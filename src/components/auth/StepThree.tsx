@@ -1,18 +1,19 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { stepThreeSchema } from "../../lib/schemas/user";
+import { SignupData, stepThreeSchema } from "../../lib/schemas/user";
 import Spinner from "../ui/Spinner";
-import Modal from "../ui/Modal";
 import FormInput from "../ui/FormInput";
 import { motion, AnimatePresence } from "framer-motion";
-import { User, X, Check, Camera, ArrowLeft, Loader2 } from "lucide-react";
+import { User, X, ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
+import ConfirmationModal from "./signup/ConfirmationModal";
+import { toast } from "@/components/ui/Toast";
 
 interface StepThreeProps {
   onSubmit: (data: any) => void;
   onBack: () => void;
-  initialData: Partial<any>;
+  initialData: Partial<SignupData>;
   submitting: boolean;
   type: string;
 }
@@ -26,9 +27,7 @@ const StepThree: React.FC<StepThreeProps> = ({
 }) => {
   const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<any>({});
-  const [previewImage, setPreviewImage] = useState<string | null>(
-    initialData.profilePicture || null
-  );
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
@@ -36,14 +35,11 @@ const StepThree: React.FC<StepThreeProps> = ({
     handleSubmit,
     formState: { errors },
     setValue,
-    watch,
   } = useForm({
     resolver: zodResolver(stepThreeSchema),
     mode: "onSubmit",
     defaultValues: initialData,
   });
-
-  const bio = watch("bio");
 
   const handleFormSubmit = (data: any) => {
     if (type === "agent") {
@@ -60,22 +56,26 @@ const StepThree: React.FC<StepThreeProps> = ({
 
     try {
       // Show preview
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        setPreviewImage(event.target?.result as string);
-      };
-      reader.readAsDataURL(file);
-
-      setValue("profilePicture", file);
+      let url = URL.createObjectURL(file);
+      setPreviewImage(url);
+      setValue("image", file);
     } catch (error) {
       console.error("Error handling file:", error);
+      toast.error("Failed to upload your image. Please try again.");
     }
   };
 
   const removeImage = () => {
     setPreviewImage(null);
-    setValue("profilePicture", null);
+    setValue("image", "");
   };
+
+  useEffect(() => {
+    if (initialData.image instanceof File) {
+      let url = URL.createObjectURL(initialData.image);
+      setPreviewImage(url);
+    }
+  }, [initialData.image]);
 
   return (
     <>
@@ -90,9 +90,9 @@ const StepThree: React.FC<StepThreeProps> = ({
           {/* Profile Picture Upload */}
           <div className="flex flex-col items-center">
             <Controller
-              name="profilePicture"
+              name="image"
               control={control}
-              defaultValue={null}
+              defaultValue={undefined}
               render={() => (
                 <div className="flex flex-col items-center">
                   <div className="relative group">
@@ -124,9 +124,6 @@ const StepThree: React.FC<StepThreeProps> = ({
                           </span>
                         </div>
                       )}
-
-                      {/* Overlay */}
-                      
                     </div>
 
                     {previewImage && (
@@ -152,9 +149,9 @@ const StepThree: React.FC<StepThreeProps> = ({
                     Upload a profile photo (optional)
                   </p>
 
-                  {errors.profilePicture && (
+                  {errors.image && (
                     <p className="mt-1 sm:mt-2 text-xs sm:text-sm text-red-500">
-                      {errors.profilePicture.message as string}
+                      {errors.image.message as string}
                     </p>
                   )}
                 </div>
@@ -212,16 +209,7 @@ const StepThree: React.FC<StepThreeProps> = ({
         </div>
       </motion.div>
 
-      <Modal
-        isOpen={showModal}
-        onClose={() => setShowModal(false)}
-        onConfirm={() => {
-          setShowModal(false);
-          onSubmit(data);
-        }}
-        title="Confirm Submission"
-        message="Are you sure you want to submit your profile? This action cannot be undone."
-      />
+      
 
       <AnimatePresence>
         {submitting && (

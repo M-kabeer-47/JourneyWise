@@ -7,7 +7,7 @@ export interface SignupData {
     country: string
     phoneNumber: string
     profilePicture: File | string | null
-    step: number
+    
   }
   
   

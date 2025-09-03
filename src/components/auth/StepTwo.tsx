@@ -6,11 +6,10 @@ import DatePicker from "./Date-Picker";
 import CountrySelect from "./Country-Select";
 import { SignupData } from "@/app/(pages)/(auth)/sign-up/types";
 import PhoneInput from "../ui/PhoneInput";
-import Spinner from "../ui/Spinner";
 import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
 import { validatePhoneNumber } from "@/utils/functions/validatePhoneNumber";
 import { ArrowLeft, ArrowRight, Loader2 } from "lucide-react";
+import { toast } from "@/components/ui/Toast";
 
 type PhoneError = {
   message: string;
@@ -35,7 +34,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
   setPhoneError,
   secondStepLoading,
 }) => {
-  const pathname = usePathname();
   const [selectedCountry, setSelectedCountry] = useState(
     initialData.country || ""
   );
@@ -53,14 +51,13 @@ const StepTwo: React.FC<StepTwoProps> = ({
   });
 
   const handleSubmitForm = (data: any) => {
-    if (validatePhoneNumber(data.phoneNumber, selectedCountry) !== true) {
+    const validationResult = validatePhoneNumber(data.phoneNumber, selectedCountry);
+    if (validationResult !== true) {
       setPhoneError({
-        message: validatePhoneNumber(
-          data.phoneNumber,
-          selectedCountry
-        ) as string,
+        message: validationResult as string,
         status: true,
       });
+      toast.error("Invalid Phone Number");
       return;
     }
 

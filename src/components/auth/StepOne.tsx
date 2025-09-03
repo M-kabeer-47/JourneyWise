@@ -4,9 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { stepOneSchema } from "../../lib/schemas/user";
 import { SignupData } from "@/app/(pages)/(auth)/sign-up/types";
 import FormInput from "@/components/ui/FormInput";
-import Spinner from "../ui/Spinner";
 import { motion } from "framer-motion";
-import { usePathname } from "next/navigation";
 import { ArrowRight, Loader2 } from "lucide-react";
 
 interface StepOneProps {
@@ -32,7 +30,6 @@ const StepOne: React.FC<StepOneProps> = ({
     handleSubmit,
     formState: { errors },
     setError,
-    watch,
   } = useForm({
     resolver: zodResolver(stepOneSchema),
     mode: "onSubmit",

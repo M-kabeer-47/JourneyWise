@@ -24,13 +24,11 @@ export const stepThreeSchema = z.object({
   bio: z.string().max(160, 'Bio must be at most 160 characters').optional(),
 });
 
-export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema).refine((data) => data.password === data.confirmPassword, {
-  message: "Passwords don't match",
-  path: ["confirmPassword"],
-});
+export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
 
 
-  let tempUserSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
+let tempUserSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
 export const userSchema = tempUserSchema.strict()
 export const userSchemaPartial = userSchema.partial()
+
 export type SignupData = z.infer<typeof signupSchema>

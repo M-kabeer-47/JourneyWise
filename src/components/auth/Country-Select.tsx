@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Check, ChevronDown, Globe, AlertCircle } from 'lucide-react';
+import { Check, ChevronDown, Globe } from 'lucide-react';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
 
@@ -38,7 +38,7 @@ export default function CountrySelect({ value, onChange, onCountryChange, error 
 
   const handleSelect = (countryName: string, countryCode: string) => {
     onChange(countryName);
-    onCountryChange(countryCode);
+    onCountryChange(countryName);
     setIsOpen(false);
     setSearchTerm('');
   };
@@ -81,7 +81,7 @@ export default function CountrySelect({ value, onChange, onCountryChange, error 
       
       {error && (
         <div className="flex items-center mt-1 text-sm text-red-500">
-          <AlertCircle className="h-3 w-3 mr-1" />
+     
           <p>{error}</p>
         </div>
       )}
