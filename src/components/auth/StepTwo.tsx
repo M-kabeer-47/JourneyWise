@@ -51,7 +51,10 @@ const StepTwo: React.FC<StepTwoProps> = ({
   });
 
   const handleSubmitForm = (data: any) => {
-    const validationResult = validatePhoneNumber(data.phoneNumber, selectedCountry);
+    const validationResult = validatePhoneNumber(
+      data.phoneNumber,
+      selectedCountry
+    );
     if (validationResult !== true) {
       setPhoneError({
         message: validationResult as string,
@@ -134,7 +137,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
             className="w-full sm:w-auto sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg 
               font-medium transition-colors flex items-center justify-center"
           >
-            <ArrowLeft size={16} className="mr-2" />
             <span>Back</span>
           </button>
 
@@ -154,10 +156,6 @@ const StepTwo: React.FC<StepTwoProps> = ({
             ) : (
               <>
                 <span className="mr-2">Continue</span>
-                <ArrowRight
-                  size={16}
-                  className="group-hover:translate-x-1 transition-transform duration-200"
-                />
               </>
             )}
           </button>

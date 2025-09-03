@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/Spinner";
+import { MultiStepLoader } from "@/components/ui/MultiStepLoader";
 export default function FormulaBreakdownPage() {
   const [count,setCount] = useState(0);
   useEffect(() => {
@@ -10,11 +11,20 @@ export default function FormulaBreakdownPage() {
   }, [count]);
 
   return (
-    <div className="h-screen items-center w-full flex  justify-center">
-      <Spinner size="small" />
-      <h1>Hello there</h1>
-      <button onClick={() => setCount(count + 1)}>Reload</button>
-    </div>
+   <MultiStepLoader
+     loadingStates={[
+       { text: "Step 1: Validate Phone Number" },
+       { text: "Step 2: Verify OTP" },
+       { text: "Step 3: Complete Registration" },
+       { text: "Step 4: Finalize Setup" },
+       { text: "Step 5: Success" },
+       { text: "Step 6: Complete" }
+
+     ]}
+     loop={true}
+     loading={true}
+     duration={1000}
+   />
   );
 }
 

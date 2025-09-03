@@ -2,12 +2,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SignupData, stepThreeSchema } from "../../lib/schemas/user";
-import Spinner from "../ui/Spinner";
 import FormInput from "../ui/FormInput";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { User, X, ArrowLeft, Loader2 } from "lucide-react";
 import Image from "next/image";
-import ConfirmationModal from "./signup/ConfirmationModal";
+import { MultiStepLoader } from "@/components/ui/MultiStepLoader";
 import { toast } from "@/components/ui/Toast";
 
 interface StepThreeProps {
@@ -25,7 +24,6 @@ const StepThree: React.FC<StepThreeProps> = ({
   submitting,
   type,
 }) => {
-  const [showModal, setShowModal] = useState(false);
   const [data, setData] = useState<any>({});
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -41,9 +39,30 @@ const StepThree: React.FC<StepThreeProps> = ({
     defaultValues: initialData,
   });
 
+  // Loading steps for account creation
+  const loadingSteps = [
+    {
+      text: "Validating your information...",
+    },
+    {
+      text: "Uploading your profile picture...",
+    },
+    {
+      text: "Setting up your account...",
+    },
+    {
+      text: "Configuring your profile...",
+    },
+    {
+      text: "Preparing your dashboard...",
+    },
+    {
+      text: "Almost done! Finalizing setup...",
+    },
+  ];
+
   const handleFormSubmit = (data: any) => {
     if (type === "agent") {
-      setShowModal(true);
       setData(data);
     } else {
       onSubmit(data);
@@ -181,8 +200,9 @@ const StepThree: React.FC<StepThreeProps> = ({
             <button
               type="button"
               onClick={onBack}
+              disabled={submitting}
               className="w-full sm:w-auto sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg 
-                font-medium transition-colors flex items-center justify-center"
+                font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ArrowLeft size={16} className="mr-2" />
               <span>Back</span>
@@ -198,8 +218,8 @@ const StepThree: React.FC<StepThreeProps> = ({
             >
               {submitting ? (
                 <div className="flex gap-2 items-center">
-                  <span>Please wait...</span>
-                  <Loader2 className="animate-spin w-4 h-4 " />
+                  <span>Creating account...</span>
+                  <Loader2 className="animate-spin w-4 h-4" />
                 </div>
               ) : (
                 <span>Complete Registration</span>
@@ -209,25 +229,13 @@ const StepThree: React.FC<StepThreeProps> = ({
         </div>
       </motion.div>
 
-      
-
-      <AnimatePresence>
-        {submitting && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className={`fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50`}
-          >
-            <div className="bg-white rounded-xl p-8 flex flex-col items-center">
-              <Spinner size="large" />
-              <p className="mt-4 text-midnight-blue font-medium">
-                Creating your account...
-              </p>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* MultiStepLoader for account creation */}
+      <MultiStepLoader
+        loadingStates={loadingSteps}
+        loading={submitting}
+        duration={1000}
+        loop={true}
+      />
     </>
   );
 };

@@ -18,30 +18,17 @@ const db = drizzle(process.env.DATABASE_URL!);
 
 export const auth = betterAuth({
   appName: "Better-Auth",
-  rateLimit: {
-    window: 60,
-    max: 100,
-    customRules: {
-      "/sign-in": {
-        window: 10,
-        max: 3,
-      },
-      "/two-factor/*": {
-        window: 10,
-        max: 3,
-      },
-    },
-  },
   emailVerification: {
     sendVerificationEmail: async ({ user, url }, request) => {
       await send_email({
         to: user.email,
         subject: "Verify your email",
-        text: `Click the link to verify your email: ${url}`,
+        text: `Click the link to toooo verify your email: ${url}`,
       });
     },
     sendOnSignUp: true,
     autoSignInAfterVerification: true,
+    sendOnSignIn: false
   },
   plugins: [
     two_factor_plugin({
@@ -84,6 +71,7 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, {
+    
     provider: "pg", //@ts-ignore
     schema: {
       user,
@@ -92,6 +80,7 @@ export const auth = betterAuth({
       verification,
       twoFactor,
     },
+    
   }),
   socialProviders: {
     google: {

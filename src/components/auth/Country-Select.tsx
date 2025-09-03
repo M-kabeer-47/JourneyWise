@@ -38,7 +38,7 @@ export default function CountrySelect({ value, onChange, onCountryChange, error 
 
   const handleSelect = (countryName: string, countryCode: string) => {
     onChange(countryName);
-    onCountryChange(countryName);
+    onCountryChange(countryCode);
     setIsOpen(false);
     setSearchTerm('');
   };

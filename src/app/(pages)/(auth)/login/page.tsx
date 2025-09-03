@@ -36,92 +36,33 @@ export default function SignIn() {
     resolver: zodResolver(signInSchema),
   });
 
-  const onSubmit = async (data: SignInForm) => {
-    setIsLoading(true);
-    // Simulate API call
-    let checkEmail = await axios
-      .get(`/api/app_auth/checkEmail`, {
-        params: {
-          email: data.email.toLowerCase(),
-        },
-      })
-      .then((response) => {
-        if (response.status === 200) {
-          return {
-            data: true,
-            google: false,
-          };
-        }
-      })
-      .catch((error) => {
-        if (error.response.status === 409) {
-          return {
-            data: true,
-            google: true,
-          };
-        } else if (
-          error.response.status === 400 &&
-          error.response?.data?.message === "Email doesn't exist"
-        ) {
-          return {
-            data: false,
-            google: false,
-          };
-        }
-      });
-
-    if (checkEmail?.google === true) {
-      setError("email", {
-        type: "manual",
-        message: "Google account already exists",
-      });
-
-      setIsLoading(false);
-      return;
-    } else if (checkEmail?.data === false) {
-      alert("Email doesn't exist");
-      setError("email", {
-        type: "manual",
-        message: "Email doesn't exist",
-      });
-      setIsLoading(false);
-      return;
+const onSubmit = async (data: SignInForm) => {
+  setIsLoading(true);
+  
+  // Monitor each step
+  console.time("Total Sign-in Time");
+  console.time("Auth Request Time");
+  
+  try {
+    const response = await axios.post(`/api/app_auth/signin`, {
+      email: data.email,
+      password: data.password,
+    });
+    if(response.status === 200){
+      // Handle successful login
+      toast.success("Login successful!");
     }
-
-    const { data: response, error } = await authClient.signIn.email(
-      {
-        email: data.email,
-        password: data.password,
-      },
-      {
-        onError: (ctx) => {
-          if (ctx.error.status === 403) {
-            authClient.sendVerificationEmail({
-              email: data.email,
-              callbackURL: "/",
-            });
-            toast.error("Please verify your email address");
-          } else {
-            setError("password", {
-              type: "manual",
-              message: "Invalid password",
-            });
-          }
-        },
-        onSuccess: (ctx) => {
-          router.push("/");
-        },
-      }
-    );
-
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    console.log(data);
+    
+  } catch (error) {
+    toast.error("Invalid email or password");
     setIsLoading(false);
-  };
-
+    
+    
+  }
+};
   return (
     <div className="overflow-hidden py-[50px]">
-      <div className="h-screen flex flex-col md:flex-row max-w-[80%] max-h-[90vh] mx-auto rounded-lg overflow-hidden shadow-2xl ">
+      <div className="h-screen flex flex-col md:flex-row sm:max-w-[80%] sm:max-h-[90vh] mx-auto rounded-lg overflow-hidden shadow-2xl ">
         {/* Left side - Hero Image Section */}
         <div className="hidden md:flex md:w-1/2 relative bg-midnight-blue">
           <div className="absolute inset-0">

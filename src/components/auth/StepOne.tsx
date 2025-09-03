@@ -140,10 +140,7 @@ const StepOne: React.FC<StepOneProps> = ({
           ) : (
             <>
               <span className="mr-2">Continue</span>
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition-transform duration-200"
-              />
+             
             </>
           )}
         </button>
