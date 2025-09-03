@@ -116,7 +116,7 @@ export default function Navbar() {
   
 
   useEffect(() => {
-    alert("Fetching user data...");
+    
     dispatch(fetchUser());
   }, []);
 

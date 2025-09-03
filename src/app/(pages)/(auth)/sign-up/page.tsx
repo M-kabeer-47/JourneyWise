@@ -12,10 +12,11 @@ import Toast from "@/components/auth/Custom-Toast";
 import { authClient } from "@/lib/auth/authClient";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
+import { auth } from "@/lib/auth/auth";
 
 export default function Signup() {
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState<Partial<SignupData>>({ step: 1 });
+  const [formData, setFormData] = useState<Partial<SignupData>>({});
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -152,7 +153,7 @@ export default function Signup() {
     const { data: Data, error } = await authClient.signUp.email({
       email: finalData.email?.toLowerCase() || "",
       password: finalData.password || "",
-      name: finalData.firstName + " " + finalData.lastName,
+      name: finalData.name || "",
       image: finalData.profilePicture || "", //@ts-ignore
       phoneNumber: finalData.phoneNumber || "",
       country: finalData.country || "",
@@ -162,11 +163,10 @@ export default function Signup() {
 
     if (Data) {
       setSubmitting(false);
-      setToastMessage("Account created successfully");
+      setToastMessage("Account created successfully, Verification email has been sent");
       setShowToast(true);
       setTimeout(() => {
-        setShowToast(false);
-
+      setShowToast(false);
         router.push("/login");
       }, 3000);
     } else {
@@ -244,13 +244,13 @@ export default function Signup() {
   };
 
   return (
-    <div className="h-screen bg-gray-50 flex justify-center items-center">
-  <div className="flex w-[100%] overflow-hidden bg-white h-screen">
+    <div className="h-screen bg-gray-50 py-[20px]">
+  <div className="flex max-w-[80%] h-[92vh] mx-auto bg-white ">
 
       
       {/* Left column - Illustrations with themed overlay */}
       <div
-        className="hidden md:flex md:w-5/12 lg:w-6/12 relative"
+        className="hidden md:flex w-1/2 relative  min-h-full"
         style={{
           backgroundImage: `url(${getStepIllustration()})`,
           backgroundSize: "cover",
@@ -261,7 +261,7 @@ export default function Signup() {
         {/* Theme overlay with gradient blend */}
         <div className="absolute inset-0 bg-gradient-to-br from-midnight-blue/30  to-midnight-blue/50"></div>
 
-        <div className="w-full flex flex-col items-center justify-center p-6 lg:p-12 relative overflow-hidden">
+        <div className="w-full flex flex-col items-center justify-center p-6 lg:p-12 relative h-full overflow-hidden">
           {/* Logo top left */}
           <div className="absolute top-8 left-8">
             <Logo className="text-white text-2xl" /> {/* Changed to white for better visibility */}
@@ -311,8 +311,8 @@ export default function Signup() {
       </div>
 
       {/* Right column - Form */}
-      <div className="w-full md:w-7/12 lg:w-6/12 flex justify-center sm:py-12 sm:px-[100px] p-10">
-        <div className="w-full">
+      <div className="w-1/2 flex justify-center h-full  sm:py-8 sm:px-[30px] p-10">
+        <div className="w-full h-full flex flex-col">
           {/* Mobile logo */}
           <div className="md:hidden mb-8">
             <Logo className="text-2xl" />
@@ -320,7 +320,7 @@ export default function Signup() {
 
           <ProgressIndicator currentStep={step} totalSteps={3} />
 
-          <div className="mt-8 min-h-[450px]">
+          <div className="mt-8 flex-1 ">
             <AnimatePresence mode="wait">
               {step === 1 && (
                 <StepOne

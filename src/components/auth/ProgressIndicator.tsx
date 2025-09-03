@@ -14,9 +14,9 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep, tota
           <React.Fragment key={i}>
             <div className="flex flex-col items-center">
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${
+                className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-inter font-bold transition-all duration-300 ${
                   i + 1 <= currentStep
-                    ? 'bg-gradient-to-r from-midnight-blue to-ocean-blue text-white shadow-lg shadow-ocean-blue/30'
+                    ? 'bg-midnight-blue text-white shadow-lg shadow-ocean-blue/30'
                     : 'bg-gray-100 text-gray-400'
                 }`}
               >
@@ -44,7 +44,7 @@ const ProgressIndicator: React.FC<ProgressIndicatorProps> = ({ currentStep, tota
               <div className="flex-1 h-1 mx-2 relative">
                 <div className="absolute inset-0 bg-gray-100 rounded-full"></div>
                 <motion.div
-                  className="absolute inset-0 bg-gradient-to-r from-midnight-blue to-ocean-blue rounded-full"
+                  className="absolute inset-0 bg-midnight-blue rounded-full"
                   initial={{ width: i + 1 < currentStep ? '100%' : '0%' }}
                   animate={{ width: i + 1 < currentStep ? '100%' : '0%' }}
                   transition={{ duration: 0.5 }}

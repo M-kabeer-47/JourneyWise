@@ -32,7 +32,17 @@ export const auth = betterAuth({
       },
     },
   },
-
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }, request) => {
+      await send_email({
+        to: user.email,
+        subject: "Verify your email",
+        text: `Click the link to verify your email: ${url}`,
+      });
+    },
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
+  },
   plugins: [
     two_factor_plugin({
       skipVerificationOnEnable: true,
@@ -110,6 +120,7 @@ export const auth = betterAuth({
 
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
 
     sendResetPassword: async ({ user, url }, request) => {
       await send_email({

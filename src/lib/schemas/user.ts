@@ -6,7 +6,7 @@ const stepOneSchemaBase = z.object({
   password: z.string().min(1,"Password is required").min(8, 'Password must be at least 8 characters'),
   confirmPassword: z.string(),
   id: z.string().optional()
-}).strict();
+})
 
 export const stepOneSchema = stepOneSchemaBase.refine((data) => data.password === data.confirmPassword, {
   message: "Passwords don't match",

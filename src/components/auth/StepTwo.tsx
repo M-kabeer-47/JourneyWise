@@ -82,22 +82,22 @@ const StepTwo: React.FC<StepTwoProps> = ({
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
       onSubmit={handleSubmit(handleSubmitForm)}
-      className="space-y-6 flex flex-col min-h-[450px]" // Added flex and min-height to match StepOne
+      className="space-y-6 h-full flex flex-col justify-between" // Added flex and min-height to match StepOne
     >
-      <div className="flex-grow space-y-6">
+      <div className="space-y-6">
         {" "}
         {/* This wrapper will push the buttons to the bottom */}
         <h2 className="text-2xl font-semibold text-midnight-blue mb-6">
           Complete Your Profile
         </h2>
         <Controller
-          name="dateOfBirth"
+          name="dob"
           control={control}
           defaultValue=""
           render={({ field }) => (
             <DatePicker
               label="Date of Birth"
-              error={errors.dateOfBirth?.message as string}
+              error={errors.dob?.message as string}
               {...field}
             />
           )}
@@ -125,7 +125,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
           render={({ field }) => (
             <PhoneInput
               {...field}
-              country={selectedCountry}
+              
               error={errors.phoneNumber?.message as string}
             />
           )}
@@ -134,9 +134,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
 
       {/* Buttons will now be positioned at the bottom */}
       <div
-        className={`flex justify-between gap-4 relative ${
-          pathname.includes("agent") ? "top-0" : " top-[100px]"
-        }`}
+        className={`flex justify-between gap-4`}
       >
         <button
           type="button"

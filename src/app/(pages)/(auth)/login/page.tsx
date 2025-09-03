@@ -16,6 +16,7 @@ import axios from "axios";
 import { signIn } from "@/lib/auth/google";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { toast } from "@/components/ui/Toast";
 export type SignInForm = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
@@ -53,7 +54,6 @@ export default function SignIn() {
         }
       })
       .catch((error) => {
-      
         if (error.response.status === 409) {
           return {
             data: true,
@@ -63,8 +63,6 @@ export default function SignIn() {
           error.response.status === 400 &&
           error.response?.data?.message === "Email doesn't exist"
         ) {
-         
-        
           return {
             data: false,
             google: false,
@@ -81,7 +79,7 @@ export default function SignIn() {
       setIsLoading(false);
       return;
     } else if (checkEmail?.data === false) {
-      alert("Email doesn't exist")
+      alert("Email doesn't exist");
       setError("email", {
         type: "manual",
         message: "Email doesn't exist",
@@ -90,23 +88,32 @@ export default function SignIn() {
       return;
     }
 
-    const { data: response, error } = await authClient.signIn.email({
-      email: data.email,
-      password: data.password,
-    });
-    if(data){
-      router.push('/');
-    }
+    const { data: response, error } = await authClient.signIn.email(
+      {
+        email: data.email,
+        password: data.password,
+      },
+      {
+        onError: (ctx) => {
+          if (ctx.error.status === 403) {
+            authClient.sendVerificationEmail({
+              email: data.email,
+              callbackURL: "/",
+            });
+            toast.error("Please verify your email address");
+          } else {
+            setError("password", {
+              type: "manual",
+              message: "Invalid password",
+            });
+          }
+        },
+        onSuccess: (ctx) => {
+          router.push("/");
+        },
+      }
+    );
 
-    if (error) {
-      //@ts-ignore
-      setError("password", {
-        type: "manual",
-        message: "Invalid password",
-      });
-      setIsLoading(false);
-      return;
-    }
     await new Promise((resolve) => setTimeout(resolve, 2000));
     console.log(data);
     setIsLoading(false);
@@ -114,7 +121,7 @@ export default function SignIn() {
 
   return (
     <div className="overflow-hidden py-[50px]">
-      <div className="h-screen flex flex-col md:flex-row max-w-[1400px] max-h-[90vh] mx-auto rounded-lg overflow-hidden shadow-2xl ">
+      <div className="h-screen flex flex-col md:flex-row max-w-[80%] max-h-[90vh] mx-auto rounded-lg overflow-hidden shadow-2xl ">
         {/* Left side - Hero Image Section */}
         <div className="hidden md:flex md:w-1/2 relative bg-midnight-blue">
           <div className="absolute inset-0">
@@ -244,7 +251,7 @@ export default function SignIn() {
               {/* Sign In Button */}
               <Button
                 type="submit"
-                className="w-full h-11 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white rounded-lg shadow-md hover:shadow-xl  transition-all duration-300"
+                className="w-full h-11 bg-midnight-blue hover:bg-midnight-blue/90 text-white rounded-lg shadow-md transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -270,7 +277,7 @@ export default function SignIn() {
               </div>
 
               {/* Google Sign In */}
-              <button
+              <Button
                 type="button"
                 onClick={() => {
                   setIsGoogleLoading(true);
@@ -302,9 +309,12 @@ export default function SignIn() {
                     Sign in with Google
                   </>
                 ) : (
-                  <Spinner size="small" />
+                  <div className="flex items-center justify-center gap-1">
+                    <p>Please wait... </p>
+                    <Loader2 className="animate-spin" />
+                  </div>
                 )}
-              </button>
+              </Button>
             </form>
 
             {/* Sign Up Link */}
