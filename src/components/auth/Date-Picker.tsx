@@ -185,7 +185,7 @@ export default function DatePicker({ value, onChange, label, error }: DatePicker
           error && "text-red-500"
         )}
       >
-        {label}<span className="text-red-500">*</span>
+        {label}
       </Label>
       
       <div className="flex items-start gap-3 ">

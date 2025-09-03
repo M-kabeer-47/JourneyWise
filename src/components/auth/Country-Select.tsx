@@ -52,7 +52,7 @@ export default function CountrySelect({ value, onChange, onCountryChange, error 
           error && "text-red-500"
         )}
       >
-        Country<span className="text-red-500">*</span>
+        Country
       </Label>
       
       <div className="relative">
@@ -75,7 +75,7 @@ export default function CountrySelect({ value, onChange, onCountryChange, error 
           onBlur={() => setIsFocused(false)}
         >
           {value || "Select your country"}
-          <ChevronDown className="h-4 w-4 ml-2 text-gray-400" />
+          <ChevronDown className="h-4 w-4 ml-2 text-gray-400 relative right-[10px]" />
         </button>
       </div>
       

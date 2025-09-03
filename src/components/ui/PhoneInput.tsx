@@ -39,13 +39,13 @@ const CustomPhoneInput: React.FC<PhoneInputProps> = ({
           value={value}
           onChange={(value) => onChange(value)}
           inputStyle={{
-            paddingLeft: "2.5rem",
+            
             width: "100%",
             height: "42px",
             fontSize: "16px",
             backgroundColor: "#FFFFFF",
           }}
-          inputClass="border border-gray-200 focus:border-ocean-blue outline-none focus:ring-2 focus:ring-ocean-blue/20 outline-none "
+          inputClass="border text-charcoal font-inter pl-2  border-gray-200 focus:border-ocean-blue outline-none focus:ring-2 focus:ring-ocean-blue/20 outline-none "
           buttonClass="border border-gray-200 outline-none focus:border-ocean-blue focus:ring-2 focus:ring-ocean-blue/20 outline-none"
           buttonStyle={{
             borderTopLeftRadius: "0.375rem",
