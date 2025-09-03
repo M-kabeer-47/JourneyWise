@@ -15,7 +15,7 @@ import Toast from "@/components/auth/Custom-Toast";
 import axios from "axios";
 import { signIn } from "@/lib/auth/google";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 export type SignInForm = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
@@ -25,7 +25,7 @@ export default function SignIn() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   const [toastType, setToastType] = useState<"success" | "error">("success");
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -94,6 +94,9 @@ export default function SignIn() {
       email: data.email,
       password: data.password,
     });
+    if(data){
+      router.push('/');
+    }
 
     if (error) {
       //@ts-ignore

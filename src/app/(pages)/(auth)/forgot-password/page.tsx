@@ -37,7 +37,7 @@ const forgotPasswordSchema = z.object({
       setIsLoading(true)
       // Simulate API call
       try{
-        const googleAccount = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/app_auth/checkGoogle`,
+        const googleAccount = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/app_auth/checkEmail`,
           {
           params: {
             email: data.email.toLowerCase()
@@ -46,11 +46,8 @@ const forgotPasswordSchema = z.object({
       }).then((response) => {
         if(response.status === 200){
           return false
-          
         }
-        }
-
-        ).catch((error) => {
+      }).catch((error) => {
           if(error.response.status === 409){
             return true;
           }

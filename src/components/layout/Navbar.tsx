@@ -226,10 +226,9 @@ export default function Navbar() {
                 </span>
               </motion.button>
             </Link>
-            {user.isLoading === true  ?
-            <UserMenuSkeleton /> : 
-
-            user.user ? (
+            {user.isLoading === true && user.user === null ? (
+              <UserMenuSkeleton />
+            ) : user.user ? (
               <ProfileDropdown
                 userName={user.user.name || "User"}
                 variant="navbar"
