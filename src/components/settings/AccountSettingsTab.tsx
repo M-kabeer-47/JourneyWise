@@ -89,14 +89,14 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
+        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
           <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
+            <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Profile Information
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Update your personal details and profile information
             </p>
           </div>
@@ -130,12 +130,12 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h3 className="font-medium text-charcoal mb-2">
                 Profile Picture
               </h3>
-              <p className="text-sm text-gray-600 mb-3">
+              <p className="text-xs sm:text-sm text-gray-600 mb-3">
                 Upload a new profile picture.
               </p>
               <label
                 htmlFor="profile-image-2"
-                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors cursor-pointer"
+                className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors cursor-pointer"
               >
                 <Upload className="w-4 h-4" />
                 Choose File
@@ -230,17 +230,17 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
+        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+          <div className="sm:w-10 sm:h-10 w-9 h-9 bg-ocean-blue/10 rounded-full flex items-center justify-center">
             <Mail className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
+            <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Email Verification
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Verify your email address to secure your account
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <p className="font-medium text-charcoal">
                 {user?.emailVerified ? "Email Verified" : "Email Not Verified"}
               </p>
-              <p className="text-sm text-gray-600">{user?.email}</p>
+              <p className="text-xs sm:text-sm text-gray-600">{user?.email}</p>
             </div>
           </div>
 
@@ -278,17 +278,17 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
+        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+          <div className="sm:w-10 sm:h-10 w-9 h-9 bg-ocean-blue/10 rounded-full flex items-center justify-center">
             <Trash2 className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
+            <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Account Status
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-gray-600">
               Manage your account activation and deactivation
             </p>
           </div>
@@ -301,7 +301,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="bg-white rounded-xl p-6 max-w-md w-full"
+            className="bg-white rounded-xl p-5 max-w-md w-full"
           >
             <div className="text-center mb-6">
               <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -310,7 +310,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h3 className="text-lg font-bold text-midnight-blue mb-2">
                 Deactivate Account
               </h3>
-              <p className="text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-gray-600">
                 Are you sure you want to deactivate your account? This action
                 can be reversed by logging in again.
               </p>

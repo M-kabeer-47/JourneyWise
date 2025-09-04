@@ -60,15 +60,14 @@ const LoaderCore = ({
             animate={{ opacity: opacity, y: -(value * 40) }}
             transition={{ duration: 0.5 }}
           >
-             <div className="flex-shrink-0">
-              {index > value && <CheckIcon className="text-black" />}
-              {index <= value && <CheckFilled className="text-green-500" />}
-              
+            <div className="flex-shrink-0">
+              {index > value && <CheckIcon className="text-gray-400" />}
+              {index <= value && <CheckFilled className="text-ocean-blue" />}
             </div>
             <span
               className={cn(
-                "text-midnight-blue dark:text-white",
-                value === index && "text-midnight-blue dark:text-lime-500 opacity-100"
+                "text-gray-600",
+                value === index && "text-midnight-blue font-medium opacity-100"
               )}
             >
               {loadingState.text}
@@ -123,13 +122,13 @@ export const MultiStepLoader = ({
           exit={{
             opacity: 0,
           }}
-          className="w-full h-full fixed inset-0 z-[100] flex items-center justify-center backdrop-blur-2xl"
+          className="w-full h-full fixed inset-0 z-[100] flex items-center justify-center bg-white/95 backdrop-blur-md"
         >
-          <div className="h-96  relative">
+          <div className="h-96 relative">
             <LoaderCore value={currentState} loadingStates={loadingStates} />
           </div>
 
-          <div className="bg-gradient-to-t inset-x-0 z-20 bottom-0 bg-white dark:bg-black h-full absolute [mask-image:radial-gradient(900px_at_center,transparent_30%,white)]" />
+          <div className="bg-gradient-to-t inset-x-0 z-20 bottom-0 bg-white h-full absolute [mask-image:radial-gradient(900px_at_center,transparent_30%,white)]" />
         </motion.div>
       )}
     </AnimatePresence>

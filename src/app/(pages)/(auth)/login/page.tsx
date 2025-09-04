@@ -211,7 +211,7 @@ export default function SignIn() {
               {/* Sign In Button */}
               <Button
                 type="submit"
-                className="w-full h-11 bg-midnight-blue/90 hover:bg-midnight-blue/80 text-white rounded-lg shadow-md transition-all duration-300"
+                className="w-full h-11 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white rounded-lg shadow-md transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (

@@ -12,6 +12,7 @@ import Spinner from '@/components/ui/Spinner'
 import { authClient } from '@/lib/auth/authClient'
 import { useRouter } from 'next/navigation'
 import axios from 'axios'
+import { Loader2 } from 'lucide-react'
 
 const forgotPasswordSchema = z.object({
     email: z.string().min(1,"Email is required").email('Invalid email address'),
@@ -122,7 +123,10 @@ const forgotPasswordSchema = z.object({
                   className={`w-[100%] bg-gradient-to-r from-midnight-blue to-ocean-blue text-white py-2 rounded-lg shadow-md hover:shadow-xl transition-all duration-300 font-medium ${isLoading ? "opacity-50 cursor-not-allowed" : " "}`}
                   disabled={isLoading}
                 >
-                  {isLoading ? <Spinner size="small" /> : 'Send reset link'}
+                  {isLoading ? <div>
+                    <span>Please wait... </span>
+                    <Loader2 className="animate-spin w-4 h-4 inline-block ml-1" />
+                  </div>: 'Send reset link'}
                 </button>
               </div>
             </form>
@@ -138,7 +142,7 @@ const forgotPasswordSchema = z.object({
               </div>
   
               <div className="mt-6 text-center">
-                <Link href="/auth/login" className="font-medium hover:text-[#0077B6] text-midnightBlue transition-colors">
+                <Link href="/login" className="font-medium hover:text-[#0077B6] text-midnightBlue transition-colors">
                   Return to login
                 </Link>
               </div>

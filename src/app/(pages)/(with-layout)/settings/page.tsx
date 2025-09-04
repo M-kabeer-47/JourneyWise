@@ -36,7 +36,7 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="bg-gray-50  relative top-[100px] pb-20 min-h-[calc(100vh-100px)]">
+    <div className="bg-gray-50  relative top-[100px] pb-20">
       {/* Header */}
       <div className="">
         <div className="max-w-[1400px] mx-auto p-4 sm:p-8">

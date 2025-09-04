@@ -1,4 +1,7 @@
-export const generateVerificationEmailHTML = (url: string, userName: string = "Traveler") => {
+export const generateVerificationEmailHTML = (
+  url: string,
+  userName: string = "Traveler"
+) => {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -20,6 +23,10 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
             line-height: 1.6;
             color: #374151;
             background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
         
         .email-container {
@@ -29,6 +36,7 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
             overflow: hidden;
+            width: 100%;
         }
         
         .header {
@@ -101,6 +109,8 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
             box-shadow: 0 8px 25px rgba(0, 60, 125, 0.3);
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            width: auto;
+            min-width: 200px;
         }
         
         .cta-button:hover {
@@ -111,32 +121,32 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
         
         .features {
             display: flex;
-            justify-content: space-around;
+            align-items: center;
+            justify-content: center;
             margin: 40px 0;
             padding: 0 20px;
+            flex-wrap: wrap;
+            gap: 20px;
         }
         
         .feature {
             text-align: center;
             flex: 1;
             margin: 0 10px;
+            min-width: 120px;
         }
         
         .feature-icon {
-            width: 50px;
-            height: 50px;
+            width: 60px;
+            height: 60px;
             background: linear-gradient(135deg, #e0f2fe 0%, #b3e5fc 100%);
             border-radius: 50%;
             margin: 0 auto 12px;
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-        
-        .feature-icon svg {
-            width: 24px;
-            height: 24px;
-            color: #003C7D;
+            font-size: 28px;
+            line-height: 1;
         }
         
         .feature-title {
@@ -163,31 +173,13 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
             font-size: 14px;
             color: #6b7280;
             margin-bottom: 16px;
+            line-height: 1.5;
         }
         
         .copyright {
             font-size: 12px;
             color: #9ca3af;
-        }
-        
-        .security-note {
-            background: #fef3c7;
-            border: 1px solid #fbbf24;
-            border-radius: 8px;
-            padding: 16px;
-            margin: 30px 0;
-            text-align: left;
-        }
-        
-        .security-note strong {
-            color: #92400e;
-            font-weight: 600;
-        }
-        
-        .security-note p {
-            font-size: 14px;
-            color: #92400e;
-            margin: 0;
+            line-height: 1.4;
         }
         
         .link-text {
@@ -195,37 +187,167 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
             color: #6b7280;
             margin-top: 20px;
             word-break: break-all;
+            line-height: 1.4;
         }
         
-        @media (max-width: 600px) {
+        /* Mobile Responsive */
+        @media screen and (max-width: 600px) {
             .email-container {
-                margin: 10px;
-                border-radius: 12px;
+                margin: 0;
+                border-radius: 0;
+                width: 100% !important;
             }
             
             .header {
                 padding: 30px 20px;
+                border-radius: 0;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .tagline {
+                font-size: 14px;
             }
             
             .content {
-                padding: 40px 20px;
+                padding: 30px 20px;
             }
             
             .main-title {
                 font-size: 24px;
+                line-height: 1.2;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            
+            .cta-button {
+                width: 100%;
+                padding: 16px 20px;
+                font-size: 16px;
+                min-width: auto;
+                box-sizing: border-box;
             }
             
             .features {
                 flex-direction: column;
-                gap: 20px;
+                gap: 30px;
+                margin: 30px 0;
+                padding: 0;
             }
             
             .feature {
                 margin: 0;
+                min-width: auto;
+            }
+            
+            .feature-icon {
+                width: 70px;
+                height: 70px;
+                font-size: 32px;
+            }
+            
+            .feature-title {
+                font-size: 16px;
+            }
+            
+            .feature-desc {
+                font-size: 14px;
             }
             
             .footer {
-                padding: 25px 20px;
+                padding: 20px 15px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+            
+            .copyright {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+            
+            .link-text {
+                font-size: 11px;
+                padding: 0 5px;
+            }
+        }
+        
+        /* Tablet Responsive */
+        @media screen and (max-width: 768px) and (min-width: 601px) {
+            .email-container {
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+            
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .features {
+                gap: 15px;
+            }
+            
+            .feature {
+                margin: 0 5px;
+            }
+            
+            .footer {
+                padding: 25px 30px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+            }
+            
+            .copyright {
+                font-size: 11px;
+            }
+        }
+        
+        /* Very small screens */
+        @media screen and (max-width: 480px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .main-title {
+                font-size: 20px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .cta-button {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+            
+            .feature-icon {
+                width: 65px;
+                height: 65px;
+                font-size: 30px;
+            }
+            
+            .footer {
+                padding: 15px 10px;
+            }
+            
+            .footer-text {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .copyright {
+                font-size: 10px;
             }
         }
     </style>
@@ -252,42 +374,7 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
                 ✨ Verify My Email Address
             </a>
             
-            <!-- Features -->
-            <div class="features">
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Discover</div>
-                    <div class="feature-desc">Explore amazing destinations</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Connect</div>
-                    <div class="feature-desc">Meet expert travel agents</div>
-                </div>
-                <div class="feature">
-                    <div class="feature-icon">
-                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path>
-                        </svg>
-                    </div>
-                    <div class="feature-title">Save</div>
-                    <div class="feature-desc">Organize your dream trips</div>
-                </div>
-            </div>
             
-            <!-- Security Note -->
-            <div class="security-note">
-                <p><strong>🔒 Security Note:</strong> This verification link will expire in 24 hours. If you didn't create an account with JourneyWise, please ignore this email.</p>
-            </div>
             
             <div class="link-text">
                 <p><strong>Having trouble with the button?</strong> Copy and paste this link into your browser:</p>
@@ -306,7 +393,10 @@ export const generateVerificationEmailHTML = (url: string, userName: string = "T
 };
 
 // OTP Email Template
-export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler") => {
+export const generateOTPEmailHTML = (
+  otp: string,
+  userName: string = "Traveler"
+) => {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -328,6 +418,10 @@ export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler")
             line-height: 1.6;
             color: #374151;
             background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
         
         .email-container {
@@ -337,6 +431,7 @@ export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler")
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
             overflow: hidden;
+            width: 100%;
         }
         
         .header {
@@ -431,19 +526,36 @@ export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler")
             font-size: 14px;
             color: #6b7280;
             margin-bottom: 16px;
+            line-height: 1.5;
         }
         
         .copyright {
             font-size: 12px;
             color: #9ca3af;
+            line-height: 1.4;
         }
         
-        @media (max-width: 600px) {
+        /* Mobile Responsive */
+        @media screen and (max-width: 600px) {
             .email-container {
-                margin: 10px;
+                margin: 0;
+                border-radius: 0;
+                width: 100% !important;
             }
             
-            .header, .content, .footer {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .tagline {
+                font-size: 14px;
+            }
+            
+            .content {
                 padding: 30px 20px;
             }
             
@@ -451,9 +563,91 @@ export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler")
                 font-size: 24px;
             }
             
+            .subtitle {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            
+            .otp-container {
+                padding: 20px;
+                margin: 20px 0;
+            }
+            
             .otp-code {
                 font-size: 28px;
                 letter-spacing: 4px;
+            }
+            
+            .footer {
+                padding: 20px 15px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+            
+            .copyright {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+        }
+        
+        /* Tablet Responsive */
+        @media screen and (max-width: 768px) and (min-width: 601px) {
+            .email-container {
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+            
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .footer {
+                padding: 25px 30px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+            }
+            
+            .copyright {
+                font-size: 11px;
+            }
+        }
+        
+        /* Very small screens */
+        @media screen and (max-width: 480px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .main-title {
+                font-size: 20px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .otp-code {
+                font-size: 24px;
+                letter-spacing: 2px;
+            }
+            
+            .footer {
+                padding: 15px 10px;
+            }
+            
+            .footer-text {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .copyright {
+                font-size: 10px;
             }
         }
     </style>
@@ -491,7 +685,10 @@ export const generateOTPEmailHTML = (otp: string, userName: string = "Traveler")
 };
 
 // Reset Password Email Template
-export const generateResetPasswordEmailHTML = (url: string, userName: string = "Traveler") => {
+export const generateResetPasswordEmailHTML = (
+  url: string,
+  userName: string = "Traveler"
+) => {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -513,6 +710,10 @@ export const generateResetPasswordEmailHTML = (url: string, userName: string = "
             line-height: 1.6;
             color: #374151;
             background-color: #f8fafc;
+            margin: 0;
+            padding: 0;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
         }
         
         .email-container {
@@ -522,6 +723,7 @@ export const generateResetPasswordEmailHTML = (url: string, userName: string = "
             box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
             border-radius: 16px;
             overflow: hidden;
+            width: 100%;
         }
         
         .header {
@@ -574,6 +776,8 @@ export const generateResetPasswordEmailHTML = (url: string, userName: string = "
             box-shadow: 0 8px 25px rgba(0, 60, 125, 0.3);
             transition: all 0.3s ease;
             margin-bottom: 30px;
+            width: auto;
+            min-width: 200px;
         }
         
         .cta-button:hover {
@@ -628,6 +832,7 @@ export const generateResetPasswordEmailHTML = (url: string, userName: string = "
             color: #6b7280;
             margin-top: 20px;
             word-break: break-all;
+            line-height: 1.4;
         }
         
         .footer {
@@ -641,24 +846,144 @@ export const generateResetPasswordEmailHTML = (url: string, userName: string = "
             font-size: 14px;
             color: #6b7280;
             margin-bottom: 16px;
+            line-height: 1.5;
         }
         
         .copyright {
             font-size: 12px;
             color: #9ca3af;
+            line-height: 1.4;
         }
         
-        @media (max-width: 600px) {
+        /* Mobile Responsive */
+        @media screen and (max-width: 600px) {
             .email-container {
-                margin: 10px;
+                margin: 0;
+                border-radius: 0;
+                width: 100% !important;
             }
             
-            .header, .content, .footer {
+            .header {
+                padding: 30px 20px;
+            }
+            
+            .logo {
+                font-size: 28px;
+            }
+            
+            .tagline {
+                font-size: 14px;
+            }
+            
+            .content {
                 padding: 30px 20px;
             }
             
             .main-title {
                 font-size: 24px;
+            }
+            
+            .subtitle {
+                font-size: 16px;
+                margin-bottom: 25px;
+            }
+            
+            .cta-button {
+                width: 100%;
+                padding: 16px 20px;
+                font-size: 16px;
+                min-width: auto;
+                box-sizing: border-box;
+            }
+            
+            .info-box {
+                padding: 15px;
+                margin: 20px 0;
+            }
+            
+            .info-box h3 {
+                font-size: 16px;
+            }
+            
+            .info-box p {
+                font-size: 13px;
+            }
+            
+            .footer {
+                padding: 20px 15px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+                margin-bottom: 12px;
+                line-height: 1.4;
+            }
+            
+            .copyright {
+                font-size: 11px;
+                line-height: 1.3;
+            }
+            
+            .link-text {
+                font-size: 11px;
+                padding: 0 5px;
+            }
+        }
+        
+        /* Tablet Responsive */
+        @media screen and (max-width: 768px) and (min-width: 601px) {
+            .email-container {
+                margin: 10px;
+                width: calc(100% - 20px);
+            }
+            
+            .content {
+                padding: 40px 30px;
+            }
+            
+            .footer {
+                padding: 25px 30px;
+            }
+            
+            .footer-text {
+                font-size: 13px;
+            }
+            
+            .copyright {
+                font-size: 11px;
+            }
+        }
+        
+        /* Very small screens */
+        @media screen and (max-width: 480px) {
+            .logo {
+                font-size: 24px;
+            }
+            
+            .main-title {
+                font-size: 20px;
+            }
+            
+            .subtitle {
+                font-size: 14px;
+            }
+            
+            .cta-button {
+                padding: 14px 20px;
+                font-size: 14px;
+            }
+            
+            .footer {
+                padding: 15px 10px;
+            }
+            
+            .footer-text {
+                font-size: 12px;
+                margin-bottom: 10px;
+            }
+            
+            .copyright {
+                font-size: 10px;
             }
         }
     </style>

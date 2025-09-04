@@ -3,6 +3,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Eye, EyeOff, Key } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
+import MyButton from "../ui/MyButton";
+import { authClient } from "@/lib/auth/authClient";
+import PasswordConfirmModal from "@/components/ui/PasswordConfirmModal";
+import useEnable2FA from "@/hooks/user/useEnable2FA";
+
 
 export default function SecurityTab() {
   const [passwordData, setPasswordData] = useState({
@@ -16,8 +21,10 @@ export default function SecurityTab() {
     new: false,
     confirm: false,
   });
-
-  const [isLoading, setIsLoading] = useState(false);
+  const [show2FAModal, setShow2FAModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [isPasswordChanging, setIsPasswordChanging] = useState(false);
+  const {enable2FA, isLoading} = useEnable2FA();
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,10 +32,10 @@ export default function SecurityTab() {
       alert("New passwords don't match");
       return;
     }
-    setIsLoading(true);
+    setIsPasswordChanging(true);
     // TODO: Implement password change API call
     setTimeout(() => {
-      setIsLoading(false);
+      setIsPasswordChanging(false);
       setPasswordData({
         currentPassword: "",
         newPassword: "",
@@ -37,23 +44,33 @@ export default function SecurityTab() {
     }, 1000);
   };
 
+ 
+
+  const handlePasswordConfirm = async (password: string) => {
+    
+    
+
+     
+  };
+
   return (
+    <>
     <div className="space-y-8">
       {/* Change Password */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
+        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+          <div className="sm:w-10 sm:h-10 w-9 h-9 bg-ocean-blue/10 rounded-full flex items-center justify-center">
             <Shield className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
+            <h2 className="sm:text-xl text-lg font-bold text-midnight-blue font-raleway">
               Change Password
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="sm:text-sm text-xs text-gray-600">
               Update your password to keep your account secure
             </p>
           </div>
@@ -114,10 +131,10 @@ export default function SecurityTab() {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-3 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium flex justify-center items-center rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 w-full sm:w-[210px]"
             >
               <Shield className="w-4 h-4" />
-              {isLoading ? "Updating..." : "Update Password"}
+              {isPasswordChanging ? "Updating..." : "Update Password"}
             </button>
           </div>
         </form>
@@ -128,32 +145,46 @@ export default function SecurityTab() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl p-6 sm:p-8 shadow-sm border border-gray-200"
+        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
       >
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-10 h-10 bg-ocean-blue/10 rounded-full flex items-center justify-center">
+          <div className="sm:w-10 sm:h-10 w-9 h-9 bg-ocean-blue/10 rounded-full flex items-center justify-center">
             <Key className="w-5 h-5 text-midnight-blue" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-midnight-blue font-raleway">
+            <h2 className="sm:text-xl text-lg font-bold text-midnight-blue font-raleway">
               Two-Factor Authentication
             </h2>
-            <p className="text-sm text-gray-600">
+            <p className="sm:text-sm text-xs text-gray-600">
               Add an extra layer of security to your account
             </p>
           </div>
         </div>
 
-        <div className="bg-gray-50 rounded-lg p-4">
-          <p className="text-sm text-gray-600 mb-4">
+        <div className="rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
+          <p className="sm:text-sm text-[14px] text-charcoal mb-4 text-left  sm:mb-0">
             Two-factor authentication is currently disabled. Enable it to add an
             extra layer of security to your account.
           </p>
-          <button className="px-6 py-3 bg-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors">
-            Enable 2FA
-          </button>
+          <MyButton
+            text="Enable 2FA"
+            className="font-inter relative sm:top-[-5px] sm:w-[210px]"
+            onClick={()=>setShow2FAModal(true)}
+          />
         </div>
       </motion.div>
+
+     
     </div>
+     <PasswordConfirmModal
+        isOpen={show2FAModal}
+        onConfirm={enable2FA}
+        onClose={() => setShow2FAModal(false)}
+        title="Enable Two-Factor Authentication"
+        description="Please enter your password to confirm and enable two-factor authentication for your account."
+        loading={isLoading}
+        loadingText="Enabling 2FA..."
+      />
+      </>
   );
 }
