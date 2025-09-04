@@ -2,8 +2,8 @@
 import nodemailer from 'nodemailer';
 import dotenv from "dotenv"
 dotenv.config()
-export default async function send_email(email: { to: string; subject: string; text: string }) {
-    const { to, subject, text } = email;
+export default async function send_email(email: { to: string; subject: string; text: string, html?: string }) {
+    const { to, subject, text, html } = email;
 
     
 
@@ -29,7 +29,7 @@ export default async function send_email(email: { to: string; subject: string; t
             to, // Recipient address
             subject, // Subject line
             text, // Plain text body
-            
+            html:html
             
 
 

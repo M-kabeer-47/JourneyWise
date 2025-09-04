@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { getSessionCookie } from "better-auth";
+import { getSessionCookie } from "better-auth/cookies";
 
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
@@ -10,8 +10,11 @@ export default async function middleware(req: NextRequest) {
   console.log("Pathname", pathname);
   // For protected paths, check authentication
   let session = await getSessionCookie(req);
-  if (!session) {
+  if (!session && pathname !== "/login") {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
+  }
+  else if (session && pathname === "/login") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
   return NextResponse.next();
@@ -42,5 +45,7 @@ export const config = {
     "/blog/:edit/:id",
     "/plan-trip/:path",
     "/profile/:path",
+    "/settings/:path",
+    "/login"
   ],
 };

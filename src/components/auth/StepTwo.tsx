@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { stepTwoSchema } from "../../lib/schemas/user";
 import DatePicker from "./Date-Picker";
 import CountrySelect from "./Country-Select";
-import { SignupData } from "@/app/(pages)/(auth)/sign-up/types";
+import { SignupData } from "@/lib/schemas/user";
 import PhoneInput from "../ui/PhoneInput";
 import { motion } from "framer-motion";
 import { validatePhoneNumber } from "@/utils/functions/validatePhoneNumber";
@@ -18,7 +18,7 @@ type PhoneError = {
 
 interface StepTwoProps {
   onSubmit: (data: any) => void;
-  onBack: () => void;
+  onBack: (data:Partial<SignupData>) => void;
   initialData: Partial<any>;
   setFormData: React.Dispatch<React.SetStateAction<Partial<SignupData>>>;
   phoneError: PhoneError;
@@ -44,6 +44,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
     formState: { errors },
     setError,
     setValue,
+    watch,
   } = useForm({
     resolver: zodResolver(stepTwoSchema),
     mode: "onSubmit",
@@ -133,7 +134,7 @@ const StepTwo: React.FC<StepTwoProps> = ({
         <div className="flex flex-col sm:flex-row gap-4 relative top-[30px]">
           <button
             type="button"
-            onClick={onBack}
+            onClick={() => onBack(watch())}
             className="w-full sm:w-auto sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg 
               font-medium transition-colors flex items-center justify-center"
           >

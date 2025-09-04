@@ -47,7 +47,7 @@ export default function SignUpLayout({step,getStepIllustration,getStepTitle,getS
               className="w-full"
             >
               {/* Step indicator */}
-              <div className="inline-flex items-center px-3 py-1.5 lg:px-4 lg:py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-xs lg:text-sm font-medium mb-4 lg:mb-6">
+              <div className="flex items-center px-3 py-1.5 lg:px-4 lg:py-2 bg-white/20 backdrop-blur-md rounded-full text-white text-xs lg:text-sm font-medium mb-4 lg:mb-6 ">
                 <span>Step {step} of 3</span>
                 <span className="w-1 h-1 bg-white rounded-full mx-2 opacity-60"></span>
                 <span>{steps[step - 1].title}</span>
@@ -64,7 +64,7 @@ export default function SignUpLayout({step,getStepIllustration,getStepTitle,getS
               {/* Feature Box - Responsive */}
               <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 lg:p-6 border border-white/20 max-w-md">
                 <div className="flex items-start">
-                  <div className="bg-white rounded-full p-1.5 lg:p-2 mr-3 lg:mr-4 flex-shrink-0">
+                  <div className="bg-white rounded-full p-1.5 lg:p-2 mr-3 lg:mr-4 flex-shrink-0 flex items-center justify-center">
                     {/* SVG icons remain the same */}
                     {step === 1 && (
                       <svg
@@ -152,7 +152,7 @@ export default function SignUpLayout({step,getStepIllustration,getStepTitle,getS
                 }`}
               >
                 <div
-                  className={`w-6 h-6 lg:w-8 lg:h-8 rounded-full flex items-center justify-center mr-2 lg:mr-3 border-2
+                  className={`w-6 h-6 font-inter lg:w-8 lg:h-8 rounded-full flex items-center justify-center mr-2 lg:mr-3 border-2
                         ${
                           i < step
                             ? "bg-white border-white"

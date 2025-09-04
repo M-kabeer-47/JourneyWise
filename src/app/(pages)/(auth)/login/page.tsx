@@ -16,7 +16,7 @@ import axios from "axios";
 import { signIn } from "@/lib/auth/google";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toast } from "@/components/ui/Toast";
+import { toasts as toast } from "@/components/ui/Toast";
 export type SignInForm = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
@@ -36,30 +36,49 @@ export default function SignIn() {
     resolver: zodResolver(signInSchema),
   });
 
-const onSubmit = async (data: SignInForm) => {
-  setIsLoading(true);
-  
-  // Monitor each step
-  console.time("Total Sign-in Time");
-  console.time("Auth Request Time");
-  
-  try {
-    const response = await axios.post(`/api/app_auth/signin`, {
-      email: data.email,
-      password: data.password,
-    });
-    if(response.status === 200){
-      // Handle successful login
-      toast.success("Login successful!");
-    }
-    
-  } catch (error) {
-    toast.error("Invalid email or password");
-    setIsLoading(false);
-    
-    
-  }
-};
+  const onSubmit = async (data: SignInForm) => {
+    setIsLoading(true);
+
+    // Monitor each step
+    console.time("Total Sign-in Time");
+    console.time("Auth Request Time");
+
+    const { data: result, error } = await authClient.signIn.email(
+      {
+        email: data.email.toLowerCase(),
+        password: data.password,
+      },
+      {
+        onError: async(ctx) => {
+          if (ctx.response.status === 403) {
+            toast.error("Please verify your email.");
+            setError("email", {
+              type: "manual",
+              message: "Please verify your email",
+            });
+            console.log("Email: ", data.email);
+            await authClient.sendVerificationEmail({
+              email: data.email.toLowerCase(),
+              callbackURL: `/email-verified`
+            });
+          } else {
+            let error = ctx.error.message
+            toast.error((error));
+            setError("password", {
+              type: "manual",
+              message: "Invalid email or password",
+            });
+          }
+          setIsLoading(false);
+        },
+        onSuccess: (ctx) => {
+          toast.success("Login successful!");
+          setIsLoading(false);
+          router.push("/");
+        },
+      }
+    );
+  };
   return (
     <div className="overflow-hidden py-[50px]">
       <div className="h-screen flex flex-col md:flex-row sm:max-w-[80%] sm:max-h-[90vh] mx-auto rounded-lg overflow-hidden shadow-2xl ">
@@ -192,7 +211,7 @@ const onSubmit = async (data: SignInForm) => {
               {/* Sign In Button */}
               <Button
                 type="submit"
-                className="w-full h-11 bg-midnight-blue hover:bg-midnight-blue/90 text-white rounded-lg shadow-md transition-all duration-300"
+                className="w-full h-11 bg-midnight-blue/90 hover:bg-midnight-blue/80 text-white rounded-lg shadow-md transition-all duration-300"
                 disabled={isLoading}
               >
                 {isLoading ? (
@@ -225,7 +244,7 @@ const onSubmit = async (data: SignInForm) => {
                   signIn();
                 }}
                 disabled={isGoogleLoading}
-                className="w-full h-11 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium shadow-sm hover:bg-gray-50 hover:border-gray-400 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-blue/20"
+                className="w-full h-11 flex items-center justify-center gap-3 bg-white border border-gray-300 rounded-lg text-sm text-gray-700 font-medium shadow-sm hover:bg-gray-50 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-ocean-blue/20"
               >
                 {!isGoogleLoading ? (
                   <>
@@ -265,7 +284,7 @@ const onSubmit = async (data: SignInForm) => {
               </span>
               <Link
                 href="/sign-up"
-                className="text-ocean-blue font-medium hover:text-ocean-blue/80 transition-colors duration-300"
+                className="text-ocean-blue text-sm font-medium hover:text-ocean-blue/80 transition-colors duration-300"
               >
                 Sign up
               </Link>

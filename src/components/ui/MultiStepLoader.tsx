@@ -62,13 +62,13 @@ const LoaderCore = ({
           >
              <div className="flex-shrink-0">
               {index > value && <CheckIcon className="text-black" />}
-              {index <= value && <CheckFilled className="text-midnight-blue" />}
+              {index <= value && <CheckFilled className="text-green-500" />}
               
             </div>
             <span
               className={cn(
-                "text-black dark:text-white",
-                value === index && "text-black dark:text-lime-500 opacity-100"
+                "text-midnight-blue dark:text-white",
+                value === index && "text-midnight-blue dark:text-lime-500 opacity-100"
               )}
             >
               {loadingState.text}

@@ -2,29 +2,26 @@
 import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/Spinner";
 import { MultiStepLoader } from "@/components/ui/MultiStepLoader";
+import {toasts as toast} from "@/components/ui/Toast";
 export default function FormulaBreakdownPage() {
-  const [count,setCount] = useState(0);
+
   useEffect(() => {
-    alert(
-      "Count: "+count
-    );
-  }, [count]);
+   
+    const interval = setInterval(() => {
+       toast.error("Welcome to the Formula Breakdown Page!");
+   
+    }, 5000); // Show toast every 10 seconds
+  }, []);
 
   return (
-   <MultiStepLoader
-     loadingStates={[
-       { text: "Step 1: Validate Phone Number" },
-       { text: "Step 2: Verify OTP" },
-       { text: "Step 3: Complete Registration" },
-       { text: "Step 4: Finalize Setup" },
-       { text: "Step 5: Success" },
-       { text: "Step 6: Complete" }
-
-     ]}
-     loop={true}
-     loading={true}
-     duration={1000}
-   />
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-gray-100">
+      <h1 className="text-2xl font-bold mb-4 text-midnight-blue">
+        Formula Breakdown Page
+      </h1>
+      <p className="mb-6 text-gray-700">
+        This is a placeholder for the formula breakdown content.
+      </p>
+      </div>
   );
 }
 

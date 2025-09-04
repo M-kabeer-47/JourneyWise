@@ -9,9 +9,10 @@ import Image from "next/image";
 import { MultiStepLoader } from "@/components/ui/MultiStepLoader";
 import { toast } from "@/components/ui/Toast";
 
+
 interface StepThreeProps {
-  onSubmit: (data: any) => void;
-  onBack: () => void;
+  onSubmit: (data: Partial<SignupData>) => void;
+  onBack: (data:Partial<SignupData>) => void;
   initialData: Partial<SignupData>;
   submitting: boolean;
   type: string;
@@ -33,6 +34,7 @@ const StepThree: React.FC<StepThreeProps> = ({
     handleSubmit,
     formState: { errors },
     setValue,
+    watch,
   } = useForm({
     resolver: zodResolver(stepThreeSchema),
     mode: "onSubmit",
@@ -130,7 +132,7 @@ const StepThree: React.FC<StepThreeProps> = ({
                           src={previewImage}
                           alt="Profile preview"
                           fill
-                          className="object-cover"
+                          className="object-cover rounded-full"
                         />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100">
@@ -145,15 +147,7 @@ const StepThree: React.FC<StepThreeProps> = ({
                       )}
                     </div>
 
-                    {previewImage && (
-                      <button
-                        type="button"
-                        onClick={removeImage}
-                        className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 sm:p-1 shadow-md transform transition-transform hover:scale-110"
-                      >
-                        <X size={12} className="sm:w-3.5 sm:h-3.5" />
-                      </button>
-                    )}
+                  
 
                     <input
                       type="file"
@@ -199,7 +193,7 @@ const StepThree: React.FC<StepThreeProps> = ({
           <div className="flex flex-col sm:flex-row gap-4 pt-2">
             <button
               type="button"
-              onClick={onBack}
+              onClick={() => onBack(watch())}
               disabled={submitting}
               className="w-full sm:w-auto sm:flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 py-3 px-6 rounded-lg 
                 font-medium transition-colors flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed"

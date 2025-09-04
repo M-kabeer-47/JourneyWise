@@ -11,8 +11,7 @@ import axios from "axios";
 import { uploadToCloudinary } from "@/utils/functions/uploadToCloudinary";
 import { authClient } from "@/lib/auth/authClient";
 import Link from "next/link";
-interface UserSignupFormProps 
-  {
+interface UserSignupFormProps {
   step: number;
   setStep: React.Dispatch<React.SetStateAction<number>>;
   getStepTitle: () => string;
@@ -20,7 +19,13 @@ interface UserSignupFormProps
   steps: { title: string; description: string }[];
 }
 
-export default function UserSignupForm({step,setStep,getStepTitle,getStepDescription,steps}:UserSignupFormProps) {
+export default function UserSignupForm({
+  step,
+  setStep,
+  getStepTitle,
+  getStepDescription,
+  steps,
+}: UserSignupFormProps) {
   const [formData, setFormData] = useState<Partial<SignupData>>({});
   const [submitting, setSubmitting] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -140,6 +145,11 @@ export default function UserSignupForm({step,setStep,getStepTitle,getStepDescrip
     nextStep();
   };
 
+  const handleBack = (data: Partial<SignupData>) => {
+    prevStep();
+    setFormData((prev) => ({ ...prev, ...data }));
+  }
+
   const handleFinalSubmit = async (data: Partial<SignupData>) => {
     // Existing implementation
     const finalData = { ...formData, ...data };
@@ -165,20 +175,16 @@ export default function UserSignupForm({step,setStep,getStepTitle,getStepDescrip
           setSubmitting(false);
           console.log("Error creating account:", error);
         },
+        onSuccess: async (data) => {
+          toast.success(
+            "Account created successfully! Verification email sent."
+          );
+
+          setSubmitting(false);
+          router.push("/login");
+        },
       }
     );
-
-    if (Data) {
-      setSubmitting(false);
-      toast.success(
-        "Account created successfully, Verification email has been sent"
-      );
-      setTimeout(() => {
-        router.push("/login");
-      }, 3000);
-    } else {
-      toast.error("Please try again later");
-    }
   };
 
   return (
@@ -225,7 +231,7 @@ export default function UserSignupForm({step,setStep,getStepTitle,getStepDescrip
           {step === 2 && (
             <StepTwo
               onSubmit={handleStepSubmit}
-              onBack={prevStep}
+              onBack={handleBack}
               initialData={formData}
               setFormData={setFormData}
               phoneError={phoneError}
@@ -236,7 +242,7 @@ export default function UserSignupForm({step,setStep,getStepTitle,getStepDescrip
           {step === 3 && (
             <StepThree
               onSubmit={handleFinalSubmit}
-              onBack={prevStep}
+              onBack={handleBack}
               initialData={formData}
               submitting={submitting}
               type={"user"}
