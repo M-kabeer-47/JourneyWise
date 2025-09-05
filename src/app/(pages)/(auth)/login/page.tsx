@@ -16,7 +16,7 @@ import axios from "axios";
 import { signIn } from "@/lib/auth/google";
 import { Mail, Lock, User, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { toasts as toast } from "@/components/ui/Toast";
+import { toast } from "@/components/ui/Toast";
 export type SignInForm = z.infer<typeof signInSchema>;
 
 export default function SignIn() {
@@ -40,8 +40,7 @@ export default function SignIn() {
     setIsLoading(true);
 
     // Monitor each step
-    console.time("Total Sign-in Time");
-    console.time("Auth Request Time");
+    
 
     const { data: result, error } = await authClient.signIn.email(
       {
@@ -56,7 +55,7 @@ export default function SignIn() {
               type: "manual",
               message: "Please verify your email",
             });
-            console.log("Email: ", data.email);
+            
             await authClient.sendVerificationEmail({
               email: data.email.toLowerCase(),
               callbackURL: `/email-verified`
@@ -72,6 +71,10 @@ export default function SignIn() {
           setIsLoading(false);
         },
         onSuccess: (ctx) => {
+          if(ctx.data.twoFactorRedirect){
+            setIsLoading(false);
+            return
+          }
           toast.success("Login successful!");
           setIsLoading(false);
           router.push("/");

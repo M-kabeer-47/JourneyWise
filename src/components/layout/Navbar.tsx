@@ -26,7 +26,7 @@ import {
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { usePathname } from "next/navigation";
-import fetchUserFromClient from "@/hooks/fetchUserFromClient";
+import { useRouter } from "next/navigation";
 import ProfileDropdown from "@/components/ui/ProfileDropdown";
 import { clearUser, fetchUser, setUser } from "@/lib/redux/slices/user";
 import { authClient } from "@/lib/auth/authClient";
@@ -48,29 +48,25 @@ const navLinks = [
   { name: "Help", href: "/help", icon: <MapPin size={20} /> },
 ];
 
-
-
-
 const profileDropdownOptions = [
   {
     label: "Your Profile",
     href: "/profile",
-    icon: <User size={16} />
+    icon: <User size={16} />,
   },
   {
     label: "Messages",
     href: "/messages",
-    icon: <MessageSquare size={16} />
+    icon: <MessageSquare size={16} />,
   },
   {
     label: "Settings",
     href: "/settings",
-    icon: <Settings size={16} />
-  }
+    icon: <Settings size={16} />,
+  },
 ];
 
 export default function Navbar() {
-  
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
@@ -83,7 +79,7 @@ export default function Navbar() {
   const { scrollY } = useScroll();
   const pathName = usePathname();
   const dispatch = useAppDispatch();
-
+  const router = useRouter();
   useMotionValueEvent(scrollY, "change", (latest) => {
     setIsScrolled(latest > 50);
   });
@@ -112,24 +108,14 @@ export default function Navbar() {
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [isMenuOpen, isSearchOpen]);
 
-  
-  
-
   useEffect(() => {
-    
     dispatch(fetchUser());
   }, []);
-
-
-
-
- 
 
   return (
     <AnimatePresence mode="wait">
       <motion.nav
         key="navbar"
-        
         initial="hidden"
         animate="visible"
         exit="exit"
@@ -142,7 +128,6 @@ export default function Navbar() {
         <div className={`w-full px-4 py-4 flex items-center justify-between`}>
           <Link
             href="/"
-
             className="text-2xl sm:text-3xl text-white font-raleway font-bold"
             prefetch={false}
           >
@@ -237,12 +222,12 @@ export default function Navbar() {
                 onSignOut={() => {
                   authClient.signOut();
                   dispatch(clearUser());
+                  router.push("/login");
                 }}
                 profileImage={user.user?.image}
               />
             ) : (
-              
-                <div className="hidden md:flex items-center space-x-2">
+              <div className="hidden md:flex items-center space-x-2">
                 <Link href="/login" prefetch={false}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
@@ -267,7 +252,6 @@ export default function Navbar() {
                   </motion.button>
                 </Link>
               </div>
-              
             )}
 
             <button

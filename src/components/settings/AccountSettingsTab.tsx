@@ -8,6 +8,7 @@ import {
   AlertCircle,
   Trash2,
   Upload,
+  Loader2,
 } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
 import Image from "next/image";
@@ -49,17 +50,15 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   const { isLoading, updateUser } = useUpdateUser();
 
   const handleProfileUpdate = async (data: UserType) => {
-    console.log("Form Data:", data);
-    console.log("Current User:", user);
     if (isSaveButtonDisabled) {
       return;
     }
 
-    let imageUrl = await updateUser.mutateAsync({
+    let updatedUser = await updateUser.mutateAsync({
       ...data,
       id: user?.id as string,
     });
-    setValue("image", imageUrl);
+    setValue("image", updatedUser.image);
     alert("Profile updated successfully!");
     alert("Data: " + JSON.stringify(data));
   };
@@ -217,9 +216,12 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               disabled={isSaveButtonDisabled || isLoading}
               type="submit"
               onClick={() => console.log("Errors", errors)}
-              className="flex items-center justify-center gap-2 px-2 w-full sm:w-[170px] py-2 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
+              className="flex items-center justify-center gap-2 px-2 w-full sm:w-[170px] py-2.5 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
             >
-              {isLoading ? "Saving..." : "Save Changes"}
+              {isLoading ? <div className="flex items-center">
+                <span>Saving...</span>
+                <Loader2 className="animate-spin w-4 h-4 inline-block ml-1" />
+              </div> : "Save Changes"}
             </button>
           </div>
         </form>

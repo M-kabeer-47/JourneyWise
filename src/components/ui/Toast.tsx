@@ -1,4 +1,4 @@
-import { Toaster, toast } from "sonner";
+import { Toaster, toast as Toast } from "sonner";
 import {
   FiCheckCircle,
   FiInfo,
@@ -8,7 +8,7 @@ import {
 } from "react-icons/fi";
 import { Check, CircleCheck } from "lucide-react";
 
-export function Toast() {
+export function ToastFunction() {
   return (
     <Toaster
       position="bottom-right"
@@ -40,7 +40,7 @@ export function Toast() {
 // Custom toast functions with styling inspired by Custom-Toast
 export const toasts = {
   success: (message: string, options?: any) => {
-    return toast.success(message, {
+    return Toast.success(message, {
       style: {
         fontWeight: 600,
         fontFamily: "Inter, sans-serif",
@@ -56,7 +56,7 @@ export const toasts = {
   },
 
   error: (message: string, options?: any) => {
-    return toast.error(message, {
+    return Toast.error(message, {
       style: {
         fontWeight: 600,
         fontFamily: "Inter, sans-serif",
@@ -72,7 +72,7 @@ export const toasts = {
   },
 
   info: (message: string, options?: any) => {
-    return toast.info(message, {
+    return Toast.info(message, {
       style: {
         background: "white",
         color: "#111827",
@@ -86,7 +86,7 @@ export const toasts = {
   },
 
   warning: (message: string, options?: any) => {
-    return toast.warning(message, {
+    return Toast.warning(message, {
       style: {
         background: "white",
         color: "#111827",
@@ -100,7 +100,7 @@ export const toasts = {
   },
 
   loading: (message: string, options?: any) => {
-    return toast.loading(message, {
+    return Toast.loading(message, {
       style: {
         background: "white",
         color: "#111827",
@@ -118,4 +118,4 @@ export const toasts = {
 export const { success, error, info, warning, loading } = toasts;
 
 // Also export the main toast for direct usage
-export { toast };
+export { Toast as toast };

@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import StoreProvider from "./redux";
 import { useState,useEffect } from "react";
-import { Toast } from "@/components/ui/Toast";
+import { ToastFunction } from "@/components/ui/Toast";
 
 
 
@@ -30,8 +30,8 @@ export default function Providers({ children }: { children: React.ReactNode }) {
           {children}
      
       </StoreProvider>
-      <Toast />
-     
+      <ToastFunction />
+
     </QueryClientProvider>
   );
 }

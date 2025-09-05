@@ -16,20 +16,26 @@ export default function useUpdateUser() {
       let ImageUrl = await uploadToCloudinary(data.image as File);
       userData.image = ImageUrl;
     }
-    dispatch(reduxUpdateUser(userData));
-    const response = await axios.put(`/api/update-user`, userData);
 
-    return userData.image;
+    await axios.put(`/api/update-user`, userData);
+
+    return userData;
   };
   const updateUser = useMutation({
     mutationFn: updateUserFunction,
     onSuccess: (data) => {
+      dispatch(reduxUpdateUser(data));
       toast.success("User updated successfully!");
       setIsLoading(false);
     },
     onError: (error) => {
+      console.log("Error: "+JSON.stringify(error.response.data.message));
+      if (error.response.data.message === "Email already exists") {
+        toast.error("Email already exists");
+      } else {
+        toast.error("Error updating user");
+      }
       setIsLoading(false);
-      toast.error("Error updating user");
     },
   });
   return { updateUser, isLoading };

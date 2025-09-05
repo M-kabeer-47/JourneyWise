@@ -11,7 +11,7 @@ interface PasswordConfirmModalProps {
   title: string;
   description: string;
   loading?: boolean;
-  loadingText?: string;
+  buttonText?: string;
   width?: "large" | "small";
   error?: string;
   setError?: React.Dispatch<React.SetStateAction<string>>;
@@ -24,14 +24,14 @@ export default function PasswordConfirmModal({
   title,
   description,
   loading = false,
-  loadingText = "Enabling...",
+  buttonText = "",
   width = "small",
   error = "",
   setError,
 }: PasswordConfirmModalProps) {
   const [password, setPassword] = useState("");
 
-  const handleConfirm = async() => {
+  const handleConfirm = async () => {
     setError && setError("");
     if (password.trim()) {
       const success = await onConfirm(password);
@@ -55,7 +55,7 @@ export default function PasswordConfirmModal({
   if (!isOpen) return null;
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50">
+      <div className="fixed top-[-35px] inset-0 z-50">
         {/* Backdrop */}
         <motion.div
           initial={{ opacity: 0 }}
@@ -128,7 +128,7 @@ export default function PasswordConfirmModal({
                 </button>
 
                 <MyButton
-                  text={loading ? loadingText : "Enable 2FA"}
+                  text={buttonText}
                   onClick={handleConfirm}
                   disabled={!password.trim() || loading}
                   loading={loading}

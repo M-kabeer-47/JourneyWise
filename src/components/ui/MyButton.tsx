@@ -1,12 +1,43 @@
 import { Loader2 } from "lucide-react";
 
-export default function MyButton({ text,className, onClick,disabled,loading}: { text: string, className?: string, onClick?: (data?: any) => void ,disabled?: boolean, loading?: boolean }) {
+export default function MyButton({
+  type = "button",
+  text,
+  className,
+  onClick,
+  disabled,
+  loading,
+  variant = "primary",
+}: {
+  text: string;
+  className?: string;
+  onClick?: (data?: any) => void;
+  disabled?: boolean;
+  loading?: boolean;
+  type?: "button" | "submit" | "reset" | undefined;
+  variant?: "primary" | "secondary";
+}) {
+  const variantClasses = {
+    primary:
+      "bg-gradient-to-r from-midnight-blue to-ocean-blue text-white hover:bg-ocean-blue/90",
+    secondary:
+      "bg-white border border-ocean-blue text-ocean-blue hover:bg-ocean-blue/10",
+  };
   return (
-     <button className={`px-6 py-2.5 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 ${className}`} onClick={onClick} disabled={disabled}>
-            {loading ? <div className="flex items-center justify-center">
-              <span>Please wait...</span>
-              <Loader2 className="animate-spin w-4 h-4 inline-block ml-1" />
-            </div> : text}
-          </button>
+    <button
+      type={type}
+      className={`px-6 py-2.5  font-medium rounded-lg transition-colors disabled:opacity-50 ${className} ${variantClasses[variant]}`}
+      onClick={onClick}
+      disabled={disabled}
+    >
+      {loading ? (
+        <div className="flex items-center justify-center">
+          <span>Please wait...</span>
+          <Loader2 className="animate-spin w-4 h-4 inline-block ml-1" />
+        </div>
+      ) : (
+        text
+      )}
+    </button>
   );
 }

@@ -3,7 +3,7 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { Toast } from "@/components/ui/Toast";
+
 import BookingForm from "@/components/booking/BookingForm";
 import IllustrationSection from "@/components/booking/IllustrationSection";
 import { toast } from "@/components/ui/Toast";
@@ -155,7 +155,7 @@ export default function BookingPage() {
         description="Are you sure you want to submit this booking request?"
         loadingText="Processing..."
       />
-      <Toast />
+      
     </div>
   );
 }

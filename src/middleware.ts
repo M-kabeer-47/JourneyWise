@@ -44,8 +44,8 @@ export const config = {
     "/blog",
     "/blog/:edit/:id",
     "/plan-trip/:path",
-    "/profile/:path",
-    "/settings/:path",
+    "/profile",
+    "/settings",
     "/login"
   ],
 };

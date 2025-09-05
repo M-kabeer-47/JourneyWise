@@ -1,14 +1,17 @@
-;
 import { createAuthClient } from "better-auth/react";
-import { adminClient,twoFactorClient } from "better-auth/client/plugins";
+import { adminClient, twoFactorClient } from "better-auth/client/plugins";
+
 
 export const authClient = createAuthClient({
   baseURL: "http://localhost:3000",
   plugins: [
-    twoFactorClient(),
-    adminClient(),
-    
+    twoFactorClient({
+      onTwoFactorRedirect() {
 
+        window.location.href = "/two-factor";
+      },
+    }),
+    adminClient(),
   ],
   // the base url of your auth server
 });

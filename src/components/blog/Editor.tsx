@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { Toast, toast } from "../ui/Toast";
+import {  toast } from "../ui/Toast";
 import ConfirmModal from "../ui/ConfirmModal";
 import ThumbnailModal from "./ThumbnailModal";
 import { BlogNav } from "./BlogNavbar";
@@ -368,7 +368,7 @@ export default function Editor({
           />
         </div>
       </div>
-      <Toast />
+      
       <ThumbnailModal
         title={type === "create" ? "Publish Blog" : "Update Blog"}
         description={

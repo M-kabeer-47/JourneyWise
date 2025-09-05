@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import Spinner from "@/components/ui/Spinner";
 import { MultiStepLoader } from "@/components/ui/MultiStepLoader";
-import {toasts as toast} from "@/components/ui/Toast";
+import { toast} from "@/components/ui/Toast";
 export default function FormulaBreakdownPage() {
 
 
