@@ -71,11 +71,11 @@ export default function FormInput({
   };
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 font-geist">
       <Label 
         htmlFor={id || name} 
         className={cn(
-          "text-sm font-medium text-gray-700",
+          "text-sm  text-gray-700",
           error && "text-red-500"
         )}
       >

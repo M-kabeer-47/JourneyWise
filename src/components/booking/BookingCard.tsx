@@ -120,13 +120,16 @@ export default function BookingCard({
 
             <div className="flex items-center justify-between mb-3">
               <span className="font-semibold sm:text-base text-sm text-charcoal">
-                {booking.booking.tier.name.toLowerCase() !== "custom" ? booking.booking.tier.name : "Custom"}
+                Package:{" "}
+                {booking.booking.tier.name.toLowerCase() !== "custom"
+                  ? booking.booking.tier.name
+                  : "Custom"}
               </span>
               <div className="flex items-center gap-1">
              
-                <span className="text-base font-raleway font-bold text-charcoal">
+                <span className="sm:text-base text-sm font-semibold text-charcoal">
                   Booked on
-                  <span className="font-inter"> {formatDate(booking.booking.bookingDate)}</span>
+                  <span className=""> {formatDate(booking.booking.bookingDate)}</span>
                 </span>
               </div>
             </div>
@@ -134,20 +137,20 @@ export default function BookingCard({
             {/* Location */}
             <div className="flex items-center gap-1 text-charcoal mb-3">
               <MapPin className="w-4 h-4 text-ocean-blue flex-shrink-0" />
-              <span className="sm:text-sm text-xs font-medium">
+              <span className="sm:text-sm text-xs">
                 {booking.experience.location.city + ", " + booking.experience.location.country}
               </span>
             </div>
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-4 text-gray-600">
                 <div className="flex items-center gap-1">
-                  <Calendar className="w-3 h-3 text-ocean-blue" />
+                  <Calendar className="w-4 h-4 text-ocean-blue" />
                   <span className=" text-xs sm:text-sm">
                     <span className="font-inter">{formatDate(booking.booking.startDate)}</span>
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Users className="w-3 h-3 text-ocean-blue" />
+                  <Users className="w-4 h-4 text-ocean-blue" />
                   <span className=" text-xs sm:text-sm">
                     <span className="font-inter">{booking.booking.tier.members}</span>
                   </span>

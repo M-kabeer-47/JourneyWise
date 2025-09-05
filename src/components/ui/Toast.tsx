@@ -27,7 +27,7 @@ export function Toast() {
           border: "none",
           boxShadow:
             "0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
-          maxWidth: "384px", // max-w-sm equivalent
+          maxWidth: "400px", // max-w-sm equivalent
         },
         className: "sonner-toast",
       }}

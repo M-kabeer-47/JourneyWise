@@ -36,15 +36,15 @@ export default function SettingsPage() {
   };
 
   return (
-    <div className="bg-gray-50  relative top-[100px] pb-20">
+    <div className="bg-gray-50 pb-[200px] min-h-auto">
       {/* Header */}
-      <div className="">
+      <div className="relative top-[80px]">
         <div className="max-w-[1400px] mx-auto p-4 sm:p-8">
           <div className="mb-6">
             <h1 className="text-3xl font-[800] text-midnight-blue mb-2 font-raleway">
               Settings
             </h1>
-            <p className="text-charcoal sm:text-base text-sm">
+            <p className="text-charcoal sm:text-base text-sm font-geist">
               Manage your account preferences and settings
             </p>
           </div>
@@ -57,7 +57,7 @@ export default function SettingsPage() {
             className="max-w-2xl"
           />
         </div>
-      </div>
+     
 
       {/* Content Area */}
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
@@ -80,6 +80,7 @@ export default function SettingsPage() {
           )}
         </motion.div>
       </div>
+       </div>
     </div>
   );
 }

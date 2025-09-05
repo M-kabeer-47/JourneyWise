@@ -12,29 +12,32 @@ import {
 } from "../../../auth-schema";
 import { admin, twoFactor as two_factor_plugin } from "better-auth/plugins";
 import { eq } from "drizzle-orm";
-import { generateVerificationEmailHTML, generateOTPEmailHTML, generateResetPasswordEmailHTML } from "@/lib/email/generateVerificationEmail";
+import {
+  generateVerificationEmailHTML,
+  generateOTPEmailHTML,
+  generateResetPasswordEmailHTML,
+} from "@/lib/email/generateVerificationEmail";
 dotenv.config();
-
 
 const db = drizzle(process.env.DATABASE_URL!);
 
 export const auth = betterAuth({
   appName: "Better-Auth",
-  rateLimit:{
-    enabled:true,
+  rateLimit: {
+    enabled: true,
     window: 60,
-    max:15
+    max: 15,
   },
   emailVerification: {
     sendVerificationEmail: async ({ user: User, url }, request) => {
-      if(request?.url.endsWith("sign-up/email")){
+      if (request?.url.endsWith("sign-up/email")) {
         return;
       }
       // Non-blocking email sending for better performance
       process.nextTick(async () => {
         try {
           const htmlContent = generateVerificationEmailHTML(url, User.name);
-          console.log("Verification Email: "+User.email)
+          console.log("Verification Email: " + User.email);
           await send_email({
             to: User.email,
             subject: "🌍 Welcome to JourneyWise - Verify Your Email",
@@ -92,7 +95,6 @@ export const auth = betterAuth({
     },
   },
   database: drizzleAdapter(db, {
-    
     provider: "pg", //@ts-ignore
     schema: {
       user,
@@ -101,14 +103,13 @@ export const auth = betterAuth({
       verification,
       twoFactor,
     },
-    
   }),
   socialProviders: {
     google: {
-      
+      prompt: "select_account",
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-       //@ts-ignore
+      //@ts-ignore
       mapProfileToUser: async (profile) => {
         let User = await db
           .select()
@@ -127,14 +128,11 @@ export const auth = betterAuth({
         }
       },
     },
-
   },
 
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    
-    
 
     sendResetPassword: async ({ user, url }, request) => {
       const htmlContent = generateResetPasswordEmailHTML(url, user.name);

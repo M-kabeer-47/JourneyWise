@@ -135,9 +135,9 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
         <ProfileHeader user={user} isOwnProfile={true} userType="user" />
 
         {/* Recent Trips */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 px-3 pt-5 pb-10 sm:px-6 sm:py-7">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            <h3 className="text-2xl font-raleway font-bold text-midnight-blue relative left-[5px]">
               Recent Trips
             </h3>
             {trips && trips.length > 3 && (
@@ -172,9 +172,9 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
         </div>
 
         {/* Recent Blogs */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 px-3 pt-5 pb-10 sm:px-6 sm:py-7">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            <h3 className="text-2xl font-raleway font-bold text-midnight-blue relative left-[5px]">
               Recent Blogs
             </h3>
             <button
@@ -202,9 +202,9 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
         </div>
 
         {/* Recent Bookings */}
-        <div className="bg-white rounded-2xl border border-gray-200 p-6">
+        <div className="bg-white rounded-2xl border border-gray-200 px-3 pt-5 pb-10 sm:px-6 sm:py-7">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="text-xl font-raleway font-bold text-midnight-blue">
+            <h3 className="text-2xl font-raleway font-bold text-midnight-blue relative left-[5px]">
               Recent Bookings
             </h3>
             <button

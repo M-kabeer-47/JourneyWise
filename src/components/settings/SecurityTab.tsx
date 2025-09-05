@@ -21,10 +21,9 @@ export default function SecurityTab() {
     new: false,
     confirm: false,
   });
-  const [show2FAModal, setShow2FAModal] = useState(false);
-  const [showPasswordModal, setShowPasswordModal] = useState(false);
+  
   const [isPasswordChanging, setIsPasswordChanging] = useState(false);
-  const {enable2FA, isLoading} = useEnable2FA();
+  const {enable2FA, isLoading,error,setError,show2FAModal,setShow2FAModal} = useEnable2FA();
 
   const handlePasswordChange = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -70,7 +69,7 @@ export default function SecurityTab() {
             <h2 className="sm:text-xl text-lg font-bold text-midnight-blue font-raleway">
               Change Password
             </h2>
-            <p className="sm:text-sm text-xs text-gray-600">
+            <p className="sm:text-sm text-xs text-charcoal font-geist">
               Update your password to keep your account secure
             </p>
           </div>
@@ -131,9 +130,9 @@ export default function SecurityTab() {
             <button
               type="submit"
               disabled={isLoading}
-              className="flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium flex justify-center items-center rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 w-full sm:w-[210px]"
+              className="flex font-geist items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium flex justify-center items-center rounded-lg hover:bg-ocean-blue/90 transition-colors disabled:opacity-50 w-full sm:w-[210px]"
             >
-              <Shield className="w-4 h-4" />
+              
               {isPasswordChanging ? "Updating..." : "Update Password"}
             </button>
           </div>
@@ -155,20 +154,20 @@ export default function SecurityTab() {
             <h2 className="sm:text-xl text-lg font-bold text-midnight-blue font-raleway">
               Two-Factor Authentication
             </h2>
-            <p className="sm:text-sm text-xs text-gray-600">
+            <p className="sm:text-sm text-xs text-charcoal font-geist ">
               Add an extra layer of security to your account
             </p>
           </div>
         </div>
 
         <div className="rounded-lg flex flex-col sm:flex-row sm:justify-between sm:items-center">
-          <p className="sm:text-sm text-[14px] text-charcoal mb-4 text-left  sm:mb-0">
+          <p className="sm:text-sm text-[14px] text-charcoal mb-4 text-left  sm:mb-0 font-geist">
             Two-factor authentication is currently disabled. Enable it to add an
             extra layer of security to your account.
           </p>
           <MyButton
             text="Enable 2FA"
-            className="font-inter relative sm:top-[-5px] sm:w-[210px]"
+            className="font-geist relative sm:top-[-5px] sm:w-[210px]"
             onClick={()=>setShow2FAModal(true)}
           />
         </div>
@@ -179,11 +178,13 @@ export default function SecurityTab() {
      <PasswordConfirmModal
         isOpen={show2FAModal}
         onConfirm={enable2FA}
+        error={error}
         onClose={() => setShow2FAModal(false)}
         title="Enable Two-Factor Authentication"
         description="Please enter your password to confirm and enable two-factor authentication for your account."
         loading={isLoading}
         loadingText="Enabling 2FA..."
+        setError={setError}
       />
       </>
   );

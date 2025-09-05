@@ -96,7 +96,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Profile Information
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-charcoal font-geist  ">
               Update your personal details and profile information
             </p>
           </div>
@@ -130,14 +130,14 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h3 className="font-medium text-charcoal mb-2">
                 Profile Picture
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600 mb-3">
+              <p className="text-xs sm:text-sm text-charcoal mb-3">
                 Upload a new profile picture.
               </p>
               <label
                 htmlFor="profile-image-2"
                 className="inline-flex items-center gap-2 px-4 py-2 border border-gray-300 rounded-lg text-xs sm:text-sm font-medium text-charcoal hover:bg-gray-50 transition-colors cursor-pointer"
               >
-                <Upload className="w-4 h-4" />
+                <Upload className="sm:w-4 sm:h-4 h-3 w-3" />
                 Choose File
                 <Controller
                   name="image"
@@ -217,7 +217,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               disabled={isSaveButtonDisabled || isLoading}
               type="submit"
               onClick={() => console.log("Errors", errors)}
-              className="flex items-center justify-center gap-2 px-2 w-[170px] py-2 bg-midnight-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
+              className="flex items-center justify-center gap-2 px-2 w-full sm:w-[170px] py-2 bg-gradient-to-r from-midnight-blue to-ocean-blue text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50 mr-3"
             >
               {isLoading ? "Saving..." : "Save Changes"}
             </button>
@@ -240,7 +240,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Email Verification
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-charcoal font-geist  ">
               Verify your email address to secure your account
             </p>
           </div>
@@ -257,7 +257,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <p className="font-medium text-charcoal">
                 {user?.emailVerified ? "Email Verified" : "Email Not Verified"}
               </p>
-              <p className="text-xs sm:text-sm text-gray-600">{user?.email}</p>
+              <p className="text-xs sm:text-sm text-charcoal">{user?.email}</p>
             </div>
           </div>
 
@@ -288,7 +288,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
               Account Status
             </h2>
-            <p className="text-xs sm:text-sm text-gray-600">
+            <p className="text-xs sm:text-sm text-charcoal font-geist  ">
               Manage your account activation and deactivation
             </p>
           </div>
@@ -310,7 +310,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h3 className="text-lg font-bold text-midnight-blue mb-2">
                 Deactivate Account
               </h3>
-              <p className="text-xs sm:text-sm text-gray-600">
+              <p className="text-xs sm:text-sm text-charcoal">
                 Are you sure you want to deactivate your account? This action
                 can be reversed by logging in again.
               </p>

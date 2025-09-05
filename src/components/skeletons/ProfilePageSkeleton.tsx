@@ -12,7 +12,7 @@ export function TripsSectionSkeleton({ count }: { count?: number }) {
   const skeletonCount = count || (isDesktop ? 5 : 3);
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 animate-pulse">
+    <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-6 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div className="h-6 bg-gray-200 rounded w-32"></div>
         <div className="h-4 bg-gray-200 rounded w-16"></div>
@@ -31,7 +31,7 @@ export function BlogsSectionSkeleton({ count,isPersonal }: { count?: number,isPe
   const skeletonCount = count || (isDesktop ? 5 : 3);
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 animate-pulse">
+    <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-6 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div className="h-6 bg-gray-200 rounded w-32"></div>
         <div className="h-4 bg-gray-200 rounded w-16"></div>
@@ -50,7 +50,7 @@ export function BookingsSectionSkeleton({ count }: { count?: number }) {
   const skeletonCount = count || (isDesktop ? 5 : 3);
   
   return (
-    <div className="bg-white rounded-2xl border border-gray-200 p-6 animate-pulse">
+    <div className="bg-white rounded-2xl border border-gray-200 p-3 sm:p-6 animate-pulse">
       <div className="flex items-center justify-between mb-6">
         <div className="h-6 bg-gray-200 rounded w-32"></div>
         <div className="h-4 bg-gray-200 rounded w-16"></div>
@@ -82,7 +82,7 @@ function AgentProfileHeaderSkeleton() {
       <div className="pt-16 pb-6 px-6">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 sm: smL: mb-2">
               <div className="h-8 bg-gray-200 rounded w-48"></div>
               <div className="w-6 h-6 bg-gray-200 rounded-full"></div>
             </div>
@@ -97,7 +97,7 @@ function AgentProfileHeaderSkeleton() {
               </div>
             </div>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-3 sm: smL:">
             <div className="h-10 bg-gray-200 rounded-lg w-24"></div>
             <div className="h-10 bg-gray-200 rounded-lg w-32"></div>
           </div>
@@ -117,7 +117,7 @@ function UserProfileHeaderSkeleton() {
           <div className="w-20 h-20 md:w-24 md:h-24 bg-gray-200 rounded-full flex-shrink-0"></div>
           
           <div className="flex-1">
-            <div className="flex items-center gap-3 mb-2">
+            <div className="flex items-center gap-3 sm: smL: mb-2">
               <div className="h-7 bg-gray-200 rounded w-40"></div>
               <div className="w-5 h-5 bg-gray-200 rounded-full"></div>
             </div>
@@ -134,7 +134,7 @@ function UserProfileHeaderSkeleton() {
           </div>
         </div>
         
-        <div className="flex gap-3">
+        <div className="flex gap-3 sm: smL:">
           <div className="h-9 bg-gray-200 rounded-lg w-20"></div>
           <div className="h-9 bg-gray-200 rounded-lg w-28"></div>
         </div>

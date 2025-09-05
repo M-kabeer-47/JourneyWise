@@ -57,9 +57,9 @@ export default function SortBy({
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between gap-2 ${isSmall ? "sm:text-sm text-xs" : "sm:text-base text-sm"} font-medium rounded-lg hover:border-ocean-blue transition-colors bg-white w-full px-4 py-2.5 border border-gray-300 ${className}`}
+        className={`flex items-center justify-between gap-2 ${isSmall ? "sm:text-sm text-xs" : "sm:text-base text-sm"}  rounded-lg hover:border-ocean-blue transition-colors bg-white w-full px-4 py-2.5 border border-gray-300 ${className}`}
       >
-        <p className={`flex gap-2 w-full items-center text-charcoal font-medium`}>
+        <p className={`flex gap-2 w-full items-center text-charcoal `}>
           Sort by: {activeLabel} <span className={`text-ocean-blue  ${isSmall ? "sm:text-sm text-xs" : "text-sm sm:text-base"}`}>{activeSort.direction === "asc" ? "↑" : "↓"}</span>
         </p>
         <ChevronDown
@@ -101,7 +101,7 @@ export default function SortBy({
                     setIsOpen(false);
                   }}
                 >
-                  <span className={` sm:text-sm text-xs font-medium text-charcoal `}>{option.label}</span>
+                  <span className={` sm:text-sm text-xs  text-charcoal `}>{option.label}</span>
                   {activeSort.value === option.value && (
                     <span className={`text-ocean-blue text-xs sm:text-sm`}>
                       {activeSort.direction === "asc" ? "↑" : "↓"}

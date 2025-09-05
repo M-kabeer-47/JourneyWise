@@ -9,6 +9,7 @@ import {
   Trash2,
   Loader2,
   User,
+  Tag,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -74,6 +75,26 @@ const getDefaultCoverImage = (title: string) => {
   }
 
   return defaults.default;
+};
+
+// Category color mapping
+const getCategoryStyles = (category: string) => {
+  const categoryColors = {
+    adventure: "bg-orange-100 text-orange-700",
+    food: "bg-red-100 text-red-700",
+    culture: "bg-purple-100 text-purple-700",
+    nature: "bg-green-100 text-green-700",
+    city: "bg-blue-100 text-blue-700",
+    travel: "bg-cyan-100 text-cyan-700",
+    lifestyle: "bg-pink-100 text-pink-700",
+    default: "bg-gray-100 text-gray-700",
+  };
+
+  const categoryLower = category.toLowerCase();
+  return (
+    categoryColors[categoryLower as keyof typeof categoryColors] ||
+    categoryColors.default
+  );
 };
 
 interface BlogCardProps {
@@ -173,7 +194,7 @@ export function BlogCard({
   return (
     <div className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-[410px] pb-[10px]">
       {/* Cover Image with Overlay */}
-      <div className="relative h-56 p-3.5">
+      <div className="relative h-56 p-3 sm:p-3.5">
         <div className="relative w-full h-full overflow-hidden rounded-lg">
           <Image
             src={blogData.blog.thumbnailUrl || defaultCoverImage}
@@ -185,6 +206,20 @@ export function BlogCard({
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-lg" />
         </div>
 
+        {/* Category Badge on Image */}
+        {blogData.blog.category && (
+          <div className="absolute top-6 left-6">
+            <span
+              className={`px-2.5 py-1 rounded-full text-xs font-medium ${getCategoryStyles(
+                blogData.blog.category
+              )} backdrop-blur-sm bg-opacity-90`}
+            >
+              <Tag className="w-3 h-3 inline mr-1" />
+              {blogData.blog.category}
+            </span>
+          </div>
+        )}
+
         {/* Actions - Personal Mode: Dropdown Menu */}
         {isPersonal && (
           <div className="absolute top-6 right-6" ref={dropdownRef}>
@@ -194,9 +229,9 @@ export function BlogCard({
                 e.stopPropagation();
                 setIsDropdownOpen(!isDropdownOpen);
               }}
-              className="p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
+              className="p-2 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200"
             >
-              <MoreVertical className="w-4 h-4 text-gray-600" />
+              <MoreVertical className="sm:w-4 sm:h-4 w-3 h-3 text-charcoal" />
             </button>
 
             <AnimatePresence>
@@ -238,7 +273,11 @@ export function BlogCard({
           <div className="absolute top-6 right-6">
             <button
               onClick={handleSaveToggle}
-              className={`${hoverEffectOnSave ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0" : ""} p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
+              className={`${
+                hoverEffectOnSave
+                  ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+                  : ""
+              } p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
             >
               {savePost.isLoading || unsavePost.isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />
@@ -253,84 +292,76 @@ export function BlogCard({
             </button>
           </div>
         )}
-
-        {/* Author Badge on Image */}
-   
       </div>
 
       {/* Content */}
-      <div className="px-5 pb-3">
-        {/* Title */}
-        <h3 className="text-xl font-[800] font-raleway text-charcoal line-clamp-2 group-hover:text-midnight-blue transition-colors duration-200 leading-tight mb-2">
-          {blogData.blog.title.length > 30
-            ? `${blogData.blog.title.substring(0, 30)}...`
-            : blogData.blog.title}
-        </h3>
-        <div
-              className={` flex items-center gap-2 mb-3 `}
+      <div className="sm:px-5 px-4 pb-3">
+        {/* Title and Status Row */}
+        <div className="flex items-start justify-between gap-3 mb-2">
+          <h3 className="text-xl font-[800] font-raleway text-charcoal line-clamp-2 group-hover:text-midnight-blue transition-colors duration-200 leading-tight flex-1">
+            {blogData.blog.title.length > 25
+              ? `${blogData.blog.title.substring(0, 25)}...`
+              : blogData.blog.title}
+          </h3>
+
+          {/* Status Badge for Personal Blogs */}
+          {isPersonal && (
+            <span
+              className={`px-2 py-1 w-[80px] flex items-center justify-center rounded-full text-xs font-raleway font-semibold flex-shrink-0 ${
+                blogData.blog.isPublished
+                  ? "bg-green-100 text-green-700"
+                  : "bg-yellow-100 text-yellow-700"
+              }`}
             >
-              <div
-                className={`relative  rounded-full overflow-hidden w-8 h-8`}
-              >
-                {blogData.author.image!=="" ? (
-                  <Image src={blogData.author.image} alt={blogData.author.name} fill className="object-cover" />
-                ) : (
-                  <div className="w-full h-full  flex items-center bg-gray-200 justify-center rounded-full text-white text-xs font-medium">
-                    <User className="w-4 h-4 text-gray-500" />
-                  </div>
-                )}
+              {blogData.blog.isPublished ? "Published" : "Draft"}
+            </span>
+          )}
+        </div>
+
+        {/* Author Info */}
+        <div className="flex items-center gap-2 mb-3">
+          <div className="relative rounded-full overflow-hidden w-8 h-8">
+            {blogData.author.image !== "" ? (
+              <Image
+                src={blogData.author.image}
+                alt={blogData.author.name}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="w-full h-full flex items-center bg-gray-200 justify-center rounded-full text-white text-xs font-medium">
+                <User className="w-4 h-4 text-gray-500" />
               </div>
-              <span
-                className={`font-raleway  text-charcoal sm:text-sm text-xs font-semibold`}
-              >
-                {blogData.author.name}
-              </span>
-            </div>
+            )}
+          </div>
+          <span className="font-raleway text-charcoal sm:text-sm text-xs font-semibold">
+            {blogData.author.name}
+          </span>
+        </div>
 
         {/* Excerpt */}
         {blogData.blog.description && (
-          <p className="text-sm text-charcoal line-clamp-2 mb-4">
+          <p className="text-sm font-geist text-charcoal line-clamp-2 mb-4">
             {blogData.blog.description.length > 100
               ? `${blogData.blog.description.substring(0, 100)}...`
               : blogData.blog.description}
           </p>
         )}
 
-        {/* Meta Info */}
-        
-
-        {/* Read More Indicator */}
-        {!isPersonal && (
-          <div className="flex justify-between items-center">
-            <div className="flex items-center justify-between">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
-              <div className="flex items-center gap-1.5">
-                <Calendar className="w-4 h-4" />
-                <span>{formatDate(blogData.blog.updatedAt)}</span>
-              </div>
-              <div className="flex items-center gap-1.5">
-                <MessageCircle className="w-4 h-4" />
-                <span>{blogData.blog.commentsCount}</span>
-              </div>
-              {/* Status Badge for Personal Blogs */}
+        {/* Meta Info and Read More */}
+        <div className="flex justify-between items-center">
+          <div className="flex items-center gap-4 text-xs sm:text-sm text-charcoal">
+            <div className="flex items-center gap-1.5">
+              <Calendar className="w-4 h-4" />
+              <span>{formatDate(blogData.blog.updatedAt)}</span>
             </div>
-            {isPersonal ? (
-              <span
-                className={`px-2 py-1 w-[80px] flex items-center justify-center rounded-full text-xs font-raleway font-semibold ${
-                  blogData.blog.isPublished
-                    ? "bg-green-100 text-green-700"
-                    : "bg-yellow-100 text-yellow-700"
-                }`}
-              >
-                {blogData.blog.isPublished ? "Published" : "Draft"}
-              </span>
-            ) : null}
+            <div className="flex items-center gap-1.5">
+              <MessageCircle className="w-4 h-4" />
+              <span>{blogData.blog.commentsCount}</span>
+            </div>
           </div>
-        </div>
+
           <Link href={`/blog/${blogData.blog.id}`}>
-
-
             <div className="flex items-center justify-end gap-1 text-ocean-blue text-sm font-medium mt-2">
               <span>Read more</span>
               <svg
@@ -348,8 +379,7 @@ export function BlogCard({
               </svg>
             </div>
           </Link>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

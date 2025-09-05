@@ -77,7 +77,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
       >
         <div className="flex items-center gap-2 truncate">
           <Globe size={18} className="text-ocean-blue flex-shrink-0" />
-          <span className="truncate text-sm sm:text-base font-medium">
+          <span className="truncate text-sm sm:text-base ">
             {selectedLocations && selectedLocations.length > 0 
               ? `${selectedLocations.length} location${selectedLocations.length > 1 ? 's' : ''}` 
               : 'All Locations'}
@@ -125,7 +125,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
               {/* Top actions */}
               <div className="py-2 px-4">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">Select Locations</span>
+                  <span className="text-sm ">Select Locations</span>
                   <button
                     onClick={clearSelection}
                     className="text-sm text-ocean-blue hover:underline"
@@ -140,7 +140,7 @@ export function LocationSelector({ locations, selectedLocations, onChange }: Loc
               <div className="h-px bg-gray-200" />
               
               {/* Nav header */}
-              <div className="py-1.5 px-4 text-xs font-medium text-charcoal uppercase tracking-wider">
+              <div className="py-1.5 px-4 text-xs  text-charcoal uppercase tracking-wider">
                 Locations
               </div>
               

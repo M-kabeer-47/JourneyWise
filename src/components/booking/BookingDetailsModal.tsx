@@ -69,7 +69,6 @@ export default function BookingDetailsModal({
   const status = statusConfig[bookingData.booking.status];
   const StatusIcon = status.icon;
 
-
   const formatDateTime = (dateString: string) =>
     new Date(dateString).toLocaleString("en-US", {
       day: "2-digit",
@@ -93,7 +92,7 @@ export default function BookingDetailsModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm p-4">
       <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 w-full max-w-6xl max-h-[90vh] overflow-y-auto">
         {/* Header with Close Button */}
-        <div className="flex justify-between items-center p-6 pb-4 border-b border-gray-100">
+        <div className="flex justify-between items-center p-4 sm:p-6 pb-4 border-b border-gray-100">
           <h2 className="sm:text-3xl text-xl font-semibold text-charcoal font-raleway">
             Booking Details
           </h2>
@@ -142,7 +141,9 @@ export default function BookingDetailsModal({
                 <div className="flex items-center gap-2 mb-4 text-charcoal">
                   <Calendar className="w-4 h-4 text-ocean-blue" />
                   <span className="text-xs sm:text-sm font-medium">
-                    <span className="font-inter">{bookingData.experience.duration}</span>{" "}
+                    <span className="font-inter">
+                      {bookingData.experience.duration}
+                    </span>{" "}
                     {bookingData.experience.duration === 1 ? "day" : "days"}
                   </span>
                 </div>
@@ -152,7 +153,7 @@ export default function BookingDetailsModal({
             {bookingData.experience.requirements &&
               bookingData.experience.requirements.length > 0 && (
                 <div className="mb-6">
-                  <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
+                  <h4 className="sm:text-base text-sm font-raleway font-bold text-midnight-blue mb-2 flex items-center gap-2">
                     Requirements
                   </h4>
                   <div className="space-y-1">
@@ -175,7 +176,7 @@ export default function BookingDetailsModal({
               {bookingData.experience.includedServices &&
                 bookingData.experience.includedServices.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
+                    <h4 className="sm:text-base text-sm font-raleway font-bold text-midnight-blue mb-2 flex items-center gap-2">
                       Included Services
                     </h4>
                     <div className="space-y-1">
@@ -199,7 +200,7 @@ export default function BookingDetailsModal({
               {bookingData.experience.excludedServices &&
                 bookingData.experience.excludedServices.length > 0 && (
                   <div className="mb-4">
-                    <h4 className="text-sm font-semibold text-midnight-blue mb-2 flex items-center gap-2">
+                    <h4 className="sm:text-base text-sm font-raleway font-bold text-midnight-blue mb-2 flex items-center gap-2">
                       Excluded Services
                     </h4>
                     <div className="space-y-1">
@@ -223,12 +224,12 @@ export default function BookingDetailsModal({
           </div>
 
           {/* Right Column - Booking Details */}
-          <div className="w-full lg:w-1/2 p-6 flex flex-col overflow-y-auto">
-            <div className="s">
+          <div className="w-full lg:w-1/2 p-4 sm:p-6 flex flex-col overflow-y-auto">
+            <div className="w-full">
               {/* Header Section with Agent and Status */}
-              <div className="mb-6 pb-4 border-b border-gray-100">
-                <div className="flex flex-col sm:flex-row justify-between w-full sm:items-start gap-4">
-                  <div className="flex-1">
+              <div className="mb-6 pb-4 border-b border-gray-100 w-full">
+                <div className="flex flex-row justify-between w-full sm:items-start gap-4">
+                  <div className="flex-1 w-full ">
                     <AuthorCard
                       name={bookingData.agent.agencyName}
                       image={bookingData.agent.image}
@@ -237,6 +238,7 @@ export default function BookingDetailsModal({
                     />
 
                     {/* Booking Date - moved here for better positioning */}
+
                     <div className="flex items-center gap-2 mt-3 text-charcoal">
                       <Calendar className="w-4 h-4 text-ocean-blue" />
                       <span className="text-xs sm:text-sm font-medium">
@@ -248,9 +250,9 @@ export default function BookingDetailsModal({
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-end gap-2">
+                  <div className="flex flex-col items-end gap-2 ">
                     <div
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full ${status.bgColor}`}
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full ` }
                     >
                       <StatusIcon className={`w-4 h-4 ${status.color}`} />
                       <span
@@ -259,18 +261,20 @@ export default function BookingDetailsModal({
                         {status.text}
                       </span>
                     </div>
-                    {bookingData.booking.isCustomRequest && (
-                      <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
-                        Custom Request
-                      </span>
-                    )}
+                    <div className="justify-end relative top-[10px]">
+                      {bookingData.booking.isCustomRequest && (
+                        <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-medium ">
+                          Custom Request
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
               {/* Trip Dates Section */}
               <div className="mb-6">
-                <h4 className="text-lg font-semibold text-midnight-blue mb-3 flex items-center gap-2">
-                  <Calendar className="w-5 h-5 text-ocean-blue" />
+                <h4 className="sm:text-base text-sm font-bold font-raleway text-midnight-blue mb-3 flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-ocean-blue " />
                   Trip Dates
                 </h4>
                 <div className=" px-4 py-2 space-y-3">
@@ -308,7 +312,7 @@ export default function BookingDetailsModal({
               {/* Customer Information */}
               {bookingData.booking.customerName && (
                 <div className="mb-6">
-                  <h4 className="text-lg font-semibold text-midnight-blue mb-3 flex items-center gap-2">
+                  <h4 className="sm:text-base text-sm font-bold font-raleway text-midnight-blue mb-3 flex items-center gap-2">
                     <User className="w-5 h-5 text-ocean-blue" />
                     Customer Information
                   </h4>
@@ -346,7 +350,7 @@ export default function BookingDetailsModal({
               )}
               {/* Package Details */}
               <div className="mb-6">
-                <h4 className="text-lg font-semibold text-midnight-blue mb-3 flex items-center gap-2">
+                <h4 className="sm:text-base text-sm font-bold font-raleway text-midnight-blue mb-3 flex items-center gap-2">
                   <Package className="w-5 h-5 text-ocean-blue" />
                   Package Details
                 </h4>
@@ -357,7 +361,9 @@ export default function BookingDetailsModal({
                         Package
                       </span>
                       <span className="text-xs sm:text-sm font-medium text-charcoal bg-white py-1 rounded-full">
-                        {bookingData.booking.tier.name === "custom" ? "Custom" : bookingData.booking.tier.name}
+                        {bookingData.booking.tier.name === "custom"
+                          ? "Custom"
+                          : bookingData.booking.tier.name}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -365,7 +371,9 @@ export default function BookingDetailsModal({
                         Members
                       </span>
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
-                        <span className="font-inter">{bookingData.booking.tier.members}</span>{" "}
+                        <span className="font-inter">
+                          {bookingData.booking.tier.members}
+                        </span>{" "}
                         {bookingData.booking.tier.members === 1
                           ? "person"
                           : "people"}
@@ -376,7 +384,8 @@ export default function BookingDetailsModal({
                         Base Price
                       </span>
                       <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
-                        {bookingData.booking.tier.currency} {bookingData.booking.tier.price.toLocaleString()}
+                        {bookingData.booking.tier.currency}{" "}
+                        {bookingData.booking.tier.price.toLocaleString()}
                       </span>
                     </div>
                     {bookingData.booking.noOfPackages &&
@@ -431,11 +440,11 @@ export default function BookingDetailsModal({
 
               {/* Total Price Section */}
               <div className="mt-8 pt-6 border-t-2 border-gray-100">
-                <h4 className="text-lg font-semibold text-midnight-blue mb-4 flex items-center gap-2">
+                <h4 className="sm:text-base text-sm font-bold font-raleway text-midnight-blue mb-4 flex items-center gap-2">
                   <Banknote className="w-5 h-5 text-ocean-blue" />
                   Total Amount
                 </h4>
-                <div className="rounded-xl p-4">
+                <div className="">
                   <div className="flex justify-end items-center">
                     {bookingData.booking.status === "modificationRequested" &&
                     bookingData.booking.modifiedTotalPrice ? (
@@ -452,7 +461,7 @@ export default function BookingDetailsModal({
                     ) : (
                       <span className="text-3xl sm:text-5xl text-midnight-blue font-bold">
                         {bookingData.booking.tier.currency}{" "}
-                        <span className="text-3xl sm:text-5xl text-midnight-blue font-bold font-inter"> 
+                        <span className="text-3xl sm:text-5xl text-midnight-blue font-bold font-inter">
                           {bookingData.booking.totalPrice.toLocaleString()}
                         </span>
                       </span>

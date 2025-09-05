@@ -71,12 +71,7 @@ export default {
   				'-apple-system',
   				'sans-serif'
   			],
-  			inter: [
-  				'Inter',
-  				'system-ui',
-  				'-apple-system',
-  				'sans-serif'
-  			],
+  			geist: ["var(--font-geist)"],
   			mono: [
   				'ui-monospace',
   				'SFMono-Regular',

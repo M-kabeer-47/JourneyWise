@@ -66,17 +66,17 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
         }`}>
          <Avatar profileImage={profileImage} variant={variant} />
           <div className="hidden md:block text-left">
-            <div className={`text-sm font-medium ${
+            <div className={`text-sm font-raleway font-medium ${
               variant === 'navbar' ? 'text-white' : 'text-gray-800'
             }`}>{userName}</div>
             {showRole && userRole && (
               <div className={`text-xs ${
-                variant === 'navbar' ? 'text-blue-100' : 'text-gray-500'
+                variant === 'navbar' ? 'text-blue-100' : 'text-charcoal'
               }`}>{userRole}</div>
             )}
           </div>
           <ChevronDown size={16} className={`${
-            variant === 'navbar' ? 'text-white/70' : 'text-gray-500'
+            variant === 'navbar' ? 'text-white/70' : 'text-charcoal'
           }`} />
         </div>
       </button>
@@ -90,14 +90,14 @@ const ProfileDropdown: React.FC<ProfileDropdownProps> = ({
             transition={{ duration: 0.2 }}
             className="origin-top-right absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50 overflow-hidden"
           >
-            <div className="py-1">
+            <div className="py-1 font-geist ">
               {options.map((option, index) => (
                 <Link
                   key={index}
                   href={option.href}
                   className="flex items-center px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                 >
-                  {option.icon && <span className="mr-3 text-gray-500">{option.icon}</span>}
+                  {option.icon && <span className="mr-3 text-charcoal">{option.icon}</span>}
                   {option.label}
                 </Link>
               ))}

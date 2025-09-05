@@ -1,6 +1,6 @@
 import { motion, AnimatePresence } from "framer-motion";
 import { X } from "lucide-react";
-import { useState } from "react";
+import React, { useEffect, useState } from "react";
 import FormInput from "./FormInput";
 import MyButton from "./MyButton";
 
@@ -13,6 +13,8 @@ interface PasswordConfirmModalProps {
   loading?: boolean;
   loadingText?: string;
   width?: "large" | "small";
+  error?: string;
+  setError?: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export default function PasswordConfirmModal({
@@ -23,14 +25,15 @@ export default function PasswordConfirmModal({
   description,
   loading = false,
   loadingText = "Enabling...",
-  width = "small"
+  width = "small",
+  error = "",
+  setError,
 }: PasswordConfirmModalProps) {
   const [password, setPassword] = useState("");
 
-  if (!isOpen) return null;
-
   const handleConfirm = () => {
     if (password.trim()) {
+      
       onConfirm(password);
     }
   };
@@ -46,6 +49,7 @@ export default function PasswordConfirmModal({
     }
   };
 
+  if (!isOpen) return null;
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-50">
@@ -65,7 +69,9 @@ export default function PasswordConfirmModal({
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className={`relative bg-white rounded-xl shadow-md w-full ${width === "large" ? "max-w-xl" : "max-w-lg"}`}
+            className={`relative bg-white rounded-xl shadow-md w-full ${
+              width === "large" ? "max-w-xl" : "max-w-lg"
+            }`}
             onKeyDown={handleKeyPress}
           >
             {/* Header with title and close button */}
@@ -95,11 +101,15 @@ export default function PasswordConfirmModal({
                   label="Password"
                   type="password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => {
+                    setPassword(e.target.value);
+                    if (error && setError) setError("");
+                  }}
                   placeholder="Enter your password"
                   required
                   icon="lock"
                   disabled={loading}
+                  error={error}
                 />
               </div>
 
