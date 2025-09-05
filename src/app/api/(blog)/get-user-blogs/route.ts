@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   let isPublished = type === "published";
   let isDraft = type === "drafts";
-
+  console.log("Type: "+type)
   if (!userID) return new Response("Missing userID", { status: 400 });
 
   if (sortColumn.toString() !== "updatedAt" && sortColumn.toString() !== "mostDiscussed")
@@ -34,6 +34,7 @@ export async function GET(request: NextRequest) {
   else if (isDraft) conditions.push(eq(blog.isPublished, false));
 
   try {
+    console.log("Conditions:", conditions);
     const blogs = await db
       .select({
         blog: blog,

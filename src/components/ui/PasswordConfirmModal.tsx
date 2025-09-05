@@ -6,7 +6,7 @@ import MyButton from "./MyButton";
 
 interface PasswordConfirmModalProps {
   isOpen: boolean;
-  onConfirm: (password: string) => void;
+  onConfirm: (password: string) => Promise<boolean>;
   onClose: () => void;
   title: string;
   description: string;
@@ -31,10 +31,13 @@ export default function PasswordConfirmModal({
 }: PasswordConfirmModalProps) {
   const [password, setPassword] = useState("");
 
-  const handleConfirm = () => {
+  const handleConfirm = async() => {
+    setError && setError("");
     if (password.trim()) {
-      
-      onConfirm(password);
+      const success = await onConfirm(password);
+      if (success) {
+        setPassword("");
+      }
     }
   };
 

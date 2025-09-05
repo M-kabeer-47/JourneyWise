@@ -5,25 +5,23 @@ import { useAppDispatch } from "../redux";
 import { updateUser } from "@/lib/redux/slices/user";
 export default function useEnable2FA() {
   const [isLoading, setIsLoading] = useState(false);
-  const [show2FAModal, setShow2FAModal] = useState(false);
-  const [error, setError] = useState("");
+
   const dispatch = useAppDispatch();
   const enable2FA = async (password: string) => {
     setIsLoading(true);
     const { data, error } = await authClient.twoFactor.enable({ password });
     if (data) {
-      toast.success("Two-Factor Authentication enabled successfully");
-      setShow2FAModal(false);
+      toast.success("2FA enabled successfully");
+      
       dispatch(updateUser({ twoFactorEnabled: true }));
     } else if (error) {
       toast.error("Failed to enable 2FA: " + error.message);
-      error.message && setError(error.message);
       setIsLoading(false);
-      return;
-    } 
+      
+    }
     setIsLoading(false);
-    
-   
+
+    return { data, error };
   };
-  return { enable2FA, isLoading, error, setError, show2FAModal, setShow2FAModal };
+  return { enable2FA, isLoading };
 }

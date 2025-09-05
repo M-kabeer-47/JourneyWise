@@ -14,6 +14,7 @@ import {
   User,
   Package,
   CreditCard,
+  Ticket,
 } from "lucide-react";
 import AuthorCard from "../ui/AuthorCard";
 import ServiceItem from "../ui/ServiceItem";
@@ -119,7 +120,7 @@ export default function BookingDetailsModal({
               {/* Rating Badge */}
               <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1.5 flex items-center gap-1">
                 <Star className="w-4 h-4 text-amber-500 fill-current" />
-                <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                   {bookingData.experience.averageRating}
                 </span>
               </div>
@@ -141,7 +142,7 @@ export default function BookingDetailsModal({
                 <div className="flex items-center gap-2 mb-4 text-charcoal">
                   <Calendar className="w-4 h-4 text-ocean-blue" />
                   <span className="text-xs sm:text-sm font-medium">
-                    <span className="font-inter">
+                    <span className="font-geist">
                       {bookingData.experience.duration}
                     </span>{" "}
                     {bookingData.experience.duration === 1 ? "day" : "days"}
@@ -239,20 +240,20 @@ export default function BookingDetailsModal({
 
                     {/* Booking Date - moved here for better positioning */}
 
-                    <div className="flex items-center gap-2 mt-3 text-charcoal">
-                      <Calendar className="w-4 h-4 text-ocean-blue" />
-                      <span className="text-xs sm:text-sm font-medium">
-                        Booked on
-                      </span>
-                      <span className="text-xs sm:text-sm text-charcoal font-medium font-inter">
-                        {formatDate(bookingData.booking.bookingDate)}
+                    <div className="flex items-center mt-3 text-charcoal">
+                      <Ticket className="w-4 h-4 text-ocean-blue" />
+                      <span className="text-xs sm:text-sm font-medium ml-2 ">
+                        Booked:
+                        <span className="ml-1 text-xs sm:text-sm text-charcoal font-medium font-geist">
+                          {formatDate(bookingData.booking.bookingDate)}
+                        </span>
                       </span>
                     </div>
                   </div>
 
                   <div className="flex flex-col items-end gap-2 ">
                     <div
-                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full ` }
+                      className={`flex items-center gap-2 px-3 py-1.5 rounded-full `}
                     >
                       <StatusIcon className={`w-4 h-4 ${status.color}`} />
                       <span
@@ -285,24 +286,24 @@ export default function BookingDetailsModal({
                     {bookingData.booking.status === "modificationRequested" &&
                     bookingData.booking.modifiedStartDate ? (
                       <div className="flex items-center gap-2">
-                        <span className="text-xs sm:text-sm font-medium text-gray-400 line-through font-inter">
+                        <span className="text-xs sm:text-sm font-medium text-gray-400 line-through font-geist">
                           {formatDate(bookingData.booking.startDate)}
                         </span>
-                        <span className="text-xs sm:text-sm text-ocean-blue font-medium bg-ocean-blue/10 px-2 py-1 rounded-md font-inter">
+                        <span className="text-xs sm:text-sm text-ocean-blue font-medium bg-ocean-blue/10 px-2 py-1 rounded-md font-geist">
                           {formatDate(bookingData.booking.modifiedStartDate)}
                         </span>
                       </div>
                     ) : (
-                      <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                      <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                         {formatDate(bookingData.booking.startDate)}
                       </span>
                     )}
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                    <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                       End Date
                     </span>
-                    <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                    <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                       {formatDate(bookingData.booking.endDate)}
                     </span>
                   </div>
@@ -340,7 +341,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Phone
                         </span>
-                        <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                        <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                           {bookingData.booking.customerPhone}
                         </span>
                       </div>
@@ -371,7 +372,7 @@ export default function BookingDetailsModal({
                         Members
                       </span>
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
-                        <span className="font-inter">
+                        <span className="font-geist">
                           {bookingData.booking.tier.members}
                         </span>{" "}
                         {bookingData.booking.tier.members === 1
@@ -383,7 +384,7 @@ export default function BookingDetailsModal({
                       <span className="text-xs sm:text-sm font-medium text-charcoal">
                         Base Price
                       </span>
-                      <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                      <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                         {bookingData.booking.tier.currency}{" "}
                         {bookingData.booking.tier.price.toLocaleString()}
                       </span>
@@ -394,7 +395,7 @@ export default function BookingDetailsModal({
                           <span className="text-xs sm:text-sm font-medium text-charcoal">
                             Packages
                           </span>
-                          <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                          <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                             {bookingData.booking.noOfPackages}
                           </span>
                         </div>
@@ -416,7 +417,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Amount Paid
                         </span>
-                        <span className="text-lg font-bold text-green-600 font-inter">
+                        <span className="text-lg font-bold text-green-600 font-geist">
                           {bookingData.booking.tier.currency}{" "}
                           {bookingData.booking?.payment?.amount.toLocaleString() ||
                             "1000"}
@@ -426,7 +427,7 @@ export default function BookingDetailsModal({
                         <span className="text-xs sm:text-sm font-medium text-charcoal">
                           Transaction Date
                         </span>
-                        <span className="text-xs sm:text-sm font-medium text-charcoal font-inter">
+                        <span className="text-xs sm:text-sm font-medium text-charcoal font-geist">
                           {formatDateTime(
                             bookingData.booking.payment?.transactionDateTime ||
                               ""
@@ -449,11 +450,11 @@ export default function BookingDetailsModal({
                     {bookingData.booking.status === "modificationRequested" &&
                     bookingData.booking.modifiedTotalPrice ? (
                       <div className="flex flex-col items-end gap-2">
-                        <span className="text-lg text-charcoal line-through font-medium font-inter">
+                        <span className="text-lg text-charcoal line-through font-medium font-geist">
                           {bookingData.booking.tier.currency}{" "}
                           {bookingData.booking.totalPrice.toLocaleString()}
                         </span>
-                        <span className="text-3xl sm:text-4xl text-midnight-blue font-bold font-inter">
+                        <span className="text-3xl sm:text-4xl text-midnight-blue font-bold font-geist">
                           {bookingData.booking.tier.currency}{" "}
                           {bookingData.booking.modifiedTotalPrice.toLocaleString()}
                         </span>
@@ -461,7 +462,7 @@ export default function BookingDetailsModal({
                     ) : (
                       <span className="text-3xl sm:text-5xl text-midnight-blue font-bold">
                         {bookingData.booking.tier.currency}{" "}
-                        <span className="text-3xl sm:text-5xl text-midnight-blue font-bold font-inter">
+                        <span className="text-3xl sm:text-5xl text-midnight-blue font-bold font-geist">
                           {bookingData.booking.totalPrice.toLocaleString()}
                         </span>
                       </span>
