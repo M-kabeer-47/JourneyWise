@@ -1,7 +1,7 @@
 import { NextRequest,NextResponse } from "next/server"
 import {trip} from "@/../auth-schema"
 import db from "@/lib/server/db"
-import { tripSchema } from "@/lib/schemas/trip"
+import { tripSchema } from "@/lib/schemas/backend/trip"
 
 export async function POST(req:NextRequest){
     let tripData = await req.json()

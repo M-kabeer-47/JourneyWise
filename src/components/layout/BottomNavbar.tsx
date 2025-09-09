@@ -42,10 +42,6 @@ export default function BottomNavbar({
   };
   const dispatch = useAppDispatch();
 
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, [dispatch]);
-
   const containerClasses =
     "fixed bottom-8  w-[92%] max-w-md rounded-2xl bg-white backdrop-blur-xl shadow-[0_8px_30px_rgba(0,0,0,0.25)] px-2 py-3";
 

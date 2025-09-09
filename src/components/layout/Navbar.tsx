@@ -23,6 +23,7 @@ import {
   User,
   MessageSquare,
   Settings,
+  Currency,
 } from "lucide-react";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { usePathname } from "next/navigation";
@@ -31,6 +32,7 @@ import ProfileDropdown from "@/components/ui/ProfileDropdown";
 import { clearUser, fetchUser, setUser } from "@/lib/redux/slices/user";
 import { authClient } from "@/lib/auth/authClient";
 import UserMenuSkeleton from "../skeletons/NavbarUserSkeleton";
+import CurrencyDropdown from "../ui/CurrencyDropdown";
 
 const navLinks = [
   { name: "Home", href: "/", icon: <Home size={20} /> },
@@ -108,10 +110,6 @@ export default function Navbar() {
     return () => document.removeEventListener("click", handleOutsideClick);
   }, [isMenuOpen, isSearchOpen]);
 
-  useEffect(() => {
-    dispatch(fetchUser());
-  }, []);
-
   return (
     <AnimatePresence mode="wait">
       <motion.nav
@@ -185,13 +183,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-5 mr-4">
-            <motion.button
-              whileTap={{ scale: 0.9 }}
-              onClick={() => setIsSearchOpen(!isSearchOpen)}
-              className="text-white  transition-colors p-2"
-            >
-              <Search size={20} />
-            </motion.button>
+            <CurrencyDropdown />
 
             <motion.button
               whileTap={{ scale: 0.9 }}

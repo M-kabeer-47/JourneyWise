@@ -24,7 +24,7 @@ type UserState = {
 
 const initialUserState: UserState = {
   user: null,
-  isLoading: false,
+  isLoading: true,
   isError: ""
 };
 

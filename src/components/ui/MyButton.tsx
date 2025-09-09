@@ -19,14 +19,14 @@ export default function MyButton({
 }) {
   const variantClasses = {
     primary:
-      "bg-gradient-to-r from-midnight-blue to-ocean-blue text-white hover:bg-ocean-blue/90",
+      "bg-midnight-blue text-white hover:bg-midnight-blue/90",
     secondary:
       "bg-white border border-ocean-blue text-ocean-blue hover:bg-ocean-blue/10",
   };
   return (
     <button
       type={type}
-      className={`px-6 py-2.5  font-medium rounded-lg transition-colors disabled:opacity-50 ${className} ${variantClasses[variant]}`}
+      className={`px-6 py-2  font-medium rounded-lg transition-colors disabled:opacity-50 ${className} ${variantClasses[variant]}`}
       onClick={onClick}
       disabled={disabled}
     >

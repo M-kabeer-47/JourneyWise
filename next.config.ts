@@ -2,7 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   reactStrictMode: false,
-
+  
   eslint: {
     ignoreDuringBuilds: true,
   },
@@ -21,6 +21,7 @@ const nextConfig: NextConfig = {
     serverActions: {
       bodySizeLimit: "10mb", // Set appropriate limit for your use case
     },
+ 
   },
 };
 

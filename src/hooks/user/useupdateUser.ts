@@ -32,8 +32,9 @@ export default function useUpdateUser() {
       setIsLoading(false);
     },
     onError: (error) => {
-      console.log("Error: " + JSON.stringify(error.response.data.message));
-      if (error.response.data.message === "Email already exists") {
+      
+      console.log("Error: " + JSON.stringify(error?.response.data.message));
+      if (error?.response.data.message === "Email already exists") {
         toast.error("Email already exists");
       } else {
         toast.error("Error updating user");

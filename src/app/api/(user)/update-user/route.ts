@@ -3,10 +3,16 @@ import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
 import { user } from "../../../../../auth-schema";
 import { eq } from "drizzle-orm";
+import { headers } from "next/headers";
+import { auth } from "@/lib/auth/auth";
 export async function PUT(request: NextRequest) {
   let body = await request.json();
   const result = userSchemaPartial.safeParse(body);
-  
+  let userID = request.headers.get("x-user-id");
+  console.log("User ID in update route:", userID);
+  if (!userID) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
   if (!result.success) {
     console.log("Error:", result.error);
     return NextResponse.json({ message: result.error }, { status: 400 });
@@ -18,13 +24,12 @@ export async function PUT(request: NextRequest) {
       await db
         .update(user)
         .set({ ...result.data, image })
-        .where(eq(user.id, result.data.id));
+        .where(eq(user.id, userID));
       return NextResponse.json(
         { message: "User updated successfully" },
         { status: 200 }
       );
     } catch (error) {
-        
       return NextResponse.json(
         { message: "Email already exists" },
         { status: 500 }

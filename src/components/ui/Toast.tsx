@@ -38,7 +38,7 @@ export function ToastFunction() {
 }
 
 // Custom toast functions with styling inspired by Custom-Toast
-export const toasts = {
+export const toast = {
   success: (message: string, options?: any) => {
     return Toast.success(message, {
       style: {
@@ -115,7 +115,7 @@ export const toasts = {
 };
 
 // Export individual toast methods for convenience
-export const { success, error, info, warning, loading } = toasts;
+export const { success, error, info, warning, loading } = toast;
 
 // Also export the main toast for direct usage
-export { Toast as toast };
+

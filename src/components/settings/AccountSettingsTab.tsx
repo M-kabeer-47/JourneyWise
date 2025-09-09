@@ -21,6 +21,7 @@ import { authClient } from "@/lib/auth/authClient";
 import { toast } from "../ui/Toast";
 import EmailVerificationModal from "@/components/settings/EmailVerificationModal";
 import MyButton from "@/components/ui/MyButton";
+import useChangeEmail from "@/hooks/user/useChangeEmail";
 
 interface AccountSettingsTabProps {
   user: UserType | null;
@@ -34,6 +35,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     control,
     watch,
     getValues,
+    setError,
   } = useForm<UserType>({
     resolver: zodResolver(userSchemaPartial),
     defaultValues: {
@@ -48,17 +50,15 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     user?.name === watch("name") &&
     user?.email === watch("email") &&
     user?.bio === watch("bio") &&
-    user?.image === watch("image") &&
-    Object.keys(errors).length !== 0;
+    user?.image === watch("image");
 
   const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
-  const [showEmailVerificationModal, setShowEmailVerificationModal] =
-    useState(false);
-  const [pendingFormData, setPendingFormData] = useState<UserType | null>(null);
-  const [isSendingOtp, setIsSendingOtp] = useState(false);
-  const { isLoading, updateUser } = useUpdateUser();
 
+  const { isLoading, updateUser } = useUpdateUser();
+  const { changeEmail, isEmailChanging } = useChangeEmail({
+    setError,
+  });
   // Reusable function to update user profile
   const updateUserProfile = async (data: UserType) => {
     try {
@@ -79,41 +79,35 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
     if (isSaveButtonDisabled) {
       return;
     }
-
-    // Check if email has changed
-    if (user?.email !== data.email) {
-      try {
-        setIsSendingOtp(true);
-        const { data: otpData, error } =
-          await authClient.emailOtp.sendVerificationOtp({
-            email: data.email,
-            type: "email-verification",
-          });
-
-        if (error) {
-          setIsSendingOtp(false);
-          toast.error("Failed to send verification code. Please try again.");
-          return;
-        }
-
-        // Store form data and show verification modal
-        setIsSendingOtp(false);
-        setPendingFormData(data);
-        setShowEmailVerificationModal(true);
-        toast.success("Please verify your email!");
-      } catch (error) {
-        toast.error("Failed to send verification code. Please try again.");
+    try {
+      if (user?.email === data.email) {
+        updateUserProfile({
+          name: data.name,
+          bio: data.bio,
+          image: data.image,
+        } as UserType);
+      } else if (
+        user?.email !== data.email &&
+        data.name === user?.name &&
+        data.bio === user?.bio &&
+        data.image === user?.image
+      ) {
+        changeEmail(data.email as string);
+      } else if (
+        user?.email !== data.email &&
+        (data.name !== user?.name ||
+          data.bio !== user?.bio ||
+          data.image !== user?.image)
+      ) {
+        await updateUserProfile({
+          name: data.name,
+          bio: data.bio,
+          image: data.image,
+        } as UserType);
+        changeEmail(data.email as string);
       }
-    } else {
-      // Email hasn't changed, update directly
-      await updateUserProfile(data);
-    }
-  };
-
-  const handleEmailVerificationSuccess = async () => {
-    if (pendingFormData) {
-      await updateUserProfile(pendingFormData);
-      setPendingFormData(null);
+    } catch (error) {
+      toast.error("Failed to change email address. Please try again.");
     }
   };
 
@@ -123,17 +117,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       let url = URL.createObjectURL(file);
       setImagePreview(url);
     }
-  };
-
-  const handleEmailVerification = async () => {
-    // TODO: Implement email verification API call
-  };
-
-  const handleAccountDeactivation = async () => {
-    // TODO: Implement account deactivation API call
-    setTimeout(() => {
-      setShowDeactivateModal(false);
-    }, 1000);
   };
 
   return (
@@ -270,8 +253,8 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <MyButton
                 type="submit"
                 text="Save Changes"
-                disabled={isSaveButtonDisabled || isLoading || isSendingOtp }
-                loading={isLoading || isSendingOtp}
+                disabled={isSaveButtonDisabled || isLoading || isEmailChanging}
+                loading={isLoading || isEmailChanging}
                 className="w-full sm:w-[170px]"
               />
             </div>
@@ -299,7 +282,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+          <div className="flex items-center justify-between p-4  rounded-lg">
             <div className="flex items-center gap-3">
               {user?.emailVerified ? (
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -320,7 +303,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
 
             {!user?.emailVerified && (
               <button
-                onClick={handleEmailVerification}
                 disabled={isLoading}
                 className="px-2 py-2 bg-midnight-blue w-[170px] text-center  text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50"
               >
@@ -381,7 +363,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                   Cancel
                 </button>
                 <button
-                  onClick={handleAccountDeactivation}
                   disabled={isLoading}
                   className="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
@@ -394,16 +375,6 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
       </div>
 
       {/* Email Verification Modal */}
-      <EmailVerificationModal
-        isOpen={showEmailVerificationModal}
-        onClose={() => {
-          setShowEmailVerificationModal(false);
-          setPendingFormData(null);
-        }}
-        email={pendingFormData?.email || ""}
-        onVerificationSuccess={handleEmailVerificationSuccess}
-        loading={isLoading}
-      />
     </>
   );
 }

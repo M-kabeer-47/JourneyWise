@@ -27,6 +27,8 @@ export const stepThreeSchema = z.object({
 export const signupSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
 
 
+
+
 let tempUserSchema = stepOneSchemaBase.merge(stepTwoSchema).merge(stepThreeSchema)
 export const userSchema = tempUserSchema.strict()
 export const userSchemaPartial = userSchema.partial()
