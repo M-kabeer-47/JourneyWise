@@ -1,5 +1,5 @@
 import { createAuthClient } from "better-auth/react";
-import { adminClient, twoFactorClient } from "better-auth/client/plugins";
+import { adminClient, emailOTPClient, twoFactorClient } from "better-auth/client/plugins";
 
 
 export const authClient = createAuthClient({
@@ -12,6 +12,7 @@ export const authClient = createAuthClient({
       },
     }),
     adminClient(),
+    emailOTPClient()
   ],
   // the base url of your auth server
 });

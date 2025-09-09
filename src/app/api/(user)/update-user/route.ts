@@ -5,10 +5,8 @@ import { user } from "../../../../../auth-schema";
 import { eq } from "drizzle-orm";
 export async function PUT(request: NextRequest) {
   let body = await request.json();
-
-  console.log("Request body:", body);
   const result = userSchemaPartial.safeParse(body);
-
+  
   if (!result.success) {
     console.log("Error:", result.error);
     return NextResponse.json({ message: result.error }, { status: 400 });

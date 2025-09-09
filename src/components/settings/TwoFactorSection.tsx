@@ -83,12 +83,7 @@ export default function TwoFactorSection() {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200"
-      >
+      <motion.div className="bg-white rounded-xl p-5 sm:p-8 shadow-sm border border-gray-200">
         <div className="flex items-center gap-3 mb-6">
           <div
             className={`sm:w-10 sm:h-10 w-9 h-9 rounded-full flex items-center justify-center bg-ocean-blue/10

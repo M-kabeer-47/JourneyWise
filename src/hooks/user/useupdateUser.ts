@@ -16,8 +16,11 @@ export default function useUpdateUser() {
       let ImageUrl = await uploadToCloudinary(data.image as File);
       userData.image = ImageUrl;
     }
-
-    await axios.put(`/api/update-user`, userData);
+    
+      await axios.put(`/api/update-user`, userData);
+    
+    
+    
 
     return userData;
   };
@@ -29,7 +32,7 @@ export default function useUpdateUser() {
       setIsLoading(false);
     },
     onError: (error) => {
-      console.log("Error: "+JSON.stringify(error.response.data.message));
+      console.log("Error: " + JSON.stringify(error.response.data.message));
       if (error.response.data.message === "Email already exists") {
         toast.error("Email already exists");
       } else {

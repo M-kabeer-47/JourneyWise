@@ -393,10 +393,7 @@ export const generateVerificationEmailHTML = (
 };
 
 // OTP Email Template
-export const generateOTPEmailHTML = (
-  otp: string,
-  userName: string = "Traveler"
-) => {
+export const generateOTPEmailHTML = (otp: string) => {
   return `
 <!DOCTYPE html>
 <html lang="en">
@@ -660,19 +657,15 @@ export const generateOTPEmailHTML = (
         </div>
         
         <div class="content">
-            <h1 class="main-title">Security Code for ${userName}</h1>
-            <p class="subtitle">
-                Use this code to complete your two-factor authentication and secure your account.
-            </p>
+            <h1 class="main-title">Security Code</h1>
+            
             
             <div class="otp-container">
                 <div class="otp-label">Your Security Code</div>
                 <div class="otp-code">${otp}</div>
             </div>
             
-            <div class="security-note">
-                <p><strong>🔒 Security Note:</strong> This code will expire in 10 minutes. Do not share it with anyone. If you didn't request this code, please contact our support team immediately.</p>
-            </div>
+            
         </div>
         
         <div class="footer">

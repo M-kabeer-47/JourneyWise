@@ -10,7 +10,11 @@ import {
   verification,
   twoFactor,
 } from "../../../auth-schema";
-import { admin, twoFactor as two_factor_plugin } from "better-auth/plugins";
+import {
+  admin,
+  emailOTP,
+  twoFactor as two_factor_plugin,
+} from "better-auth/plugins";
 import { eq } from "drizzle-orm";
 import {
   generateVerificationEmailHTML,
@@ -57,7 +61,7 @@ export const auth = betterAuth({
       skipVerificationOnEnable: true,
       otpOptions: {
         async sendOTP({ user, otp }, request) {
-          const htmlContent = generateOTPEmailHTML(otp, user.name);
+          const htmlContent = generateOTPEmailHTML(otp);
           await send_email({
             to: user.email,
             subject: "🔐 JourneyWise - Your Security Code",
@@ -68,6 +72,19 @@ export const auth = betterAuth({
       },
     }),
     admin(),
+    emailOTP({
+      async sendVerificationOTP({ email, otp, type }) {
+        if (type === "email-verification") {
+          const htmlContent = generateOTPEmailHTML(otp);
+          await send_email({
+            to: email,
+            subject: "🔐 JourneyWise - Your Security Code",
+            text: `Your security code is: ${otp}`,
+            html: htmlContent,
+          });
+        }
+      },
+    }),
   ],
   account: {
     accountLinking: {
@@ -76,6 +93,19 @@ export const auth = betterAuth({
     },
   },
   user: {
+    changeEmail: {
+      enabled: true,
+      sendChangeEmailVerification: async (
+        { user, newEmail, url, token },
+        request
+      ) => {
+        await send_email({
+          to: user.email, // verification email must be sent to the current user email to approve the change
+          subject: "Approve email change",
+          text: `Click the link to approve the change: ${url}`,
+        });
+      },
+    },
     additionalFields: {
       country: {
         type: "string",

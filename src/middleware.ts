@@ -9,22 +9,22 @@ export default async function middleware(req: NextRequest) {
 
   console.log("Pathname", pathname);
   // For protected paths, check authentication
-  let session = await getSessionCookie(req);
-  if (!session && pathname !== "/login") {
+  try {
+    let session = await getSessionCookie(req);
+    if (!session && pathname !== "/login") {
+      return NextResponse.redirect(new URL("/unauthorized", req.url));
+    } else if (session && pathname === "/login") {
+      return NextResponse.redirect(new URL("/", req.url));
+    }
+    return NextResponse.next();
+  } catch (error) {
     return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
-  else if (session && pathname === "/login") {
-    return NextResponse.redirect(new URL("/", req.url));
-  }
-
-  return NextResponse.next();
 }
 
 // Configure which paths this middleware runs on
 export const config = {
   matcher: [
- 
-
     "/api/publish-blog",
     "/api/update-blog/:path",
     "/api/delete-blog/:path",
@@ -46,6 +46,6 @@ export const config = {
     "/plan-trip/:path",
     "/profile",
     "/settings",
-    "/login"
+    "/login",
   ],
 };
