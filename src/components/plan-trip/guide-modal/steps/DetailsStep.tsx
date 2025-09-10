@@ -2,13 +2,13 @@ import { motion } from "framer-motion";
 import { Users, Wallet, Clock, Route } from "lucide-react";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { GuideData,guideDataSchema } from "@/lib/schemas/trip";
+import { GuideData, guideDataSchema } from "@/lib/schemas/trip";
 import CurrencySelector from "@/components/ui/CurrencySelector";
-import { Currency } from "@/lib/constants/currencies";
-import { currencies } from "@/lib/constants/currencies";
+
+import { ALL_CURRENCIES } from "@/lib/constants/currencies";
 interface DetailsStepProps {
   initialData?: Partial<GuideData>;
-  currencies: Currency[];
+  currencies: any;
   onNext: (data: GuideData) => void;
 }
 
@@ -30,7 +30,8 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
   });
 
   const selectedCurrency =
-    currencies.find((c) => c.code === watch("currency")) || currencies[0];
+    ALL_CURRENCIES.find((c) => c.code === watch("currency")) ||
+    ALL_CURRENCIES[0];
 
   const onSubmit = (data: GuideData) => {
     onNext(data);
@@ -86,7 +87,9 @@ export const DetailsStep = ({ initialData, onNext }: DetailsStepProps) => {
               />
             </div>
             {errors.numOfPeople && (
-              <p className="text-red-500 text-xs">{errors.numOfPeople.message}</p>
+              <p className="text-red-500 text-xs">
+                {errors.numOfPeople.message}
+              </p>
             )}
           </div>
 

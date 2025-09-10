@@ -1,30 +1,31 @@
-export interface Currency {
-  code: string;
-  name: string;
-  symbol: string;
-}
+// Shared currency data for use across the application
 
-export const currencies: Currency[] = [
-  { code: "USD", name: "US Dollar", symbol: "$" },
-  { code: "EUR", name: "Euro", symbol: "€" },
-  { code: "GBP", name: "British Pound", symbol: "£" },
-  { code: "JPY", name: "Japanese Yen", symbol: "¥" },
-  { code: "AUD", name: "Australian Dollar", symbol: "A$" },
-  { code: "CAD", name: "Canadian Dollar", symbol: "C$" },
-  { code: "CHF", name: "Swiss Franc", symbol: "CHF" },
-  { code: "CNY", name: "Chinese Yuan", symbol: "¥" },
-  { code: "HKD", name: "Hong Kong Dollar", symbol: "HK$" },
-  { code: "NZD", name: "New Zealand Dollar", symbol: "NZ$" },
-  { code: "SEK", name: "Swedish Krona", symbol: "kr" },
-  { code: "KRW", name: "South Korean Won", symbol: "₩" },
-  { code: "SGD", name: "Singapore Dollar", symbol: "S$" },
-  { code: "PKR", name: "Pakistani Rupee", symbol: "Rs" },
-  { code: "NOK", name: "Norwegian Krone", symbol: "kr" },
-  { code: "MXN", name: "Mexican Peso", symbol: "$" },
-  { code: "INR", name: "Indian Rupee", symbol: "₹" },
-  { code: "RUB", name: "Russian Ruble", symbol: "₽" },
-  { code: "ZAR", name: "South African Rand", symbol: "R" },
-  { code: "BRL", name: "Brazilian Real", symbol: "R$" },
-  { code: "AED", name: "UAE Dirham", symbol: "د.إ" },
-  { code: "THB", name: "Thai Baht", symbol: "฿" },
+export const POPULAR_CURRENCIES = [
+  { code: "USD", symbol: "$", name: "United States Dollar", countryCode: "us" },
+  { code: "EUR", symbol: "€", name: "Euro", countryCode: "eu" },
+  { code: "GBP", symbol: "£", name: "Pound Sterling", countryCode: "gb" },
+  { code: "PKR", symbol: "₨", name: "Pakistani Rupee", countryCode: "pk" },
+];
+
+export const ALL_CURRENCIES = [
+  { code: "USD", symbol: "$", name: "United States Dollar", countryCode: "us" },
+  { code: "AUD", symbol: "$", name: "Australian Dollar", countryCode: "au" },
+  { code: "BRL", symbol: "R$", name: "Brazilian Real", countryCode: "br" },
+  { code: "CAD", symbol: "$", name: "Canadian Dollar", countryCode: "ca" },
+  { code: "CHF", symbol: "Fr", name: "Swiss Franc", countryCode: "ch" },
+  { code: "CLP", symbol: "$", name: "Chilean Peso", countryCode: "cl" },
+  { code: "CNY", symbol: "¥", name: "Chinese Yuan", countryCode: "cn" },
+  { code: "CZK", symbol: "Kč", name: "Czech Koruna", countryCode: "cz" },
+  { code: "DKK", symbol: "kr", name: "Danish Krone", countryCode: "dk" },
+  { code: "EUR", symbol: "€", name: "Euro", countryCode: "eu" },
+  { code: "GBP", symbol: "£", name: "Pound Sterling", countryCode: "gb" },
+  { code: "HKD", symbol: "$", name: "Hong Kong Dollar", countryCode: "hk" },
+  { code: "HUF", symbol: "Ft", name: "Hungarian Forint", countryCode: "hu" },
+  { code: "IDR", symbol: "Rp", name: "Indonesian Rupiah", countryCode: "id" },
+  { code: "ILS", symbol: "₪", name: "Israeli New Shekel", countryCode: "il" },
+  { code: "INR", symbol: "₹", name: "Indian Rupee", countryCode: "in" },
+  { code: "JPY", symbol: "¥", name: "Japanese Yen", countryCode: "jp" },
+  { code: "PKR", symbol: "₨", name: "Pakistani Rupee", countryCode: "pk" },
+  { code: "AED", symbol: "د.إ", name: "UAE Dirham", countryCode: "ae" },
+  { code: "SAR", symbol: "﷼", name: "Saudi Riyal", countryCode: "sa" },
 ];

@@ -1,25 +1,29 @@
+"use client";
+
 import { useState } from "react";
 import { Check, ChevronDown, DollarSign, Search } from "lucide-react";
-import { currencies } from "@/lib/constants/currencies";
 import { cn } from "@/utils/blog/utils";
+import { ALL_CURRENCIES } from "@/lib/constants/currencies";
+
 interface CurrencySelectProps {
   value: string;
   onChange: (value: string) => void;
   error?: string;
 }
+
 const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  const filteredCurrencies = currencies.filter(
+  const filteredCurrencies = ALL_CURRENCIES.filter(
     (currency) =>
       currency.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       currency.code.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const selectedCurrency =
-    currencies.find((c) => c.code === value) || currencies[0];
+    ALL_CURRENCIES.find((c) => c.code === value) || ALL_CURRENCIES[0];
 
   const handleSelect = (currencyCode: string) => {
     onChange(currencyCode);
@@ -56,10 +60,13 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         >
-          <span className="text-xs sm:text-sm">
-            {selectedCurrency.code} - {selectedCurrency.name} (
-            {selectedCurrency.symbol})
-          </span>
+          <div className="flex items-center gap-2">
+            <span className={`fi fi-${selectedCurrency.countryCode} w-4 h-4`}></span>
+            <span className="text-xs sm:text-sm">
+              {selectedCurrency.code} - {selectedCurrency.name} (
+              {selectedCurrency.symbol})
+            </span>
+          </div>
           <ChevronDown className="h-4 w-4 relative right-[8px] text-gray-400" />
         </button>
       </div>

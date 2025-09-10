@@ -1,51 +1,18 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Search, X } from "lucide-react";
-
-const POPULAR_CURRENCIES = [
-  { code: "USD", symbol: "$", name: "United States Dollar", flag: "🇺🇸" },
-  { code: "EUR", symbol: "€", name: "Euro", flag: "🇪🇺" },
-  { code: "GBP", symbol: "£", name: "Pound Sterling", flag: "🇬🇧" },
-  { code: "PKR", symbol: "₨", name: "Pakistani Rupee", flag: "🇵🇰" },
-];
-
-const ALL_CURRENCIES = [
-  { code: "USD", symbol: "$", name: "United States Dollar", flag: "🇺🇸" },
-  { code: "AUD", symbol: "$", name: "Australian Dollar", flag: "🇦🇺" },
-  { code: "BRL", symbol: "R$", name: "Brazilian Real", flag: "🇧🇷" },
-  { code: "CAD", symbol: "$", name: "Canadian Dollar", flag: "🇨🇦" },
-  { code: "CHF", symbol: "Fr", name: "Swiss Franc", flag: "🇨🇭" },
-  { code: "CLP", symbol: "$", name: "Chilean Peso", flag: "🇨🇱" },
-  { code: "CNY", symbol: "¥", name: "Chinese Yuan", flag: "🇨🇳" },
-  { code: "CZK", symbol: "Kč", name: "Czech Koruna", flag: "🇨🇿" },
-  { code: "DKK", symbol: "kr", name: "Danish Krone", flag: "🇩🇰" },
-  { code: "EUR", symbol: "€", name: "Euro", flag: "🇪🇺" },
-  { code: "GBP", symbol: "£", name: "Pound Sterling", flag: "🇬🇧" },
-  { code: "HKD", symbol: "$", name: "Hong Kong Dollar", flag: "🇭🇰" },
-  { code: "HUF", symbol: "Ft", name: "Hungarian Forint", flag: "🇭🇺" },
-  { code: "IDR", symbol: "Rp", name: "Indonesian Rupiah", flag: "🇮🇩" },
-  { code: "ILS", symbol: "₪", name: "Israeli New Shekel", flag: "🇮🇱" },
-  { code: "INR", symbol: "₹", name: "Indian Rupee", flag: "🇮🇳" },
-  { code: "JPY", symbol: "¥", name: "Japanese Yen", flag: "🇯🇵" },
-  { code: "PKR", symbol: "₨", name: "Pakistani Rupee", flag: "🇵🇰" },
-  { code: "AED", symbol: "د.إ", name: "UAE Dirham", flag: "🇦🇪" },
-  { code: "SAR", symbol: "﷼", name: "Saudi Riyal", flag: "🇸🇦" },
-].filter(currency => currency.code !== "BTC"); // No crypto currencies
+// Import the flag-icons CSS
+import "flag-icons/css/flag-icons.min.css";
+import { useAppSelector, useAppDispatch } from "@/hooks/redux";
+import { setSelectedCurrency } from "@/lib/redux/slices/currencySlice";
+import { ALL_CURRENCIES, POPULAR_CURRENCIES } from "@/lib/constants/currencies";
+import { Currency } from "@/lib/redux/slices/currencySlice";
 
 export default function CurrencyDropdown() {
-  const [selectedCurrency, setSelectedCurrency] = useState(() => {
-    // Get from localStorage if available
-    if (typeof window !== "undefined") {
-      const savedCurrency = localStorage.getItem("preferred-currency");
-      if (savedCurrency) {
-        const found = ALL_CURRENCIES.find(c => c.code === savedCurrency);
-        if (found) return found;
-      }
-    }
-    return ALL_CURRENCIES[0];
-  });
+  const dispatch = useAppDispatch();
+  const currency = useAppSelector((state) => state.currency.selectedCurrency);
   
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -68,10 +35,8 @@ export default function CurrencyDropdown() {
     };
   }, [isOpen]);
 
-  const handleCurrencySelect = (currency: (typeof ALL_CURRENCIES)[0]) => {
-    setSelectedCurrency(currency);
-    // Save to localStorage
-    localStorage.setItem("preferred-currency", currency.code);
+  const handleCurrencySelect = (selectedCurrency: Currency) => {
+    dispatch(setSelectedCurrency(selectedCurrency));
     setIsOpen(false);
     setSearchQuery("");
   };
@@ -83,18 +48,19 @@ export default function CurrencyDropdown() {
 
   return (
     <>
-      {/* Trigger Button */}
+      {/* Trigger Button with SVG flag */}
       <button
         onClick={() => setIsOpen(true)}
-        className="text-white hover:text-gray-200 transition-colors duration-200 font-medium text-sm"
+        className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-full hover:text-gray-200 transition-colors duration-200 font-medium text-sm flex items-center gap-2 py-2 px-3"
       >
-        {selectedCurrency.code}
+        <span className={`fi fi-${currency.countryCode} w-5 h-5`}></span>
+        <span>{currency.code}</span>
       </button>
 
       {/* Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center ">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -154,13 +120,16 @@ export default function CurrencyDropdown() {
                             key={`popular-${currency.code}`}
                             onClick={() => handleCurrencySelect(currency)}
                             className={`group flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                              selectedCurrency.code === currency.code
+                              currency.code === currency.code
                                 ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                                 : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                             }`}
                           >
-                            <div className="w-12 h-12 rounded-full bg-gray-100 group-hover:bg-ocean-blue/10 flex items-center justify-center text-2xl mb-2 transition-colors">
-                              {currency.flag}
+                            {/* Flag using flag-icons */}
+                            <div className="w-12 h-12 rounded-full bg-ocean-blue/5 overflow-hidden mb-3 flex items-center justify-center">
+                              <span
+                                className={`fi fi-${currency.countryCode} w-[150px] h-[150px]`}
+                              ></span>
                             </div>
                             <div className="text-center">
                               <div className="flex items-center justify-center gap-1 mb-1">
@@ -197,13 +166,16 @@ export default function CurrencyDropdown() {
                         key={currency.code}
                         onClick={() => handleCurrencySelect(currency)}
                         className={`group flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                          selectedCurrency.code === currency.code
+                          currency.code === currency.code
                             ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                             : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                         }`}
                       >
-                        <div className="w-10 h-10 rounded-full bg-gray-100 group-hover:bg-ocean-blue/10 flex items-center justify-center text-lg transition-colors flex-shrink-0">
-                          {currency.flag}
+                        {/* Flag using flag-icons */}
+                        <div className="w-12 h-12 rounded-full bg-gray-50 overflow-hidden flex-shrink-0 flex items-center justify-center">
+                          <span
+                            className={`fi fi-${currency.countryCode} w-16 h-16`}
+                          ></span>
                         </div>
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
@@ -213,9 +185,6 @@ export default function CurrencyDropdown() {
                             <span className="text-ocean-blue font-semibold text-sm">
                               {currency.symbol}
                             </span>
-                            {selectedCurrency.code === currency.code && (
-                              <div className="w-2 h-2 bg-ocean-blue rounded-full ml-auto flex-shrink-0"></div>
-                            )}
                           </div>
                           <p className="text-xs text-gray-500 group-hover:text-charcoal transition-colors font-geist truncate">
                             {currency.name}

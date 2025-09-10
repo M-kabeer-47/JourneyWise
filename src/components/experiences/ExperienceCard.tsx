@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Star,
   Edit3,
@@ -14,11 +14,13 @@ import {
 import { motion } from "framer-motion";
 import { Experience } from "@/lib/types/experience";
 import Link from "next/link";
-import { formatPrice } from "@/utils/functions/formatPrice";
+import { useCurrencyConverter } from "@/hooks/useCurrencyConverter";
 import Image from "next/image";
 import { useAppSelector } from "@/hooks/redux";
 import useSavePost from "@/hooks/savedPosts/useSavePost";
 import AuthorCard from "../ui/AuthorCard";
+import { formatCurrency } from "@/utils/formatCurrency";
+
 interface ExperienceCardProps {
   experience: Experience;
   isAgent?: boolean;
@@ -28,27 +30,55 @@ interface ExperienceCardProps {
   hoverEffectOnSave?: boolean;
 }
 
-export default function ExperienceCard({  
+export default function ExperienceCard({
   experience,
   isAgent = false,
   hoverEffectOnSave = true,
   queryKey = "experiences",
 }: ExperienceCardProps) {
-  
   const user = useAppSelector((state) => state.user.user);
-  const {savePost,unsavePost} = useSavePost();
+  const { savePost, unsavePost } = useSavePost();
+  const { convertCurrency, formatPrice, isLoading, currency } = useCurrencyConverter();
+
+  const [convertedPrice, setConvertedPrice] = useState<number | null>(null);
+  const [isConverting, setIsConverting] = useState(false);
+
+  // Get the source currency from the experience
+  const sourceCurrency = experience.currency || "USD"; // Fallback to USD if not specified
+
+  useEffect(() => {
+    // Convert price from the experience's currency to selected currency
+    const updatePrice = async () => {
+      setIsConverting(true);
+      try {
+        const price = convertCurrency(experience.minPrice, sourceCurrency);
+        setConvertedPrice(price);
+      } catch (error) {
+        console.error("Error converting price:", error);
+      } finally {
+        setIsConverting(false);
+      }
+    };
+    
+    updatePrice();
+  }, [experience.minPrice, sourceCurrency, convertCurrency, currency]);
+
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (experience.isSaved) {
-      unsavePost.mutateAsync({savedPostID:experience.id, queryKey});
+      unsavePost.mutateAsync({ savedPostID: experience.id, queryKey });
     } else {
-      if(!user){
+      if (!user) {
         return;
       }
-  
-      savePost.mutateAsync({userID:user?.id,postID:experience.id,type:"experience", queryKey});
-      
+
+      savePost.mutateAsync({
+        userID: user?.id,
+        postID: experience.id,
+        type: "experience",
+        queryKey,
+      });
     }
   };
 
@@ -56,6 +86,33 @@ export default function ExperienceCard({
   const truncateDescription = (text: string, maxLength: number = 120) => {
     if (text.length <= maxLength) return text;
     return text.slice(0, maxLength).trim() + "...";
+  };
+
+  // Display price with proper loading handling
+  const displayPrice = () => {
+    if (isLoading || isConverting) {
+      return (
+        <span className="text-2xl font-inter font-bold text-midnight-blue animate-pulse">
+          {currency.symbol}...
+        </span>
+      );
+    }
+
+    if (convertedPrice !== null) {
+      // Use our custom formatter for reliability with PKR
+      return (
+        <span className="text-2xl font-inter font-bold text-midnight-blue tabular-nums">
+          {formatCurrency(convertedPrice, currency.code, { maximumFractionDigits: 0 })}
+        </span>
+      );
+    }
+    
+    // Fallback to original price with original currency
+    return (
+      <span className="text-2xl font-inter font-bold text-midnight-blue tabular-nums">
+        {formatCurrency(experience.minPrice, sourceCurrency, { maximumFractionDigits: 0 })}
+      </span>
+    );
   };
 
   return (
@@ -97,18 +154,26 @@ export default function ExperienceCard({
           {!isAgent && user && (
             <button
               onClick={handleSaveToggle}
-              className={`${hoverEffectOnSave ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0" : ""} p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
+              className={`${
+                hoverEffectOnSave
+                  ? "opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0"
+                  : ""
+              } p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg hover:bg-white transition-all duration-200`}
             >
-              {
-              (savePost.isLoading || unsavePost.isLoading) ? (
+              {savePost.isLoading || unsavePost.isLoading ? (
                 <Loader2 className="w-4 h-4 animate-spin text-ocean-blue" />
-              ) : 
-              unsavePost.isError ? (
-                <Bookmark className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+              ) : unsavePost.isError ? (
+                <Bookmark
+                  className="w-4 h-4 text-ocean-blue"
+                  fill="currentColor"
+                />
               ) : savePost.isError ? (
                 <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
               ) : experience.isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-ocean-blue" fill="currentColor" />
+                <BookmarkCheck
+                  className="w-4 h-4 text-ocean-blue"
+                  fill="currentColor"
+                />
               ) : (
                 <Bookmark className="w-4 h-4 text-gray-600 hover:text-ocean-blue" />
               )}
@@ -117,7 +182,12 @@ export default function ExperienceCard({
         </div>
 
         {/* Bottom Left: Agent Info */}
-        {experience.agent && <AuthorCard name={experience.agent.name} image={experience.agent.image} />}
+        {experience.agent && (
+          <AuthorCard
+            name={experience.agent.name}
+            image={experience.agent.image}
+          />
+        )}
 
         {/* Agent Action Buttons (overlay on image) */}
         {isAgent && (
@@ -152,12 +222,11 @@ export default function ExperienceCard({
             {experience.tags.slice(0, 3).map((tag, index) => (
               <span
                 key={index}
-                className="inline-block px-3 py-1  font-medium bg-ocean-blue/10 text-midnight-blue rounded-full sm:text-[13px] text-xs" 
+                className="inline-block px-3 py-1  font-medium bg-ocean-blue/10 text-midnight-blue rounded-full sm:text-[13px] text-xs"
               >
                 {tag}
               </span>
             ))}
-            
           </div>
         )}
 
@@ -221,9 +290,7 @@ export default function ExperienceCard({
         <div className="pt-4 border-t border-gray-100">
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Starting at</span>
-            <span className="text-2xl font-inter font-bold text-midnight-blue">
-              ${formatPrice(experience.minPrice)}
-            </span>
+            {displayPrice()}
           </div>
         </div>
       </div>

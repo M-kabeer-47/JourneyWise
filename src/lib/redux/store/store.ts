@@ -1,11 +1,13 @@
 import { configureStore } from '@reduxjs/toolkit'
 import experienceData from '../slices/experience'
 import user from '../slices/user'
+import currencyReducer from '../slices/currencySlice'
 export const makeStore = () => {
   return configureStore({
     reducer: {
         experienceData: experienceData,
-        user: user
+        user: user,
+        currency: currencyReducer
     }
   })
 }
