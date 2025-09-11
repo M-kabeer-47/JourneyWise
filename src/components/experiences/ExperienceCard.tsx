@@ -38,30 +38,14 @@ export default function ExperienceCard({
 }: ExperienceCardProps) {
   const user = useAppSelector((state) => state.user.user);
   const { savePost, unsavePost } = useSavePost();
-  const { convertCurrency, formatPrice, isLoading, currency } = useCurrencyConverter();
+  const { convertCurrency, formatPrice, isLoading, currency } =
+    useCurrencyConverter();
 
   const [convertedPrice, setConvertedPrice] = useState<number | null>(null);
   const [isConverting, setIsConverting] = useState(false);
 
   // Get the source currency from the experience
-  const sourceCurrency = experience.currency || "USD"; // Fallback to USD if not specified
 
-  useEffect(() => {
-    // Convert price from the experience's currency to selected currency
-    const updatePrice = async () => {
-      setIsConverting(true);
-      try {
-        const price = convertCurrency(experience.minPrice, sourceCurrency);
-        setConvertedPrice(price);
-      } catch (error) {
-        console.error("Error converting price:", error);
-      } finally {
-        setIsConverting(false);
-      }
-    };
-    
-    updatePrice();
-  }, [experience.minPrice, sourceCurrency, convertCurrency, currency]);
 
   const handleSaveToggle = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -98,21 +82,17 @@ export default function ExperienceCard({
       );
     }
 
-    if (convertedPrice !== null) {
+    
       // Use our custom formatter for reliability with PKR
       return (
         <span className="text-2xl font-inter font-bold text-midnight-blue tabular-nums">
-          {formatCurrency(convertedPrice, currency.code, { maximumFractionDigits: 0 })}
+          {formatPrice({amount: experience.minPrice,toCurrency: experience.currency})}
         </span>
       );
-    }
-    
+
+
     // Fallback to original price with original currency
-    return (
-      <span className="text-2xl font-inter font-bold text-midnight-blue tabular-nums">
-        {formatCurrency(experience.minPrice, sourceCurrency, { maximumFractionDigits: 0 })}
-      </span>
-    );
+ 
   };
 
   return (

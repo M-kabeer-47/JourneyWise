@@ -1,72 +1,43 @@
-import { useEffect } from 'react';
-import { useAppSelector, useAppDispatch } from './redux';
-import { fetchExchangeRates } from '@/lib/redux/slices/currencySlice';
-
+import { useEffect } from "react";
+import { useAppSelector, useAppDispatch } from "./redux";
+import { fetchExchangeRates } from "@/lib/redux/slices/currencySlice";
+import { toast } from "@/components/ui/Toast";
 export const useCurrencyConverter = () => {
   const dispatch = useAppDispatch();
-  const { selectedCurrency, exchangeRates, lastFetched, status } = useAppSelector(
-    (state) => state.currency
-  );
-
-  useEffect(() => {
-    const fetchRatesIfNeeded = () => {
-      // Fetch rates if not available or older than 1 hour
-      const now = Date.now();
-      if (
-        !lastFetched || 
-        now - lastFetched > 3600000 || 
-        Object.keys(exchangeRates).length === 0
-      ) {
-        dispatch(fetchExchangeRates('USD'));
-      }
-    };
-
-    fetchRatesIfNeeded();
-  }, [dispatch, lastFetched, exchangeRates]);
+  const { selectedCurrency, exchangeRates, lastFetched, status } =
+    useAppSelector((state) => state.currency);
 
   // Convert function with better error handling
-  const convertCurrency = (
-    amount: number,
-    fromCurrency: string,
-    toCurrency: string = selectedCurrency.code
-  ): number => {
+  const convertCurrency = ({ amount, toCurrency }): number => {
+    let fromCurrency = selectedCurrency.code;
     if (!amount) return 0;
     if (fromCurrency === toCurrency) return amount;
+    if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
+      return amount; // No rates available yet
+    }
+
     
+    console.log("Converting", amount, fromCurrency, "to", toCurrency);
+    // log type of every variable
+    console.log("Type of amount:", typeof amount);
+    console.log("Type of fromCurrency:", typeof fromCurrency);
+    console.log("Type of toCurrency:", typeof toCurrency);
     try {
       // If rates aren't loaded yet
       if (Object.keys(exchangeRates).length === 0) {
         return amount; // Return original amount until rates are available
       }
+      if (!exchangeRates[toCurrency]) {
+        throw new Error("Unsupported currency for conversion");
+      }
 
       // First convert to USD as base
-      let amountInUSD = amount;
-      if (fromCurrency !== 'USD') {
-        // Check if we have a direct rate from fromCurrency to USD
-        if (exchangeRates['USD']) {
-          // This means we're working with fromCurrency as base
-          amountInUSD = amount * exchangeRates['USD'];
-        } else {
-          // We're working with USD as base, so we need the inverse rate
-          const rateToUSD = 1 / (exchangeRates[fromCurrency] || 1);
-          amountInUSD = amount * rateToUSD;
-        }
+      if(exchangeRates[toCurrency].value > 1){
+        return (amount / exchangeRates[toCurrency].value)
       }
-
-      // Then convert from USD to target currency
-      if (toCurrency === 'USD') return amountInUSD;
-      
-      // Similar logic for target currency
-      if (exchangeRates['USD']) {
-        // fromCurrency is base
-        return amountInUSD / exchangeRates['USD'] * (exchangeRates[toCurrency] || 1);
-      } else {
-        // USD is base
-        const usdToTarget = exchangeRates[toCurrency] || 1;
-        return amountInUSD * usdToTarget;
-      }
+      return amount * exchangeRates[toCurrency].value;
     } catch (err) {
-      console.error('Currency conversion error:', err);
+      toast.error("Error: " + err.message);
       return amount; // Return original amount on error
     }
   };
@@ -78,22 +49,26 @@ export const useCurrencyConverter = () => {
     options: Intl.NumberFormatOptions = {}
   ): string => {
     const convertedAmount = convertCurrency(amount, fromCurrency);
-    
+
     try {
       const defaultOptions: Intl.NumberFormatOptions = {
-        style: 'currency',
+        style: "currency",
         currency: selectedCurrency.code,
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
-        ...options
+        ...options,
       };
 
-      return new Intl.NumberFormat('en-US', defaultOptions).format(convertedAmount);
+      return new Intl.NumberFormat("en-US", defaultOptions).format(
+        convertedAmount
+      );
     } catch (err) {
       // If Intl.NumberFormat doesn't support this currency, use a simple format
-      console.warn('Currency formatting fallback:', err);
-      const symbol = selectedCurrency.symbol || '';
-      return `${symbol}${convertedAmount.toFixed(options.maximumFractionDigits || 0)}`;
+      console.warn("Currency formatting fallback:", err);
+      const symbol = selectedCurrency.symbol || "";
+      return `${symbol}${convertedAmount.toFixed(
+        options.maximumFractionDigits || 0
+      )}`;
     }
   };
 
@@ -101,7 +76,7 @@ export const useCurrencyConverter = () => {
     currency: selectedCurrency,
     convertCurrency,
     formatPrice,
-    isLoading: status === 'loading',
-    error: status === 'failed'
+    isLoading: status === "loading",
+    error: status === "failed",
   };
 };

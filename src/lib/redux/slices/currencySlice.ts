@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+
 import axios from "axios";
 import { ALL_CURRENCIES } from "@/lib/constants/currencies";
-
+import { toast } from "@/components/ui/Toast";
 export type Currency = {
   code: string;
   symbol: string;
@@ -32,37 +33,26 @@ const getDefaultCurrency = (): Currency => {
 // Fetch exchange rates using Frankfurter API which supports PKR
 export const fetchExchangeRates = createAsyncThunk(
   "currency/fetchExchangeRates",
-  async (baseCurrency: string = "USD", { rejectWithValue }) => {
+  async (selectedCurrency: string) => {
+    if (localStorage.getItem("exchange-rates")) {
+      return JSON.parse(localStorage.getItem("exchange-rates"));
+    }
     try {
       // Try Frankfurter API first (supports PKR)
       const response = await axios.get(
-        `https://api.frankfurter.app/latest?from=${baseCurrency}`
+        `http://api.currencyapi.com/v3/latest?&base_currency=${selectedCurrency}&apikey=${process.env.NEXT_PUBLIC_CURRENCY_CONVERTER_API_KEY}`
       );
 
-      if (response.data && response.data.rates) {
-        return response.data.rates;
-      }
-
-      // If Frankfurter fails, try backup API
-      throw new Error("Primary API failed");
-    } catch (primaryError) {
-      try {
-        // Backup: Try Exchange Rate API
-        const backupResponse = await axios.get(
-          `https://api.exchangerate.host/latest?base=${baseCurrency}`
+      if (response.data && response.data.data) {
+        localStorage.setItem(
+          "exchange-rates",
+          JSON.stringify(response.data.data)
         );
-
-        if (backupResponse.data && backupResponse.data.rates) {
-          return backupResponse.data.rates;
-        }
-
-        return rejectWithValue(
-          "Failed to fetch exchange rates from all sources"
-        );
-      } catch (backupError) {
-        console.error("Exchange rate API errors:", primaryError, backupError);
-        return rejectWithValue("Failed to fetch exchange rates");
+        return response.data.data;
       }
+      throw new Error("Invalid response from currencyapi.com");
+    } catch (error) {
+      toast.error("Error  " + error.message);
     }
   }
 );
