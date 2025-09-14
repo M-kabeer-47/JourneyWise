@@ -10,7 +10,11 @@ import { setSelectedCurrency } from "@/lib/redux/slices/currencySlice";
 import { ALL_CURRENCIES, POPULAR_CURRENCIES } from "@/lib/constants/currencies";
 import { Currency } from "@/lib/redux/slices/currencySlice";
 
-export default function CurrencyDropdown() {
+export default function CurrencyDropdown({
+  type = "settings",
+}: {
+  type?: "settings" | "navbar";
+}) {
   const dispatch = useAppDispatch();
 
   const { isHydrated, selectedCurrency, status } = useAppSelector(
@@ -51,22 +55,41 @@ export default function CurrencyDropdown() {
   return (
     <>
       {/* Trigger Button with SVG flag */}
-      <button
-        onClick={() => setIsOpen(true)}
-        className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-full hover:text-gray-200 transition-colors duration-200 font-medium text-sm flex items-center gap-2 py-2 px-3"
-      >
-        {isHydrated && status !== "loading" ? (
-          <>
-            <span
-              className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}
-            ></span>
-            <span>{selectedCurrency.code.toUpperCase()}</span>
-          </>
-        ) : (
-          // skeleton loader
-          <div className="w-16 h-5 bg-gray-200 rounded-full animate-pulse"></div>
-        )}
-      </button>
+      {type === "navbar" ? (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-full hover:text-gray-200 transition-colors duration-200 font-medium text-sm flex items-center gap-2 py-2 px-3"
+        >
+          {isHydrated && status !== "loading" ? (
+            <>
+              <span
+                className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}
+              ></span>
+              <span>{selectedCurrency.code.toUpperCase()}</span>
+            </>
+          ) : (
+            // skeleton loader
+            <div className="w-16 h-5 bg-gray-200 rounded-full animate-pulse"></div>
+          )}
+        </button>
+      ) : (
+        <button
+          onClick={() => setIsOpen(true)}
+          className="flex items-center gap-3 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-ocean-blue transition-colors w-full"
+        >
+          {isHydrated && status !== "loading" ? (
+            <>
+              <span
+                className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}
+              ></span>
+              <span>{selectedCurrency.code.toUpperCase()}</span>
+            </>
+          ) : (
+            // skeleton loader
+            <div className="w-16 h-5 bg-gray-200 rounded-full animate-pulse"></div>
+          )}
+        </button>
+      )}
 
       {/* Modal */}
       <AnimatePresence>

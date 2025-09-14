@@ -183,7 +183,7 @@ export default function Navbar() {
           </div>
 
           <div className="flex items-center space-x-2 sm:space-x-5 mr-4">
-            <CurrencyDropdown />
+            <CurrencyDropdown type="navbar" />
 
             <motion.button
               whileTap={{ scale: 0.9 }}
