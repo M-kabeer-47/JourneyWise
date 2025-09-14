@@ -9,6 +9,7 @@ import formatDate from "@/utils/functions/formatDate";
 import useSavePost from "@/hooks/savedPosts/useSavePost";
 import { useAppSelector } from "@/hooks/redux";
 import { toast } from "../ui/Toast";
+import { useCurrencyConverter } from "@/hooks/useCurrencyConverter";
 
 interface TripCardProps {
   trip: Trip;
@@ -17,38 +18,52 @@ interface TripCardProps {
   hoverEffectOnSave?: boolean;
 }
 
-export default function TripCard({ trip, isPersonal = false, queryKey = "trips", hoverEffectOnSave = true }: TripCardProps) {
-  const {savePost, unsavePost} = useSavePost();
+export default function TripCard({ 
+  trip, 
+  isPersonal = false, 
+  queryKey = "trips", 
+  hoverEffectOnSave = true 
+}: TripCardProps) {
+  const { savePost, unsavePost } = useSavePost();
   const user = useAppSelector((state) => state.user.user);
-  const formatCurrency = (amount: number, currency: string) => {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency,
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(amount);
+  
+  // Use currency converter hook
+  const { convertedPrice, isLoading, currency } = useCurrencyConverter({
+    amount: trip.estimatedBudget,
+    fromCurrency: trip.currency
+  });
+
+  const handleSaveToggle = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (trip.isSaved) {
+      unsavePost.mutateAsync({ savedPostID: trip.id, queryKey });
+    } else {
+      if (!user) {
+        toast.error("Please login to save trip");
+        return;
+      }
+      savePost.mutateAsync({ postID: trip.id, userID: user.id, type: "trip", queryKey });
+    }
   };
 
+  // Display price with loading handling
+  const displayPrice = () => {
+    if (isLoading) {
+      return (
+        <div className="h-8 w-20 bg-gray-200 animate-pulse rounded"></div>
+      );
+    }
 
-    const handleSaveToggle = (e: React.MouseEvent) => {
-      e.preventDefault();
-      e.stopPropagation();
-      if (trip.isSaved) {
-        unsavePost.mutateAsync({savedPostID: trip.id, queryKey});
-        
-      } else {
-        if(!user){
-          toast.error("Please login to save trip");
-          return;
-        }
-        savePost.mutateAsync({postID: trip.id, userID: user.id, type: "trip", queryKey});
-        
-      }
-    };
+    return (
+      <span className="text-2xl font-bold text-midnight-blue font-geist tabular-nums">
+        {convertedPrice}
+      </span>
+    );
+  };
 
   return (
     <motion.div
-    
       className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl transition-all duration-500 border border-gray-100 hover:border-ocean-blue/20 transform h-full flex flex-col"
     >
       {/* Header with Route Visualization or Thumbnail - Fixed Height */}
@@ -72,13 +87,12 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
             <div className="flex items-center gap-2 max-w-full overflow-hidden">
               {trip.waypoints && trip.waypoints.length > 0 ? (
                 trip.waypoints
-                  
                   .slice(0, 4)
                   .map((waypoint, index, array) => (
                     <React.Fragment key={waypoint.id}>
                       <div className="flex flex-col items-center">
                         <div className="w-3 h-3 bg-ocean-blue rounded-full mb-1"></div>
-                        <span className="text-xs  text-midnight-blue text-center max-w-16 truncate">
+                        <span className="text-xs text-midnight-blue text-center max-w-16 truncate">
                           {waypoint.name}
                         </span>
                       </div>
@@ -92,7 +106,7 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
               )}
 
               {trip.waypoints && trip.waypoints.length > 4 && (
-                <div className="text-xs text-ocean-blue ">
+                <div className="text-xs text-ocean-blue">
                   +{trip.waypoints.length - 4} more
                 </div>
               )}
@@ -144,13 +158,13 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-sm ">
+                <div className="w-full h-full bg-ocean-blue flex items-center justify-center text-white text-sm">
                   {trip.user.name.charAt(0).toUpperCase()}
                 </div>
               )}
             </div>
             <div>
-              <div className="text-xs  text-gray-800">
+              <div className="text-xs text-gray-800">
                 {trip.user.name}
               </div>
             </div>
@@ -165,12 +179,9 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
         {/* Title */}
         <h3 className="text-xl flex items-center gap-2 font-[800] text-midnight-blue line-clamp-2 mb-3 group-hover:text-midnight-blue transition-colors duration-200 leading-tight font-raleway">
           {trip.waypoints[0].name}
-
           <MoveRight className="w-[30px] h-[30px]" />
           {trip.waypoints[trip.waypoints.length - 1].name}
         </h3>
-
-        {/* Start and End Points */}
 
         {/* Spacer to push content to bottom */}
         <div className="flex-grow"></div>
@@ -179,21 +190,21 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
         <div className="flex items-center justify-between w-full text-sm text-gray-500 mb-4 font-geist">
           <div className="flex items-center gap-2 justify-center">
             <Users className="w-4 h-4 mb-1" />
-            <span className="">
-              <span className="">{trip.numOfPeople}</span>{" "}
+            <span>
+              <span>{trip.numOfPeople}</span>{" "}
               {trip.numOfPeople === 1 ? "person" : "people"}
             </span>
           </div>
           <div className="flex items-center gap-2 justify-center">
             <MapPin className="w-4 h-4 mb-1" />
-            <span className=" ">
+            <span>
               {trip.estimatedDistance.toLocaleString()} km
             </span>
           </div>
           <div className="flex items-center gap-2 justify-center">
             <Route className="w-4 h-4 mb-1" />
-            <span className="">
-              <span className="">{trip.waypoints?.length || 0}</span>{" "}
+            <span>
+              <span>{trip.waypoints?.length || 0}</span>{" "}
               waypoints
             </span>
           </div>
@@ -203,7 +214,7 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
         {!isPersonal && (
           <div className="flex justify-end mb-4">
             <Link href={`/trip/${trip.id}`}>
-              <div className="flex items-center gap-1 text-ocean-blue text-sm ">
+              <div className="flex items-center gap-1 text-ocean-blue text-sm">
                 <span>View Details</span>
                 <svg
                   className="w-4 h-4 transform -translate-x-1 group-hover:translate-x-0 transition-transform duration-200"
@@ -229,9 +240,7 @@ export default function TripCard({ trip, isPersonal = false, queryKey = "trips",
             <span className="text-sm text-charcoal font-medium font-geist">
               Estimated Budget
             </span>
-            <span className="text-2xl font-bold text-midnight-blue font-geist">
-              {formatCurrency(trip.estimatedBudget, trip.currency)}
-            </span>
+            {displayPrice()}
           </div>
         </div>
       </div>

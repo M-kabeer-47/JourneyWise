@@ -18,6 +18,7 @@ export default function FetchUserFromClient({
 
   useEffect(() => {
     dispatch(fetchExchangeRates(selectedCurrency.code));
+    
   }, [selectedCurrency]);
 
   return <>{children}</>;

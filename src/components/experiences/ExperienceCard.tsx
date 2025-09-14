@@ -38,10 +38,8 @@ export default function ExperienceCard({
 }: ExperienceCardProps) {
   const user = useAppSelector((state) => state.user.user);
   const { savePost, unsavePost } = useSavePost();
-  const { convertCurrency, formatPrice, isLoading, currency } =
-    useCurrencyConverter();
-
-  const [convertedPrice, setConvertedPrice] = useState<number | null>(null);
+  const { formatPrice, isLoading, convertedPrice,currency } = useCurrencyConverter({amount: experience.minPrice,fromCurrency: experience.currency});
+ 
   const [isConverting, setIsConverting] = useState(false);
 
   // Get the source currency from the experience
@@ -77,7 +75,7 @@ export default function ExperienceCard({
     if (isLoading || isConverting) {
       return (
         <span className="text-2xl font-inter font-bold text-midnight-blue animate-pulse">
-          {currency.symbol}...
+          <Loader2 className="w-6 h-6 animate-spin" />
         </span>
       );
     }
@@ -86,7 +84,7 @@ export default function ExperienceCard({
       // Use our custom formatter for reliability with PKR
       return (
         <span className="text-2xl font-inter font-bold text-midnight-blue tabular-nums">
-          {formatPrice({amount: experience.minPrice,toCurrency: experience.currency})}
+          {convertedPrice}
         </span>
       );
 

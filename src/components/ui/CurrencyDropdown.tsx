@@ -12,7 +12,7 @@ import { Currency } from "@/lib/redux/slices/currencySlice";
 
 export default function CurrencyDropdown() {
   const dispatch = useAppDispatch();
-  const currency = useAppSelector((state) => state.currency.selectedCurrency);
+  const selectedCurrency = useAppSelector((state) => state.currency.selectedCurrency);
   
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
@@ -53,8 +53,8 @@ export default function CurrencyDropdown() {
         onClick={() => setIsOpen(true)}
         className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-full hover:text-gray-200 transition-colors duration-200 font-medium text-sm flex items-center gap-2 py-2 px-3"
       >
-        <span className={`fi fi-${currency.countryCode} w-5 h-5`}></span>
-        <span>{currency.code}</span>
+        <span className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}></span>
+        <span>{selectedCurrency.code.toUpperCase()}</span>
       </button>
 
       {/* Modal */}
@@ -120,7 +120,7 @@ export default function CurrencyDropdown() {
                             key={`popular-${currency.code}`}
                             onClick={() => handleCurrencySelect(currency)}
                             className={`group flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                              currency.code === currency.code
+                              selectedCurrency.code === currency.code.toLowerCase()
                                 ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                                 : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                             }`}
@@ -166,7 +166,7 @@ export default function CurrencyDropdown() {
                         key={currency.code}
                         onClick={() => handleCurrencySelect(currency)}
                         className={`group flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                          currency.code === currency.code
+                          selectedCurrency.code === currency.code.toLowerCase()
                             ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                             : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                         }`}
