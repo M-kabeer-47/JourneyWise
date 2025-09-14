@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "./redux";
 import { fetchExchangeRates } from "@/lib/redux/slices/currencySlice";
 import { toast } from "@/components/ui/Toast";
+
 export const useCurrencyConverter = ({ amount, fromCurrency }) => {
   const [convertedPrice, setConvertedPrice] = useState<string>(""); // State to hold converted price
   const dispatch = useAppDispatch();
@@ -10,7 +11,8 @@ export const useCurrencyConverter = ({ amount, fromCurrency }) => {
 
   useEffect(() => {
     setConvertedPrice(formatPrice({ amount, fromCurrency: fromCurrency }));
-  });
+  },[exchangeRates])
+
   // Convert function with better error handling
   const convertCurrency = ({ amount, fromCurrency }): number => {
     let toCurrency = selectedCurrency.code;
@@ -21,10 +23,10 @@ export const useCurrencyConverter = ({ amount, fromCurrency }) => {
     }
 
     console.log("Converting", amount, fromCurrency, "to", toCurrency);
-    // log type of every variable
     console.log("Type of amount:", typeof amount);
     console.log("Type of fromCurrency:", typeof fromCurrency);
     console.log("Type of toCurrency:", typeof toCurrency);
+
     try {
       // If rates aren't loaded yet
       if (!exchangeRates[fromCurrency]) {
@@ -37,22 +39,24 @@ export const useCurrencyConverter = ({ amount, fromCurrency }) => {
         );
       }
 
-      // First convert to USD as base
-      if (exchangeRates[fromCurrency].value > 1) {
-        return amount / exchangeRates[fromCurrency].value;
-      }
-      return amount * exchangeRates[fromCurrency].value;
+      // Always divide by the exchange rate (API gives 1 selectedCurrency = X fromCurrency)
+      const convertedAmount = amount / exchangeRates[fromCurrency].value;
+      console.log(
+        `${amount} ${fromCurrency} = ${convertedAmount} ${toCurrency} (rate: ${exchangeRates[fromCurrency].value})`
+      );
+
+      return convertedAmount;
     } catch (err) {
       toast.error("Error: " + err.message);
       return amount; // Return original amount on error
     }
   };
 
-  // Format price with currency symbol
+  // Format price using Intl.NumberFormat + currency symbol
   const formatPrice = ({
     amount,
     fromCurrency,
-    options,
+    options = {},
   }: {
     amount: number;
     fromCurrency: string;
@@ -64,24 +68,32 @@ export const useCurrencyConverter = ({ amount, fromCurrency }) => {
     });
 
     try {
+      // Get the currency symbol from our currency array
+      const currencySymbol = selectedCurrency.symbol || "";
+
+      // Set up default formatting options
       const defaultOptions: Intl.NumberFormatOptions = {
-        style: "currency",
-        currency: selectedCurrency.code,
         minimumFractionDigits: 0,
         maximumFractionDigits: 0,
         ...options,
       };
 
-      return new Intl.NumberFormat("en-US", defaultOptions).format(
-        convertedAmount
-      );
+      // Use Intl.NumberFormat for proper number formatting (commas, etc.)
+      const formattedNumber = new Intl.NumberFormat(
+        "en-US",
+        defaultOptions
+      ).format(convertedAmount);
+
+      // Combine our currency symbol with the formatted number
+      return `${currencySymbol}${formattedNumber}`;
     } catch (err) {
-      // If Intl.NumberFormat doesn't support this currency, use a simple format
+      // Fallback formatting
       console.warn("Currency formatting fallback:", err);
-      const symbol = selectedCurrency.symbol || "";
-      return `${symbol}${convertedAmount.toFixed(
-        options.maximumFractionDigits || 0
-      )}`;
+      const currencySymbol = selectedCurrency.symbol || "";
+      const decimals = options.maximumFractionDigits || 0;
+
+      // Manual formatting with toFixed
+      return `${currencySymbol}${convertedAmount.toFixed(decimals)}`;
     }
   };
 
@@ -91,6 +103,6 @@ export const useCurrencyConverter = ({ amount, fromCurrency }) => {
     formatPrice,
     isLoading: status === "loading",
     error: status === "failed",
-    convertedPrice
+    convertedPrice,
   };
 };

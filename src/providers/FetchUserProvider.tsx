@@ -3,7 +3,7 @@
 import { useAppDispatch } from "@/hooks/redux";
 import { useEffect } from "react";
 import { fetchUser } from "@/lib/redux/slices/user";
-import { fetchExchangeRates } from "@/lib/redux/slices/currencySlice";
+import { fetchExchangeRates, loadSavedCurrency } from "@/lib/redux/slices/currencySlice";
 import { useAppSelector } from "@/hooks/redux";
 export default function FetchUserFromClient({
   children,
@@ -14,6 +14,7 @@ export default function FetchUserFromClient({
   const { selectedCurrency } = useAppSelector((state) => state.currency);
   useEffect(() => {
     dispatch(fetchUser());
+    dispatch(loadSavedCurrency());
   }, []);
 
   useEffect(() => {

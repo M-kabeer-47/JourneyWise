@@ -12,8 +12,10 @@ import { Currency } from "@/lib/redux/slices/currencySlice";
 
 export default function CurrencyDropdown() {
   const dispatch = useAppDispatch();
-  const selectedCurrency = useAppSelector((state) => state.currency.selectedCurrency);
-  
+
+  const { isHydrated, selectedCurrency, status } = useAppSelector(
+    (state) => state.currency
+  );
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -53,14 +55,23 @@ export default function CurrencyDropdown() {
         onClick={() => setIsOpen(true)}
         className="bg-white/10 backdrop-blur-sm border border-white/20 hover:bg-white/20 text-white rounded-full hover:text-gray-200 transition-colors duration-200 font-medium text-sm flex items-center gap-2 py-2 px-3"
       >
-        <span className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}></span>
-        <span>{selectedCurrency.code.toUpperCase()}</span>
+        {isHydrated && status !== "loading" ? (
+          <>
+            <span
+              className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}
+            ></span>
+            <span>{selectedCurrency.code.toUpperCase()}</span>
+          </>
+        ) : (
+          // skeleton loader
+          <div className="w-16 h-5 bg-gray-200 rounded-full animate-pulse"></div>
+        )}
       </button>
 
       {/* Modal */}
       <AnimatePresence>
         {isOpen && (
-          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 ">
             {/* Backdrop */}
             <motion.div
               initial={{ opacity: 0 }}
@@ -76,7 +87,7 @@ export default function CurrencyDropdown() {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.2, ease: "easeOut" }}
-              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[80vh] overflow-hidden"
+              className="relative bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[85vh] overflow-hidden pb-[50px]"
             >
               {/* Header */}
               <div className="px-6 py-5 border-b border-gray-200 bg-white sticky top-0 z-10">
@@ -120,7 +131,7 @@ export default function CurrencyDropdown() {
                             key={`popular-${currency.code}`}
                             onClick={() => handleCurrencySelect(currency)}
                             className={`group flex flex-col items-center p-4 rounded-xl border-2 transition-all duration-200 ${
-                              selectedCurrency.code === currency.code.toLowerCase()
+                              selectedCurrency.code === currency.code
                                 ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                                 : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                             }`}
@@ -166,7 +177,7 @@ export default function CurrencyDropdown() {
                         key={currency.code}
                         onClick={() => handleCurrencySelect(currency)}
                         className={`group flex items-center gap-3 p-4 rounded-xl border-2 transition-all duration-200 text-left ${
-                          selectedCurrency.code === currency.code.toLowerCase()
+                          selectedCurrency.code === currency.code
                             ? "border-ocean-blue bg-ocean-blue/5 shadow-md"
                             : "border-gray-200 hover:border-ocean-blue/50 hover:bg-ocean-blue/5 hover:shadow-md"
                         }`}
