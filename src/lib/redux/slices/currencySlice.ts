@@ -8,7 +8,6 @@ export type Currency = {
   symbol: string;
   name: string;
   countryCode: string;
-  
 };
 
 interface CurrencyState {
@@ -17,7 +16,6 @@ interface CurrencyState {
   lastFetched: number | null;
   status: "idle" | "loading" | "succeeded" | "failed";
   error: string | null;
- 
 }
 
 // Get default currency
@@ -25,27 +23,56 @@ const getDefaultCurrency = (): Currency => {
   if (typeof window !== "undefined") {
     const savedCurrency = localStorage.getItem("preferred-currency");
     if (savedCurrency) {
-      const found = ALL_CURRENCIES.find((c) => c.code.toLowerCase() === savedCurrency);
+      const found = ALL_CURRENCIES.find((c) => c.code === savedCurrency);
       if (found) return found;
     }
   }
-  return ALL_CURRENCIES.find((c) => c.code.toLowerCase() === "usd")
+  return ALL_CURRENCIES.find((c) => c.code === "USD") || ALL_CURRENCIES[0];
 };
 
 // Fetch exchange rates using Frankfurter API which supports PKR
 export const fetchExchangeRates = createAsyncThunk(
   "currency/fetchExchangeRates",
   async (selectedCurrencyCode: string) => {
-    selectedCurrencyCode = selectedCurrencyCode.toLowerCase();  
-    alert("Fetching rates for " + selectedCurrencyCode);
+    let storedRates = localStorage.getItem("exchange-rates");
+    if (
+      storedRates &&
+      JSON.parse(storedRates)[selectedCurrencyCode] &&
+      Date.now() - JSON.parse(storedRates)[selectedCurrencyCode].fetchedTime <
+        24 * 60 * 60 * 1000
+    ) {
+      console.log(
+        "storedRates: ",
+        storedRates + " for " + selectedCurrencyCode
+      );
+      return JSON.parse(storedRates)[selectedCurrencyCode].exchangeRates;
+    }
     try {
       // Try Frankfurter API first (supports PKR)
       const response = await axios.get(
-        `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies/${selectedCurrencyCode.toLowerCase()}.json`
+        `https://api.currencyapi.com/v3/latest?&base_currency=${selectedCurrencyCode}&apikey=${process.env.NEXT_PUBLIC_CURRENCY_CONVERTER_API_KEY}`
       );
 
-      if (response.data) {
-        return response.data[selectedCurrencyCode.toLowerCase()];
+      if (response.data && response.data.data) {
+        let updatedStoredRates = storedRates
+          ? {
+              ...JSON.parse(storedRates),
+              [selectedCurrencyCode]: {
+                exchangeRates: response.data.data,
+                fetchedTime: Date.now(),
+              },
+            }
+          : {
+              [selectedCurrencyCode]: {
+                exchangeRates: response.data.data,
+                fetchedTime: Date.now(),
+              },
+            };
+        localStorage.setItem(
+          "exchange-rates",
+          JSON.stringify(updatedStoredRates)
+        );
+        return response.data.data
       }
       throw new Error("Invalid response from currencyapi.com");
     } catch (error) {
@@ -56,7 +83,6 @@ export const fetchExchangeRates = createAsyncThunk(
 
 const initialState: CurrencyState = {
   selectedCurrency: getDefaultCurrency(),
-  isFetching: false,
   exchangeRates: {},
   lastFetched: null,
   status: "idle",
@@ -68,10 +94,10 @@ const currencySlice = createSlice({
   initialState,
   reducers: {
     setSelectedCurrency: (state, action: PayloadAction<Currency>) => {
-      state.selectedCurrency = {...action.payload,code:action.payload.code.toLowerCase()};
+      state.selectedCurrency = action.payload;
       // Save to localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem("preferred-currency", action.payload.code.toLowerCase());
+        localStorage.setItem("preferred-currency", action.payload.code);
       }
     },
   },

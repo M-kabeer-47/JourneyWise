@@ -2,36 +2,31 @@ import { useEffect, useState } from "react";
 import { useAppSelector, useAppDispatch } from "./redux";
 import { fetchExchangeRates } from "@/lib/redux/slices/currencySlice";
 import { toast } from "@/components/ui/Toast";
-export const useCurrencyConverter = ({
-  amount,
-  fromCurrency,
-}: {
-  amount: number;
-  fromCurrency: string;
-}) => {
+export const useCurrencyConverter = ({ amount, fromCurrency }) => {
+  const [convertedPrice, setConvertedPrice] = useState<string>(""); // State to hold converted price
   const dispatch = useAppDispatch();
   const { selectedCurrency, exchangeRates, lastFetched, status } =
     useAppSelector((state) => state.currency);
-  const [convertedPrice, setconvertedPrice] = useState<string | null>(null);
 
   useEffect(() => {
-    setconvertedPrice(formatPrice({ amount, fromCurrency }));
-  }, [exchangeRates]);
+    setConvertedPrice(formatPrice({ amount, fromCurrency: fromCurrency }));
+  });
   // Convert function with better error handling
-
   const convertCurrency = ({ amount, fromCurrency }): number => {
-    let toCurrency = selectedCurrency.code.toLowerCase();
-    fromCurrency = fromCurrency.toLowerCase();
+    let toCurrency = selectedCurrency.code;
     if (!amount) return 0;
     if (fromCurrency === toCurrency) return amount;
-
     if (!exchangeRates || Object.keys(exchangeRates).length === 0) {
       return amount; // No rates available yet
     }
 
+    console.log("Converting", amount, fromCurrency, "to", toCurrency);
+    // log type of every variable
+    console.log("Type of amount:", typeof amount);
+    console.log("Type of fromCurrency:", typeof fromCurrency);
+    console.log("Type of toCurrency:", typeof toCurrency);
     try {
       // If rates aren't loaded yet
-
       if (!exchangeRates[fromCurrency]) {
         throw new Error(
           "Unsupported currency for conversion: " +
@@ -43,13 +38,10 @@ export const useCurrencyConverter = ({
       }
 
       // First convert to USD as base
-      let exchangeRatePrice = exchangeRates[fromCurrency];
-      console.log("To currency:", toCurrency);
-      console.log("Exchange rate price:", exchangeRatePrice);
-      if (exchangeRatePrice > 1) {
-        return amount / exchangeRatePrice;
+      if (exchangeRates[fromCurrency].value > 1) {
+        return amount / exchangeRates[fromCurrency].value;
       }
-      return amount * exchangeRatePrice;
+      return amount * exchangeRates[fromCurrency].value;
     } catch (err) {
       toast.error("Error: " + err.message);
       return amount; // Return original amount on error
@@ -66,7 +58,7 @@ export const useCurrencyConverter = ({
     fromCurrency: string;
     options?: Intl.NumberFormatOptions;
   }): string => {
-    const convertedPrice = convertCurrency({
+    const convertedAmount = convertCurrency({
       amount,
       fromCurrency: fromCurrency,
     });
@@ -81,24 +73,24 @@ export const useCurrencyConverter = ({
       };
 
       return new Intl.NumberFormat("en-US", defaultOptions).format(
-        convertedPrice
+        convertedAmount
       );
     } catch (err) {
       // If Intl.NumberFormat doesn't support this currency, use a simple format
       console.warn("Currency formatting fallback:", err);
       const symbol = selectedCurrency.symbol || "";
-      return `${symbol}${convertedPrice.toFixed(
+      return `${symbol}${convertedAmount.toFixed(
         options.maximumFractionDigits || 0
       )}`;
     }
   };
 
   return {
-    convertedPrice,
     currency: selectedCurrency,
     convertCurrency,
     formatPrice,
     isLoading: status === "loading",
     error: status === "failed",
+    convertedPrice
   };
 };
