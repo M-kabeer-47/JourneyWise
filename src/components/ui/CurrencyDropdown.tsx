@@ -75,7 +75,7 @@ export default function CurrencyDropdown({
       ) : (
         <button
           onClick={() => setIsOpen(true)}
-          className="flex items-center gap-3 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:border-ocean-blue transition-colors w-full"
+          className="flex items-center gap-3 px-4 py-2 bg-white border border-gray-300 rounded-lg hover:border-ocean-blue transition-colors w-full"
         >
           {isHydrated && status !== "loading" ? (
             <>

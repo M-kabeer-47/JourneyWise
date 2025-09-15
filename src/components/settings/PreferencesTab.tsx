@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Settings } from "lucide-react";
 import { useAppSelector } from "@/hooks/redux";
 import { toast } from "../ui/Toast";
+import useUserPreferences from "@/hooks/user/useUserPreferences";
 
 // Import modular sections
 import DisplayThemeSection from "./sections/DisplayThemeSection";
@@ -34,6 +35,7 @@ import {
   Star,
   Sparkles,
 } from "lucide-react";
+import { PreferencesForm } from "@/lib/schemas/userPreferences";
 
 interface Tag {
   id: string;
@@ -74,30 +76,40 @@ interface PreferencesTabProps {
 }
 
 export default function PreferencesTab({ user }: PreferencesTabProps) {
-  const { selectedCurrency } = useAppSelector((state) => state.currency);
-
+  const { updatePreferences, preferences: serverPreferences, isLoading } = useUserPreferences();
+  
   // Modal states
   const [interestTagsModalOpen, setInterestTagsModalOpen] = useState(false);
 
-  // Local state for preferences
-  const [preferences, setPreferences] = useState({
-    theme: "light",
-    preferredUnits: "metric",
-    preferredRegion: "worldwide",
-    interestTags: ["adventure", "culture", "food"],
-    priceDropAlerts: true,
-    bookingUpdates: true,
-    tripReminders: true,
-    profileVisibility: "public",
-    showSavedItems: true,
-  });
+  // Use server preferences as initial state
+  const [preferences, setPreferences] = useState<PreferencesForm>(
+    serverPreferences || {
+      theme: "light",
+      distanceUnits: "km",
+      region: "worldwide",
+      interestTags: [],
+      priceDropAlerts: true,
+      bookingUpdates: true,
+      experienceReminders: true,
+      profileVisibility: "public",
+      showSavedItems: true,
+    }
+  );
 
-  const handlePreferenceChange = (key: string, value: any) => {
+  const handlePreferenceChange = async (key: string, value: any) => {
+    // Update local state immediately for UI responsiveness
     setPreferences((prev) => ({
       ...prev,
       [key]: value,
     }));
-    toast.success("Preference updated");
+
+    // Update server
+    try {
+      await updatePreferences.mutateAsync({ [key]: value });
+    } catch (error) {
+      // Revert local state on error
+      setPreferences(serverPreferences || preferences);
+    }
   };
 
   const toggleInterestTag = (tagId: string) => {

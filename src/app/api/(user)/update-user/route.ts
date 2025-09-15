@@ -3,8 +3,7 @@ import db from "@/lib/server/db";
 import { NextRequest, NextResponse } from "next/server";
 import { user } from "../../../../../auth-schema";
 import { eq } from "drizzle-orm";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth/auth";
+
 export async function PUT(request: NextRequest) {
   let body = await request.json();
   const result = userSchemaPartial.safeParse(body);

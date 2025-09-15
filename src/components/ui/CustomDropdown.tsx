@@ -7,13 +7,13 @@ export default function CustomDropdown({
   onClick,
   className = "",
   isSmall = false,
-  value = ""
+  value = "",
 }: {
   options: string[];
   onClick: (option: string) => void;
   className?: string;
   size?: "small" | "medium" | "large";
-  isSmall?: boolean;    
+  isSmall?: boolean;
   value?: string;
 }) {
   const [isOpen, setIsOpen] = useState(false);
@@ -49,7 +49,6 @@ export default function CustomDropdown({
             className={`text-charcoal  ${
               isSmall ? "sm:text-sm text-xs" : "text-sm sm:text-base"
             }`}
-          
           >
             {value || "Select an option"}
           </span>
@@ -73,11 +72,21 @@ export default function CustomDropdown({
             style={{ minWidth: "100%", width: "max-content" }}
           >
             {options.map((option, index) => (
-              <div key={index} className="px-1">
+              <div
+                key={index}
+                className={`px-1 ${
+                  value === option
+                    ? "font-medium bg-ocean-blue/5"
+                    : "hover:bg-ocean-blue/5"
+                }`}
+              >
                 <button
                   type="button"
-                  className={`flex items-center justify-between w-full px-2 py-2 text-xs sm:text-sm text-left hover:bg-gray-50 rounded-md`}
-                  onClick={() => onClick(option)}
+                  className={`flex items-center justify-between w-full px-2 py-2 text-xs sm:text-sm text-left  rounded-md `}
+                  onClick={() => {
+                    setIsOpen(false);
+                    onClick(option);
+                  }}
                 >
                   <span className={` sm:text-sm text-xs  text-charcoal `}>
                     {option}

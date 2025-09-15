@@ -8,6 +8,13 @@
       "when": 1756814153522,
       "tag": "0000_smooth_blockbuster",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1757904313129,
+      "tag": "0001_light_inhumans",
+      "breakpoints": true
     }
   ]
 }

@@ -75,7 +75,7 @@ export default function FormInput({
       <Label 
         htmlFor={id || name} 
         className={cn(
-          "text-sm  text-gray-700",
+          "text-sm  text-charcoal",
           error && "text-red-500"
         )}
       >

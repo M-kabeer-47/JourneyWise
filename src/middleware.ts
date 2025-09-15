@@ -22,25 +22,22 @@ export default async function middleware(request: NextRequest) {
         },
       }
     );
-    
+
     let isValidUser = userSchema.safeParse(session?.user);
-    if (!isValidUser.success) {
+    if (isValidUser.error){
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
     if (!session && pathname !== "/login") {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     } else if (session && pathname === "/login") {
       return NextResponse.redirect(new URL("/", request.url));
-
-    } 
-
-    else if (
+    } else if (
       session &&
       pathname !== "/settings" &&
       !session.user?.emailVerified
     ) {
       console.log("Redirecting to verify-email");
-      
+
       return NextResponse.redirect(new URL("/verify-email", request.url));
     } else if (session?.user && pathname.startsWith("/api/")) {
       const response = NextResponse.next();
@@ -72,6 +69,8 @@ export const config = {
     "/api/create-trip/:path",
     "/api/delete-trip/:path",
     "/api/get-user-trips/:path",
+    "/api/update-user-preferences",
+    "/api/get-user-preferences",
     "/dashboard/:path",
     "/create-experience/:path",
     "/blog",

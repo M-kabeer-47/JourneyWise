@@ -64,7 +64,7 @@ export const experience = pgTable("experience", {
   averageRating: doublePrecision("averageRating").notNull(),
   isAvailable: boolean("isAvailable").notNull(),
   createdAt: timestamp("createdAt").notNull().default(new Date()),
-  currency: text("currency").default("USD")
+  currency: text("currency").default("USD"),
 });
 
 export const session = pgTable("session", {
@@ -97,7 +97,14 @@ export const booking = pgTable("booking", {
     .references(() => experience.id),
   bookingDate: date("bookingDate").notNull(),
   status: text({
-    enum: ["pending", "approved", "modification_requested", "confirmed", "cancelled", "completed"],
+    enum: [
+      "pending",
+      "approved",
+      "modification_requested",
+      "confirmed",
+      "cancelled",
+      "completed",
+    ],
   }).notNull(),
   startDate: date("startDate").notNull(),
   modifiedStartDate: date("modifiedStartDate"),
@@ -111,7 +118,6 @@ export const booking = pgTable("booking", {
   notes: text("notes"),
   createdAt: timestamp("createdAt").default(new Date()),
   updatedAt: timestamp("updatedAt").default(new Date()),
- 
 });
 
 export const faq = pgTable("faq", {
@@ -220,13 +226,13 @@ export const trip = pgTable("trip", {
   userID: text("userID")
     .notNull()
     .references(() => user.id),
-  country:text("country").notNull(),
+  country: text("country").notNull(),
   waypoints: jsonb("waypoints").notNull(),
   estimatedBudget: integer("estimatedBudget").notNull(),
   numOfPeople: integer("numOfPeople").notNull(),
   estimatedDistance: integer("estimatedDistance").notNull(),
   currency: text("currency").notNull(),
-  thumbnailUrl:text("thumbnailUrl"),
+  thumbnailUrl: text("thumbnailUrl"),
   createdAt: timestamp("createdAt").notNull().default(new Date()),
   updatedAt: timestamp("updatedAt").notNull().default(new Date()),
 });
@@ -241,19 +247,57 @@ export const blog = pgTable("blog", {
   category: text("category"),
   description: text("description"),
   coverUrl: text("coverUrl"),
-  thumbnailUrl:text("thumbnailUrl"),
+  thumbnailUrl: text("thumbnailUrl"),
   commentsCount: integer("commentsCount").default(0),
   createdAt: timestamp("createdAt").notNull().default(new Date()),
   updatedAt: timestamp("updatedAt").notNull().default(new Date()),
 });
 
-
-export const savedPosts = pgTable("savedPosts",{
-  id:uuid("id").primaryKey().defaultRandom(),
-  userID:text("userID")
+export const savedPosts = pgTable("savedPosts", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userID: text("userID")
     .notNull()
     .references(() => user.id),
-  type:text({enum:["trip","blog","experience"]}).notNull(),
-  postID:uuid("postID").notNull(),
-  createdAt:timestamp("createdAt").notNull().default(new Date()),
-})
+  type: text({ enum: ["trip", "blog", "experience"] }).notNull(),
+  postID: uuid("postID").notNull(),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
+});
+
+export const userPreferences = pgTable("userPreferences", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userID: text("userID")
+    .notNull()
+    .references(() => user.id),
+  theme: text({ enum: ["light", "dark", "system"] })
+    .notNull()
+    .default("light"),
+  distanceUnits: text({ enum: ["km", "miles"] })
+    .notNull()
+    .default("km"),
+  region: text({
+    enum: [
+      "worldwide",
+      "north-america",
+      "south-america",
+      "europe",
+      "asia",
+      "africa",
+      "australia",
+      "middle-east",
+      "oceania",
+      "caribbean",
+    ],
+  })
+    .notNull()
+    .default("worldwide"),
+  interestTags: jsonb("interestTags").notNull().default([]),
+  priceDropAlerts: boolean("priceDropAlerts").notNull().default(true),
+  bookingUpdates: boolean("bookingUpdates").notNull().default(true),
+  experienceReminders: boolean("experienceReminders").notNull().default(true),
+  profileVisibility: text({ enum: ["public", "private"] })
+    .notNull()
+    .default("public"),
+  showSavedItems: boolean("showSavedItems").notNull().default(true),
+  createdAt: timestamp("createdAt").notNull().default(new Date()),
+  updatedAt: timestamp("updatedAt").notNull().default(new Date()),
+});
