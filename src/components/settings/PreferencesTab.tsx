@@ -1,9 +1,8 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Settings } from "lucide-react";
-import { useAppSelector } from "@/hooks/redux";
-import { toast } from "../ui/Toast";
+
 import useUserPreferences from "@/hooks/user/useUserPreferences";
 
 // Import modular sections
@@ -12,6 +11,12 @@ import TravelInterestsSection from "./sections/TravelInterestsSection";
 import NotificationsSection from "./sections/NotificationsSection";
 import PrivacySecuritySection from "./sections/PrivacySecuritySection";
 import InterestTagsModal from "./TagsModal";
+
+// Import skeleton components
+import DisplayThemeSectionSkeleton from "@/components/skeletons/DsiplayThemeSection";
+import TravelInterestsSectionSkeleton from "@/components/skeletons/TravelInterestsSection";
+import NotificationsSectionSkeleton from "@/components/skeletons/NotificationSection";
+import PrivacySecuritySectionSkeleton from "@/components/skeletons/PrivacySection";
 
 // Import types and constants
 import {
@@ -37,53 +42,21 @@ import {
 } from "lucide-react";
 import { PreferencesForm } from "@/lib/schemas/userPreferences";
 
-interface Tag {
-  id: string;
-  label: string;
-  icon?: React.ComponentType<{ size?: number; className?: string }>;
-}
+export default function PreferencesTab() {
+  const {
+    updatePreferences,
+    preferences,
+    isUpdating,
+    isFetching,
+    isFetchingError,
+  } = useUserPreferences();
 
-const INTEREST_TAGS: Tag[] = [
-  { id: "adventure", label: "Adventure", icon: Mountain },
-  { id: "beach", label: "Beach", icon: Waves },
-  { id: "culture", label: "Culture", icon: Landmark },
-  { id: "food", label: "Food & Cuisine", icon: Utensils },
-  { id: "nightlife", label: "Nightlife", icon: Moon },
-  { id: "hiking", label: "Hiking", icon: Footprints },
-  { id: "wildlife", label: "Wildlife", icon: Flame },
-  { id: "historical", label: "Historical", icon: Building },
-  { id: "photography", label: "Photography", icon: Camera },
-  { id: "luxury", label: "Luxury", icon: Star },
-  { id: "budget", label: "Budget", icon: DollarSign },
-  { id: "family", label: "Family", icon: Users },
-  { id: "road-trip", label: "Road Trip", icon: Car },
-  { id: "shopping", label: "Shopping", icon: ShoppingBag },
-  { id: "local", label: "Local Experience", icon: Home },
-  { id: "wellness", label: "Wellness", icon: Sparkles },
-  { id: "romantic", label: "Romantic", icon: Heart },
-  { id: "winter", label: "Winter", icon: Snowflake },
-  { id: "summer", label: "Summer", icon: Sun },
-];
-
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
-
-interface PreferencesTabProps {
-  user: User | null;
-}
-
-export default function PreferencesTab({ user }: PreferencesTabProps) {
-  const { updatePreferences, preferences: serverPreferences, isLoading } = useUserPreferences();
-  
   // Modal states
   const [interestTagsModalOpen, setInterestTagsModalOpen] = useState(false);
 
   // Use server preferences as initial state
-  const [preferences, setPreferences] = useState<PreferencesForm>(
-    serverPreferences || {
+  const [userPreferences, setUserPreferences] = useState<PreferencesForm>(
+    preferences || {
       theme: "light",
       distanceUnits: "km",
       region: "worldwide",
@@ -96,24 +69,26 @@ export default function PreferencesTab({ user }: PreferencesTabProps) {
     }
   );
 
+  // Update local state when server preferences load
+
   const handlePreferenceChange = async (key: string, value: any) => {
     // Update local state immediately for UI responsiveness
-    setPreferences((prev) => ({
+    setUserPreferences((prev) => ({
       ...prev,
       [key]: value,
     }));
 
     // Update server
     try {
-      await updatePreferences.mutateAsync({ [key]: value });
+      await updatePreferences({ [key]: value });
     } catch (error) {
       // Revert local state on error
-      setPreferences(serverPreferences || preferences);
+      setUserPreferences(preferences || userPreferences);
     }
   };
 
   const toggleInterestTag = (tagId: string) => {
-    setPreferences((prev) => {
+    setUserPreferences((prev) => {
       const updatedTags = prev.interestTags.includes(tagId)
         ? prev.interestTags.filter((id) => id !== tagId)
         : [...prev.interestTags, tagId];
@@ -124,47 +99,84 @@ export default function PreferencesTab({ user }: PreferencesTabProps) {
       };
     });
   };
+  useEffect(() => {
+    if (preferences) setUserPreferences(preferences);
+  }, [preferences]);
 
-  return (
-    <>
+  if (isFetching) {
+    return (
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         className="bg-gray-50 rounded-xl"
       >
-        <DisplayThemeSection
-          preferences={preferences}
-          onPreferenceChange={handlePreferenceChange}
-        />
-
-        <TravelInterestsSection
-          preferences={preferences}
-          onPreferenceChange={handlePreferenceChange}
-          onOpenInterestTags={() => setInterestTagsModalOpen(true)}
-        />
-
-        <NotificationsSection
-          preferences={preferences}
-          onPreferenceChange={handlePreferenceChange}
-        />
-
-        <PrivacySecuritySection
-          preferences={preferences}
-          onPreferenceChange={handlePreferenceChange}
-        />
+        <DisplayThemeSectionSkeleton />
+        <TravelInterestsSectionSkeleton />
+        <NotificationsSectionSkeleton />
+        <PrivacySecuritySectionSkeleton />
       </motion.div>
+    );
+  }
+  if (isFetchingError) {
+    return (
+      <div className="flex flex-col items-center justify-center p-10 bg-red-50 border border-red-200 rounded-xl">
+        <Settings className="w-10 h-10 text-red-400 mb-4" />
+        <h2 className="text-xl font-semibold text-red-800 mb-2">
+          Failed to load preferences
+        </h2>
+        <p className="text-red-600 mb-4">
+          There was an error fetching your preferences. Please try again.
+        </p>
+        <button
+          onClick={() => window.location.reload()}
+          className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition"
+        >
+          Retry
+        </button>
+      </div>
+    );
+  } else {
+    return (
+      <>
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="bg-gray-50 rounded-xl"
+        >
+          <DisplayThemeSection
+            preferences={userPreferences}
+            onPreferenceChange={handlePreferenceChange}
+          />
 
-      <InterestTagsModal
+          <TravelInterestsSection
+            preferences={userPreferences}
+            onPreferenceChange={handlePreferenceChange}
+            onOpenInterestTags={() => setInterestTagsModalOpen(true)}
+          />
+
+          <NotificationsSection
+            preferences={userPreferences}
+            onPreferenceChange={handlePreferenceChange}
+          />
+
+          <PrivacySecuritySection
+            preferences={userPreferences}
+            onPreferenceChange={handlePreferenceChange}
+          />
+        </motion.div>
+
+        {/* <InterestTagsModal
         isOpen={interestTagsModalOpen}
         onClose={() => setInterestTagsModalOpen(false)}
         tags={INTEREST_TAGS}
         selectedTags={preferences.interestTags}
         onTagToggle={toggleInterestTag}
         onSave={() => {
-          toast.success("Interest tags updated");
-          setTimeout(() => setInterestTagsModalOpen(false), 100);
+          setInterestTagsModalOpen(false);
+          handlePreferenceChange("interestTags", preferences.interestTags);
         }}
-      />
-    </>
-  );
+      /> */}
+      </>
+    );
+  }
 }

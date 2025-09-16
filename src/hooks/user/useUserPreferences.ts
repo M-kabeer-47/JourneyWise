@@ -6,26 +6,34 @@ import {
 } from "@/lib/schemas/userPreferences";
 import { toast } from "@/components/ui/Toast";
 import { useState } from "react";
-
+import { useQueryClient } from "@tanstack/react-query";
 export default function usePreferences() {
-  const [isLoading, setIsLoading] = useState(false);
+  const queryClient = useQueryClient();
+
+  const handleOptimisticUpdates = (queryKey, newData) => {
+    queryClient.setQueriesData({ queryKey }, (old: any) => {
+      return {
+        ...old,
+        ...newData,
+      };
+    });
+  };
 
   const updatePreferencesFunction = async (data: PreferencesUpdate) => {
-    setIsLoading(true);
-
     try {
       const response = await axios.put(`/api/update-user-preferences`, data);
+      console.log("Response from updating api: "+response.data);
+      handleOptimisticUpdates("user-preferences", response.data);
       return response.data;
     } catch (error) {
       throw error;
-    } finally {
-      setIsLoading(false);
     }
   };
 
   const fetchPreferencesFunction = async (): Promise<PreferencesForm> => {
     try {
       const response = await axios.get(`/api/get-user-preferences`);
+      console.log("Fetched Prferences: " + JSON.stringify(response.data));
       return response.data;
     } catch (error) {
       toast.error("Failed to fetch preferences");
@@ -33,7 +41,7 @@ export default function usePreferences() {
     }
   };
 
-  const updatePreferences = useMutation({
+  const { mutateAsync, isPending } = useMutation({
     mutationFn: updatePreferencesFunction,
     onSuccess: () => {
       toast.success("Preferences updated successfully!");
@@ -52,16 +60,21 @@ export default function usePreferences() {
     },
   });
 
-  const { data: preferences, isLoading: isFetching } = useQuery({
+  const {
+    data: preferences,
+    isFetching,
+    isError: isFetchingError,
+  } = useQuery({
     queryKey: ["user-preferences"],
     queryFn: fetchPreferencesFunction,
     staleTime: 5 * 60 * 1000, // 5 minutes
   });
 
   return {
-    updatePreferences,
+    updatePreferences: mutateAsync,
     preferences,
-    isLoading: isLoading || updatePreferences.isPending,
+    isUpdating: isPending,
     isFetching,
+    isFetchingError,
   };
 }

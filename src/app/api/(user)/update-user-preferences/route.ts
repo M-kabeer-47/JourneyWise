@@ -19,9 +19,9 @@ export async function PUT(request: NextRequest) {
       .from(userPreferences)
       .where(eq(userPreferences.userID, userID));
     if (existingPreferences.length === 0) {
-      await db.insert(userPreferences).values({ ...result.data, userID });
+      let response = await db.insert(userPreferences).values({ ...result.data, userID }).returning()
       return NextResponse.json(
-        { message: "Preferences updated successfully" },
+        { message: "Preferences updated successfully",data: response  },
         { status: 200 }
       );
     }

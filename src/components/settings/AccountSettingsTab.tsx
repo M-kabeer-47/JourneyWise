@@ -8,7 +8,7 @@ import {
   AlertCircle,
   Trash2,
   Upload,
-  Loader2,
+  
 } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
 import Image from "next/image";
@@ -55,7 +55,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   const [imagePreview, setImagePreview] = useState<string>(user?.image || "");
   const [showDeactivateModal, setShowDeactivateModal] = useState(false);
 
-  const { isLoading, updateUser } = useUpdateUser();
+  const { isLoading: isUpdating, updateUser } = useUpdateUser();
   const { changeEmail, isEmailChanging } = useChangeEmail({
     setError,
   });
@@ -253,8 +253,8 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <MyButton
                 type="submit"
                 text="Save Changes"
-                disabled={isSaveButtonDisabled || isLoading || isEmailChanging}
-                loading={isLoading || isEmailChanging}
+                disabled={isSaveButtonDisabled || isUpdating || isEmailChanging}
+                loading={isUpdating || isEmailChanging}
                 className="w-full sm:w-[170px]"
               />
             </div>
@@ -303,10 +303,10 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
 
             {!user?.emailVerified && (
               <button
-                disabled={isLoading}
+                disabled={isUpdating}
                 className="px-2 py-2 bg-midnight-blue w-[170px] text-center  text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50"
               >
-                {isLoading ? "Sending..." : "Verify Email"}
+                {isUpdating ? "Sending..." : "Verify Email"}
               </button>
             )}
           </div>
@@ -363,10 +363,10 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                   Cancel
                 </button>
                 <button
-                  disabled={isLoading}
+                  disabled={isUpdating}
                   className="flex-1 px-6 py-3 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                 >
-                  {isLoading ? "Deactivating..." : "Deactivate"}
+                  {isUpdating ? "Deactivating..." : "Deactivate"}
                 </button>
               </div>
             </motion.div>

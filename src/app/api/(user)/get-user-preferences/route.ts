@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
       .select()
       .from(userPreferences)
       .where(eq(userPreferences.userID, userID));
-    return NextResponse.json(preferences);
+    return NextResponse.json(preferences[0]);
   } catch (error) {
     return NextResponse.json(
       { message: "Error fetching preferences" },

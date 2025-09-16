@@ -1,16 +1,16 @@
 "use client";
 import React, { useState } from "react";
-import { useParams } from "next/navigation";
 import { motion } from "framer-motion";
 import ProfileTabs from "@/components/profile/ProfileSidebar";
-import ProfileTab from "@/components/profile/ProfileTab";
-import TripsTab from "@/components/profile/TripsTab";
-import BlogsTab from "@/components/profile/BlogsTab";
-import SavedTab from "@/components/profile/SavedTab";
-import BookingsTab from "@/components/profile/BookingsTab";
 import { useAppSelector } from "@/hooks/redux";
 import ProfilePageSkeleton from "@/components/skeletons/ProfilePageSkeleton";
+import dynamic from "next/dynamic"
 
+const ProfileTab = dynamic(()=>import("@/components/profile/ProfileTab"))
+const TripsTab = dynamic(()=>import("@/components/profile/TripsTab"))
+const BlogsTab = dynamic(()=>import("@/components/profile/BlogsTab"))
+const BookingsTab =dynamic(()=>import("@/components/profile/BookingsTab"))
+const SavedTab = dynamic(()=>import("@/components/profile/SavedTab"))
 export default function UserProfilePage() {
   const user = useAppSelector((state) => state.user);
 
