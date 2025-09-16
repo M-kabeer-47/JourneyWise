@@ -9,14 +9,12 @@ import { Experience } from "@/lib/types/experience";
 import { Button } from "@/components/ui/button";
 
 interface ExperienceCarouselProps {
-  title: string;
   experiences?: Experience[];
   sectionRef?: React.RefObject<HTMLElement>;
   isLoading?: boolean;
 }
 
 export default function ExperienceCarousel({
-  title,
   experiences = [], // Default to empty array
   sectionRef,
   isLoading = false,
@@ -30,7 +28,7 @@ export default function ExperienceCarousel({
   const updateCardsPerView = () => {
     const width = window.innerWidth;
 
-    if (width >= 1280) setCardsPerView(4); // xl
+    if (width >= 1280) setCardsPerView(3); // xl
     else if (width >= 768) setCardsPerView(2); // md
     else setCardsPerView(1); // mobile
   };
@@ -86,33 +84,19 @@ export default function ExperienceCarousel({
   return (
     <section
       ref={sectionRef || null}
-      className="py-20  relative overflow-hidden"
+      className=" relative overflow-hidden"
     >
-      <div className="px-4 md:px-12">
+      <div className="">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           viewport={{ once: true }}
           className="text-center mb-16"
-        >
-          {isLoading ? (
-            <>
-              <div className="h-10 bg-gray-300 rounded w-1/2 mx-auto animate-pulse mb-4" />
-              <div className="mt-4 w-24 h-1 bg-gray-300 mx-auto rounded-full animate-pulse" />
-            </>
-          ) : (
-            <>
-              <h2 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-midnight-blue to-ocean-blue bg-clip-text text-transparent">
-                {title}
-              </h2>
-              <div className="mt-4 w-24 h-1 bg-gradient-to-r from-midnight-blue to-ocean-blue mx-auto rounded-full" />
-            </>
-          )}
-        </motion.div>
+        ></motion.div>
 
         <div className="relative w-full" ref={containerRef}>
-          <div className="overflow-hidden px-2">
+          <div className="overflow-hidden ">
             {isLoading ? (
               // Skeleton loading state - simple fixed number based on screen size
               <div className="flex">
