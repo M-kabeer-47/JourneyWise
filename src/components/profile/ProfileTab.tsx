@@ -16,7 +16,7 @@ import ConfirmModal from "../ui/ConfirmModal";
 import { useRouter } from "next/navigation";
 import { ArrowRight } from "lucide-react";
 import BookingDetailsModal from "../booking/BookingDetailsModal";
-import {
+import ProfilePageSkeleton, {
   TripsSectionSkeleton,
   BlogsSectionSkeleton,
   BookingsSectionSkeleton,
@@ -24,7 +24,10 @@ import {
 import { toast } from "@/components/ui/Toast";
 import { Blog } from "@/lib/types/blog";
 interface ProfileTabProps {
-  user: User;
+  user: {
+    user: User | null;
+    isLoading: boolean;
+  };
   onTabChange: (tab: string) => void;
 }
 
@@ -40,7 +43,7 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
   const router = useRouter();
   const { bookings, isFetchingBookings, isBookingsError } =
     useFetchUserBookings({
-      userID: user.id,
+      userID: user.user?.id,
       sortColumn: "updatedAt",
       sortOrder: "desc",
       status: "all",
@@ -48,13 +51,13 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
     });
 
   const { trips, isFetchingTrips, isTripsError } = useFetchUserTrips({
-    userID: user.id,
+    userID: user.user?.id,
     sortColumn: "updatedAt",
     sortOrder: "desc",
     page: 1,
   });
   const { blogs, isFetchingBlogs, isBlogsError } = useFetchUserBlogs({
-    userID: user.id,
+    userID: user?.user?.id,
     sortColumn: "updatedAt",
     sortOrder: "desc",
     type: "all",
@@ -123,7 +126,9 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
   const handleCloseModal = () => {
     setDeleteModal({ isOpen: false, type: "trip", id: "", title: "" });
   };
-
+  if (!user.user || user.isLoading) {
+    return <ProfilePageSkeleton />;
+  }
   return (
     <>
       <motion.div
@@ -132,7 +137,8 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
         className="space-y-8"
       >
         {/* Profile Header */}
-        <ProfileHeader user={user} isOwnProfile={true} userType="user" />
+
+        <ProfileHeader user={user.user} isOwnProfile={true} userType="user" />
 
         {/* Recent Trips */}
         <div className="bg-white rounded-2xl border border-gray-200 px-3 pt-5 pb-10 sm:px-6 sm:py-7">
@@ -195,7 +201,12 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
           ) : (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
               {blogs.map((blog: Blog) => (
-                <BlogCard key={blog.blog.id} blog={blog} isPersonal={true}  queryKey="user-blogs"/>
+                <BlogCard
+                  key={blog.blog.id}
+                  blog={blog}
+                  isPersonal={true}
+                  queryKey="user-blogs"
+                />
               ))}
             </div>
           )}
@@ -233,7 +244,6 @@ export default function ProfileTab({ user, onTabChange }: ProfileTabProps) {
                   isPersonal={true}
                   setSelectedBooking={setSelectedBooking}
                   setShowDetails={setShowDetails}
-
                 />
               ))}
             </div>

@@ -39,11 +39,11 @@ export const getThemeInternalValue = (displayValue: string) => {
 };
 
 export const getUnitsDisplayValue = (units: string) => {
-  return units === "metric" ? "Kilometers (km)" : "Miles (mi)";
+  return units === "km" ? "Kilometers (km)" : "Miles (mi)";
 };
 
 export const getUnitsInternalValue = (displayValue: string) => {
-  return displayValue === "Kilometers (km)" ? "metric" : "imperial";
+  return displayValue === "Kilometers (km)" ? "km" : "miles";
 };
 
 export default function DisplayThemeSection({
@@ -82,13 +82,13 @@ export default function DisplayThemeSection({
             options={UNITS_OPTIONS}
             onClick={(option) =>
               onPreferenceChange(
-                "preferredUnits",
+                "distanceUnits",
                 getUnitsInternalValue(option)
               )
             }
             isSmall={true}
             className=""
-            value={getUnitsDisplayValue(preferences.preferredUnits)}
+            value={getUnitsDisplayValue(preferences.distanceUnits)}
           />
         </div>
       </div>

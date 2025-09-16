@@ -2,13 +2,12 @@
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import {
-  User,
+  User as UserIcon,
   Mail,
   CheckCircle,
   AlertCircle,
   Trash2,
   Upload,
-  
 } from "lucide-react";
 import FormInput from "@/components/ui/FormInput";
 import Image from "next/image";
@@ -17,17 +16,64 @@ import { Controller, useForm } from "react-hook-form";
 import { userSchemaPartial } from "@/lib/schemas/user";
 import { User as UserType } from "@/lib/types/user";
 import useUpdateUser from "@/hooks/user/useupdateUser";
-import { authClient } from "@/lib/auth/authClient";
 import { toast } from "../ui/Toast";
-import EmailVerificationModal from "@/components/settings/EmailVerificationModal";
 import MyButton from "@/components/ui/MyButton";
 import useChangeEmail from "@/hooks/user/useChangeEmail";
+import AccountSettingsTabSkeleton from "@/components/skeletons/AccountSettingsTabSkeleton";
 
 interface AccountSettingsTabProps {
-  user: UserType | null;
+  user: {
+    user: UserType | null;
+    isLoading: boolean;
+    error?: string;
+  };
 }
 
-export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
+export default function AccountSettingsTab({ user: User }: AccountSettingsTabProps) {
+  let { user, isLoading, error } = User;
+
+  // Show skeleton while loading
+  if (isLoading) {
+    return <AccountSettingsTabSkeleton />;
+  }
+
+  // Show error state if needed
+  if (error) {
+    return (
+      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <AlertCircle className="w-6 h-6 text-red-600" />
+          </div>
+          <h3 className="text-lg font-bold text-midnight-blue mb-2">Error Loading Settings</h3>
+          <p className="text-sm text-gray-600 mb-4">{error}</p>
+          <button 
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-midnight-blue text-white rounded-lg hover:bg-midnight-blue/90 transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show empty state if no user
+  if (!user) {
+    return (
+      <div className="bg-white rounded-xl p-8 shadow-sm border border-gray-200">
+        <div className="text-center">
+          <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <UserIcon className="w-6 h-6 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-bold text-midnight-blue mb-2">No User Data</h3>
+          <p className="text-sm text-gray-600">Please log in to access your settings.</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Component logic continues here with the existing code...
   const {
     setValue,
     handleSubmit,
@@ -59,6 +105,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
   const { changeEmail, isEmailChanging } = useChangeEmail({
     setError,
   });
+
   // Reusable function to update user profile
   const updateUserProfile = async (data: UserType) => {
     try {
@@ -157,7 +204,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-ocean-blue/10">
-                      <User className="w-8 h-8 text-midnight-blue" />
+                      <UserIcon className="w-8 h-8 text-midnight-blue" />
                     </div>
                   )}
                 </div>
@@ -276,13 +323,13 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
                 Email Verification
               </h2>
-              <p className="text-xs sm:text-sm text-charcoal font-geist  ">
+              <p className="text-xs sm:text-sm text-charcoal font-geist">
                 Verify your email address to secure your account
               </p>
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4  rounded-lg">
+          <div className="flex items-center justify-between p-4 rounded-lg">
             <div className="flex items-center gap-3">
               {user?.emailVerified ? (
                 <CheckCircle className="w-5 h-5 text-green-500" />
@@ -304,7 +351,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
             {!user?.emailVerified && (
               <button
                 disabled={isUpdating}
-                className="px-2 py-2 bg-midnight-blue w-[170px] text-center  text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50"
+                className="px-2 py-2 bg-midnight-blue w-[170px] text-center text-white font-medium rounded-lg hover:bg-midnight-blue/90 transition-colors disabled:opacity-50"
               >
                 {isUpdating ? "Sending..." : "Verify Email"}
               </button>
@@ -327,7 +374,7 @@ export default function AccountSettingsTab({ user }: AccountSettingsTabProps) {
               <h2 className="text-lg sm:text-xl font-bold text-midnight-blue font-raleway">
                 Account Status
               </h2>
-              <p className="text-xs sm:text-sm text-charcoal font-geist  ">
+              <p className="text-xs sm:text-sm text-charcoal font-geist">
                 Manage your account activation and deactivation
               </p>
             </div>

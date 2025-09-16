@@ -11,7 +11,9 @@ export default function usePreferences() {
   const queryClient = useQueryClient();
 
   const handleOptimisticUpdates = (queryKey, newData) => {
-    queryClient.setQueriesData({ queryKey }, (old: any) => {
+    queryClient.setQueriesData({ queryKey: [queryKey] }, (old: any) => {
+      console.log("Old Data: ", old);
+      console.log("New Data: ", newData);
       return {
         ...old,
         ...newData,
@@ -22,8 +24,8 @@ export default function usePreferences() {
   const updatePreferencesFunction = async (data: PreferencesUpdate) => {
     try {
       const response = await axios.put(`/api/update-user-preferences`, data);
-      console.log("Response from updating api: "+response.data);
-      handleOptimisticUpdates("user-preferences", response.data);
+      console.log("Response from updating api: "+JSON.stringify(response.data));
+      handleOptimisticUpdates("user-preferences", response.data.data);
       return response.data;
     } catch (error) {
       throw error;

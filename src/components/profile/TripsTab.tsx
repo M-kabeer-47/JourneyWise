@@ -8,11 +8,15 @@ import Pagination from "@/components/ui/Pagination";
 import { useState } from "react";
 import { useFetchUserTrips } from "@/hooks/trip/useFetchUserTrips";
 import { TripCardSkeleton } from "@/components/skeletons/TripCardSkeleton";
+import { User } from "@/lib/types/user";
 interface TripsTabProps {
-  userID: string;
+  user: {
+    user: User | null;
+    isLoading: boolean;
+  };
 }
 
-export default function TripsTab({ userID }: TripsTabProps) {
+export default function TripsTab({ user }: TripsTabProps) {
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
@@ -28,7 +32,7 @@ export default function TripsTab({ userID }: TripsTabProps) {
   ];
 
   const { trips, isFetchingTrips, isTripsError, pagination } = useFetchUserTrips({
-    userID,
+    userID: user?.user?.id,
     sortColumn: sortBy.value,
     sortOrder: sortBy.direction,
     page: currentPage
@@ -76,7 +80,7 @@ export default function TripsTab({ userID }: TripsTabProps) {
         />
       </div>
 
-      {isFetchingTrips ? (
+      {isFetchingTrips || user.isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {[...Array(5)].map((_, i) => (
             <TripCardSkeleton key={i} />

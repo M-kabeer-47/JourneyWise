@@ -10,9 +10,13 @@ import BookingDetailsModal from "../booking/BookingDetailsModal";
 import { Booking } from "@/lib/types/booking";
 import { useFetchUserBookings } from "@/hooks/booking/useFetchUserBookings";
 import { BookingCardSkeleton } from "@/components/skeletons/BookingCardSkeleton";
+import { User } from "@/lib/types/user";
 
 interface BookingsTabProps {
-  userID: string;
+user:{
+  user: User | null;
+  isLoading: boolean;
+}
 }
 
 const statusTabs = [
@@ -24,7 +28,7 @@ const statusTabs = [
   { key: "completed", label: "Completed" },
 ];
 
-export default function BookingsTab({ userID }: BookingsTabProps) {
+export default function BookingsTab({ user }: BookingsTabProps) {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [activeStatus, setActiveStatus] = useState("all");
@@ -40,7 +44,7 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
   const sortOptions = [{ value: "bookingDate", label: "Booking Date" }, { value: "totalPrice", label: "Total Price" }];
 
   const { bookings, isFetchingBookings, isBookingsError, pagination } = useFetchUserBookings({
-    userID,
+    userID: user?.user?.id,
     sortColumn: sortBy.value,
     sortOrder: sortBy.direction,
     status: activeStatus,
@@ -96,7 +100,7 @@ export default function BookingsTab({ userID }: BookingsTabProps) {
         />
       </div>
 
-      {isFetchingBookings ? (
+      {isFetchingBookings || user.isLoading ? (
         <div className="space-y-6">
           {[...Array(5)].map((_, i) => (
             <BookingCardSkeleton key={i} />

@@ -11,13 +11,16 @@ import ExperienceCard from "../experiences/ExperienceCard";
 import TripCard from "../trips/TripCard";
 import { BlogCard } from "../blog/BlogCard";
 interface SavedTabProps {
-  userID: string;
+  user: {
+    user: User | null;
+    isLoading: boolean;
+  };
 }
 
-export default function SavedTab({ userID }: SavedTabProps) {
-  const [activeType, setActiveType] = useState<
-    "blog" | "trip" | "experience"
-  >("experience");
+export default function SavedTab({ user }: SavedTabProps) {
+  const [activeType, setActiveType] = useState<"blog" | "trip" | "experience">(
+    "experience"
+  );
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
     value: string;
@@ -31,7 +34,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
 
   const { savedPosts, isFetchingSavedPosts, isSavedPostsError, pagination } =
     useFetchSavedPosts({
-      userID,
+      userID: user?.user?.id,
       type: activeType,
       sortColumn: sortBy.value,
       sortOrder: sortBy.direction,
@@ -65,7 +68,6 @@ export default function SavedTab({ userID }: SavedTabProps) {
       <div className="flex flex-col sm:flex-row justify-between mb-8">
         <Tabs
           options={[
-           
             { key: "experience", label: "Experiences" },
             { key: "trip", label: "Trips" },
             { key: "blog", label: "Blogs" },
@@ -85,7 +87,7 @@ export default function SavedTab({ userID }: SavedTabProps) {
         />
       </div>
 
-      {isFetchingSavedPosts ? (
+      {isFetchingSavedPosts || user.isLoading ? (
         <SavedItemSkeleton count={9} />
       ) : savedPosts && savedPosts.length === 0 ? (
         <NoData
@@ -98,30 +100,36 @@ export default function SavedTab({ userID }: SavedTabProps) {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {activeType === "blog" ? savedPosts.map((savedPost) => (
-              <BlogCard
-                key={savedPost.savedPost.id}
-                blog={savedPost.blog}
-                queryKey="saved-posts"
-                hoverEffectOnSave={false}
-              />
-            )) : activeType === "trip" ? savedPosts.map((savedPost) => (
-              <TripCard
-                key={savedPost.savedPost.id}
-                trip={savedPost.trip}
-                queryKey="saved-posts"
-                hoverEffectOnSave={false}
-              />
-            )) : activeType === "experience" ? savedPosts.map((savedPost) => (
-              <ExperienceCard
-                key={savedPost.savedPost.id}
-                experience={savedPost.experience}
-                queryKey="saved-posts"
-                hoverEffectOnSave={false}
-              />
-            )) : null}
+            {activeType === "blog"
+              ? savedPosts.map((savedPost) => (
+                  <BlogCard
+                    key={savedPost.savedPost.id}
+                    blog={savedPost.blog}
+                    queryKey="saved-posts"
+                    hoverEffectOnSave={false}
+                  />
+                ))
+              : activeType === "trip"
+              ? savedPosts.map((savedPost) => (
+                  <TripCard
+                    key={savedPost.savedPost.id}
+                    trip={savedPost.trip}
+                    queryKey="saved-posts"
+                    hoverEffectOnSave={false}
+                  />
+                ))
+              : activeType === "experience"
+              ? savedPosts.map((savedPost) => (
+                  <ExperienceCard
+                    key={savedPost.savedPost.id}
+                    experience={savedPost.experience}
+                    queryKey="saved-posts"
+                    hoverEffectOnSave={false}
+                  />
+                ))
+              : null}
           </div>
-          
+
           {pagination && pagination.pages > 1 && (
             <div className="mt-8">
               <Pagination

@@ -9,12 +9,16 @@ import { useFetchUserBlogs } from "@/hooks/blog/useFetchUserBlogs";
 import { BlogCardSkeleton } from "@/components/skeletons/BlogCardSkeleton";
 import { BlogCard } from "../blog/BlogCard";
 import { Blog } from "@/lib/types/blog";
+import { User } from "@/lib/types/user";
 
 interface BlogsTabProps {
-  userID: string;
+  user: {
+    user: User | null;
+    isLoading: boolean;
+  };
 }
 
-export default function BlogsTab({ userID }: BlogsTabProps) {
+export default function BlogsTab({ user }: BlogsTabProps) {
   const [activeTab, setActiveTab] = useState<string>("all");
   const [currentPage, setCurrentPage] = useState(1);
   const [sortBy, setSortBy] = useState<{
@@ -25,13 +29,14 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
     direction: "desc",
   });
 
-  const { blogs, isFetchingBlogs, isBlogsError, pagination } = useFetchUserBlogs({
-    userID,
-    sortColumn: sortBy.value,
-    sortOrder: sortBy.direction,
-    type: activeTab as "all" | "published" | "draft",
-    page: currentPage
-  });
+  const { blogs, isFetchingBlogs, isBlogsError, pagination } =
+    useFetchUserBlogs({
+      userID: user?.user?.id,
+      sortColumn: sortBy.value,
+      sortOrder: sortBy.direction,
+      type: activeTab as "all" | "published" | "draft",
+      page: currentPage,
+    });
 
   // Reset to page 1 when filters change
   const handleTabChange = (newTab: string) => {
@@ -84,15 +89,18 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
         <SortBy
           activeSort={sortBy}
           onSortChange={handleSortChange}
-          options={[{ value: "updatedAt", label: "Last Updated" }, { value: "mostDiscussed", label: "Most Discussed" }]}
+          options={[
+            { value: "updatedAt", label: "Last Updated" },
+            { value: "mostDiscussed", label: "Most Discussed" },
+          ]}
           size="small"
         />
       </div>
 
-      {isFetchingBlogs ? (
+      {isFetchingBlogs || user.isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {[...Array(5)].map((_, i) => (
-            <BlogCardSkeleton key={i} isPersonal={true}/>
+            <BlogCardSkeleton key={i} isPersonal={true} />
           ))}
         </div>
       ) : blogs?.length === 0 ? (
@@ -110,11 +118,16 @@ export default function BlogsTab({ userID }: BlogsTabProps) {
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-            {blogs?.map((blog:Blog) => (
-              <BlogCard key={blog.blog.id} blog={blog} isPersonal={true} queryKey={"user-blogs"} />
+            {blogs?.map((blog: Blog) => (
+              <BlogCard
+                key={blog.blog.id}
+                blog={blog}
+                isPersonal={true}
+                queryKey={"user-blogs"}
+              />
             ))}
           </div>
-          
+
           {pagination && pagination.pages > 1 && (
             <div className="mt-8">
               <Pagination

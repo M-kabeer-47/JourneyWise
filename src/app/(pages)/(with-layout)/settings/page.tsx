@@ -1,12 +1,23 @@
 "use client";
-import React, { useState } from "react";
-import AccountSettingsTab from "@/components/settings/AccountSettingsTab";
-import SecurityTab from "@/components/settings/SecurityTab";
-import PreferencesTab from "@/components/settings/PreferencesTab";
-import PaymentBillingTab from "@/components/settings/PaymentBillingTab";
+import React, { useEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+
 import { useAppSelector } from "@/hooks/redux";
 import Tabs from "@/components/profile/Tabs";
 import { motion } from "framer-motion";
+import dynamic from "next/dynamic";
+
+const AccountSettingsTab = dynamic(
+  () => import("@/components/settings/AccountSettingsTab")
+);
+const SecurityTab = dynamic(() => import("@/components/settings/SecurityTab"));
+const PreferencesTab = dynamic(
+  () => import("@/components/settings/PreferencesTab")
+);
+const PaymentBillingTab = dynamic(
+  () => import("@/components/settings/PaymentBillingTab")
+);
+
 const settingsTabs = [
   { key: "account", label: "Account" },
   { key: "security", label: "Security" },
@@ -15,23 +26,47 @@ const settingsTabs = [
 ];
 
 export default function SettingsPage() {
-  
+  const router = useRouter();
+  const searchParams = useSearchParams();
   const user = useAppSelector((state) => state.user);
-  
-  const [activeTab, setActiveTab] = useState("account");
+
+  // Get active tab from URL params, default to 'account'
+  const [activeTab, setActiveTab] = useState(
+    searchParams.get("tab") || "account"
+  );
+
+  // Validate tab exists, redirect to account if invalid
+  useEffect(() => {
+    const validTabs = settingsTabs.map((tab) => tab.key);
+    const currentTab = searchParams.get("tab");
+
+    if (currentTab && !validTabs.includes(currentTab)) {
+      router.replace("/settings?tab=account");
+    } else if (!currentTab) {
+      // Set default tab in URL without triggering navigation
+      router.replace("/settings?tab=account");
+    } else {
+      setActiveTab(currentTab);
+    }
+  }, [searchParams, router]);
+
+  const handleTabChange = (tabKey: string) => {
+    // Update URL with new tab
+    router.push(`/settings?tab=${tabKey}`, { scroll: false });
+  };
 
   const renderTabContent = () => {
     switch (activeTab) {
       case "account":
-        return <AccountSettingsTab user={user.user} />;
+        return <AccountSettingsTab user={user} />;
       case "security":
-        return <SecurityTab user={user.user} />;
+        return <SecurityTab />;
       case "preferences":
-        return <PreferencesTab user={user.user} />;
+        return <PreferencesTab />;
       case "payment":
         return <PaymentBillingTab user={user.user} />;
       default:
-        return <AccountSettingsTab user={user.user} />;
+        return <AccountSettingsTab user={user} />;
     }
   };
 
@@ -48,39 +83,28 @@ export default function SettingsPage() {
               Manage your account preferences and settings
             </p>
           </div>
-          
+
           {/* Tabs Navigation */}
           <Tabs
             options={settingsTabs}
             activeKey={activeTab}
-            onChange={setActiveTab}
+            onChange={handleTabChange}
             className="max-w-2xl"
           />
         </div>
-     
 
-      {/* Content Area */}
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
-        <motion.div
-          key={activeTab}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          {user.isLoading ? (
-            <div className="bg-white rounded-xl p-8 shadow-sm">
-              <div className="animate-pulse space-y-4">
-                <div className="h-6 bg-gray-200 rounded w-1/4"></div>
-                <div className="h-4 bg-gray-200 rounded w-1/2"></div>
-                <div className="h-10 bg-gray-200 rounded"></div>
-              </div>
-            </div>
-          ) : (
-            renderTabContent()
-          )}
-        </motion.div>
+        {/* Content Area */}
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
+          <motion.div
+            key={activeTab}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            {renderTabContent()}
+          </motion.div>
+        </div>
       </div>
-       </div>
     </div>
   );
 }

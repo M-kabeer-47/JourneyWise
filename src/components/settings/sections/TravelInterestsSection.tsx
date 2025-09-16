@@ -103,13 +103,13 @@ export default function TravelInterestsSection({
             options={REGIONS_OPTIONS}
             onClick={(option) =>
               onPreferenceChange(
-                "preferredRegion",
+                "region",
                 getRegionInternalValue(option)
               )
             }
             isSmall={true}
             className=""
-            value={getRegionDisplayValue(preferences.preferredRegion)}
+            value={getRegionDisplayValue(preferences.region)}
           />
         </div>
       </div>

@@ -40,8 +40,37 @@ import {
   Star,
   Sparkles,
 } from "lucide-react";
+
 import { PreferencesForm } from "@/lib/schemas/userPreferences";
 
+
+type TagType = {
+  id: string;
+  label: string;
+  icon: React.ComponentType<any>;
+};
+
+const INTEREST_TAGS: TagType[] = [
+  { id: "adventure", label: "Adventure", icon: Mountain },
+  { id: "beach", label: "Beach", icon: Waves },
+  { id: "culture", label: "Culture", icon: Landmark },
+  { id: "food", label: "Food & Cuisine", icon: Utensils },
+  { id: "nightlife", label: "Nightlife", icon: Moon },
+  { id: "hiking", label: "Hiking", icon: Footprints },
+  { id: "wildlife", label: "Wildlife", icon: Flame },
+  { id: "historical", label: "Historical", icon: Building },
+  { id: "photography", label: "Photography", icon: Camera },
+  { id: "luxury", label: "Luxury", icon: Star },
+  { id: "budget", label: "Budget", icon: DollarSign },
+  { id: "family", label: "Family", icon: Users },
+  { id: "road-trip", label: "Road Trip", icon: Car },
+  { id: "shopping", label: "Shopping", icon: ShoppingBag },
+  { id: "local", label: "Local Experience", icon: Home },
+  { id: "wellness", label: "Wellness", icon: Sparkles },
+  { id: "romantic", label: "Romantic", icon: Heart },
+  { id: "winter", label: "Winter", icon: Snowflake },
+  { id: "summer", label: "Summer", icon: Sun },
+];
 export default function PreferencesTab() {
   const {
     updatePreferences,
@@ -165,17 +194,17 @@ export default function PreferencesTab() {
           />
         </motion.div>
 
-        {/* <InterestTagsModal
-        isOpen={interestTagsModalOpen}
-        onClose={() => setInterestTagsModalOpen(false)}
-        tags={INTEREST_TAGS}
-        selectedTags={preferences.interestTags}
-        onTagToggle={toggleInterestTag}
-        onSave={() => {
-          setInterestTagsModalOpen(false);
-          handlePreferenceChange("interestTags", preferences.interestTags);
-        }}
-      /> */}
+        <InterestTagsModal
+          isOpen={interestTagsModalOpen}
+          onClose={() => setInterestTagsModalOpen(false)}
+          tags={INTEREST_TAGS}
+          selectedTags={userPreferences.interestTags}
+          onTagToggle={toggleInterestTag}
+          onSave={() => {
+            setInterestTagsModalOpen(false);
+            handlePreferenceChange("interestTags", userPreferences.interestTags);
+          }}
+        />
       </>
     );
   }

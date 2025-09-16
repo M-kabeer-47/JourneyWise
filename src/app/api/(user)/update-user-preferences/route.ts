@@ -3,6 +3,7 @@ import { preferencesUpdateSchema } from "@/lib/schemas/userPreferences";
 import { userPreferences } from "../../../../../auth-schema";
 import { eq } from "drizzle-orm";
 import db from "@/lib/server/db";
+import { profile } from "console";
 export async function PUT(request: NextRequest) {
   let body = await request.json();
   let result = preferencesUpdateSchema.safeParse(body);
@@ -19,18 +20,32 @@ export async function PUT(request: NextRequest) {
       .from(userPreferences)
       .where(eq(userPreferences.userID, userID));
     if (existingPreferences.length === 0) {
-      let response = await db.insert(userPreferences).values({ ...result.data, userID }).returning()
+      let response = await db
+        .insert(userPreferences)
+        .values({ ...result.data, userID })
+        .returning({
+          theme: userPreferences.theme,
+          distanceUnits: userPreferences.distanceUnits,
+          region: userPreferences.region,
+          interestTags: userPreferences.interestTags,
+          priceDropAlerts: userPreferences.priceDropAlerts,
+          bookingUpdates: userPreferences.bookingUpdates,
+          experienceReminders: userPreferences.experienceReminders,
+          showSavedItems: userPreferences.showSavedItems,
+          profileVisibility: userPreferences.profileVisibility,
+        });
       return NextResponse.json(
-        { message: "Preferences updated successfully",data: response  },
+        { message: "Preferences updated successfully", data: response[0] },
         { status: 200 }
       );
     }
-    await db
+    let response = await db
       .update(userPreferences)
       .set({ ...result.data })
-      .where(eq(userPreferences.userID, userID));
+      .where(eq(userPreferences.userID, userID))
+      .returning();
     return NextResponse.json(
-      { message: "Preferences updated successfully" },
+      { message: "Preferences updated successfully", data: response[0] },
       { status: 200 }
     );
   } catch (e) {
