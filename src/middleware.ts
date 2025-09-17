@@ -23,23 +23,20 @@ export default async function middleware(request: NextRequest) {
       }
     );
 
-    let isValidUser = userSchema.safeParse(session?.user);
-    if (isValidUser.error){
-      return NextResponse.redirect(new URL("/unauthorized", request.url));
-    }
     if (!session && pathname !== "/login") {
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     } else if (session && pathname === "/login") {
       return NextResponse.redirect(new URL("/", request.url));
-    } else if (
+    }
+    let isValidUser = userSchema.safeParse(session?.user);
+    if (
       session &&
       pathname !== "/settings" &&
-      !session.user?.emailVerified
+      !session.user?.emailVerified &&
+      !isValidUser.error
     ) {
-      console.log("Redirecting to verify-email");
-
       return NextResponse.redirect(new URL("/verify-email", request.url));
-    } else if (session?.user && pathname.startsWith("/api/")) {
+    } else if (session?.user && pathname.startsWith("/api/") && isValidUser.success) {
       const response = NextResponse.next();
       console.log("User ID:", session.user.id);
       response.headers.set("x-user-id", session.user.id);

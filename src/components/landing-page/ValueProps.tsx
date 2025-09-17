@@ -78,7 +78,7 @@ const decorativeIcons = [Star, MessageCircle, Compass, TrendingUp];
 
 export default function ValueProps() {
   return (
-    <section className="py-20 bg-gradient-to-b from-white to-gray-50/50">
+    <section className="py-20 bg-gray-50">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -203,7 +203,7 @@ export default function ValueProps() {
                         inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 group-hover:gap-3
                         ${
                           isDarkCard
-                            ? "bg-ocean-blue text-white hover:bg-ocean-blue/90"
+                            ? "bg-white text-midnight-blue"
                             : "bg-midnight-blue text-white hover:bg-midnight-blue/90"
                         }
                       `}

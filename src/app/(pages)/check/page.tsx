@@ -7,20 +7,17 @@ export default function FormulaBreakdownPage() {
 
 
   return (
-   <MultiStepLoader 
-   loadingStates={[
-    { text: "Analyzing your data..." },
-    { text: "Breaking down complex formulas..." },
-    { text: "Generating step-by-step explanations..." },
-    { text: "Finalizing the breakdown..." },
-    { text: "Almost done! Preparing your results..." },
-    // Add more steps as needed
-    { text: "Complete!" },
-
-   ]}
-   duration={1000}
-   loading={true}
-    />
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 px-4">
+      <video
+        src="/car.mp4"
+        autoPlay
+        loop
+        muted
+        className="w-full max-w-3xl rounded-lg shadow-lg"
+      />
+      <h1 className="text-3xl font-bold text-gray-800 mt-6">Page Under Construction</h1>
+      <p className="text-gray-600 mt-2">We're working hard to bring you this feature. Stay tuned!</p>
+    </div>
   );
 }
 
