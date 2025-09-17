@@ -408,7 +408,6 @@ export default function HowItWorks() {
                                     ? "left-0"
                                     : "left-[50px] opacity-70"
                                 }`}
-                                
                                 muted
                                 loop
                                 playsInline

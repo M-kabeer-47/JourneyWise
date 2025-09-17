@@ -26,16 +26,13 @@ export default function Hero() {
           >
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-midnight-blue mb-6 font-raleway leading-tight">
               Book professional travel experiences.{" "}
-              <span className="text-ocean-blue">
-                Plan with community routes.
-              </span>{" "}
+              <span className="text-ocean-blue">Plan with community routes.</span>{" "}
               Travel smarter.
             </h1>
 
             <p className="text-lg md:text-xl text-charcoal mb-8 leading-relaxed font-geist">
-              JourneyWise connects travelers with licensed agents and a global
-              community to discover, plan, and book unforgettable trips — all in
-              one place.
+              JourneyWise connects travelers with licensed agents and a global 
+              community to discover, plan, and book unforgettable trips — all in one place.
             </p>
 
             {/* CTAs */}
@@ -53,11 +50,7 @@ export default function Hero() {
               <motion.button
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                onClick={() =>
-                  document
-                    .getElementById("route-explorer")
-                    ?.scrollIntoView({ behavior: "smooth" })
-                }
+                onClick={() => document.getElementById('route-explorer')?.scrollIntoView({ behavior: 'smooth' })}
                 className="border-2 border-midnight-blue text-midnight-blue px-8 py-4 rounded-lg font-semibold text-lg hover:bg-midnight-blue/5 transition-colors focus:outline-none focus:ring-2 focus:ring-midnight-blue/50"
               >
                 Find Route Suggestions
@@ -74,11 +67,20 @@ export default function Hero() {
           >
             {/* Main Hero Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+              <Image
+                src="/images/hero-travel.jpg"
+                alt="Travelers on scenic mountain route with beautiful landscape"
+                width={600}
+                height={400}
+                className="w-full h-auto"
+                priority
+              />
+              
               {/* Floating Experience Card */}
               <motion.div
-                whileHover={{
-                  y: -5,
-                  boxShadow: "0 20px 40px rgba(0,0,0,0.15)",
+                whileHover={{ 
+                  y: -5, 
+                  boxShadow: "0 20px 40px rgba(0,0,0,0.15)" 
                 }}
                 className="absolute top-4 right-4 bg-white rounded-xl p-4 shadow-lg max-w-[280px]"
               >
@@ -89,9 +91,7 @@ export default function Hero() {
                   <div className="flex-1">
                     <div className="flex items-center gap-1 mb-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                      <span className="text-sm font-medium text-charcoal">
-                        4.9
-                      </span>
+                      <span className="text-sm font-medium text-charcoal">4.9</span>
                       <span className="text-xs text-gray-500">(127)</span>
                     </div>
                     <h4 className="font-semibold text-midnight-blue text-sm mb-1">
@@ -101,9 +101,7 @@ export default function Hero() {
                       By Alpine Tours Pro
                     </p>
                     <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-ocean-blue">
-                        $1,299
-                      </span>
+                      <span className="text-lg font-bold text-ocean-blue">$1,299</span>
                       <button className="bg-midnight-blue text-white px-3 py-1 rounded text-xs font-medium hover:bg-midnight-blue/90 transition-colors">
                         Book Now
                       </button>
@@ -159,7 +157,7 @@ export default function Hero() {
                 <button className="flex-1 bg-midnight-blue text-white p-4 rounded-lg font-semibold hover:bg-midnight-blue/90 transition-colors">
                   Search Experiences
                 </button>
-                <button
+                <button 
                   onClick={() => setShowSearchModal(false)}
                   className="px-6 py-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >

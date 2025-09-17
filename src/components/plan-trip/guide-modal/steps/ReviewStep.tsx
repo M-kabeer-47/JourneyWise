@@ -1,13 +1,13 @@
 import { motion } from "framer-motion"
 import { MapPin, Route, Users, Wallet } from "lucide-react"
-
+import { Currency } from "../../../../lib/constants/currencies"
 
 interface ReviewStepProps {
   startLocation: string
   endLocation: string
   numPeople: number | undefined
   estimatedBudget: number | undefined
-  selectedCurrency: any
+  selectedCurrency: Currency
   estimatedDistance: number | undefined
 }
 

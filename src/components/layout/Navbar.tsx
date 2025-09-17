@@ -223,7 +223,7 @@ export default function Navbar() {
                 <Link href="/login" prefetch={false}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
-                    className="text-white transition-colors font-semibold text-sm sm:text-base font-raleway"
+                    className="text-white transition-colors font-semibold text-sm sm:text-base"
                   >
                     Login
                   </motion.button>
@@ -236,10 +236,10 @@ export default function Navbar() {
                       !isScrolled && pathName === "/"
                         ? "text-white"
                         : "text-accent"
-                    } hover:text-white transition-colors font-raleway font-semibold flex items-center text-sm sm:text-base`}
+                    } hover:text-white transition-colors font-semibold flex items-center text-sm sm:text-base`}
                   >
                     <UserPlus className="mr-1" size={18} />
-                    <span className={`hidden sm:inline `}>Become an Agent</span>
+                    <span className={`hidden sm:inline`}>Become an Agent</span>
                     <span className="sm:hidden">Agent</span>
                   </motion.button>
                 </Link>

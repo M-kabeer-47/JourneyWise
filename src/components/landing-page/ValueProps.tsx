@@ -78,7 +78,7 @@ const decorativeIcons = [Star, MessageCircle, Compass, TrendingUp];
 
 export default function ValueProps() {
   return (
-    <section className="py-20 bg-gray-50">
+    <section className="py-20 bg-gradient-to-b from-white to-gray-50/50">
       <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
@@ -101,7 +101,7 @@ export default function ValueProps() {
           {valueProps.map((prop, index) => {
             const isDarkCard = index === 2; // Experiences card
             const DecorativeIcon = decorativeIcons[index];
-
+            
             return (
               <motion.div
                 key={prop.title}
@@ -111,73 +111,37 @@ export default function ValueProps() {
                 viewport={{ once: true }}
                 className={`
                   rounded-3xl p-8 hover:shadow-lg transition-all duration-300 group relative overflow-hidden
-                  ${index === 0 ? "xl:col-span-1 xl:row-span-1" : ""}
-                  ${index === 1 ? "xl:col-span-1 xl:row-span-1" : ""}
-                  ${
-                    index === 2
-                      ? "md:col-span-2 xl:col-span-1 xl:row-span-2 lg:p-10"
-                      : ""
-                  }
-                  ${
-                    index === 3
-                      ? "md:col-span-2 xl:col-span-2 xl:row-span-1"
-                      : ""
-                  }
-                  ${
-                    isDarkCard
-                      ? "bg-midnight-blue text-white"
-                      : "bg-white border border-gray-100"
-                  }
-                  ${!isDarkCard ? "min-h-[350px]" : ""}
+                  ${index === 0 ? 'xl:col-span-1 xl:row-span-1' : ''}
+                  ${index === 1 ? 'xl:col-span-1 xl:row-span-1' : ''}
+                  ${index === 2 ? 'md:col-span-2 xl:col-span-1 xl:row-span-2 lg:p-10' : ''}
+                  ${index === 3 ? 'md:col-span-2 xl:col-span-2 xl:row-span-1' : ''}
+                  ${isDarkCard ? 'bg-midnight-blue text-white' : 'bg-white border border-gray-100'}
+                  ${!isDarkCard ? 'min-h-[350px]' : ''}
                 `}
               >
                 {/* Icon */}
-                <div
-                  className={`
+                <div className={`
                   rounded-2xl flex items-center justify-center mb-8 transition-transform duration-300 group-hover:scale-105
-                  ${
-                    isDarkCard
-                      ? "w-16 h-16 bg-white/10"
-                      : "w-14 h-14 bg-gradient-to-br from-ocean-blue/10 to-midnight-blue/10"
-                  }
-                `}
-                >
-                  <prop.icon
-                    className={`
-                    ${
-                      isDarkCard
-                        ? "text-white w-8 h-8"
-                        : "text-midnight-blue w-7 h-7"
-                    }
-                  `}
-                  />
+                  ${isDarkCard ? 'w-16 h-16 bg-white/10' : 'w-14 h-14 bg-gradient-to-br from-ocean-blue/10 to-midnight-blue/10'}
+                `}>
+                  <prop.icon className={`
+                    ${isDarkCard ? 'text-white w-8 h-8' : 'text-midnight-blue w-7 h-7'}
+                  `} />
                 </div>
 
                 {/* Content */}
                 <div className="relative z-10">
-                  <h3
-                    className={`
+                  <h3 className={`
                     font-bold mb-4 font-raleway
-                    ${
-                      isDarkCard
-                        ? "text-white text-2xl lg:text-3xl"
-                        : "text-midnight-blue text-xl lg:text-2xl"
-                    }
-                  `}
-                  >
+                    ${isDarkCard ? 'text-white text-2xl lg:text-3xl' : 'text-midnight-blue text-xl lg:text-2xl'}
+                  `}>
                     {prop.title}
                   </h3>
 
-                  <p
-                    className={`
+                  <p className={`
                     font-geist leading-relaxed mb-6
-                    ${
-                      isDarkCard
-                        ? "text-white/80 text-lg mb-8"
-                        : "text-charcoal text-base"
-                    }
-                  `}
-                  >
+                    ${isDarkCard ? 'text-white/80 text-lg mb-8' : 'text-charcoal text-base'}
+                  `}>
                     {prop.description}
                   </p>
 
@@ -201,11 +165,7 @@ export default function ValueProps() {
                       href={prop.href}
                       className={`
                         inline-flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all duration-300 group-hover:gap-3
-                        ${
-                          isDarkCard
-                            ? "bg-white text-midnight-blue"
-                            : "bg-midnight-blue text-white hover:bg-midnight-blue/90"
-                        }
+                        ${isDarkCard ? 'bg-ocean-blue text-white hover:bg-ocean-blue/90' : 'bg-midnight-blue text-white hover:bg-midnight-blue/90'}
                       `}
                     >
                       {prop.cta}
@@ -219,15 +179,9 @@ export default function ValueProps() {
 
                 {/* Decorative Icons */}
                 <div className="absolute top-6 right-6 opacity-20">
-                  <DecorativeIcon
-                    className={`
-                    ${
-                      isDarkCard
-                        ? "w-8 h-8 text-white"
-                        : "w-6 h-6 text-ocean-blue"
-                    }
-                  `}
-                  />
+                  <DecorativeIcon className={`
+                    ${isDarkCard ? 'w-8 h-8 text-white' : 'w-6 h-6 text-ocean-blue'}
+                  `} />
                 </div>
               </motion.div>
             );
@@ -235,6 +189,35 @@ export default function ValueProps() {
         </div>
 
         {/* Bottom Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          viewport={{ once: true }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-8 mt-16 pt-12 border-t border-gray-200"
+        >
+          {[
+            { number: "1,200+", label: "Unique Experiences" },
+            { number: "2,000+", label: "Routes Created" },
+            { number: "10,000+", label: "Travel Stories" },
+            { number: "500+", label: "Verified Agents" },
+          ].map((stat, index) => (
+            <div key={stat.label} className="text-center">
+              <motion.div
+                initial={{ scale: 0 }}
+                whileInView={{ scale: 1 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+                className="text-2xl lg:text-3xl font-bold text-midnight-blue mb-2 font-raleway"
+              >
+                {stat.number}
+              </motion.div>
+              <div className="text-sm lg:text-base text-charcoal font-geist">
+                {stat.label}
+              </div>
+            </div>
+          ))}
+        </motion.div>
       </div>
     </section>
   );
