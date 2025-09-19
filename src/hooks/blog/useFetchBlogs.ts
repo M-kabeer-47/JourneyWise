@@ -22,18 +22,21 @@ interface Blog {
   author: BlogAuthor;
 }
 
-const fetchBlogs = async (params: URLSearchParams) => {
-  const { data } = await axios.get(
-    `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/get-blogs?${params.toString()}`
-  );
-  return data;
-};
-
-export const useFetchBlogs = () => {
+export const useFetchBlogs = ({ limit }: { limit?: number }) => {
   const params = useSearchParams();
 
+  const fetchBlogs = async (params: URLSearchParams) => {
+    const { data } = await axios.get(
+      `${
+        process.env.NEXT_PUBLIC_BACKEND_URL
+      }/api/get-blogs?${params.toString()}&limit=${limit || 10}`
+    );
+    return data;
+  };
+
+  
   const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["blogs", params.toString()],
+    queryKey: ["blogs", params.toString(), limit],
     queryFn: () => fetchBlogs(params),
     refetchOnWindowFocus: false,
   });

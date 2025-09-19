@@ -2,7 +2,7 @@
 
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
-import { currencies } from "../../../../lib/constants/currencies";
+import { ALL_CURRENCIES } from "../../../../lib/constants/currencies";
 import { MapPin, Users, CheckCircle2, LucideIcon, Info } from "lucide-react";
 import { ModalWrapper } from "./ModalWrapper";
 import { ProgressSteps } from "./ProgressStep";
@@ -106,7 +106,7 @@ export const GuideModal = ({ isOpen, onComplete,initialData }: GuideModalProps) 
   };
 
   const selectedCurrency =
-    currencies.find((c) => c.code === guideData.currency) || currencies[0];
+    ALL_CURRENCIES.find((c) => c.code === guideData.currency) || ALL_CURRENCIES[0];
 
   const steps: Step[] = [
     {
@@ -150,7 +150,7 @@ export const GuideModal = ({ isOpen, onComplete,initialData }: GuideModalProps) 
           {step === 2 && (
             <DetailsStep
               initialData={guideData}
-              currencies={currencies}
+              currencies={ALL_CURRENCIES}
               onNext={handleDetailsNext}
             />
           )}

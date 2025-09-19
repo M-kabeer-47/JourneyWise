@@ -132,13 +132,6 @@ export default function HowItWorks() {
     }
   };
 
-  const handleCardClick = (index: number) => {
-    if (isMobileView) {
-      // For mobile, use clicks instead of hover
-      setHoveredStep(index === hoveredStep ? null : index);
-    }
-  };
-
   const handleVideoError = (index: number, error: Event) => {
     const videoElement = error.target as HTMLVideoElement;
     const errorMessage = `Video error: ${
@@ -217,23 +210,20 @@ export default function HowItWorks() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: index * 0.1 }}
                 viewport={{ once: true }}
-                onClick={() => handleCardClick(index)}
-                className="w-full bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden"
+                className="w-full bg-white rounded-2xl shadow-sm border border-gray-100"
               >
                 {/* Content section */}
-                <div className="p-5">
-                  <div className="flex items-start gap-3 mb-2">
+                <div className="p-4">
+                  <div className="flex flex-col items-start gap-3 mb-3">
                     <div
-                      className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                        isActive ? "bg-ocean-blue/20" : "bg-gray-100"
-                      }`}
+                      className={`rounded-xl flex items-center justify-center gap-3 `}
                     >
                       <step.icon className="w-5 h-5 text-midnight-blue" />
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-bold text-lg mb-1 text-midnight-blue">
+                      <h3 className="font-bold text-lg text-midnight-blue">
                         {step.title}
                       </h3>
+                    </div>
+                    <div className="">
                       <p className="text-sm leading-relaxed text-charcoal">
                         {step.description}
                       </p>
@@ -241,7 +231,7 @@ export default function HowItWorks() {
                   </div>
 
                   {/* Detail text is always visible on mobile */}
-                  <div className="ml-[52px] mt-2">
+                  <div className="mt-2">
                     <p className="text-sm leading-relaxed text-charcoal">
                       {step.detail}
                     </p>
@@ -249,7 +239,7 @@ export default function HowItWorks() {
                 </div>
 
                 {/* Video section - Always below content in mobile */}
-                <div className="w-full h-[200px] relative">
+                <div className="w-full h-[280px] relative rounded-lg px-[10px] pb-[10px] overflow-hidden">
                   {videoErrors[index] ? (
                     <div className="w-full h-full flex flex-col items-center justify-center text-center p-2">
                       <div className="text-red-500 text-xs mb-1">
@@ -261,19 +251,21 @@ export default function HowItWorks() {
                     </div>
                   ) : (
                     <video
-                      ref={(el) => {
-                        videoRefs.current[index] = el;
-                      }}
-                      className="w-full h-full object-cover"
+                      className="w-full h-[250px] object-cover rounded-lg"
                       muted
                       loop
                       playsInline
+                      autoPlay={true}
                       controls={false}
                       onError={(e) => handleVideoError(index, e)}
                       onLoadStart={() => handleVideoLoadStart(index)}
                       onCanPlay={() => handleVideoCanPlay(index)}
                     >
-                      <source src={step.videoUrl} type="video/mp4" />
+                      <source
+                        src={step.videoUrl}
+                        type="video/mp4"
+                        className="rounded-xl"
+                      />
                     </video>
                   )}
                 </div>

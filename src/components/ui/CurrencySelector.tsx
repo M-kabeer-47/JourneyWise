@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Check, ChevronDown, DollarSign, Search } from "lucide-react";
 import { cn } from "@/utils/blog/utils";
 import { ALL_CURRENCIES } from "@/lib/constants/currencies";
-
+import "flag-icons/css/flag-icons.min.css";
 interface CurrencySelectProps {
   value: string;
   onChange: (value: string) => void;
@@ -43,12 +43,10 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
       </label>
 
       <div className="relative">
-        <DollarSign className="absolute left-3 top-[14px] sm:top-[12px] sm:w-5 sm:h-5 w-4 h-4 text-gray-400" />
-
         <button
           type="button"
           className={cn(
-            "pl-10 w-full h-11 rounded-lg text-left text-charcoal text-sm",
+            "pl-2 w-full h-11 rounded-lg text-left text-charcoal text-sm",
             "transition-all duration-200 outline-none border",
             "flex items-center justify-between",
             error
@@ -60,8 +58,10 @@ const CurrencySelect = ({ value, onChange, error }: CurrencySelectProps) => {
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
         >
-          <div className="flex items-center gap-2">
-            <span className={`fi fi-${selectedCurrency.countryCode} w-4 h-4`}></span>
+          <div className="flex items-center gap-4">
+            <span
+              className={`fi fi-${selectedCurrency.countryCode} w-5 h-5`}
+            ></span>
             <span className="text-xs sm:text-sm">
               {selectedCurrency.code} - {selectedCurrency.name} (
               {selectedCurrency.symbol})
