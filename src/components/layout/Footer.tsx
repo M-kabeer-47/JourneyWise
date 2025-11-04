@@ -1,7 +1,13 @@
-import Link from 'next/link'
-import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react'
+"use client"
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
 
 export default function Footer() {
+  const pathname = usePathname();
+  if (pathname.includes("/chat")) {
+    return null; // Do not render Footer on chat pages
+  }
   return (
     <footer className="bg-midnight-blue text-white py-12">
       <div className="container mx-auto px-4">
@@ -13,28 +19,100 @@ export default function Footer() {
           <div>
             <h4 className="text-lg font-semibold mb-4">Quick Links</h4>
             <ul className="space-y-2">
-              <li><Link href="/about"  prefetch={false}  className="hover:text-accent">About Us</Link></li>
-              <li><Link href="/contact" prefetch={false}  className="hover:text-accent">Contact</Link></li>
-              <li><Link href="/faq"  prefetch={false} className="hover:text-accent">FAQ</Link></li>
-              <li><Link href="/privacy" prefetch={false}  className="hover:text-accent">Privacy Policy</Link></li>
+              <li>
+                <Link
+                  href="/about"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  About Us
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/contact"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Contact
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/faq"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/privacy"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Resources</h4>
             <ul className="space-y-2">
-              <li><Link href="/blog" prefetch={false} className="hover:text-accent">Blog</Link></li>
-              <li><Link href="/guides" prefetch={false} className="hover:text-accent">Travel Guides</Link></li>
-              <li><Link href="/community" prefetch={false} className="hover:text-accent">Community</Link></li>
-              <li><Link href="/support" prefetch={false} className="hover:text-accent">Support</Link></li>
+              <li>
+                <Link
+                  href="/blog"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Blog
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/guides"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Travel Guides
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/community"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Community
+                </Link>
+              </li>
+              <li>
+                <Link
+                  href="/support"
+                  prefetch={false}
+                  className="hover:text-accent"
+                >
+                  Support
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
             <h4 className="text-lg font-semibold mb-4">Connect With Us</h4>
             <div className="flex space-x-4">
-              <a href="#" className="hover:text-accent"><Facebook /></a>
-              <a href="#" className="hover:text-accent"><Twitter /></a>
-              <a href="#" className="hover:text-accent"><Instagram /></a>
-              <a href="#" className="hover:text-accent"><Linkedin /></a>
+              <a href="#" className="hover:text-accent">
+                <Facebook />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Twitter />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Instagram />
+              </a>
+              <a href="#" className="hover:text-accent">
+                <Linkedin />
+              </a>
             </div>
           </div>
         </div>
@@ -43,6 +121,5 @@ export default function Footer() {
         </div>
       </div>
     </footer>
-  )
+  );
 }
-

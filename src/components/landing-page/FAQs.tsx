@@ -7,98 +7,118 @@ const faqData = {
   travelers: [
     {
       question: "How do I book a travel experience?",
-      answer: "Simply browse our verified agent listings, select your preferred experience, and complete the secure checkout process. You'll receive instant confirmation and direct contact with your chosen agent."
+      answer:
+        "Simply browse our verified agent listings, select your preferred experience, and complete the secure checkout process. You'll receive instant confirmation and direct contact with your chosen agent.",
     },
     {
       question: "Are all travel agents verified?",
-      answer: "Yes, all agents on our platform go through a rigorous verification process including license checks, background verification, and performance reviews to ensure you're working with qualified professionals."
+      answer:
+        "Yes, all agents on our platform go through a rigorous verification process including license checks, background verification, and performance reviews to ensure you're working with qualified professionals.",
     },
     {
       question: "What payment methods do you accept?",
-      answer: "We accept all major credit cards, PayPal, Apple Pay, Google Pay, and bank transfers. All payments are processed securely through our encrypted payment system."
+      answer:
+        "We accept all major credit cards, PayPal, Apple Pay, Google Pay, and bank transfers. All payments are processed securely through our encrypted payment system.",
     },
     {
       question: "Can I cancel or modify my booking?",
-      answer: "Cancellation and modification policies vary by agent and experience. You can view specific terms before booking, and our support team is available to help with any changes."
+      answer:
+        "Cancellation and modification policies vary by agent and experience. You can view specific terms before booking, and our support team is available to help with any changes.",
     },
     {
       question: "How do route suggestions work?",
-      answer: "Community members create routes between two waypoints, including recommended stops, timing, and tips. You can vote, save, and customize these routes for your own trips."
+      answer:
+        "Community members create routes between two waypoints, including recommended stops, timing, and tips. You can vote, save, and customize these routes for your own trips.",
     },
     {
       question: "Is my personal information secure?",
-      answer: "Absolutely. We use bank-level encryption and follow strict data protection standards. Your information is never shared without your consent, and you control your privacy settings."
-    }
+      answer:
+        "Absolutely. We use bank-level encryption and follow strict data protection standards. Your information is never shared without your consent, and you control your privacy settings.",
+    },
   ],
   agents: [
     {
       question: "How do I become a verified agent?",
-      answer: "Submit your travel license, complete our verification process, and set up your profile. Our team typically reviews applications within 48-72 hours."
+      answer:
+        "Submit your travel license, complete our verification process, and set up your profile. Our team typically reviews applications within 48-72 hours.",
     },
     {
       question: "What commission does JourneyWise take?",
-      answer: "Our commission structure is transparent and competitive, ranging from 8-15% depending on your subscription tier and booking volume. Premium agents enjoy lower commission rates."
+      answer:
+        "Our commission structure is transparent and competitive, ranging from 8-15% depending on your subscription tier and booking volume. Premium agents enjoy lower commission rates.",
     },
     {
       question: "How do I get paid?",
-      answer: "We offer multiple payout methods including direct bank transfer, PayPal, and digital wallets. Payments are processed within 2-5 business days after the experience is completed."
+      answer:
+        "We offer multiple payout methods including direct bank transfer, PayPal, and digital wallets. Payments are processed within 2-5 business days after the experience is completed.",
     },
     {
       question: "Can I manage my calendar and availability?",
-      answer: "Yes, our agent dashboard includes a comprehensive calendar system where you can set availability, manage bookings, block dates, and sync with external calendars."
+      answer:
+        "Yes, our agent dashboard includes a comprehensive calendar system where you can set availability, manage bookings, block dates, and sync with external calendars.",
     },
     {
       question: "Do you provide marketing support?",
-      answer: "Premium agents get featured placement, marketing tools, analytics, and promotional opportunities. We also provide SEO optimization for your listings."
+      answer:
+        "Premium agents get featured placement, marketing tools, analytics, and promotional opportunities. We also provide SEO optimization for your listings.",
     },
     {
       question: "What support is available for agents?",
-      answer: "All agents have access to our support team, knowledge base, and agent community forum. Premium agents get priority support and dedicated account management."
-    }
+      answer:
+        "All agents have access to our support team, knowledge base, and agent community forum. Premium agents get priority support and dedicated account management.",
+    },
   ],
   billing: [
     {
       question: "Are there any hidden fees?",
-      answer: "No hidden fees. All costs are clearly displayed before booking. The only fees are the experience price and clearly marked service fees."
+      answer:
+        "No hidden fees. All costs are clearly displayed before booking. The only fees are the experience price and clearly marked service fees.",
     },
     {
       question: "How do refunds work?",
-      answer: "Refund policies depend on the specific experience and agent terms. Most bookings offer full refunds within 24-48 hours, with varying terms thereafter."
+      answer:
+        "Refund policies depend on the specific experience and agent terms. Most bookings offer full refunds within 24-48 hours, with varying terms thereafter.",
     },
     {
       question: "Do you offer travel insurance?",
-      answer: "We partner with leading travel insurance providers to offer optional coverage. You can add insurance during the booking process or purchase separately."
+      answer:
+        "We partner with leading travel insurance providers to offer optional coverage. You can add insurance during the booking process or purchase separately.",
     },
     {
       question: "What currencies do you support?",
-      answer: "We support 50+ currencies with real-time conversion rates. You can view prices and pay in your preferred currency."
+      answer:
+        "We support 50+ currencies with real-time conversion rates. You can view prices and pay in your preferred currency.",
     },
     {
       question: "Can I get receipts for my bookings?",
-      answer: "Yes, all bookings include detailed receipts sent via email. You can also download receipts from your account dashboard at any time."
+      answer:
+        "Yes, all bookings include detailed receipts sent via email. You can also download receipts from your account dashboard at any time.",
     },
     {
       question: "Do you offer group booking discounts?",
-      answer: "Many agents offer group discounts for 6+ travelers. Contact agents directly or reach out to our support team for group booking assistance."
-    }
-  ]
+      answer:
+        "Many agents offer group discounts for 6+ travelers. Contact agents directly or reach out to our support team for group booking assistance.",
+    },
+  ],
 };
 
 const categories = [
-  { key: 'travelers', label: 'For Travelers', icon: Users },
-  { key: 'agents', label: 'For Agents', icon: Shield },
-  { key: 'billing', label: 'Billing & Payments', icon: CreditCard }
+  { key: "travelers", label: "For Travelers", icon: Users },
+  { key: "agents", label: "For Agents", icon: Shield },
+  { key: "billing", label: "Billing & Payments", icon: CreditCard },
 ];
 
 export default function FAQ() {
-  const [activeCategory, setActiveCategory] = useState<'travelers' | 'agents' | 'billing'>('travelers');
+  const [activeCategory, setActiveCategory] = useState<
+    "travelers" | "agents" | "billing"
+  >("travelers");
   const [openItems, setOpenItems] = useState<Record<string, boolean>>({});
 
   const toggleItem = (index: number) => {
     const key = `${activeCategory}-${index}`;
-    setOpenItems(prev => ({
+    setOpenItems((prev) => ({
       ...prev,
-      [key]: !prev[key]
+      [key]: !prev[key],
     }));
   };
 
@@ -134,8 +154,8 @@ export default function FAQ() {
                 }}
                 className={`flex items-center gap-2 px-6 py-3 rounded-xl font-semibold transition-all ${
                   activeCategory === category.key
-                    ? 'bg-midnight-blue text-white shadow-sm'
-                    : 'text-charcoal hover:bg-gray-50'
+                    ? "bg-midnight-blue text-white shadow-sm"
+                    : "text-charcoal hover:bg-gray-50"
                 }`}
               >
                 <category.icon size={18} />
@@ -155,7 +175,7 @@ export default function FAQ() {
         >
           {currentFAQs.map((faq, index) => {
             const isOpen = openItems[`${activeCategory}-${index}`];
-            
+
             return (
               <motion.div
                 key={index}
@@ -180,7 +200,7 @@ export default function FAQ() {
                     )}
                   </div>
                 </button>
-                
+
                 <AnimatePresence>
                   {isOpen && (
                     <motion.div
@@ -207,24 +227,7 @@ export default function FAQ() {
           transition={{ duration: 0.6, delay: 0.3 }}
           viewport={{ once: true }}
           className="text-center mt-16"
-        >
-          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <h3 className="text-xl font-bold text-midnight-blue mb-4 font-raleway">
-              Still have questions?
-            </h3>
-            <p className="text-gray-600 mb-6 font-geist">
-              Our support team is here to help you get the most out of JourneyWise
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button className="bg-midnight-blue text-white px-6 py-3 rounded-lg font-semibold hover:bg-midnight-blue/90 transition-colors">
-                Contact Support
-              </button>
-              <button className="border-2 border-midnight-blue text-midnight-blue px-6 py-3 rounded-lg font-semibold hover:bg-midnight-blue/5 transition-colors">
-                Join Community Forum
-              </button>
-            </div>
-          </div>
-        </motion.div>
+        ></motion.div>
       </div>
     </section>
   );

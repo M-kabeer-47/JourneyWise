@@ -24,7 +24,7 @@ export default async function middleware(request: NextRequest) {
     );
 
     let isValidUser = userSchema.safeParse(session?.user);
-    if (isValidUser.error){
+    if (session && isValidUser.error){
       return NextResponse.redirect(new URL("/unauthorized", request.url));
     }
     if (!session && pathname !== "/login") {

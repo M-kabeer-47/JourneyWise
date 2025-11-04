@@ -2,20 +2,21 @@ import { useState, useRef, useEffect } from "react";
 import { ChevronDown } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
-export default function CustomDropdown({
+interface SelectorProps {
+  options: string[];
+  onClick: (option: string) => void;
+  value?: string;
+  className?: string;
+  isSmall?: boolean;
+}
+
+export default function Selector({
   options,
   onClick,
   className = "",
   isSmall = false,
   value = "",
-}: {
-  options: string[];
-  onClick: (option: string) => void;
-  className?: string;
-  size?: "small" | "medium" | "large";
-  isSmall?: boolean;
-  value?: string;
-}) {
+}: SelectorProps) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

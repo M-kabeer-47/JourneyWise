@@ -2,7 +2,7 @@ import React from "react";
 import { Star } from "lucide-react";
 import PreferenceSection from "../shared/PreferenceSection";
 import SettingButton from "../shared/SettingButton";
-import CustomDropdown from "../../ui/CustomDropdown";
+import CustomDropdown from "../../ui/Selector";
 import { Label } from "@/components/ui/label";
 
 export const REGIONS_OPTIONS = [

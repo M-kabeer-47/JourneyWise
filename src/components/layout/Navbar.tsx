@@ -117,11 +117,11 @@ export default function Navbar() {
         initial="hidden"
         animate="visible"
         exit="exit"
-        className={`fixed w-full z-50 transition-all duration-300 ${
+        className={`w-full h-[70px] z-50 transition-all duration-300 ${
           !isScrolled && pathName === "/"
             ? "bg-transparent"
             : "bg-midnight-blue"
-        }`}
+        } ${!pathName.includes("/chat") && "fixed"}`}
       >
         <div className={`w-full px-4 py-4 flex items-center justify-between`}>
           <Link

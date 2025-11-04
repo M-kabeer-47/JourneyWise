@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Search, X } from "lucide-react";
+import { Input } from "./Input";
 
 interface SearchBarProps {
   searchTerm: string;
@@ -17,12 +18,13 @@ const SearchBar: React.FC<SearchBarProps> = ({
 }) => {
   return (
     <div className="relative flex items-center w-full">
-      <input
+      <Input
         type="text"
         placeholder={placeholder}
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="block w-full px-4 py-2.5 bg-white border border-gray-300 rounded-lg text-charcoal focus:outline-none focus:border-ocean-blue placeholder:text-sm sm:placeholder:text-base"
+        className=""
+ 
       />
       
       {searchTerm ? (

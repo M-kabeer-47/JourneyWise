@@ -36,7 +36,7 @@ export  function BlogsPage() {
   const [isInitialized, setIsInitialized] = useState(false);
 
   // Fetch blogs using your hook
-  const { data, isLoading, isFetching } = useFetchBlogs();
+  const { data, isLoading, isFetching } = useFetchBlogs({limit: 10});
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);

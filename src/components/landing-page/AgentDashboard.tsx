@@ -76,7 +76,7 @@ export default function AgentDashboard() {
                       <h3 className="text-xl font-bold font-raleway">
                         Agent Dashboard
                       </h3>
-                      <p className="text-ocean-blue/80">Welcome back, Sarah</p>
+                      <p className="text-accent">Welcome back, Sarah</p>
                     </div>
                     <div className="w-12 h-12 bg-ocean-blue/20 rounded-full flex items-center justify-center">
                       <Users className="w-6 h-6" />

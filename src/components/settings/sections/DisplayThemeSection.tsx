@@ -1,7 +1,7 @@
 import React from "react";
 import { Palette } from "lucide-react";
 import PreferenceSection from "../shared/PreferenceSection";
-import CustomDropdown from "../../ui/CustomDropdown";
+import CustomDropdown from "../../ui/Selector";
 import CurrencyDropdown from "../../ui/CurrencyDropdown";
 
 const THEME_OPTIONS = ["Light", "Dark", "System Default"];

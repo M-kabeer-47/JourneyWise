@@ -2,7 +2,7 @@ import React from "react";
 import { Shield } from "lucide-react";
 import PreferenceSection from "../shared/PreferenceSection";
 import ToggleSwitch from "../shared/ToggleSwitch";
-import CustomDropdown from "../../ui/CustomDropdown";
+import CustomDropdown from "../../ui/Selector";
 
 export const VISIBILITY_OPTIONS = ["Public", "Private"];
 

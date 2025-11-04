@@ -2,12 +2,14 @@ import Footer from "@/components/layout/Footer";
 import Navbar from "@/components/layout/Navbar";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-    console.log("Navbar layout re rendered");
-        return (
-        <>
-            <Navbar />
-            {children}
-            <Footer />
-        </>
-    );
+  return (
+    <>
+      <Navbar />
+      <main className="bg-light-gray">
+        {/* pt-[70px] matches the navbar height to prevent content from hiding behind it */}
+        {children}
+      </main>
+      <Footer />
+    </>
+  );
 }
