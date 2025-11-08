@@ -19,19 +19,25 @@ import { ChatMessage, User } from "@/lib/constants/mock-chat-data";
 import {
   EmojiPicker,
   EmojiPickerSearch,
-  EmojiPickerContent,
+  EmojiPickermessage,
   EmojiPickerFooter,
 } from "@/components/chat/EmojiPicker";
 import AttachmentPreview, { AttachmentFile } from "./AttachmentPreview";
 
 interface MessageComposerProps {
-  onSendMessage: (
-    content: string,
-    replyToId?: string,
-    attachments?: AttachmentFile[]
-  ) => void;
+  onSendMessage: ({
+    message,
+    recipientID,
+    replyToID,
+    attachmentsArray,
+  }: {
+    message: string;
+    recipientID: string;
+    replyToID?: string;
+    attachmentsArray?: AttachmentFile[] | undefined;
+  }) => void;
   replyingTo?: ChatMessage;
-  replyingToUser?: User;
+  replyingToUser?: string;
   onCancelReply: () => void;
 }
 
@@ -180,12 +186,13 @@ const MessageComposer = forwardRef(function MessageComposer(
   }, []);
 
   const handleSend = () => {
-    if (message.trim() || attachments.length > 0) {
-      onSendMessage(
-        message.trim(),
-        replyingTo?.id,
-        attachments.length > 0 ? attachments : undefined
-      );
+    if ((message.trim() || attachments.length > 0) && replyingToUser) {
+      onSendMessage({
+        message: message.trim(),
+        recipientID: replyingToUser,
+        replyToID: replyingTo?.id,
+        attachmentsArray: attachments,
+      });
       setMessage("");
       handleRemoveAllAttachments();
       if (replyingTo) {
@@ -235,10 +242,10 @@ const MessageComposer = forwardRef(function MessageComposer(
                 Replying to{" "}
                 <span className="font-medium text-midnight-blue font-raleway">
                   {replyingToUser.name}
-                </span>
+                </span>{" "}
               </div>
               <div className="text-sm text-charcoal font-geist line-clamp-2">
-                {replyingTo.content}
+                {replyingTo.message}
               </div>
             </div>
             <button
@@ -263,7 +270,7 @@ const MessageComposer = forwardRef(function MessageComposer(
               className="h-full w-full"
             >
               <EmojiPickerSearch />
-              <EmojiPickerContent />
+              <EmojiPickermessage />
               <EmojiPickerFooter />
             </EmojiPicker>
           </div>

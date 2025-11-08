@@ -32,6 +32,11 @@ export const auth = betterAuth({
     window: 60,
     max: 15,
   },
+  session:{
+    expiresIn: 60 * 60 * 24 * 7, // 7 days
+    updateAge: 60 * 60 * 2, // 2 hours
+
+  },
   emailVerification: {
     sendVerificationEmail: async ({ user: User, url }, request) => {
       if (request?.url.endsWith("sign-up/email")) {

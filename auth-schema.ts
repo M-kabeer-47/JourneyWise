@@ -154,14 +154,16 @@ export const payment = pgTable("payment", {
 });
 
 export const messages = pgTable("messages", {
-  id: uuid("id").primaryKey().defaultRandom(),
+  id: uuid("id").primaryKey(),
   senderID: text("senderID")
     .notNull()
     .references(() => user.id),
   recipientID: text("recipientID")
     .notNull()
     .references(() => user.id),
-  createdAt: timestamp("createdAt").notNull().default(new Date()),
+  attachments: jsonb("attachments"),
+  createdAt: timestamp("createdAt").notNull().defaultNow(),
+  updatedAt: timestamp("updatedAt").notNull().defaultNow(),
   status: text({ enum: ["sent", "delivered", "seen", "deleted"] }).notNull(),
   message: text("message").notNull(),
 });

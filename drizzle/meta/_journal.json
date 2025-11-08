@@ -15,6 +15,27 @@
       "when": 1757904313129,
       "tag": "0001_light_inhumans",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762493949993,
+      "tag": "0002_small_logan",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1762569656155,
+      "tag": "0003_smart_miek",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1762595404536,
+      "tag": "0004_aromatic_overlord",
+      "breakpoints": true
     }
   ]
 }

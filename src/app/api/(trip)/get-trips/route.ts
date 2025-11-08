@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
     const minDistance = searchParams.get("minDistance");
     const maxDistance = searchParams.get("maxDistance");
     const countries = searchParams.get("countries"); // Comma-separated list of waypoints
-    console.log("countries", countries);
+    
     // Search parameter
     const searchQuery = searchParams.get("search");
 

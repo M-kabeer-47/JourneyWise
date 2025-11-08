@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth/auth";
-import { getSessionCookie } from "better-auth/cookies";
 import { betterFetch } from "@better-fetch/fetch";
 import { userSchema } from "./lib/schemas/backend/user";
 
@@ -11,6 +10,7 @@ export default async function middleware(request: NextRequest) {
   // Define public paths that don't need authentication
 
   console.log("Pathname", pathname);
+  console.log("Cookies:", request.headers.get("cookie"));
   // For protected paths, check authentication
   try {
     const { data: session } = await betterFetch<Session>(
@@ -22,6 +22,8 @@ export default async function middleware(request: NextRequest) {
         },
       }
     );
+    console.log("base URL:", request.nextUrl.origin);
+    console.log("Session Data:", session);
 
     let isValidUser = userSchema.safeParse(session?.user);
     if (session && isValidUser.error){

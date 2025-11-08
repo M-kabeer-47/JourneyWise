@@ -1,15 +1,11 @@
+import { ChatMessage } from "@/lib/constants/mock-chat-data";
+
 interface RepliedMessageProps {
-  replyToUser: {
-    name: string;
-  };
   handleReplyClick: (e: React.MouseEvent) => void;
   isOwnMessage: boolean;
-  replyToMessage: {
-    content: string;
-  };
+  replyToMessage: ChatMessage;
 }
 export default function RepliedMessage({
-  replyToUser,
   handleReplyClick,
   isOwnMessage,
   replyToMessage,
@@ -24,24 +20,11 @@ export default function RepliedMessage({
       onClick={handleReplyClick}
     >
       <div
-        className={`text-xs mb-1 font-geist ${
-          isOwnMessage ? "text-white/80" : "text-charcoal/60"
-        }`}
-      >
-        <span
-          className={`font-medium font-raleway ${
-            isOwnMessage ? "text-white" : "text-midnight-blue"
-          }`}
-        >
-          {replyToUser.name}
-        </span>
-      </div>
-      <div
         className={`text-sm line-clamp-2 font-geist ${
           isOwnMessage ? "text-white/90" : "text-charcoal"
         }`}
       >
-        {replyToMessage.content}
+        {replyToMessage.message}
       </div>
     </button>
   );

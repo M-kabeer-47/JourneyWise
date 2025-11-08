@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  crossOrigin:"anonymous",
   images: {
     remotePatterns: [
       {

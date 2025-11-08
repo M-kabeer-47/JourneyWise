@@ -14,7 +14,7 @@ export type User = {
   image?: string | null;
   twoFactorEnabled?: boolean | null;
   banned?: boolean | null;
-  role?: string | null;
+  role: string | null;
   banReason?: string | null;
   description?: string | null;
   country: string;

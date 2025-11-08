@@ -1,0 +1,1 @@
+export default function useUserStatus(socket: Socket | null, userID: string) {

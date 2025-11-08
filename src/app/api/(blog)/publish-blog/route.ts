@@ -3,19 +3,15 @@ import { blog } from "@/../auth-schema";
 import db from "@/lib/server/db";
 import { blogSchema } from "@/lib/schemas/blog";
 
-
 export async function POST(request: NextRequest) {
   const blogData = await request.json();
   const isValidBlogData = blogSchema.safeParse(blogData);
   if (!isValidBlogData.success) {
     return NextResponse.json(
-      { message: "Invalid blog data" , error: isValidBlogData.error.errors},
+      { message: "Invalid blog data", error: isValidBlogData.error.errors },
       { status: 400 }
     );
-
   }
-
- 
   try {
     let result = await db
       .insert(blog)

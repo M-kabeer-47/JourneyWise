@@ -5,7 +5,7 @@ import { X, File, FileText } from "lucide-react";
 export interface AttachmentFile {
   file: File;
   preview: string;
-  type: "image" | "file";
+  type: "image" | "file" | string;
 }
 
 interface AttachmentPreviewProps {

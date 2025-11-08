@@ -5,7 +5,7 @@ import { Input } from "./Input";
 
 interface SearchBarProps {
   searchTerm: string;
-  setSearchTerm: (value: string) => void;
+  setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   placeholder?: string;
   className?: string;
 }

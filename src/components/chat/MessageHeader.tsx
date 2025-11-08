@@ -1,15 +1,9 @@
+import { ChatMessage } from "@/lib/constants/mock-chat-data";
+import { User } from "@/lib/types/user";
+
 interface MessageHeaderProps {
-  user: {
-    name: string;
-    role: "traveler" | "agent" | "admin";
-    initials: string;
-  };
-  message: {
-    id: string;
-    content: string;
-    timestamp: Date;
-    edited?: boolean;
-  };
+  user: User
+  message: ChatMessage
   isOwnMessage: boolean;
 }
 

@@ -23,7 +23,7 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <QueryClientProvider client={queryClient}>
       <StoreProvider>
-        {/* <ReactQueryDevtools initialIsOpen={false} /> */}
+        <ReactQueryDevtools initialIsOpen={false} />
         <FetchUserProvider>{children}</FetchUserProvider>
       </StoreProvider>
       <ToastFunction />

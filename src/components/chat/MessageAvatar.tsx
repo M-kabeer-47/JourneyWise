@@ -1,24 +1,30 @@
+import { User } from "@/lib/types/user";
 
-interface ChatUser {
-  id: string;
-  name: string;
-  initials: string;
-  avatar?: string;
-  isOnline: boolean;
-}
+// Generate initials from name
+const getInitials = (name: string): string => {
+  const names = name.trim().split(" ");
+  if (names.length === 1) {
+    return names[0].substring(0, 2).toUpperCase();
+  }
+  return (names[0][0] + names[names.length - 1][0]).toUpperCase();
+};
+
 interface MessageAvatarProps {
-  user: ChatUser;
+  user: User;
   isOwnMessage: boolean;
 }
+
 export default function MessageAvatar({
   user,
   isOwnMessage,
 }: MessageAvatarProps) {
+  const initials = getInitials(user.name);
+  
   return (
     <div className="flex-shrink-0">
-      {user.avatar ? (
+      {user.image ? (
         <img
-          src={user.avatar}
+          src={user.image}
           alt={user.name}
           className="w-9 h-9 rounded-full object-cover ring-2 ring-ocean-blue/20 shadow-sm"
         />
@@ -35,12 +41,9 @@ export default function MessageAvatar({
               isOwnMessage ? "text-white" : "text-white"
             }`}
           >
-            {user.initials}
+            {initials}
           </span>
         </div>
-      )}
-      {user.isOnline && (
-        <div className="w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-white -mt-2.5 ml-6.5 shadow-sm" />
       )}
     </div>
   );
