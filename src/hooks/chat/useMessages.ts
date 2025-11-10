@@ -1,4 +1,4 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ChatMessage } from "@/lib/constants/mock-chat-data";
 import axios from "axios";
 import { Socket } from "socket.io-client";
@@ -7,66 +7,78 @@ import { useAppSelector } from "../redux";
 import { toast } from "@/components/ui/Toast";
 import { useRef } from "react";
 
-interface SendMessageParams {
-  message: string;
-  recipientID: string;
-  replyToId?: string;
-}
 
 interface FetchMessagesParams {
   recipientID: string;
-  userID: string | null;
+  senderID: string | null;
+  pageParam: number;
 }
 
 // Fetch messages between sender and recipient
 async function fetchMessages({
   recipientID,
-  userID,
+  senderID,
+  pageParam,
 }: FetchMessagesParams): Promise<ChatMessage[]> {
-  if (!userID) {
+  if (!senderID) {
     toast.error("Please login to fetch messages.");
     return [];
   }
   const response = await axios.get("/api/fetch-messages", {
-    params: { recipientID },
+    params: { recipientID, page: pageParam, limit: 20 },
     headers: {
-      "x-user-id": userID,
+      "x-user-id": senderID,
     },
   });
-  return response.data;
+  return response.data.messages;
 }
 
 export function useMessages({
-  senderID,
   recipientID,
   socket,
 }: {
-  senderID: string;
-  recipientID: string;
+  recipientID: string | null;
   socket: Socket | null;
 }) {
   const queryClient = useQueryClient();
   const user = useAppSelector((state) => state.user);
-  const userID = user.user && user.user.id;
+  const senderID = user.user && user.user.id;
   const retryCount = useRef<number>(0);
-  // Fetch messages query
-  const messagesQuery = useQuery({
+  
+  // Fetch messages with infinite query
+  const messagesQuery = useInfiniteQuery({
     queryKey: ["messages", senderID, recipientID],
-    queryFn: () => fetchMessages({ recipientID, userID: userID }),
+    queryFn: ({ pageParam }: any) => 
+      fetchMessages({ recipientID: recipientID!, senderID, pageParam }),
+    getNextPageParam: (lastPage: ChatMessage[], allPages: ChatMessage[][]) => {
+      // If last page has messages, return next page number
+      return lastPage.length > 0 ? allPages.length + 1 : undefined;
+    },
     enabled: !!senderID && !!recipientID,
+    staleTime: 5 * 60 * 1000,
+    initialPageParam: 1,
+    refetchOnWindowFocus: false,
   });
+
+  // Flatten all pages into single array and reverse to show oldest first
+  const messages: ChatMessage[] = messagesQuery.data?.pages.flat().reverse() || [];
 
   function updateMessageStatus(
     messageID: string,
     status: "sending" | "sent" | "delivered" | "seen"
   ) {
-    queryClient.setQueryData<ChatMessage[]>(
+    queryClient.setQueryData(
       ["messages", senderID, recipientID],
-      (old) => {
-        if (!old) return [];
-        return old.map((msg) =>
-          msg.id === messageID ? { ...msg, status } : msg
-        );
+      (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: ChatMessage[]) =>
+            page.map((msg: ChatMessage) =>
+              msg.id === messageID ? { ...msg, status } : msg
+            )
+          ),
+        };
       }
     );
   }
@@ -90,7 +102,7 @@ export function useMessages({
     // Optimistically add message to UI
     const optimisticMessage: ChatMessage = {
       id: messageID ? messageID : crypto.randomUUID(),
-      senderID,
+      senderID: senderID!,
       recipientID,
       message,
       attachments: attachmentsArray || null,
@@ -99,18 +111,30 @@ export function useMessages({
       replyTo: replyToId,
     };
 
-    queryClient.setQueryData<ChatMessage[]>(
+    queryClient.setQueryData(
       ["messages", senderID, recipientID],
-      (old) => {
-        if (!old) return [optimisticMessage];
+      (old: any) => {
+        if (!old) {
+          return {
+            pages: [[optimisticMessage]],
+            pageParams: [1],
+          };
+        }
 
+        const firstPage = old.pages[0] || [];
+        
         // Check if message already exists
-        const messageExists = old.some(
-          (msg) => msg.id === optimisticMessage.id
+        const messageExists = firstPage.some(
+          (msg: ChatMessage) => msg.id === optimisticMessage.id
         );
 
-        // If exists, return old array unchanged. Otherwise, add the new message
-        return messageExists ? old : [...old, optimisticMessage];
+        if (messageExists) return old;
+
+        // Add to the first page (most recent messages)
+        return {
+          ...old,
+          pages: [[optimisticMessage, ...firstPage], ...old.pages.slice(1)],
+        };
       }
     );
 
@@ -153,38 +177,71 @@ export function useMessages({
     messages: ChatMessage[];
     recipientID: string;
   }) => {
-    const { messages, recipientID } = data;
-    console.log("Messages to update: ", messages);
-    queryClient.setQueryData<ChatMessage[]>(
+    const { messages: updatedMessages, recipientID } = data;
+    console.log("Messages to update: ", updatedMessages);
+    queryClient.setQueryData(
       ["messages", senderID, recipientID],
-      (old) => {
-        if (!old) return messages;
-        const updatedMessages = old.map((msg) => {
-          const updatedMsg = messages.find((m) => m.id === msg.id);
-          console.log("Updated Message: ", updatedMsg);
-          return updatedMsg ? { ...msg, status: updatedMsg.status } : msg;
-        });
-        return updatedMessages;
+      (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: ChatMessage[]) =>
+            page.map((msg: ChatMessage) => {
+              const updatedMsg = updatedMessages.find((m) => m.id === msg.id);
+              console.log("Updated Message: ", updatedMsg);
+              return updatedMsg ? { ...msg, status: updatedMsg.status } : msg;
+            })
+          ),
+        };
       }
     );
   };
+  
   // Add message from socket
   const addSocketMessage = (message: ChatMessage) => {
-    queryClient.setQueryData<ChatMessage[]>(
-      ["messages", senderID, recipientID],
-      (old) => {
-        // Check if message already exists
-        if (old?.some((msg) => msg.id === message.id)) {
-          return old;
-        }
-        return [...(old || []), message];
+    // Determine correct query key based on current user perspective
+    const currentUserID = senderID;
+    if (!currentUserID) return;
+    
+    let queryKey: [string, string, string];
+    
+    if (message.senderID === currentUserID) {
+      // Current user sent the message
+      queryKey = ["messages", currentUserID, message.recipientID];
+    } else {
+      // Current user received the message
+      queryKey = ["messages", currentUserID, message.senderID];
+    }
+    
+    queryClient.setQueryData(queryKey, (old: any) => {
+      if (!old) {
+        return {
+          pages: [[message]],
+          pageParams: [1],
+        };
       }
-    );
+
+      const firstPage = old.pages[0] || [];
+      
+      // Check if message already exists
+      if (firstPage.some((msg: ChatMessage) => msg.id === message.id)) {
+        return old;
+      }
+
+      // Add to the first page (most recent messages)
+      return {
+        ...old,
+        pages: [[message, ...firstPage], ...old.pages.slice(1)],
+      };
+    });
   };
 
   return {
-    messages: messagesQuery.data || [],
+    messages,
     isLoading: messagesQuery.isLoading,
+    isFetchingNextPage: messagesQuery.isFetchingNextPage,
+    hasNextPage: messagesQuery.hasNextPage,
+    fetchNextPage: messagesQuery.fetchNextPage,
     isError: messagesQuery.isError,
     error: messagesQuery.error,
     sendMessage,

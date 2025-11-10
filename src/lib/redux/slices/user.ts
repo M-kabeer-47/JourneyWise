@@ -1,19 +1,17 @@
 import fetchUserFromClient from "@/hooks/fetchUserFromClient";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import {User} from "@/lib/types/user";
+import { User } from "@/lib/types/user";
 
-const fetchUser = createAsyncThunk("/fetchUser",async()=>{
-const userData = await fetchUserFromClient();
-console.log("Fetched User Data:", userData);
-console.log("Fetching...")
-if(userData){
+const fetchUser = createAsyncThunk("/fetchUser", async () => {
+  const userData = await fetchUserFromClient();
+  if (userData) {
     return {
-        ...userData,
-        createdAt: userData.createdAt.toISOString(),
-        updatedAt: userData.updatedAt.toISOString(),
+      ...userData,
+      createdAt: userData.createdAt.toISOString(),
+      updatedAt: userData.updatedAt.toISOString(),
     }
-}
-return null;
+  }
+  return null;
 })
 
 type UserState = {
@@ -58,6 +56,6 @@ let user = createSlice({
   }
 });
 
-export const { setUser, clearUser,updateUser} = user.actions;
-export {fetchUser}
+export const { setUser, clearUser, updateUser } = user.actions;
+export { fetchUser }
 export default user.reducer;

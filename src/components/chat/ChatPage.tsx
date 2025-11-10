@@ -3,12 +3,25 @@ import React, { useState } from "react";
 import ConversationSidebar from "./ConversationSidebar";
 import MessagesArea from "./MessagesArea";
 import useChatUsers, { UserPreview } from "@/hooks/chat/useChatUsers";
+import { useConnect } from "@/hooks/chat/useConnect";
+import { useAppSelector } from "@/hooks/redux";
 
 export default function ChatPage() {
   const [showSidebar, setShowSidebar] = useState(true);
   const [activeUser, setActiveUser] = useState<UserPreview | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
-  const { users, isLoading, isError } = useChatUsers({ searchQuery });
+  const { users, isLoading, isError, updateUserStatus } = useChatUsers({
+    searchQuery,
+  });
+  const senderID = useAppSelector((state) => state.user.user?.id || "");
+
+  // Only connect socket after users are loaded
+  const { socket } = useConnect({
+    userID: senderID,
+    updateUserStatus,
+    setActiveUser,
+    enabled: !isLoading, // Add this to prevent connection before data loads
+  });
 
   if (isLoading) {
     return (
@@ -27,6 +40,7 @@ export default function ChatPage() {
         searchQuery={searchQuery}
         setSearchQuery={setSearchQuery}
         users={users}
+        socket={socket}
       />
 
       {/* Main Chat Area */}
@@ -38,8 +52,7 @@ export default function ChatPage() {
         <MessagesArea
           activeUser={activeUser}
           onBackClick={() => setShowSidebar(true)}
-          setActiveUser={setActiveUser}
-          searchQuery={searchQuery}
+          socket={socket}
         />
       </div>
     </div>

@@ -3,7 +3,8 @@ import React, { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ConversationListItem from "./ConversationListItem";
 import SearchBar from "../ui/SearchBar";
-import  { UserPreview } from "@/hooks/chat/useChatUsers";
+import { UserPreview } from "@/hooks/chat/useChatUsers";
+import type { Socket } from "socket.io-client";
 
 interface ConversationSidebarProps {
   showSidebar: boolean;
@@ -12,6 +13,7 @@ interface ConversationSidebarProps {
   searchQuery: string;
   setSearchQuery?: React.Dispatch<React.SetStateAction<string>>;
   users: UserPreview[];
+  socket: Socket;
 }
 
 export default function ConversationSidebar({
@@ -21,6 +23,7 @@ export default function ConversationSidebar({
   searchQuery,
   setSearchQuery,
   users,
+  socket,
 }: ConversationSidebarProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -29,10 +32,16 @@ export default function ConversationSidebar({
   // Fetch users from API
 
   const handleConversationClick = (userId: string) => {
-    // Set recipientID as query parameter
     const params = new URLSearchParams(searchParams.toString());
     let user = users.find((u) => u.id === userId) || null;
-    onUserSelect(user);
+
+    onUserSelect((prevUser:UserPreview) => {
+      socket.emit("openChat", {
+        userID: userId,
+        previousUserID: prevUser ? prevUser.id : null,
+      });
+      return user;
+    });
     params.set("recipientID", userId);
     router.push(`?${params.toString()}`);
     onHideSidebar();
@@ -59,7 +68,7 @@ export default function ConversationSidebar({
 
       {/* Conversations List */}
       <div className="flex-1 overflow-y-auto">
-        {users.map((user:UserPreview) => {
+        {users.map((user: UserPreview) => {
           // Create a mock conversation object for compatibility
           const mockConversation = {
             id: `conv-${user.id}`,

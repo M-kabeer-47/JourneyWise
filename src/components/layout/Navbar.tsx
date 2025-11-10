@@ -78,7 +78,7 @@ export default function Navbar() {
   const searchRef = useRef<HTMLDivElement>(null);
   const blogDropdownRef = useRef<HTMLDivElement>(null);
   const user = useAppSelector((state) => state.user);
-  console.log("User state in Navbar:", user);
+  
   const { scrollY } = useScroll();
   const pathName = usePathname();
   const dispatch = useAppDispatch();

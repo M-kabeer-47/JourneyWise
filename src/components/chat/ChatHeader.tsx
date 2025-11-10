@@ -52,6 +52,10 @@ export default function ChatHeader({
           {activeUser.status === "online" && (
             <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white shadow-sm"></div>
           )}
+          {activeUser.status === "offline" && (
+            <div className="absolute bottom-0 right-0 w-3 h-3 bg-gray-400 rounded-full border-2 border-white shadow-sm"></div>
+          )}
+
         </div>
 
         <div className="flex-1 min-w-0">

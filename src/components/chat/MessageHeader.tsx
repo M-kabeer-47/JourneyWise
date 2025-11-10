@@ -1,9 +1,10 @@
 import { ChatMessage } from "@/lib/constants/mock-chat-data";
 import { User } from "@/lib/types/user";
+import { UserPreview } from "@/hooks/chat/useChatUsers";
 
 interface MessageHeaderProps {
-  user: User
-  message: ChatMessage
+  user: User | UserPreview;
+  message: ChatMessage;
   isOwnMessage: boolean;
 }
 

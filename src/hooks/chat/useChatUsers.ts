@@ -43,14 +43,19 @@ export default function useChatUsers({
     staleTime: 5 * 60 * 1000, // Cache for 5 minutes
   });
 
-  const updateUserStatus = (userIDsArray: string[], status: string) => {
+  const updateUserStatus = (userIDsArray: string[]) => {
     // Update all chatUsers queries regardless of search query
     queryClient.setQueryData(
       ["chatUsers", searchQuery],
       (oldData: UserPreview[] | undefined) => {
+        console.log("Old Data:", oldData);
         if (!oldData) return oldData;
+
         return oldData.map((user) => {
-          return userIDsArray.includes(user.id) ? { ...user, status } : user;
+          return userIDsArray.includes(user.id) ? { ...user, status: "online" } : {
+            ...user,
+            status: "offline",
+          };
         });
       }
     );

@@ -1,4 +1,5 @@
 import { User } from "@/lib/types/user";
+import { UserPreview } from "@/hooks/chat/useChatUsers";
 
 // Generate initials from name
 const getInitials = (name: string): string => {
@@ -10,7 +11,7 @@ const getInitials = (name: string): string => {
 };
 
 interface MessageAvatarProps {
-  user: User;
+  user: User | UserPreview;
   isOwnMessage: boolean;
 }
 

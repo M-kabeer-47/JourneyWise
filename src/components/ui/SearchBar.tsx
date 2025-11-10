@@ -4,7 +4,7 @@ import { Search, X } from "lucide-react";
 import { Input } from "./Input";
 
 interface SearchBarProps {
-  searchTerm: string;
+  searchTerm: string | undefined;
   setSearchTerm: React.Dispatch<React.SetStateAction<string>>;
   placeholder?: string;
   className?: string;

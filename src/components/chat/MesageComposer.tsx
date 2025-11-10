@@ -19,7 +19,7 @@ import { ChatMessage, User } from "@/lib/constants/mock-chat-data";
 import {
   EmojiPicker,
   EmojiPickerSearch,
-  EmojiPickermessage,
+  EmojiPickerContent as EmojiPickerMessage,
   EmojiPickerFooter,
 } from "@/components/chat/EmojiPicker";
 import AttachmentPreview, { AttachmentFile } from "./AttachmentPreview";
@@ -270,7 +270,7 @@ const MessageComposer = forwardRef(function MessageComposer(
               className="h-full w-full"
             >
               <EmojiPickerSearch />
-              <EmojiPickermessage />
+              <EmojiPickerMessage />
               <EmojiPickerFooter />
             </EmojiPicker>
           </div>

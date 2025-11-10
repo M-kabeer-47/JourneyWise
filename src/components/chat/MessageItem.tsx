@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/lib/redux/store/store";
 import { ChatMessage } from "@/lib/constants/mock-chat-data";
 import { User } from "@/lib/types/user";
+import { UserPreview } from "@/hooks/chat/useChatUsers";
 import MessageHeader from "./MessageHeader";
 import MessageAvatar from "./MessageAvatar";
 import RepliedMessage from "./RepliedMessage";
@@ -33,7 +34,7 @@ const formatMessageTime = (timestamp: Date | string): string => {
 interface MessageItemProps {
   message: ChatMessage;
   replyToMessage?: ChatMessage;
-  recipient: User;
+  recipient: User | UserPreview;
   onReply: (messageId: string) => void;
   onScrollToMessage: (messageId: string) => void;
   ref: React.Ref<HTMLDivElement> | null;
@@ -126,7 +127,7 @@ const MessageItem: React.FC<MessageItemProps> = ({
               {message.status === "sending" || message.isUploading ? (
                 <Loader2 className="h-3.5 w-3.5 text-white/70 animate-spin" />
               ) : message.status === "seen" ? (
-                <CheckCheck className="h-3.5 w-3.5 text-white" />
+                <CheckCheck className="h-3.5 w-3.5 text-ocean-blue" />
               ) : message.status === "delivered" ? (
                 <CheckCheck className="h-3.5 w-3.5 text-white/70" />
               ) : message.status === "sent" ? (
