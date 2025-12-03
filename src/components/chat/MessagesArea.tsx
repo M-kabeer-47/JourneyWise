@@ -130,25 +130,63 @@ export default function MessagesArea({
     };
   }, [socket, addSocketMessage, updateMessagesStatus]);
 
-  // Scroll to bottom on initial load and when sending messages
+  // Track initial load and scroll state
+  const hasScrolledToBottomRef = useRef(false);
+  const lastMessageIdRef = useRef<string | null>(null);
+  const isNearBottomRef = useRef(true); // Track if user is near bottom
+
+  // Track scroll position to know if user is near bottom
+  const handleScroll = () => {
+    if (!scrollContainerRef.current) return;
+    
+    const { scrollTop, scrollHeight, clientHeight } = scrollContainerRef.current;
+    // Consider "near bottom" if within 100px of bottom
+    // Note: with column-reverse, scrollTop is 0 when at bottom
+    isNearBottomRef.current = Math.abs(scrollTop) < 100;
+  };
+
+  // Scroll to bottom ONLY on initial load
   useEffect(() => {
-    if (!isLoading && messages.length > 0 && scrollContainerRef.current) {
-      // Scroll to bottom on initial load
-      scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
+    if (!isLoading && messages.length > 0 && scrollContainerRef.current && !hasScrolledToBottomRef.current) {
+      // Initial scroll to bottom
+      scrollContainerRef.current.scrollTop = 0; // With column-reverse, 0 is bottom
+      hasScrolledToBottomRef.current = true;
+      if (messages.length > 0) {
+        lastMessageIdRef.current = messages[messages.length - 1].id;
+      }
     }
   }, [recipientID, isLoading]);
 
-  // Auto-scroll to bottom only when current user sends a message
+  // Reset scroll flag when conversation changes
   useEffect(() => {
-    if (messages.length > 0 && scrollContainerRef.current) {
-      const lastMessage = messages[messages.length - 1];
+    hasScrolledToBottomRef.current = false;
+    lastMessageIdRef.current = null;
+    isNearBottomRef.current = true;
+  }, [recipientID]);
+
+  // Auto-scroll to bottom ONLY when a NEW message is added at the END
+  // useEffect(() => {
+  //   if (messages.length > 0 && scrollContainerRef.current && hasScrolledToBottomRef.current) {
+  //     const lastMessage = messages[messages.length - 1];
       
-      // Only auto-scroll if last message is from current user
-      if (lastMessage.senderID === currentUser.user?.id) {
-        scrollContainerRef.current.scrollTop = scrollContainerRef.current.scrollHeight;
-      }
-    }
-  }, [messages, currentUser]);
+  //     // Check if there's a NEW message at the end (different ID from last tracked)
+  //     if (lastMessage.id !== lastMessageIdRef.current) {
+  //       // Only auto-scroll if:
+  //       // 1. Last message is from current user (user sent it), OR
+  //       // 2. User is already near the bottom (viewing latest messages)
+  //       const shouldAutoScroll = 
+  //         lastMessage.senderID === currentUser.user?.id || 
+  //         isNearBottomRef.current;
+          
+  //       if (shouldAutoScroll) {
+  //         scrollContainerRef.current.scrollTop = 0; // With column-reverse, 0 is bottom
+  //       }
+        
+  //       // Update the last message ID
+  //       lastMessageIdRef.current = lastMessage.id;
+  //     }
+  //   }
+  // }, [messages, currentUser]);
 
   // Convert UserPreview to User type for MessageItem compatibility
 
@@ -175,12 +213,14 @@ export default function MessagesArea({
       <div 
         id="scrollableDiv"
         ref={scrollContainerRef}
+        onScroll={handleScroll}
         className="flex-1 overflow-y-auto px-3 sm:px-6 py-4 sm:py-6 bg-gradient-to-b from-white to-light-gray/30 flex flex-col-reverse"
       >
         <InfiniteScroll
           dataLength={messages.length}
           next={fetchNextPage}
           hasMore={!!hasNextPage}
+          scrollThreshold={1}
           loader={isFetchingNextPage ? (
             <div className="flex justify-center py-4">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-midnight-blue"></div>
@@ -191,8 +231,17 @@ export default function MessagesArea({
           style={{ display: 'flex', flexDirection: 'column-reverse' }}
         >
           <div ref={messagesEndRef} />
-          {groupedMessages.reverse().map((group, groupIndex) => (
+          {groupedMessages.map((group, groupIndex) => (
             <div key={groupIndex}>
+              {/* Date Separator - Shows BEFORE messages in this group */}
+              <div className="flex items-center justify-center my-6">
+                <div className="px-4 py-1.5 bg-white rounded-full shadow-sm border border-gray-200">
+                  <span className="text-xs font-medium text-charcoal/60 font-raleway">
+                    {group.date}
+                  </span>
+                </div>
+              </div>
+
               {/* Messages */}
               {group.messages.map((message) => {
                 // Determine who sent this message
@@ -213,15 +262,6 @@ export default function MessagesArea({
                   />
                 );
               })}
-
-              {/* Date Separator */}
-              <div className="flex items-center justify-center my-6">
-                <div className="px-4 py-1.5 bg-white rounded-full shadow-sm border border-gray-200">
-                  <span className="text-xs font-medium text-charcoal/60 font-raleway">
-                    {group.date}
-                  </span>
-                </div>
-              </div>
             </div>
           ))}
         </InfiniteScroll>

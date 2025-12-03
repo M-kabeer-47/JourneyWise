@@ -25,11 +25,12 @@ async function fetchMessages({
     return [];
   }
   const response = await axios.get("/api/fetch-messages", {
-    params: { recipientID, page: pageParam, limit: 20 },
+    params: { recipientID, page: pageParam, limit: 10 },
     headers: {
       "x-user-id": senderID,
     },
   });
+
   return response.data.messages;
 }
 
@@ -49,7 +50,7 @@ export function useMessages({
   const messagesQuery = useInfiniteQuery({
     queryKey: ["messages", senderID, recipientID],
     queryFn: ({ pageParam }: any) => 
-      fetchMessages({ recipientID: recipientID!, senderID, pageParam }),
+    fetchMessages({ recipientID: recipientID!, senderID, pageParam }),
     getNextPageParam: (lastPage: ChatMessage[], allPages: ChatMessage[][]) => {
       // If last page has messages, return next page number
       return lastPage.length > 0 ? allPages.length + 1 : undefined;
@@ -60,7 +61,12 @@ export function useMessages({
     refetchOnWindowFocus: false,
   });
 
-  // Flatten all pages into single array and reverse to show oldest first
+  // Flatten all pages into single array
+  // API returns messages in DESC order (newest first)
+  // Page 1: [msg100, msg99...msg91], Page 2: [msg90, msg89...msg81]
+  // Flatten: [msg100, msg99...msg91, msg90, msg89...msg81]
+  // Reverse to get oldest→newest: [msg81, msg82...msg90, msg91, msg92...msg100]
+  // This works with column-reverse in UI to display newest at bottom
   const messages: ChatMessage[] = messagesQuery.data?.pages.flat().reverse() || [];
 
   function updateMessageStatus(
